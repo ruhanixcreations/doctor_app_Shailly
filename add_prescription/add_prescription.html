@@ -226,6 +226,57 @@ input:focus, select:focus, textarea:focus{
 }
 textarea{min-height:80px;resize:vertical}
 
+/* Error messages */
+.error-message{
+  color:#dc3545;
+  font-size:13px;
+  font-weight:600;
+  margin-top:6px;
+  padding:8px 12px;
+  background:rgba(220,53,69,0.05);
+  border-left:3px solid #dc3545;
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.error-message i{
+  font-size:14px;
+}
+
+/* Blood test checkboxes */
+.blood-checkbox-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  margin-bottom:6px;
+}
+.blood-checkbox-item:hover{
+  background:rgba(0,169,165,0.05);
+}
+.blood-checkbox-item input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  cursor:pointer;
+  accent-color:var(--primary-teal);
+}
+.blood-checkbox-label{
+  flex:1;
+  font-size:14px;
+  color:var(--text-dark);
+  font-weight:500;
+  cursor:pointer;
+}
+.blood-checkbox-price{
+  font-size:13px;
+  color:var(--text-muted);
+  font-weight:600;
+}
+
 /* dropdown controls inside med-form */
 .med-dropdown{position:relative}
 .med-dropdown .selectedBtn{
@@ -471,6 +522,9 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
         <div>
           <label class="small">Symptoms <span class="required-star">*</span></label>
           <textarea id="topSymptoms" placeholder="Enter patient's symptoms (e.g., fever, headache, cough with sputum...)" rows="3"></textarea>
+          <div id="symptomsError" class="error-message" style="display:none;">
+            <i class="fas fa-exclamation-circle"></i> This field is required
+          </div>
         </div>
       </div>
 
@@ -498,18 +552,16 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
         </div>
         
         <div id="bloodTestBox">
-          <label class="small">Recommended Blood Test</label>
-          <div class="blood-dropdown" id="bloodDropdown" style="margin-top:8px;">
-            <div class="selectedBtn" id="bloodSelectedBtn">
-              <span id="bloodLabel">Choose blood test...</span> 
-              <span style="opacity:0.6">▾</span>
+          <label class="small">Recommended Blood Tests (Optional - Select Multiple)</label>
+          <div class="blood-checkbox-container" style="margin-top:12px;">
+            <div class="search" style="margin-bottom:12px;">
+              <input id="bloodSearch" type="search" placeholder="Search blood tests..." style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid var(--border-light);">
             </div>
-            <div class="listPanel hidden" id="bloodPanel">
-              <div class="search"><input id="bloodSearch" type="search" placeholder="Search blood tests..."></div>
-              <div class="items" id="bloodItems" style="max-height:200px;overflow:auto;margin-top:8px"></div>
+            <div id="bloodCheckboxList" style="max-height:250px;overflow-y:auto;border:1px solid var(--border-light);border-radius:6px;padding:12px;background:var(--bg-white);">
+              <div style="text-align:center;padding:20px;color:var(--text-muted);">
+                <i class="fas fa-spinner fa-spin"></i> Loading blood tests...
+              </div>
             </div>
-            <input type="hidden" id="selectedBloodId" value="">
-            <input type="hidden" id="selectedBloodName" value="">
           </div>
 
           <!-- Follow-up date -->
@@ -564,8 +616,11 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
             </table>
           </div>
 
-          <div id="bloodSelectedLabel" style="display:none;">
-            <i class="fas fa-vial"></i> <strong>Recommended Blood Test:</strong> <span id="bloodSelectedText"></span>
+          <div id="bloodSelectedLabel" style="display:none;margin-top:16px;">
+            <div style="font-weight:700;color:var(--text-dark);margin-bottom:8px;font-size:15px;">
+              <i class="fas fa-vial" style="color:var(--primary-teal);"></i> Recommended Blood Tests:
+            </div>
+            <ol id="bloodSelectedList" style="margin-left:20px;line-height:1.8;color:var(--text-dark);"></ol>
           </div>
           <div id="followUpLabel" style="display:none;">
             <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
@@ -668,7 +723,17 @@ window.addEventListener('blur', hideAllOpenPanels);
 /* ---------- LOAD lists ---------- */
 async function loadPatients(){ try{ const r = await fetch('add_prescription.php?action=list_patients'); const j = await r.json(); if(j.success){ patients = j.patients || []; populatePatientItems(''); } else patients = []; }catch(e){ patients=[]; } }
 async function loadMedicines(){ try{ const r = await fetch('add_prescription.php?action=list_medicines'); const j = await r.json(); medicines = j.success ? (j.medicines||[]) : []; }catch(e){ medicines = []; } }
-async function loadBloodTests(){ try{ const r = await fetch('add_prescription.php?action=list_blood_tests'); const j = await r.json(); bloodTests = j.success ? (j.blood_tests||[]) : []; populateBloodItems(''); }catch(e){ bloodTests = []; populateBloodItems(''); } }
+async function loadBloodTests(){ 
+  try{ 
+    const r = await fetch('add_prescription.php?action=list_blood_tests'); 
+    const j = await r.json(); 
+    bloodTests = j.success ? (j.blood_tests||[]) : []; 
+    populateBloodCheckboxes(''); 
+  }catch(e){ 
+    bloodTests = []; 
+    populateBloodCheckboxes(''); 
+  } 
+}
 
 /* ---------- PATIENT DROPDOWN ---------- */
 const patientDropdown = document.getElementById('patientDropdown');
@@ -716,37 +781,84 @@ function populatePatientItems(filter){
 patientSelectedBtn.addEventListener('click',(ev)=>{ ev.stopPropagation(); if(patientPanel.style.display==='block'){ hidePanel(patientPanel); } else { populatePatientItems(''); showPanelFixed(patientSelectedBtn, patientPanel); } });
 patientSearch.addEventListener('input',(e)=> populatePatientItems(e.target.value));
 
-/* ---------- BLOOD TEST DROPDOWN ---------- */
-const bloodDropdown = document.getElementById('bloodDropdown');
-const bloodSelectedBtn = document.getElementById('bloodSelectedBtn');
-const bloodPanel = document.getElementById('bloodPanel');
-const bloodItems = document.getElementById('bloodItems');
+/* ---------- BLOOD TEST CHECKBOXES ---------- */
+const bloodCheckboxList = document.getElementById('bloodCheckboxList');
 const bloodSearch = document.getElementById('bloodSearch');
-const bloodLabel = document.getElementById('bloodLabel');
-const selectedBloodId = document.getElementById('selectedBloodId');
-const selectedBloodName = document.getElementById('selectedBloodName');
+const selectedBloodTests = new Set(); // Store selected test IDs
 
-function populateBloodItems(filter){
-  bloodItems.innerHTML='';
-  const q=(filter||'').trim().toLowerCase();
+function populateBloodCheckboxes(filter){
+  const q = (filter||'').trim().toLowerCase();
   const list = bloodTests.filter(b => !q || (b.name && b.name.toLowerCase().includes(q)));
-  if(!list.length){ bloodItems.innerHTML='<div class="no-results">No blood tests</div>'; return; }
+  
+  if(!list.length){ 
+    bloodCheckboxList.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted)">No blood tests found</div>'; 
+    return; 
+  }
+  
+  bloodCheckboxList.innerHTML = '';
   list.forEach(b=>{
-    const div=document.createElement('div'); div.className='item';
-    div.textContent = `${b.name} ${b.price?(' — ₹'+b.price):''}`; div.dataset.id=b.id; div.dataset.name=b.name;
-    div.addEventListener('click', ()=>{
-      selectedBloodId.value = b.id;
-      selectedBloodName.value = b.name;
-      bloodLabel.textContent = b.name;
-      hidePanel(bloodPanel);
-      document.getElementById('bloodSelectedText').textContent = b.name;
-      document.getElementById('bloodSelectedLabel').style.display = document.getElementById('savedItemsContainer').style.display === 'block' ? 'block' : 'none';
+    const item = document.createElement('div');
+    item.className = 'blood-checkbox-item';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `blood_${b.id}`;
+    checkbox.value = b.id;
+    checkbox.checked = selectedBloodTests.has(b.id.toString());
+    checkbox.addEventListener('change', (e)=>{
+      if(e.target.checked){
+        selectedBloodTests.add(b.id.toString());
+      } else {
+        selectedBloodTests.delete(b.id.toString());
+      }
+      updateSelectedBloodTestsDisplay();
     });
-    bloodItems.appendChild(div);
+    
+    const label = document.createElement('label');
+    label.className = 'blood-checkbox-label';
+    label.htmlFor = `blood_${b.id}`;
+    label.textContent = b.name;
+    
+    const price = document.createElement('span');
+    price.className = 'blood-checkbox-price';
+    price.textContent = b.price ? `₹${b.price}` : '';
+    
+    item.appendChild(checkbox);
+    item.appendChild(label);
+    if(b.price) item.appendChild(price);
+    
+    bloodCheckboxList.appendChild(item);
   });
 }
-bloodSelectedBtn.addEventListener('click',(ev)=>{ ev.stopPropagation(); if(bloodPanel.style.display==='block'){ hidePanel(bloodPanel); } else { populateBloodItems(''); showPanelFixed(bloodSelectedBtn, bloodPanel); } });
-bloodSearch.addEventListener('input',(e)=> populateBloodItems(e.target.value));
+
+function updateSelectedBloodTestsDisplay(){
+  const bloodSelectedLabel = document.getElementById('bloodSelectedLabel');
+  const bloodSelectedList = document.getElementById('bloodSelectedList');
+  
+  if(selectedBloodTests.size === 0){
+    bloodSelectedLabel.style.display = 'none';
+    return;
+  }
+  
+  // Get selected test names
+  const selectedTests = bloodTests.filter(b => selectedBloodTests.has(b.id.toString()));
+  
+  // Display as numbered list
+  bloodSelectedList.innerHTML = '';
+  selectedTests.forEach(test => {
+    const li = document.createElement('li');
+    li.textContent = test.name + (test.price ? ` (₹${test.price})` : '');
+    li.style.marginBottom = '4px';
+    bloodSelectedList.appendChild(li);
+  });
+  
+  // Show in saved items if visible
+  if(document.getElementById('savedItemsContainer').style.display === 'block'){
+    bloodSelectedLabel.style.display = 'block';
+  }
+}
+
+bloodSearch.addEventListener('input',(e)=> populateBloodCheckboxes(e.target.value));
 
 /* ---------- MEDICINE MINI-FORM ---------- */
 const medsContainer = document.getElementById('medsFormsContainer');
@@ -784,6 +896,9 @@ function createMiniForm(prefill={}){
           </div>
           <input type="hidden" class="medInput" value="${prefill.medicine_name?escapeHtml(prefill.medicine_name):''}">
         </div>
+        <div class="error-message medicine-error" style="display:none;">
+          <i class="fas fa-exclamation-circle"></i> Please select a medicine
+        </div>
       </div>
 
       <div class="col">
@@ -792,9 +907,15 @@ function createMiniForm(prefill={}){
           <option value="">-- Select type --</option>
           <option>Tablet</option><option>Syrup</option><option>Injection</option><option>Other</option>
         </select>
+        <div class="error-message type-error" style="display:none;">
+          <i class="fas fa-exclamation-circle"></i> Please select medicine type
+        </div>
 
         <label class="label-required" style="margin-top:12px;display:none;"><i class="fas fa-clock" style="color:var(--primary-teal);margin-right:6px"></i>Duration <span class="required-star">*</span></label>
         <input class="durationInput" type="text" placeholder="e.g., 3 days, 1 week" style="display:none;">
+        <div class="error-message duration-error" style="display:none;">
+          <i class="fas fa-exclamation-circle"></i> Please enter duration
+        </div>
 
         <label class="label-required" style="margin-top:12px;display:none;"><i class="fas fa-calendar-day" style="color:var(--primary-teal);margin-right:6px"></i>Time of Day <span class="required-star">*</span></label>
         <div class="timeGroup" style="display:none;margin-top:8px;gap:10px;">
@@ -811,6 +932,9 @@ function createMiniForm(prefill={}){
             <span style="margin-left:6px">Night</span>
           </label>
         </div>
+        <div class="error-message time-error" style="display:none;">
+          <i class="fas fa-exclamation-circle"></i> Please select at least one time
+        </div>
 
         <div class="before-after">
           <div style="font-weight:600;margin-top:12px;margin-bottom:8px;font-size:13px;color:var(--text-dark)">
@@ -823,6 +947,9 @@ function createMiniForm(prefill={}){
             <input type="radio" name="${uid}" value="After" class="afterRadio"> After meal
           </label>
           <input type="hidden" class="beforeAfterInput" value="">
+          <div class="error-message before-after-error" style="display:none;margin-top:8px;">
+            <i class="fas fa-exclamation-circle"></i> Please select before or after meal
+          </div>
         </div>
       </div>
 
@@ -986,15 +1113,73 @@ function validateMedicineForms(){
   const forms = Array.from(medsContainer.children);
   if(forms.length === 0){ return false; }
   let ok=true;
+  
   for(const f of forms){
     const med = f.querySelector('.medInput')?.value.trim();
     const type = f.querySelector('.typeInput')?.value.trim();
     const dur = f.querySelector('.durationInput')?.value.trim();
-    const t1 = f.querySelector('.tMorning')?.checked; const t2 = f.querySelector('.tAfternoon')?.checked; const t3 = f.querySelector('.tNight')?.checked;
+    const t1 = f.querySelector('.tMorning')?.checked; 
+    const t2 = f.querySelector('.tAfternoon')?.checked; 
+    const t3 = f.querySelector('.tNight')?.checked;
     const timeOk = !!(t1||t2||t3);
     const beforeAfterVal = f.querySelector('.beforeAfterInput')?.value || '';
-    if(!med || !type || !dur || !timeOk) { ok=false; break; }
-    if((t1||t2||t3) && !beforeAfterVal) { ok=false; break; }
+    
+    // Show/hide error messages
+    const medError = f.querySelector('.medicine-error');
+    const typeError = f.querySelector('.type-error');
+    const durError = f.querySelector('.duration-error');
+    const timeError = f.querySelector('.time-error');
+    const beforeAfterError = f.querySelector('.before-after-error');
+    
+    // Medicine error
+    if(medError){
+      if(!med && f.querySelector('.typeInput').style.display !== 'none'){
+        medError.style.display = 'flex';
+        ok = false;
+      } else {
+        medError.style.display = 'none';
+      }
+    }
+    
+    // Type error
+    if(typeError && f.querySelector('.typeInput').style.display !== 'none'){
+      if(!type){
+        typeError.style.display = 'flex';
+        ok = false;
+      } else {
+        typeError.style.display = 'none';
+      }
+    }
+    
+    // Duration error
+    if(durError && f.querySelector('.durationInput').style.display !== 'none'){
+      if(!dur){
+        durError.style.display = 'flex';
+        ok = false;
+      } else {
+        durError.style.display = 'none';
+      }
+    }
+    
+    // Time error
+    if(timeError && f.querySelector('.timeGroup').style.display !== 'none'){
+      if(!timeOk){
+        timeError.style.display = 'flex';
+        ok = false;
+      } else {
+        timeError.style.display = 'none';
+      }
+    }
+    
+    // Before/After error
+    if(beforeAfterError && f.querySelector('.before-after').style.display !== 'none'){
+      if((t1||t2||t3) && !beforeAfterVal){
+        beforeAfterError.style.display = 'flex';
+        ok = false;
+      } else {
+        beforeAfterError.style.display = 'none';
+      }
+    }
   }
   return ok;
 }
@@ -1009,6 +1194,15 @@ function validateForSave(){
 function updateButtonStates(){
   const saveBtn = document.getElementById('savePrescription');
   const addBtn = document.getElementById('addBottomBtn');
+  const symptomsError = document.getElementById('symptomsError');
+  const topSymptoms = document.getElementById('topSymptoms').value.trim();
+  
+  // Check symptoms for error display
+  if(!topSymptoms){
+    symptomsError.style.display = 'flex';
+  } else {
+    symptomsError.style.display = 'none';
+  }
   
   // Add Medicine button: only checks if medicine forms are complete (no symptoms check)
   const medFormsValid = validateMedicineForms();
@@ -1059,8 +1253,12 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
   const items = collectMiniForms();
   if(!items.length){ alert('Add medicines'); return; }
   const client_id = localStorage.getItem('client_id') || '';
-  const bloodTestId = document.getElementById('selectedBloodId').value || null;
-  const bloodTestName = document.getElementById('selectedBloodName').value || null;
+  
+  // Get selected blood tests
+  const selectedTests = bloodTests.filter(b => selectedBloodTests.has(b.id.toString()));
+  const bloodTestNames = selectedTests.map(t => t.name).join(', ');
+  const bloodTestIds = Array.from(selectedBloodTests).join(',');
+  
   const symptoms = document.getElementById('topSymptoms').value.trim() || '';
   const follow_up_date = document.getElementById('topFollowUp').value || null;
 
@@ -1068,7 +1266,15 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     const res = await fetch('add_prescription.php?action=save', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_id: bloodTestId, blood_test_name: bloodTestName })
+      body: JSON.stringify({ 
+        patient_id: pid, 
+        client_id, 
+        symptoms, 
+        follow_up_date, 
+        items, 
+        blood_test_id: bloodTestIds || null, 
+        blood_test_name: bloodTestNames || null 
+      })
     });
     const j = await res.json();
     if(!j.success){ alert('Save failed: '+(j.message||'')); return; }
@@ -1080,6 +1286,9 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
     updateFollowUpLabelFromTop();
     document.getElementById('topSymptoms').value = '';
+    // Clear selected blood tests
+    selectedBloodTests.clear();
+    populateBloodCheckboxes('');
     validateAllForms();
     await loadPatientPrescriptions(pid);
     updateRemoveButtonsVisibility();
@@ -1129,18 +1338,30 @@ async function loadPatientPrescriptions(patient_id){
     }
     setPrintForId(latestPrescription ? latestPrescription.prescription_id : null);
 
-    // update recommended blood test (from latest)
+    // update recommended blood tests (from latest)
     if(latestPrescription && latestPrescription.recommended_blood_test){
-      document.getElementById('bloodSelectedText').textContent = latestPrescription.recommended_blood_test;
+      const testNames = latestPrescription.recommended_blood_test.split(',').map(n => n.trim());
+      const bloodSelectedList = document.getElementById('bloodSelectedList');
+      bloodSelectedList.innerHTML = '';
+      testNames.forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        li.style.marginBottom = '4px';
+        bloodSelectedList.appendChild(li);
+      });
       document.getElementById('bloodSelectedLabel').style.display='block';
-      selectedBloodName.value = latestPrescription.recommended_blood_test || '';
-      const bt = bloodTests.find(b => b.name === latestPrescription.recommended_blood_test);
-      if(bt) selectedBloodId.value = bt.id;
+      
+      // Update checkboxes
+      selectedBloodTests.clear();
+      testNames.forEach(name => {
+        const test = bloodTests.find(b => b.name === name);
+        if(test) selectedBloodTests.add(test.id.toString());
+      });
+      populateBloodCheckboxes('');
     } else {
       document.getElementById('bloodSelectedLabel').style.display='none';
-      selectedBloodId.value = '';
-      selectedBloodName.value = '';
-      bloodLabel.textContent = 'Choose blood test...';
+      selectedBloodTests.clear();
+      populateBloodCheckboxes('');
     }
 
     // update follow-up date (from latestPrescription)
@@ -1179,9 +1400,8 @@ async function onPatientSelected(patient_id, patientObj){
   document.getElementById('pdWeight').textContent = patientObj.weight || '-';
 
   document.getElementById('topSymptoms').value = '';
-  selectedBloodId.value = '';
-  selectedBloodName.value = '';
-  bloodLabel.textContent = 'Choose blood test...';
+  selectedBloodTests.clear();
+  populateBloodCheckboxes('');
   if(!document.getElementById('topFollowUp').value) document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
   updateFollowUpLabelFromTop();
 
