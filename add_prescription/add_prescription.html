@@ -440,7 +440,7 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
       <div id="patientDetails">
         <div class="patient-info-card">
           <div class="patient-name">
-            <i class="fas fa-user"></i> <span id="pdName">-</span>
+            <i class="fas fa-user"></i> Patient Name - <span id="pdName">-</span>
           </div>
           <div class="patient-details">
             <div class="patient-detail-item">
@@ -462,15 +462,15 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
 
     <!-- PRESCRIPTION FORM AREA -->
     <div id="formsArea" style="display:none;">
-      <!-- CHIEF COMPLAINTS SECTION -->
+      <!-- SYMPTOMS SECTION -->
       <div class="section">
         <div class="section-header">
           <i class="fas fa-stethoscope"></i>
-          <span>Chief Complaints</span>
+          <span>Symptoms</span>
         </div>
         <div>
-          <label class="small">Symptoms / Complaints <span class="required-star">*</span></label>
-          <textarea id="topSymptoms" placeholder="Enter patient's symptoms and complaints (e.g., fever, headache, cough with sputum...)" rows="3"></textarea>
+          <label class="small">Symptoms <span class="required-star">*</span></label>
+          <textarea id="topSymptoms" placeholder="Enter patient's symptoms (e.g., fever, headache, cough with sputum...)" rows="3"></textarea>
         </div>
       </div>
 
@@ -521,7 +521,7 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
       </div>
 
       <!-- ACTION BUTTONS -->
-      <div class="action-btn-group">
+      <div class="action-btn-group" style="margin-bottom:30px">
         <button id="savePrescription" class="btn save" disabled>
           <i class="fas fa-save"></i> Save Prescription
         </button>
@@ -980,19 +980,11 @@ function updateFollowUpLabelFromTop(){
   }
 }
 
-/* ---------- VALIDATION (Now enforces Before/After) ---------- */
-function setPrimaryButtonsEnabled(enabled){
-  const saveBtn = document.getElementById('savePrescription');
-  const addBtn = document.getElementById('addBottomBtn');
-  if(enabled){ saveBtn.removeAttribute('disabled'); addBtn.removeAttribute('disabled'); }
-  else { saveBtn.setAttribute('disabled',''); addBtn.setAttribute('disabled',''); }
-}
-function validateAllForms(){
-  const topSymptoms = document.getElementById('topSymptoms').value.trim();
-  if(!topSymptoms) { setPrimaryButtonsEnabled(false); return false; }
-
+/* ---------- VALIDATION (Separate checks for Add Medicine and Save Prescription) ---------- */
+function validateMedicineForms(){
+  // Check if all medicine forms are complete (without checking symptoms)
   const forms = Array.from(medsContainer.children);
-  if(forms.length === 0){ setPrimaryButtonsEnabled(false); return false; }
+  if(forms.length === 0){ return false; }
   let ok=true;
   for(const f of forms){
     const med = f.querySelector('.medInput')?.value.trim();
@@ -1004,8 +996,40 @@ function validateAllForms(){
     if(!med || !type || !dur || !timeOk) { ok=false; break; }
     if((t1||t2||t3) && !beforeAfterVal) { ok=false; break; }
   }
-  setPrimaryButtonsEnabled(ok);
   return ok;
+}
+
+function validateForSave(){
+  // Check symptoms AND medicine forms for Save button
+  const topSymptoms = document.getElementById('topSymptoms').value.trim();
+  if(!topSymptoms) { return false; }
+  return validateMedicineForms();
+}
+
+function updateButtonStates(){
+  const saveBtn = document.getElementById('savePrescription');
+  const addBtn = document.getElementById('addBottomBtn');
+  
+  // Add Medicine button: only checks if medicine forms are complete (no symptoms check)
+  const medFormsValid = validateMedicineForms();
+  if(medFormsValid){ 
+    addBtn.removeAttribute('disabled'); 
+  } else { 
+    addBtn.setAttribute('disabled',''); 
+  }
+  
+  // Save Prescription button: checks both symptoms AND medicine forms
+  const allValid = validateForSave();
+  if(allValid){ 
+    saveBtn.removeAttribute('disabled'); 
+  } else { 
+    saveBtn.setAttribute('disabled',''); 
+  }
+}
+
+function validateAllForms(){
+  updateButtonStates();
+  return validateForSave();
 }
 
 /* ---------- COLLECT & SAVE ---------- */
@@ -1029,7 +1053,7 @@ function collectMiniForms(){
 
 /* Save handler */
 document.getElementById('savePrescription').addEventListener('click', async ()=>{
-  if(!validateAllForms()){ alert('Please fill all required fields (marked *)'); return; }
+  if(!validateForSave()){ alert('Please fill symptoms and complete all medicine entries (marked with *)'); return; }
   const pid = document.getElementById('selectedPatientId').value;
   if(!pid){ alert('Select patient'); return; }
   const items = collectMiniForms();
@@ -1064,7 +1088,7 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
 
 /* +Add button */
 addBottomBtn.addEventListener('click',(e)=>{
-  if(!validateAllForms()){ alert('Please complete current entries before adding another'); return; }
+  if(!validateMedicineForms()){ alert('Please complete current medicine entries before adding another'); return; }
   createMiniForm(); const forms = document.getElementById('medsFormsContainer'); forms.lastElementChild.scrollIntoView({behavior:'smooth',block:'center'});
 });
 
