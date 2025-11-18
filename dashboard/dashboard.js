@@ -6,6 +6,79 @@
 //   * receptionalist -> hide: card-new-prescription, card-add-reception
 //   * user         -> hide: card-add-patient
 
+const dashboardState = {
+  cards: [],
+  cardsEmpty: null,
+  statRole: null,
+  statClient: null,
+  statShortcut: null
+};
+
+function syncCardDisplay(card) {
+  if (!card) return;
+  const hiddenByRole = card.dataset.roleHidden === 'true';
+  const hiddenByFilter = card.dataset.filterHidden === 'true';
+  const shouldHide = hiddenByRole || hiddenByFilter;
+  card.style.display = shouldHide ? 'none' : '';
+  card.setAttribute('aria-hidden', shouldHide ? 'true' : 'false');
+}
+
+function resetRoleVisibility() {
+  dashboardState.cards.forEach(card => {
+    delete card.dataset.roleHidden;
+    syncCardDisplay(card);
+  });
+}
+
+function updateStats() {
+  if (dashboardState.statRole) {
+    const roleRaw = (localStorage.getItem('role') || '').trim();
+    dashboardState.statRole.textContent = roleRaw
+      ? roleRaw.charAt(0).toUpperCase() + roleRaw.slice(1)
+      : '—';
+  }
+  if (dashboardState.statClient) {
+    const clientId = (localStorage.getItem('client_id') || '').trim();
+    dashboardState.statClient.textContent = clientId || '—';
+  }
+  updateShortcutStat();
+}
+
+function getVisibleShortcutCount() {
+  return dashboardState.cards.filter(card => card.style.display !== 'none').length;
+}
+
+function updateShortcutStat(count) {
+  if (!dashboardState.statShortcut) return;
+  const value = typeof count === 'number' ? count : getVisibleShortcutCount();
+  dashboardState.statShortcut.textContent = value.toString().padStart(2, '0');
+}
+
+function initCardFilter(inputEl, emptyStateEl) {
+  if (!inputEl) {
+    updateShortcutStat();
+    return;
+  }
+  const handleFilter = () => {
+    const query = (inputEl.value || '').trim().toLowerCase();
+    let visibleCount = 0;
+    dashboardState.cards.forEach(card => {
+      const filterText = (card.dataset.filterValue || card.textContent || '').toLowerCase();
+      if (query && !filterText.includes(query)) {
+        card.dataset.filterHidden = 'true';
+      } else {
+        delete card.dataset.filterHidden;
+      }
+      syncCardDisplay(card);
+      if (card.style.display !== 'none') visibleCount++;
+    });
+    if (emptyStateEl) emptyStateEl.classList.toggle('visible', visibleCount === 0);
+    updateShortcutStat(visibleCount);
+  };
+  inputEl.addEventListener('input', handleFilter);
+  handleFilter();
+}
+
 /* ------------------ Loading overlay helpers ------------------ */
 function createLoadingOverlay() {
   const overlay = document.createElement('div');
@@ -91,26 +164,17 @@ async function followRedirectAndNavigate(href) {
 /* ------------------ Role-based visibility ------------------ */
 function hideCard(cardEl, reasonText) {
   if (!cardEl) return;
-  // add aria-hidden for accessibility and visually hide
-  cardEl.setAttribute('aria-hidden', 'true');
-  cardEl.style.display = 'none';
+  cardEl.dataset.roleHidden = 'true';
+  syncCardDisplay(cardEl);
   // optional small notice appended to the header (only once)
   if (reasonText) {
     let info = document.getElementById('dashboard-role-info');
     if (!info) {
       info = document.createElement('div');
       info.id = 'dashboard-role-info';
-      info.style.maxWidth = '1100px';
-      info.style.margin = '12px auto';
-      info.style.padding = '8px 14px';
-      info.style.borderRadius = '10px';
-      info.style.fontFamily = 'Inter, system-ui, Arial, sans-serif';
-      info.style.fontSize = '14px';
-      info.style.color = '#0b2340';
-      info.style.background = 'rgba(15,30,80,0.04)';
-      info.style.textAlign = 'center';
-      const container = document.querySelector('.container') || document.body;
-      container.insertBefore(info, container.firstChild);
+      info.className = 'role-alert';
+      const container = document.querySelector('.shortcut-section') || document.querySelector('.page-shell') || document.body;
+      container.insertBefore(info, container.firstChild || null);
     }
     // set text (if multiple calls, keep the first message)
     if (!info.textContent) info.textContent = reasonText;
@@ -119,6 +183,7 @@ function hideCard(cardEl, reasonText) {
 
 /* Reads role from localStorage and hides cards accordingly */
 function applyRoleVisibility() {
+  resetRoleVisibility();
   const role = (localStorage.getItem('role') || '').trim().toLowerCase();
   // IDs used in your dashboard:
   const elAddReception = document.getElementById('card-add-reception');         // Add Receptionalist
@@ -126,7 +191,7 @@ function applyRoleVisibility() {
   const elAddPatient = document.getElementById('card-add-patient');            // Add New Patient
 
   if (!role) {
-    // no role present — show everything
+    updateStats();
     return;
   }
 
@@ -140,11 +205,26 @@ function applyRoleVisibility() {
   } else {
     // other roles — no changes (or add additional rules here)
   }
+
+  updateStats();
 }
 
 /* ------------------ Main DOM logic ------------------ */
 document.addEventListener('DOMContentLoaded', () => {
-  // card elements
+  const cardsContainer = document.getElementById('dashboardCards');
+  dashboardState.cards = Array.from(cardsContainer?.querySelectorAll('.shortcut-card') || []);
+  dashboardState.cards.forEach(card => {
+    card.dataset.filterValue = (card.innerText || '').toLowerCase();
+  });
+  dashboardState.cardsEmpty = document.getElementById('cardsEmpty');
+  dashboardState.statRole = document.querySelector('[data-stat-role]');
+  dashboardState.statClient = document.querySelector('[data-stat-client]');
+  dashboardState.statShortcut = document.querySelector('[data-stat-shortcuts]');
+
+  const filterInput = document.getElementById('cardFilter');
+  const heroAddPatientBtn = document.getElementById('heroAddPatient');
+  const heroOpenMenuBtn = document.getElementById('heroOpenMenu');
+
   const addReceptionEl = document.getElementById('card-add-reception');
   const viewPatientEl = document.getElementById('card-view-patient');
   const newPrescriptionEl = document.getElementById('card-new-prescription');
@@ -166,6 +246,21 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.cursor = 'pointer';
     }
   });
+
+  // hero quick actions
+  if (heroAddPatientBtn && addPatientEl) {
+    heroAddPatientBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      addPatientEl.click();
+    });
+  }
+  if (heroOpenMenuBtn) {
+    heroOpenMenuBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const toggle = document.querySelector('[data-nav-toggle]');
+      if (toggle) toggle.dispatchEvent(new Event('click', { bubbles: true }));
+    });
+  }
 
   // Add Receptionalist: special flow (server sets session/redirect)
   if (addReceptionEl) {
@@ -207,12 +302,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Apply role-based hiding (uses localStorage.role set by signin flow)
   applyRoleVisibility();
+  initCardFilter(filterInput, dashboardState.cardsEmpty);
 
   // Optional: watch for role changes in another tab/window and re-apply (best-effort)
   window.addEventListener('storage', (e) => {
     if (e.key === 'role') {
       // micro-delay so other tab finishes writing
-      setTimeout(() => applyRoleVisibility(), 100);
+      setTimeout(() => {
+        applyRoleVisibility();
+        if (filterInput) filterInput.dispatchEvent(new Event('input'));
+      }, 100);
     }
   });
 });
