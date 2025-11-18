@@ -4,227 +4,424 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>All Medicines</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root{
-      --navy:#0b2340;
-      --sea:#6f9ef0;
-      --sea-dark:#183159;
-      --muted:#6f7f8f;
-      --card-bg:#ffffff;
-      --radius:12px;
-      --control-height:46px;
-      --input-shadow: 0 12px 30px rgba(13,30,60,0.08);
-      --input-focus-shadow: 0 14px 40px rgba(25,72,160,0.12);
-      --btn-shadow: 0 14px 34px rgba(24,57,89,0.10);
-      --glass: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,252,255,0.98));
-      --bg: linear-gradient(180deg,#e9f3ff 0%,#f7fbff 100%);
-      --overlay: rgba(6,12,24,0.48);
-      --disabled-grey: #cfcfcf;
-      --disabled-text: #6b6b6b;
+      --primary-teal:#00A9A5;
+      --primary-blue:#1a75bb;
+      --text-dark:#2c3e50;
+      --text-muted:#6c757d;
+      --border-light:#e0e6ed;
+      --bg-light:#f8f9fa;
+      --bg-white:#ffffff;
+      --danger:#dc3545;
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
     body{
-      font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
-      background:var(--bg);
-      min-height:100vh;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:22px;
-      color:#071123;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:#f5f7fa;
+      color:var(--text-dark);
+      padding:20px;
       -webkit-font-smoothing:antialiased;
     }
 
-    .container {
-      width:100%;
+    .container{
       max-width:980px;
-      margin:18px auto;
-      padding:16px;
-      background: var(--glass);
-      border-radius:var(--radius);
-      box-shadow: 0 20px 60px rgba(9,30,66,0.08);
-      border:1px solid rgba(16,42,83,0.04);
-      overflow:visible;
+      margin:20px auto;
+      background:var(--bg-white);
+      border-radius:12px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.08);
+      border:1px solid var(--border-light);
+      overflow:hidden;
     }
 
-    h2{
+    .header{
+      background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+      padding:16px 24px;
+      color:white;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .brand{
+      width:42px;
+      height:42px;
+      border-radius:8px;
+      background:rgba(255,255,255,0.2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:blur(10px);
+      flex-shrink:0;
       font-size:20px;
+    }
+
+    .header-text{
+      flex:1;
+    }
+
+    .header .title{
+      font-size:18px;
       font-weight:700;
-      color:var(--navy);
-      margin-bottom:10px;
+      margin-bottom:2px;
+      line-height:1.2;
     }
 
-    .top-row{ display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
-    .left-controls{ display:flex; gap:12px; align-items:center; flex:1; min-width:0; }
-    .right-controls{ display:flex; gap:12px; align-items:center; justify-content:flex-end; flex:0 0 auto; flex-direction:column; align-items:flex-end; }
-
-    .input-inline-stub{
-      display:flex; gap:8px; align-items:center; flex:1; flex-wrap:wrap;
-    }
-    .input-inline-stub input, .input-inline-stub select{
-      height:40px;
-      padding:8px 10px;
-      border-radius:10px;
-      border:1px solid rgba(8,18,33,0.07);
-      background:#fff;
-      min-width:120px;
-      font-size:14px;
-      color:#071123;
+    .header .subtitle{
+      font-size:12px;
+      opacity:0.9;
+      font-weight:400;
     }
 
-    .btn {
-      height:var(--control-height);
-      padding:10px 14px;
-      border-radius:10px;
-      border:none;
-      font-weight:700;
-      cursor:pointer;
-      color:#fff;
-      background:linear-gradient(90deg,var(--sea-dark),var(--sea));
-      box-shadow:var(--btn-shadow);
-      transition: transform .08s ease, box-shadow .12s, opacity .12s;
-    }
-    .btn:active{ transform: translateY(1px) }
-    .btn.ghost{
-      background:transparent;color:var(--sea-dark);border:1px solid rgba(24,57,89,0.06);box-shadow:none;height:40px;padding:8px 12px;border-radius:10px;
-    }
-    /* Disabled buttons are grey with grey text as requested */
-    .btn[disabled]{
-      background: var(--disabled-grey) !important;
-      color: var(--disabled-text) !important;
-      cursor:not-allowed;
-      box-shadow:none;
-      transform:none;
-      opacity:1; /* keep full opacity since color indicates disabled */
+    .content{
+      padding:24px;
     }
 
-    #status.small{ font-size:13px; color:var(--muted); margin-top:6px; text-align:right; min-height:18px; }
+    .controls{
+      display:flex;
+      gap:10px;
+      margin-bottom:16px;
+      align-items:center;
+    }
 
-    .search-block{ margin-top:14px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-    #filter{
-      width:100%;
+    .input{
+      flex:1;
+      padding:11px 14px;
       height:44px;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(8,18,33,0.07);
-      background:linear-gradient(180deg,#fff,#fbfdff);
-      box-shadow: var(--input-shadow);
+      border-radius:6px;
+      border:1px solid var(--border-light);
       font-size:14px;
-      color:#071123;
+      background:var(--bg-white);
+      transition:all 0.2s ease;
     }
 
-    /* Table */
-    .table-wrapper { width:100%; overflow:hidden; border-radius:10px; margin-top:14px; }
-    .table {
+    .input::placeholder{
+      color:var(--text-muted);
+    }
+
+    .input:focus{
+      border-color:var(--primary-teal);
+      box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+      outline:none;
+    }
+
+    .btn{
+      height:44px;
+      padding:10px 20px;
+      border-radius:6px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      font-size:14px;
+      transition:all 0.2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .btn:hover:not(:disabled){
+      transform:translateY(-1px);
+      box-shadow:0 3px 10px rgba(0,169,165,0.25);
+    }
+
+    .btn:disabled{
+      background:#d1d5db;
+      color:#9ca3af;
+      cursor:not-allowed;
+    }
+
+    .btn.ghost{
+      background:#fff;
+      border:1px solid var(--border-light);
+      color:var(--text-dark);
+    }
+
+    #status{
+      font-size:13px;
+      color:var(--text-muted);
+      text-align:right;
+      min-height:18px;
+    }
+
+    .table-wrapper{
+      width:100%;
+      overflow:hidden;
+      border-radius:8px;
+      margin-top:8px;
+    }
+
+    .table{
       width:100%;
       border-collapse:collapse;
       background:transparent;
-      border-radius:10px;
-      overflow:hidden;
-      table-layout:fixed;
     }
+
     .table thead tr{
-      background:linear-gradient(90deg, rgba(111,158,240,0.08), rgba(24,49,89,0.03));
-      color:var(--navy);
+      background:rgba(0,169,165,0.03);
+      color:var(--text-dark);
       font-weight:600;
       font-size:13px;
     }
+
     .table th, .table td{
-      padding:12px 14px;
-      border-bottom:1px solid rgba(11,18,35,0.04);
+      padding:12px;
+      border-bottom:1px solid var(--border-light);
       text-align:left;
       font-size:14px;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
     }
-    .table tbody tr{ background: #fff; }
-    .table tbody tr:hover{ background: linear-gradient(90deg, rgba(111,158,240,0.03), rgba(255,255,255,0.6)); }
 
-    .action-btn{ height:36px; padding:6px 10px; border-radius:8px; border:none; cursor:pointer; font-weight:700; font-size:13px; box-shadow:none; }
-    .action-btn.delete{ color:#c03b3b; background:transparent; border:1px solid rgba(192,59,59,0.08); }
+    .table tbody tr{
+      background:#fff;
+    }
 
-    .empty { padding:22px 12px; color:var(--muted); text-align:center; font-size:14px; }
+    .table tbody tr:hover{
+      background:rgba(0,169,165,0.02);
+    }
 
-    /* Modal styles */
+    .action-btn{
+      height:auto;
+      padding:6px 12px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+
+    .action-btn.delete{
+      color:var(--danger);
+      background:transparent;
+      border:1px solid rgba(220,53,69,0.2);
+    }
+
+    .action-btn.delete:hover{
+      background:rgba(220,53,69,0.05);
+    }
+
+    .empty{
+      padding:22px 12px;
+      color:var(--text-muted);
+      text-align:center;
+      font-size:14px;
+    }
+
     .modal-overlay{
-      position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:var(--overlay); z-index:1200;
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.5);
+      z-index:1200;
       padding:18px;
     }
+
     .modal{
       width:100%;
       max-width:520px;
       background:#fff;
       border-radius:12px;
-      padding:18px;
-      box-shadow:0 30px 80px rgba(8,18,40,0.18);
-      border:1px solid rgba(16,42,83,0.06);
-      transform: translateY(8px);
+      padding:24px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
     }
-    .modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; }
-    .modal-title{ font-weight:700; color:var(--navy); font-size:16px; }
-    .modal-body{ display:flex; gap:10px; flex-direction:column; }
-    .form-row{ display:flex; gap:8px; }
+
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .modal-title{
+      font-weight:700;
+      color:var(--text-dark);
+      font-size:18px;
+    }
+
+    .modal-body{
+      display:flex;
+      gap:12px;
+      flex-direction:column;
+    }
+
+    .form-row{
+      display:flex;
+      gap:10px;
+    }
+
     .form-row input, .form-row select{
-      flex:1; height:44px; padding:10px 12px; border-radius:10px; border:1px solid rgba(8,18,33,0.08); background:#fff; font-size:14px;
-      box-shadow: var(--input-shadow);
+      flex:1;
+      height:44px;
+      padding:11px 14px;
+      border-radius:6px;
+      border:1px solid var(--border-light);
+      background:#fff;
+      font-size:14px;
+      transition:all 0.2s ease;
     }
-    .modal-foot{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
-    .note-small{ font-size:13px; color:var(--muted); margin-top:6px; text-align:right; }
+
+    .form-row input:focus, .form-row select:focus{
+      border-color:var(--primary-teal);
+      box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+      outline:none;
+    }
+
+    .modal-foot{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:16px;
+    }
+
+    .note-small{
+      font-size:13px;
+      color:var(--text-muted);
+      margin-top:6px;
+    }
 
     @media(max-width:760px){
-      .container{ padding:12px; }
-      .modal{ max-width:520px; width:94%; padding:14px; border-radius:10px; }
-      .modal-title{ font-size:15px; }
-      .form-row{ flex-direction:column; }
-      .form-row input, .form-row select{ width:100%; }
-      .right-controls{ flex:0 0 auto; }
-      .btn{ height:44px; padding:10px 12px; }
-      .action-btn{ width:100px; }
-      .table thead { display:none; }
-      .table, .table tbody, .table tr, .table td { display:block; width:100%; }
-      .table tr { margin-bottom:12px; border-radius:10px; box-shadow: 0 8px 20px rgba(9,30,66,0.04); overflow:hidden; }
-      .table td { display:flex; justify-content:space-between; padding:10px 12px; border-bottom:1px solid rgba(11,18,35,0.04); white-space:normal; }
-      .table td::before{ content: attr(data-label); font-weight:600; color:var(--muted); margin-right:8px; flex:0 0 42%; }
-      .table td > div { flex:1 1 auto; text-align:right; }
+      body{
+        padding:16px;
+      }
+      
+      .header{
+        padding:14px 18px;
+      }
+      
+      .brand{
+        width:38px;
+        height:38px;
+        font-size:18px;
+      }
+      
+      .header .title{
+        font-size:16px;
+      }
+      
+      .header .subtitle{
+        font-size:11px;
+      }
+      
+      .content{
+        padding:20px;
+      }
+      
+      .controls{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      
+      .modal{
+        max-width:520px;
+        width:94%;
+        padding:20px;
+      }
+      
+      .modal-title{
+        font-size:16px;
+      }
+      
+      .form-row{
+        flex-direction:column;
+      }
+      
+      .form-row input, .form-row select{
+        width:100%;
+      }
+      
+      .table thead{
+        display:none;
+      }
+      
+      .table, .table tbody, .table tr, .table td{
+        display:block;
+        width:100%;
+      }
+      
+      .table tr{
+        margin-bottom:12px;
+        border-radius:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
+        overflow:hidden;
+      }
+      
+      .table td{
+        display:flex;
+        justify-content:space-between;
+        padding:10px 12px;
+        border-bottom:1px solid rgba(0,0,0,0.04);
+        white-space:normal;
+      }
+      
+      .table td::before{
+        content:attr(data-label);
+        font-weight:600;
+        color:var(--text-muted);
+        margin-right:8px;
+        flex:0 0 42%;
+      }
+      
+      .table td > div{
+        flex:1 1 auto;
+        text-align:right;
+      }
     }
 
     @media(max-width:420px){
-      .modal{ width:96%; padding:12px; }
-      .btn{ height:42px; font-size:14px; }
+      .header{
+        padding:12px 16px;
+      }
+      
+      .header .title{
+        font-size:15px;
+      }
+      
+      .modal{
+        width:96%;
+        padding:18px;
+      }
     }
 
-    .visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px); white-space:nowrap; }
+    .visually-hidden{
+      position:absolute !important;
+      height:1px;
+      width:1px;
+      overflow:hidden;
+      clip:rect(1px, 1px, 1px, 1px);
+      white-space:nowrap;
+    }
   </style>
 </head>
 <body>
 <main class="container" role="main">
-  <h2>All Medicines</h2>
-
-  <div class="top-row" style="margin-bottom:6px;">
-    <div class="left-controls">
-      <!-- removed the quick filter - only primary filter below remains -->
+  <div class="header">
+    <div class="brand">💊</div>
+    <div class="header-text">
+      <div class="title">All Medicines</div>
+      <div class="subtitle">Manage medicine inventory</div>
     </div>
+  </div>
 
-    <div class="right-controls">
+  <div class="content">
+    <div class="controls">
+      <input id="filter" placeholder="Filter by name, company, form or strength" aria-label="Filter medicines" class="input">
       <button id="showModalBtn" class="btn" aria-haspopup="dialog" aria-controls="addMedModal">Add Medicine</button>
-      <!-- Status element -->
-      <div id="status" class="small" style="color:var(--muted);margin-top:6px;"></div>
     </div>
-  </div>
 
-  <div class="search-block" style="margin-bottom:6px;">
-    <input id="filter" placeholder="Filter by name, company, form or strength" aria-label="Filter medicines">
-  </div>
+    <div id="status"></div>
 
-  <div class="table-wrapper">
-    <table class="table" id="medTable" role="table" aria-label="Medicines table">
-      <thead><tr><th style="width:30%;">Name</th><th style="width:25%;">Company</th><th style="width:18%;">Form</th><th style="width:17%;">Strength</th><th style="width:110px"></th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-wrapper">
+      <table class="table" id="medTable" role="table" aria-label="Medicines table">
+        <thead><tr><th style="width:30%;">Name</th><th style="width:25%;">Company</th><th style="width:18%;">Form</th><th style="width:17%;">Strength</th><th style="width:110px"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 </main>
 
@@ -319,7 +516,7 @@
     if(e.key === 'Escape') closeModalWindow();
   }
 
-  // Validate modal inputs and enable Save only when all fields non-empty
+  // Validate modal inputs
   function checkModalValidity(){
     const name = modalName.value.trim();
     const company = modalCompany.value.trim();
@@ -332,7 +529,7 @@
     el.addEventListener('change', checkModalValidity);
   });
 
-  // Single filter that searches across all fields
+  // Filter
   document.getElementById('filter').addEventListener('input', renderTableFromMemory);
 
   // Data loader & renderer
@@ -350,7 +547,6 @@
     }
   }
 
-  // Filter tests all medicine fields (name, company, form, strength)
   function matchesFilter(item, q){
     if(!q) return true;
     q = q.toLowerCase();

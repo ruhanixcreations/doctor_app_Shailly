@@ -3,75 +3,302 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Add New Patient — Capture & Create PDF</title>
+<title>Add New Patient</title>
 
 <style>
 :root{
-  --sea-dark: #183159;
-  --sea: #6f9ef0;
-  --disabled-bg: #e0e0e0;
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
 }
 
-/* Page layout */
-body{font-family:Inter,Arial,sans-serif;background:#f5f7fb;padding:12px;color:#333;}
-.card{max-width:940px;margin:12px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.08);}
-h1{margin:0 0 16px;font-size:24px;color:#1a202c;}
-.row{display:flex;gap:20px;flex-wrap:wrap;}
-.col-main{flex:1 1 100%;}
-label{display:block;font-weight:600;margin-bottom:6px;font-size:14px;}
-input, select, button, textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:16px;box-sizing:border-box;transition:border-color 0.2s, box-shadow 0.2s;}
-input:focus, select:focus, textarea:focus {border-color: var(--sea-dark); outline: none;}
-.inline-group{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
-.inline-item{flex:1 1 auto; min-width: 80px;}
-.inline-item.w-small{width:110px; flex:0 0 110px;}
-.inline-item.w-medium{width:130px; flex:0 0 130px;}
-.controls{display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;align-items:center;}
-.small{font-size:14px;color:#666;margin-top:8px;}
-.thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
-.thumb-wrap{position:relative;width:100px;height:100px;border-radius:8px;overflow:hidden;border:1px solid #ddd;background:#fafafa;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.05);}
-.thumb-wrap img{width:100%;height:100%;object-fit:cover;}
-.remove-btn{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:22px;padding:0;}
-#pdfName{margin-top:8px;font-size:15px;color:#0a66c2;font-weight:600;}
-status{display:block;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
 
-/* Buttons - use same gradient as 'Add Test' file */
-.btn{
-  border:0;
-  border-radius:10px;
-  padding:10px 14px;
-  color:#fff;
+.card{
+  max-width:940px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header .title{
+  font-size:18px;
   font-weight:700;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:24px;
+}
+
+h2{
+  font-size:16px;
+  color:var(--text-dark);
+  margin-bottom:14px;
+  font-weight:600;
+}
+
+label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+  font-size:14px;
+  color:var(--text-dark);
+}
+
+input, select, button, textarea{
+  width:100%;
+  padding:11px 14px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  transition:all 0.2s ease;
+  font-family:inherit;
+}
+
+input:focus, select:focus, textarea:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.inline-group{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+.inline-item{
+  flex:1 1 auto;
+  min-width:80px;
+}
+
+.inline-item.w-small{
+  width:110px;
+  flex:0 0 110px;
+}
+
+.inline-item.w-medium{
+  width:130px;
+  flex:0 0 130px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.btn{
+  height:44px;
+  padding:10px 20px;
+  border-radius:6px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+  font-weight:600;
   cursor:pointer;
-  background: linear-gradient(90deg, var(--sea-dark), var(--sea));
-  box-shadow: 0 10px 26px rgba(24,57,89,0.10);
-  min-height:44px;
+  font-size:14px;
+  transition:all 0.2s ease;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:8px;
+  width:auto;
 }
-.btn.ghost{ background:#fff; color:var(--sea-dark); border:1px solid rgba(11,18,35,0.06) }
-.btn.delete{ background: linear-gradient(90deg,#ff6b6b,#ff4b4b); box-shadow:none; padding:8px 12px; border-radius:8px; font-size:14px; }
-.btn[disabled]{ background: var(--disabled-bg); color:#7a7a7a; cursor:not-allowed; box-shadow:none }
 
-/* Camera action buttons container - ensure one row, no wrap */
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,169,165,0.25);
+}
+
+.btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+}
+
+.small{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-top:8px;
+}
+
+.thumbs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.thumb-wrap{
+  position:relative;
+  width:100px;
+  height:100px;
+  border-radius:8px;
+  overflow:hidden;
+  border:1px solid var(--border-light);
+  background:#fafafa;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 4px rgba(0,0,0,.05);
+}
+
+.thumb-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.remove-btn{
+  position:absolute;
+  top:4px;
+  right:4px;
+  background:rgba(0,0,0,.7);
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  width:22px;
+  height:22px;
+  cursor:pointer;
+  font-size:14px;
+  line-height:22px;
+  padding:0;
+}
+
+#pdfName{
+  margin-top:8px;
+  font-size:14px;
+  color:var(--primary-teal);
+  font-weight:600;
+}
+
 .camera-actions-row{
   display:flex;
   gap:10px;
-  margin-top:10px;
-  flex-wrap:nowrap;         /* important: don't wrap to second line */
+  margin-top:12px;
+  flex-wrap:nowrap;
   align-items:center;
 }
 
-/* Video & canvas */
-video{width:100%;border-radius:8px;background:#000;max-height:360px;display:block;}
-canvas{display:none;}
+video{
+  width:100%;
+  border-radius:8px;
+  background:#000;
+  max-height:360px;
+  display:block;
+}
 
-/* Small responsive tweaks */
-@media (max-width:560px){
-  .inline-group{flex-direction:column;}
-  .inline-item.w-small,.inline-item.w-medium{flex:1 1 100%; width:100%;}
-  .camera-actions-row{flex-wrap:wrap; /* if device is tiny, allow wrap as fallback */ }
+canvas{
+  display:none;
+}
+
+.divider{
+  border:0;
+  border-top:1px solid var(--border-light);
+  margin:20px 0;
+}
+
+@media (max-width:760px){
+  body{
+    padding:16px;
+  }
+  
+  .header{
+    padding:14px 18px;
+  }
+  
+  .brand{
+    width:38px;
+    height:38px;
+    font-size:18px;
+  }
+  
+  .header .title{
+    font-size:16px;
+  }
+  
+  .header .subtitle{
+    font-size:11px;
+  }
+  
+  .content{
+    padding:20px;
+  }
+  
+  .inline-group{
+    flex-direction:column;
+  }
+  
+  .inline-item.w-small,.inline-item.w-medium{
+    flex:1 1 100%;
+    width:100%;
+  }
+  
+  .camera-actions-row{
+    flex-wrap:wrap;
+  }
+}
+
+@media(max-width:420px){
+  .header{
+    padding:12px 16px;
+  }
+  
+  .header .title{
+    font-size:15px;
+  }
 }
 </style>
 
@@ -79,75 +306,81 @@ canvas{display:none;}
 </head>
 <body>
 <div class="card">
-  <h1>Add New Patient</h1>
+  <div class="header">
+    <div class="brand">👤</div>
+    <div class="header-text">
+      <div class="title">Add New Patient</div>
+      <div class="subtitle">Create patient record with photos</div>
+    </div>
+  </div>
 
-  <form id="patientForm" enctype="multipart/form-data" autocomplete="off" novalidate>
-    <input type="hidden" id="client_id" name="client_id">
+  <div class="content">
+    <form id="patientForm" enctype="multipart/form-data" autocomplete="off" novalidate>
+      <input type="hidden" id="client_id" name="client_id">
 
-    <div class="row">
-      <div class="col-main">
-        <label for="patient_name">Patient Name *</label>
-        <input id="patient_name" name="patient_name" required autocomplete="name" />
+      <h2>Patient Details</h2>
+      <label for="patient_name">Patient Name *</label>
+      <input id="patient_name" name="patient_name" required autocomplete="name" />
 
-        <div class="inline-group" style="margin-top:10px;">
-          <div class="inline-item">
-            <label for="mobile">Mobile *</label>
-            <input id="mobile" name="mobile" inputmode="tel" required autocomplete="tel" />
-          </div>
-
-          <div class="inline-item w-small">
-            <label for="age">Age *</label>
-            <input id="age" name="age" type="number" min="0" required />
-          </div>
-
-          <div class="inline-item w-medium">
-            <label for="weight">Weight (kg) *</label>
-            <input id="weight" name="weight" type="number" step="0.1" min="0" required />
-          </div>
+      <div class="inline-group">
+        <div class="inline-item">
+          <label for="mobile">Mobile *</label>
+          <input id="mobile" name="mobile" inputmode="tel" required autocomplete="tel" />
         </div>
 
-        <label for="doctor" style="margin-top:16px;">Doctor *</label>
-        <select id="doctor" name="doctor" required>
-          <option value="" disabled selected>Select Doctor</option>
-                  </select>
+        <div class="inline-item w-small">
+          <label for="age">Age *</label>
+          <input id="age" name="age" type="number" min="0" required />
+        </div>
+
+        <div class="inline-item w-medium">
+          <label for="weight">Weight (kg) *</label>
+          <input id="weight" name="weight" type="number" step="0.1" min="0" required />
+        </div>
       </div>
-    </div>
 
-    <hr style="margin:18px 0;">
-    <label>Camera (capture multiple photos)</label>
-    <div class="controls" id="cameraControls">
-      <button type="button" id="openCamera" class="btn">Open Camera</button>
-    </div>
+      <label for="doctor" style="margin-top:16px;">Doctor *</label>
+      <select id="doctor" name="doctor" required>
+        <option value="" disabled selected>Select Doctor</option>
+      </select>
 
-    <div style="margin-top:10px;">
-      <video id="video" autoplay playsinline style="display:none;"></video>
-      <canvas id="canvas"></canvas>
-    </div>
-
-        <div id="cameraActionButtons" class="camera-actions-row" style="display:none;">
-      <button type="button" id="takePhoto" class="btn" disabled>Take Photo</button>
-      <button type="button" id="stopCamera" class="btn" disabled>Stop Camera</button>
-    </div>
-
-    <hr style="margin:18px 0;">
-
-    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
-      <div class="small">Captured files (click ✕ to remove)</div>
-      <div class="controls" style="margin-top:0;">
-        <button type="button" id="createPdf" class="btn" disabled>Create PDF from Photos</button>
+      <hr class="divider">
+      
+      <h2>Camera (capture multiple photos)</h2>
+      <div class="controls" id="cameraControls">
+        <button type="button" id="openCamera" class="btn">Open Camera</button>
       </div>
-    </div>
 
-    <div id="thumbs" class="thumbs"></div>
-    <div id="pdfName" style="display:none;"></div>
+      <div style="margin-top:12px;">
+        <video id="video" autoplay playsinline style="display:none;"></video>
+        <canvas id="canvas"></canvas>
+      </div>
 
-    <div style="margin-top:20px;" class="controls">
-      <button type="submit" id="submitBtn" class="btn" disabled>💾 Save & Submit</button>
-      <input type="file" id="fileUpload" style="display:none;" accept="image/*,application/pdf" multiple>
-    </div>
+      <div id="cameraActionButtons" class="camera-actions-row" style="display:none;">
+        <button type="button" id="takePhoto" class="btn" disabled>Take Photo</button>
+        <button type="button" id="stopCamera" class="btn" disabled>Stop Camera</button>
+      </div>
 
-    <div id="status" class="small" style="margin-top:10px;"></div>
-  </form>
+      <hr class="divider">
+
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+        <div class="small">Captured files (click ✕ to remove)</div>
+        <div class="controls" style="margin-top:0;">
+          <button type="button" id="createPdf" class="btn" disabled>Create PDF from Photos</button>
+        </div>
+      </div>
+
+      <div id="thumbs" class="thumbs"></div>
+      <div id="pdfName" style="display:none;"></div>
+
+      <div style="margin-top:20px;" class="controls">
+        <button type="submit" id="submitBtn" class="btn" disabled>💾 Save & Submit</button>
+        <input type="file" id="fileUpload" style="display:none;" accept="image/*,application/pdf" multiple>
+      </div>
+
+      <div id="status" class="small" style="margin-top:10px;"></div>
+    </form>
+  </div>
 </div>
 
 <script>
@@ -179,14 +412,13 @@ canvas{display:none;}
   let stream = null;
   let filesArray = [];
 
-  // Load client id and fetch doctors on load
+  // Load client id and fetch doctors
   document.addEventListener('DOMContentLoaded', ()=> {
     clientInput.value = localStorage.getItem('client_id') || '';
     fetchDoctors(); 
     updateControls();
   });
 
-  // Function to fetch doctors and populate the dropdown
   async function fetchDoctors(){
     try {
       const res = await fetch('add_new_patient.php?action=get_doctors');
@@ -195,8 +427,7 @@ canvas{display:none;}
       if (json.success && Array.isArray(json.doctors)){
         json.doctors.forEach(doctor => {
           const option = document.createElement('option');
-          option.value = doctor.id; // The value is the doctor's user ID
-          // MODIFIED: Include client_id in the displayed text
+          option.value = doctor.id;
           option.textContent = `${doctor.name} (Client ID: ${doctor.client_id})`; 
           doctorSelect.appendChild(option);
         });
@@ -210,21 +441,17 @@ canvas{display:none;}
     }
   }
 
-
-  // ---------- Strict input prevention ----------
-  // Name: only letters and spaces (prevent typing invalid characters)
+  // Input validation
   nameInput.addEventListener('keypress', (e) => {
     const char = String.fromCharCode(e.which || e.keyCode);
     if (!/^[a-zA-Z\s]$/.test(char)) e.preventDefault();
   });
-  // Clean pasted input & on input
   nameInput.addEventListener('input', ()=> {
     const cleaned = nameInput.value.replace(/[^a-zA-Z\s]/g, '');
     if (nameInput.value !== cleaned) nameInput.value = cleaned;
     updateControls();
   });
 
-  // Mobile: digits only, max 10 (prevent typing invalid characters)
   mobileInput.addEventListener('keypress', (e) => {
     const char = String.fromCharCode(e.which || e.keyCode);
     if (!/^\d$/.test(char) || mobileInput.value.length >= 10) e.preventDefault();
@@ -235,12 +462,10 @@ canvas{display:none;}
     updateControls();
   });
 
-  // Other fields update validation on input
   [ageInput, weightInput].forEach(el => el.addEventListener('input', updateControls));
   doctorSelect.addEventListener('change', updateControls); 
 
-
-  // ---------- Utility functions ----------
+  // Utility functions
   function dataURLtoBlob(dataurl){
     const arr = dataurl.split(',');
     const mime = arr[0].match(/:(.*?);/)[1];
@@ -305,7 +530,7 @@ canvas{display:none;}
     renderThumbs();
   }
 
-  // ---------- Validation & control enabling ----------
+  // Validation
   function isNameValid(){ return /^[A-Za-z\s]+$/.test(nameInput.value.trim()); }
   function isMobileValid(){ return /^\d{10}$/.test(mobileInput.value.trim()); }
   function isAgeValid(){ return ageInput.value !== '' && Number(ageInput.value) >= 0; }
@@ -314,41 +539,35 @@ canvas{display:none;}
   function hasCapturedFiles(){ return filesArray.length > 0; }
 
   function updateControls(){
-    // createPdf enabled when at least one image (or file) exists and there is at least one non-pdf? We'll enable if any images exist or files exist.
     createPdfBtn.disabled = filesArray.length === 0;
-
-    // take/stop camera buttons reflect stream state in event handlers
-    // Save button: require all fields valid and at least one captured file
     const allOk = isNameValid() && isMobileValid() && isAgeValid() && isWeightValid() && isDoctorValid() && hasCapturedFiles();
     submitBtn.disabled = !allOk;
 
-    // small UI status
     if (!isNameValid() && nameInput.value.length > 0) {
-      nameInput.style.borderColor = '#ff6b6b';
+      nameInput.style.borderColor = '#dc3545';
     } else {
       nameInput.style.borderColor = '';
     }
     if (!isMobileValid() && mobileInput.value.length > 0) {
-      mobileInput.style.borderColor = '#ff6b6b';
+      mobileInput.style.borderColor = '#dc3545';
     } else {
       mobileInput.style.borderColor = '';
     }
-    // Highlight doctor field if invalid
     if (!isDoctorValid() && doctorSelect.value !== '') {
-      doctorSelect.style.borderColor = '#ff6b6b';
+      doctorSelect.style.borderColor = '#dc3545';
     } else {
       doctorSelect.style.borderColor = '';
     }
   }
 
-  // ---------- Camera handlers ----------
+  // Camera handlers
   openCameraBtn.addEventListener('click', async () => {
     if (!stream) {
       try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
         video.srcObject = stream;
         video.style.display = 'block';
-        cameraActionButtons.style.display = 'flex'; // show action buttons row
+        cameraActionButtons.style.display = 'flex';
         takePhotoBtn.disabled = false;
         stopCameraBtn.disabled = false;
         openCameraBtn.innerText = 'Camera Open';
@@ -386,7 +605,7 @@ canvas{display:none;}
     }
   });
 
-  // ---------- Create PDF ----------
+  // Create PDF
   createPdfBtn.addEventListener('click', async () => {
     const images = filesArray.filter(f => !f.isPdf);
     if (images.length === 0) {
@@ -410,7 +629,6 @@ canvas{display:none;}
       const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
       const pdfFile = new File([blob], 'report_' + Date.now() + '.pdf', { type: 'application/pdf' });
 
-      // remove existing PDFs from filesArray and add created PDF
       filesArray = filesArray.filter(f => !f.isPdf);
       addFile(pdfFile, null);
       pdfNameEl.style.display = 'block';
@@ -423,11 +641,10 @@ canvas{display:none;}
     }
   });
 
-  // ---------- Form submit ----------
+  // Form submit
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     updateControls();
-    // final validation
     if (!(isNameValid() && isMobileValid() && isAgeValid() && isWeightValid() && isDoctorValid() && hasCapturedFiles())){
       alert('Please fill all required fields correctly and capture at least one photo or PDF.');
       return;
@@ -445,7 +662,6 @@ canvas{display:none;}
     formData.append('weight', weightInput.value);
     formData.append('doctor', doctorSelect.value.trim()); 
 
-    // if there's a PDF file in filesArray, send it as report_pdf else send images
     const pdfItem = filesArray.find(f => f.isPdf);
     if (pdfItem){
       formData.append('report_pdf', pdfItem.file, pdfItem.file.name);
@@ -460,12 +676,10 @@ canvas{display:none;}
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || 'Server error');
       statusEl.textContent = 'Saved: ' + (json.message || 'OK') + (json.patient_id ? (' (ID: '+json.patient_id+')') : '');
-      // reset
       filesArray = [];
       renderThumbs();
       pdfNameEl.style.display = 'none';
       form.reset();
-      // Reset the doctor dropdown back to "Select Doctor"
       doctorSelect.value = ''; 
       if (stream){ stream.getTracks().forEach(t => t.stop()); stream = null; video.style.display = 'none'; cameraActionButtons.style.display = 'none'; }
       updateControls();
@@ -476,12 +690,9 @@ canvas{display:none;}
     }
   });
 
-  // Initial controls update
   updateControls();
 
 })();
 </script>
 </body>
 </html>
-
-

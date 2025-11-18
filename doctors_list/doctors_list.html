@@ -7,111 +7,258 @@
 
 <style>
 :root{
-  --bg:#f5f8ff;
-  --card:#fff;
-  --sea:#6f9ef0;
-  --sea-dark:#183159;
-  --muted:#6b7280;
-  --danger:#ff5a5f;
-  --radius:12px;
-  --shadow:0 12px 32px rgba(9,30,66,0.06);
-  --overlay: rgba(6,12,24,0.48);
-  --disabled-grey:#d6d6d6;
-  --disabled-text:#6b6b6b;
-  --input-shadow: 0 12px 30px rgba(13,30,60,0.08);
-  --cell-padding-right: 18px;
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --danger:#dc3545;
 }
 
-/* base */
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-  font-family:Inter,system-ui,Arial,sans-serif;
-  margin:0;
-  background:var(--bg);
-  color:#0b2340;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
   padding:20px;
   -webkit-font-smoothing:antialiased;
 }
 
 .container{
   max-width:980px;
-  margin:18px auto;
-  background:var(--card);
-  padding:18px;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
 }
 
-.header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-h2{margin:0;font-size:20px}
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
 
-/* controls */
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;align-items:center}
-.input{padding:10px;border-radius:10px;border:1px solid #e7eefc;min-width:0;min-height:40px; box-shadow:var(--input-shadow)}
-.small{font-size:13px;color:var(--muted)}
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
 
-/* table */
-.table{width:100%;border-collapse:collapse;margin-top:6px}
-.table th,.table td{padding:10px;border-bottom:1px solid #f0f4fb;text-align:left;font-size:14px}
-.table th{font-weight:700;background:#fbfeff}
-.action-btn{background:var(--danger);color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer}
+.header-text{
+  flex:1;
+}
 
-/* Buttons - same sea gradient as All Medicines */
-.btn{
-  background:linear-gradient(90deg,var(--sea-dark),var(--sea));
-  color:#fff;
-  border:none;
-  padding:9px 12px;
-  border-radius:10px;
-  cursor:pointer;
+.header .title{
+  font-size:18px;
   font-weight:700;
-  height:40px;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:24px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  align-items:center;
+}
+
+.input{
+  flex:1;
+  padding:11px 14px;
+  height:44px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  background:var(--bg-white);
+  transition:all 0.2s ease;
+}
+
+.input:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.btn{
+  height:44px;
+  padding:10px 20px;
+  border-radius:6px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.2s ease;
   display:inline-flex;
   align-items:center;
+  justify-content:center;
   gap:8px;
 }
-.btn.ghost{background:#fff;border:1px solid #e7eefc;color:var(--sea-dark)}
-.btn.secondary{ background:transparent; border:1px solid rgba(11,18,35,0.06); color:var(--muted) }
 
-/* Disabled style */
-.btn[disabled]{
-  background: var(--disabled-grey) !important;
-  color: var(--disabled-text) !important;
-  cursor: not-allowed;
-  box-shadow: none;
-  opacity: 1;
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,169,165,0.25);
 }
 
-.toast{position:fixed;right:18px;bottom:18px;background:#111;color:#fff;padding:10px 14px;border-radius:8px;display:none;z-index:2000}
-.hidden{display:none}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.col{flex:1 1 220px;min-width:160px}
-.note{font-size:13px;color:#6b7280;margin-top:8px}
+.btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+}
 
-/* Modal */
+.btn.ghost{
+  background:#fff;
+  border:1px solid var(--border-light);
+  color:var(--text-dark);
+}
+
+.btn.secondary{
+  background:transparent;
+  border:1px solid var(--border-light);
+  color:var(--text-muted);
+}
+
+.small{
+  font-size:13px;
+  color:var(--text-muted);
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+
+.table th,.table td{
+  padding:12px;
+  border-bottom:1px solid var(--border-light);
+  text-align:left;
+  font-size:14px;
+}
+
+.table th{
+  font-weight:600;
+  background:rgba(0,169,165,0.03);
+  color:var(--text-dark);
+}
+
+.action-btn{
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+}
+
+.action-btn:hover{
+  background:#c82333;
+}
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#1a202c;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:8px;
+  display:none;
+  z-index:2000;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.hidden{
+  display:none;
+}
+
 .modal-overlay{
-  position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:var(--overlay); z-index:1200; padding:16px;
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.5);
+  z-index:1200;
+  padding:16px;
 }
+
 .modal{
   width:100%;
   max-width:560px;
-  background:var(--card);
+  background:var(--bg-white);
   border-radius:12px;
-  padding:16px;
-  box-shadow:0 30px 80px rgba(8,18,40,0.18);
-  border:1px solid rgba(16,42,83,0.06);
+  padding:24px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
 }
-.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
-.modal-title{font-weight:700;color:var(--sea-dark)}
-.modal-body{display:flex;flex-direction:column;gap:10px}
-.form-row{display:flex;gap:8px;flex-wrap:wrap}
-.form-row .input{flex:1;min-width:120px}
-.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
 
-/* Default cell-value styling: desktop - ellipsis */
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.modal-title{
+  font-weight:700;
+  color:var(--text-dark);
+  font-size:18px;
+}
+
+.modal-body{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.form-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.form-row .input{
+  flex:1;
+  min-width:120px;
+}
+
+.note{
+  font-size:13px;
+  color:var(--text-muted);
+  padding:10px;
+  background:rgba(0,169,165,0.05);
+  border-left:3px solid var(--primary-teal);
+  border-radius:4px;
+}
+
 .cell-value{
   display:block;
   overflow:hidden;
@@ -119,74 +266,137 @@ h2{margin:0;font-size:20px}
   white-space:nowrap;
 }
 
-/* responsive - stacked rows + scrollable value area inside cell */
 @media (max-width:760px){
-  .modal{ width:100%; max-width:480px; padding:12px }
-  .container{ padding:12px }
-  .table thead{ display:none }
-  .table, .table tbody, .table tr, .table td{ display:block; width:100% }
-  .table tr{ margin-bottom:12px; border-radius:10px; box-shadow: 0 8px 20px rgba(9,30,66,0.04); overflow:hidden; background:#fff }
+  body{
+    padding:16px;
+  }
+  
+  .header{
+    padding:14px 18px;
+  }
+  
+  .brand{
+    width:38px;
+    height:38px;
+    font-size:18px;
+  }
+  
+  .header .title{
+    font-size:16px;
+  }
+  
+  .header .subtitle{
+    font-size:11px;
+  }
+  
+  .content{
+    padding:20px;
+  }
+  
+  .controls{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  
+  .modal{
+    max-width:480px;
+    padding:20px;
+  }
+  
+  .table thead{
+    display:none;
+  }
+  
+  .table, .table tbody, .table tr, .table td{
+    display:block;
+    width:100%;
+  }
+  
+  .table tr{
+    margin-bottom:12px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    overflow:hidden;
+    background:#fff;
+  }
+  
   .table td{
     display:flex;
-    justify-content:flex-start;
+    justify-content:space-between;
     padding:10px 12px;
-    border-bottom:1px solid rgba(11,18,35,0.04);
+    border-bottom:1px solid rgba(0,0,0,0.04);
     white-space:normal;
     gap:8px;
     align-items:center;
   }
+  
   .table td::before{
-    content: attr(data-label);
+    content:attr(data-label);
     font-weight:600;
-    color:var(--muted);
+    color:var(--text-muted);
     flex:0 0 35%;
     max-width:35%;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
   }
+  
   .cell-value{
-    flex:1 1 65%;
-    max-width:65%;
+    flex:1;
+    text-align:right;
     overflow-x:auto;
     white-space:nowrap;
-    -webkit-overflow-scrolling:touch;
-    text-align:right;
-    padding-right: var(--cell-padding-right);
   }
+  
   .table td[data-label="Actions"]{
     justify-content:flex-end;
   }
+  
   .table td[data-label="Actions"]::before{
     display:none;
   }
-  .cell-value::-webkit-scrollbar{ height:8px }
-  .cell-value::-webkit-scrollbar-thumb{ background:rgba(0,0,0,0.12); border-radius:6px }
 }
 
-/* accessibility */
-.visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap }
+@media(max-width:420px){
+  .header{
+    padding:12px 16px;
+  }
+  
+  .header .title{
+    font-size:15px;
+  }
+}
+
+.visually-hidden{
+  position:absolute !important;
+  height:1px;
+  width:1px;
+  overflow:hidden;
+  clip:rect(1px,1px,1px,1px);
+  white-space:nowrap;
+}
 </style>
 </head>
 <body>
   <main class="container" aria-live="polite">
     <div class="header">
-      <h2>Doctors List</h2>
-      <div style="display:flex;gap:12px;align-items:center">
-        <button id="openAddBtn" class="btn" aria-haspopup="dialog" aria-controls="addDoctorModal">+ Add Doctor</button>
+      <div class="brand">👨‍⚕️</div>
+      <div class="header-text">
+        <div class="title">Doctors List</div>
+        <div class="subtitle">Manage doctor accounts</div>
       </div>
     </div>
 
-    <div class="controls" style="margin-top:4px; width:100%;">
-      <input id="filter" class="input" placeholder="Filter by name, email, mobile, role or date" aria-label="Filter doctors" style="width:100%;">
+    <div class="content">
+      <div class="controls">
+        <input id="filter" class="input" placeholder="Filter by name, email, mobile, role or date" aria-label="Filter doctors">
+        <button id="openAddBtn" class="btn" aria-haspopup="dialog" aria-controls="addDoctorModal">+ Add Doctor</button>
+      </div>
+
+      <div id="status" class="small" style="margin-bottom:10px"></div>
+
+      <table class="table" id="tbl" role="table" aria-label="Doctors table">
+        <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Created</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
-
-    <div id="status" class="small" style="min-height:18px"></div>
-
-    <table class="table" id="tbl" role="table" aria-label="Doctors table">
-      <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Created</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
   </main>
 
   <div id="toast" class="toast" role="status" aria-hidden="true"></div>
@@ -195,22 +405,20 @@ h2{margin:0;font-size:20px}
   <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
     <div class="modal" id="addDoctorModal" role="document" aria-labelledby="modalTitle">
       <div class="modal-head">
-        <div class="modal-title" id="modalTitle">Add Doctor — Email verification required</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button id="modalClose" class="btn secondary" aria-label="Close dialog">Close</button>
-        </div>
+        <div class="modal-title" id="modalTitle">Add Doctor</div>
+        <button id="modalClose" class="btn secondary" aria-label="Close dialog">Close</button>
       </div>
 
       <div class="modal-body">
         <div class="note">Enter email and click <strong>Send OTP</strong>. Verify OTP, then complete details and click <strong>Create Doctor</strong>.</div>
 
         <div class="form-row">
-          <input id="dName" class="input col" placeholder="Full name (letters only)" aria-label="Full name">
+          <input id="dName" class="input" placeholder="Full name (letters only)" aria-label="Full name">
         </div>
 
         <div class="form-row">
-          <input id="dMobile" class="input col" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
-          <input id="dEmail" class="input col" placeholder="Email address" type="email" aria-label="Email">
+          <input id="dMobile" class="input" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
+          <input id="dEmail" class="input" placeholder="Email address" type="email" aria-label="Email">
         </div>
 
         <div class="form-row" style="align-items:center;gap:8px">
@@ -220,7 +428,7 @@ h2{margin:0;font-size:20px}
 
         <div id="otpSection" class="hidden">
           <div class="form-row">
-            <input id="otpInput" class="input col" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
+            <input id="otpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
             <button id="verifyOtpBtn" class="btn" disabled>Verify OTP</button>
             <button id="resendOtpBtn" class="btn ghost">Resend</button>
           </div>
@@ -229,8 +437,8 @@ h2{margin:0;font-size:20px}
 
         <div id="createSection" class="hidden">
           <div class="form-row">
-            <input id="password" class="input col" placeholder="Password (min 6 char)" type="password" aria-label="Password">
-            <input id="confirmPassword" class="input col" placeholder="Confirm password" type="password" aria-label="Confirm password">
+            <input id="password" class="input" placeholder="Password (min 6 char)" type="password" aria-label="Password">
+            <input id="confirmPassword" class="input" placeholder="Confirm password" type="password" aria-label="Confirm password">
           </div>
 
           <div class="form-row" style="justify-content:flex-end;align-items:center">
@@ -312,23 +520,18 @@ function resetModalForm(){
   if(resendTimer){ clearInterval(resendTimer); resendTimer=null; }
 }
 
-/* ========== NEW: inline validations ========== */
-/* allow only letters and spaces in name field */
 dName.addEventListener('input', (e) => {
   const cleaned = e.target.value.replace(/[^A-Za-z\s]/g, '');
   if (e.target.value !== cleaned) e.target.value = cleaned;
   checkCreateValidity();
 });
 
-/* allow only digits in mobile and limit to 10 digits */
 dMobile.addEventListener('input', (e) => {
   let v = e.target.value.replace(/\D/g, '');
   if (v.length > 10) v = v.slice(0,10);
   e.target.value = v;
   checkCreateValidity();
 });
-
-/* ================================================= */
 
 filterInput.addEventListener('input', renderTable);
 
@@ -364,7 +567,7 @@ function renderTable(){
   const list = (doctorsMemory||[]).filter(r => matchesFilter(r, q));
   if(list.length === 0){
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="small" colspan="6">No doctors found</td>`;
+    tr.innerHTML = `<td class="small" colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No doctors found</td>`;
     tb.appendChild(tr);
     return;
   }
@@ -394,7 +597,6 @@ function renderTable(){
   });
 }
 
-/* OTP behaviors */
 dEmail.addEventListener('input', () => {
   const email = (dEmail.value||'').trim().toLowerCase();
   sendStatus.textContent = '';
@@ -485,7 +687,6 @@ function startResendCountdown(){
   }, 1000);
 }
 
-/* Create doctor */
 function checkCreateValidity(){
   const name = (dName.value||'').trim();
   const mobileVal = (dMobile.value||'').trim();
@@ -541,7 +742,6 @@ createBtn.addEventListener('click', async ()=>{
   }
 });
 
-/* Utilities */
 function validateEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function validateMobile(m){ return /^\d{10}$/.test(m); }
 
