@@ -111,7 +111,7 @@ body{
 }
 .patient-details{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:12px;
   margin-top:12px;
   font-size:14px;
@@ -431,6 +431,12 @@ tbody tr:last-child td{
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .patient-details{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
 @media (max-width: 1024px) {
   .patient-details{
     grid-template-columns:repeat(2,1fr);
