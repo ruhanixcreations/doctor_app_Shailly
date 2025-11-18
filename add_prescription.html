@@ -687,7 +687,7 @@ window.addEventListener('blur', hideAllOpenPanels);
 /* ---------- LOAD lists ---------- */
 async function loadPatients(){ try{ const r = await fetch('add_prescription.php?action=list_patients'); const j = await r.json(); if(j.success){ patients = j.patients || []; populatePatientItems(''); } else patients = []; }catch(e){ patients=[]; } }
 async function loadMedicines(){ try{ const r = await fetch('add_prescription.php?action=list_medicines'); const j = await r.json(); medicines = j.success ? (j.medicines||[]) : []; }catch(e){ medicines = []; } }
-async function loadBloodTests(){ try{ const r = await fetch('add_prescription.php?action=list_blood_tests'); const j = await r.json(); bloodTests = j.success ? (j.blood_tests||[]) : []; populateBloodItems(''); }catch(e){ bloodTests = []; populateBloodItems(''); } }
+async function loadBloodTests(){ try{ const r = await fetch('add_prescription.php?action=list_blood_tests'); const j = await r.json(); bloodTests = j.success ? (j.blood_tests||[]) : []; }catch(e){ bloodTests = []; } }
 
 /* ---------- PATIENT DROPDOWN ---------- */
 const patientDropdown = document.getElementById('patientDropdown');
