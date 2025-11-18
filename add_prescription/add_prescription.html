@@ -9,88 +9,202 @@
 
 <style>
 :root{
-  --navy:#0b2340; --blue-start:#183159; --blue-end:#6f9ef0; --muted:#6f7f8f;
-  --save-green:#28a745; --add-gradient: linear-gradient(90deg,var(--blue-start),var(--blue-end));
-  --disabled-bg:#e6e6e6; --disabled-text:#8a8a8a; --card-bg:#fff;
-  --compact-gap:12px; --container-max:1080px;
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+  --section-header:#183159;
+  --container-max:1200px;
+  --compact-gap:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html,body{height:100%;min-height:100vh}
 body{
-  font-family:"Inter",system-ui,Arial,sans-serif;
-  background:linear-gradient(180deg,#e9f3ff 0%,#f7fbff 100%);
-  color:#071123;padding:18px;display:flex;justify-content:center;
-  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 
 /* main container */
 .container{
   width:100%;
   max-width:var(--container-max);
-  margin:10px;
+  margin:0 auto;
+  padding:0;
+  background:var(--bg-white);
+  min-height:100vh;
+}
+
+/* header section */
+.header{
+  background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
+  padding:20px 30px;
+  color:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header h1{
+  font-size:24px;
+  font-weight:600;
+  margin:0;
+  letter-spacing:0.3px;
+}
+.header .subtitle{
+  font-size:13px;
+  opacity:0.9;
+  margin-top:4px;
+}
+
+/* content area */
+.content{
+  padding:24px 30px;
+}
+
+/* section styling */
+.section{
+  background:var(--bg-white);
+  border:1px solid var(--border-light);
+  border-radius:8px;
   padding:20px;
-  background:var(--card-bg);
-  border-radius:14px;
-  box-shadow:0 22px 60px rgba(9,30,66,0.07);
-  border:1px solid rgba(16,42,83,0.06);
+  margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.section-header{
+  font-size:16px;
+  font-weight:700;
+  color:var(--section-header);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.section-header i{
+  color:var(--primary-teal);
+  font-size:18px;
+}
+
+/* patient info card */
+.patient-info-card{
+  background:linear-gradient(to right,#f8f9fa,#ffffff);
+  border-left:4px solid var(--primary-teal);
+  padding:16px;
+  border-radius:6px;
+  margin-bottom:20px;
+}
+.patient-name{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:8px;
+  border-bottom:2px solid #dc3545;
+  padding-bottom:4px;
+  display:inline-block;
+}
+.patient-details{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+  margin-top:12px;
+  font-size:14px;
+}
+.patient-detail-item{
+  display:flex;
+  flex-direction:column;
+}
+.patient-detail-label{
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  font-weight:600;
+  letter-spacing:0.5px;
+  margin-bottom:2px;
+}
+.patient-detail-value{
+  font-weight:600;
+  color:var(--text-dark);
 }
 
 /* headings */
-h2{font-size:20px;font-weight:800;margin-bottom:12px;color:#071123}
-.small{font-size:13px;color:var(--muted);display:block;font-weight:600;}
-.section-title{font-weight:700;color:#183159;margin-bottom:8px}
+h2{font-size:18px;font-weight:700;margin-bottom:12px;color:var(--text-dark)}
+.small{font-size:13px;color:var(--text-muted);display:block;font-weight:600;margin-bottom:6px}
 
 /* patient select area */
 .patient-dropdown{position:relative}
 .selectedBtn{
   display:flex;align-items:center;justify-content:space-between;
-  gap:8px;padding:12px;border-radius:10px;border:1px solid rgba(8,18,33,0.08);
-  background:linear-gradient(180deg,#fff,#fbfdff);cursor:pointer;font-size:14px;
-  box-shadow:0 10px 28px rgba(13,30,60,0.04);min-height:46px;
+  gap:8px;padding:14px 16px;border-radius:6px;border:1px solid var(--border-light);
+  background:var(--bg-white);cursor:pointer;font-size:14px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.05);min-height:48px;
+  transition:all 0.2s ease;
+}
+.selectedBtn:hover{
+  border-color:var(--primary-teal);
+  box-shadow:0 4px 8px rgba(0,169,165,0.15);
 }
 .selectedBtn span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* floating panel (dropdown list) - script will set position:fixed when open */
 .listPanel{
   position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:60;
-  border:1px solid rgba(8,18,33,0.08);background:#fff;border-radius:10px;
-  box-shadow:0 12px 36px rgba(9,30,66,0.10);max-height:320px;overflow:auto;
+  border:1px solid var(--border-light);background:var(--bg-white);border-radius:6px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.12);max-height:320px;overflow:auto;
   transform-origin:top center;padding:8px;
 }
-.listPanel .search input{width:100%;padding:8px;border-radius:8px;border:1px solid #eee}
-.listPanel .item{padding:10px;border-radius:8px;cursor:pointer;margin:4px 0}
-.listPanel .item:hover{background:#f0f7ff}
+.listPanel .search input{
+  width:100%;padding:10px 12px;border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+}
+.listPanel .search input:focus{
+  outline:none;border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+.listPanel .item{padding:12px;border-radius:4px;cursor:pointer;margin:4px 0;font-size:14px}
+.listPanel .item:hover{background:rgba(0,169,165,0.08);color:var(--primary-teal)}
 
 /* patient details */
 #patientDetails{
-  background:#fff;border-radius:10px;padding:12px;border:1px solid rgba(11,18,35,0.04);
-  margin-bottom:12px;display:none;
+  display:none;
 }
-#patientDetails .row{display:flex;gap:14px;flex-wrap:wrap}
 
 /* forms area */
 #formsArea{
-  margin-top:6px;border:1px solid rgba(11,18,35,0.04);border-radius:12px;padding:14px;
-  background:linear-gradient(180deg,#fbfdff,#fff);box-shadow:0 8px 28px rgba(9,30,66,0.03);
+  display:none;
 }
 
 /* med mini-forms: ALWAYS stack in single column (one after other) */
-.meds-forms{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.meds-forms{display:flex;flex-direction:column;gap:16px;margin-top:12px}
 .med-form{
-  border:1px solid rgba(8,18,33,0.06);border-radius:12px;padding:18px 18px 16px 18px;
-  background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:0 8px 22px rgba(9,30,66,0.03);
-  position:relative;transition:transform .12s,box-shadow .12s,padding .12s;
+  border:1px solid var(--border-light);border-radius:6px;padding:20px;
+  background:var(--bg-white);box-shadow:0 2px 4px rgba(0,0,0,0.04);
+  position:relative;transition:all .2s ease;
 }
-.med-form.expanded{transform:translateY(-4px);box-shadow:0 18px 40px rgba(9,30,66,0.06)}
+.med-form.expanded{
+  border-color:var(--primary-teal);
+  box-shadow:0 4px 12px rgba(0,169,165,0.15);
+}
 
 /* remove button: placed inside top-right of card, circular and small */
 .removeMini{
   position:absolute; right:12px; top:12px;
   width:32px; height:32px; display:flex; align-items:center; justify-content:center;
-  background:#fff; color:#c03b3b; border:1px solid rgba(11,18,35,0.06);
+  background:var(--bg-white); color:#dc3545; border:1px solid var(--border-light);
   padding:0; border-radius:50%; cursor:pointer; font-weight:700; font-size:14px;
-  box-shadow:0 6px 18px rgba(9,30,66,0.03); z-index:80;
-  line-height:1;
+  box-shadow:0 2px 4px rgba(0,0,0,0.06); z-index:80;
+  line-height:1; transition:all 0.2s ease;
+}
+.removeMini:hover{
+  background:#dc3545;
+  color:white;
+  transform:scale(1.05);
 }
 .smallBtn{font-size:12px;padding:5px 7px}
 
@@ -99,31 +213,87 @@ h2{font-size:20px;font-weight:800;margin-bottom:12px;color:#071123}
 .col{width:100%}
 
 /* labels and inputs */
-.label-required, .med-form .small{ margin-bottom:6px; display:block; font-weight:600; color:#183159; }
+.label-required, .med-form .small{ margin-bottom:6px; display:block; font-weight:600; color:var(--text-dark); font-size:13px; }
+.required-star{color:#dc3545;margin-left:2px}
 input[type="text"], input[type="search"], select, textarea, input[type="date"]{
-  width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(8,18,33,0.08);
-  background:linear-gradient(180deg,#fff,#fbfdff);font-size:14px;box-shadow:0 10px 30px rgba(13,30,60,0.04);outline:none;
+  width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--border-light);
+  background:var(--bg-white);font-size:14px;outline:none;
+  transition:all 0.2s ease;
 }
-textarea{min-height:80px}
+input:focus, select:focus, textarea:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+textarea{min-height:80px;resize:vertical}
 
 /* dropdown controls inside med-form */
-.med-dropdown .selectedBtn{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px}
-.med-dropdown .listPanel{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:70;border-radius:10px}
+.med-dropdown{position:relative}
+.med-dropdown .selectedBtn{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;border-radius:6px;
+}
+.med-dropdown .listPanel{
+  position:absolute;left:0;right:0;top:calc(100% + 8px);
+  z-index:70;border-radius:6px;
+}
 
 /* before-after & time group (stacked) */
 .before-after{margin-top:8px;display:none}
-.before-after label{margin-right:12px;font-weight:600;display:block;gap:8px}
-.timeGroup{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center}
-.timeGroup label{display:inline-flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;border:1px solid rgba(8,18,33,0.04);background:#fff}
+.before-after label{
+  margin-right:12px;font-weight:500;display:inline-flex;
+  gap:6px;align-items:center;font-size:14px;
+}
+.timeGroup{
+  display:flex;flex-direction:row;flex-wrap:wrap;gap:10px;
+  align-items:center;margin-top:8px;
+}
+.timeGroup label{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 14px;border-radius:6px;
+  border:1px solid var(--border-light);
+  background:var(--bg-white);
+  font-size:14px;font-weight:500;
+  transition:all 0.2s ease;
+  cursor:pointer;
+}
+.timeGroup label:hover{
+  border-color:var(--primary-teal);
+  background:rgba(0,169,165,0.05);
+}
+.timeGroup input[type="checkbox"]{
+  width:18px;height:18px;cursor:pointer;
+  accent-color:var(--primary-teal);
+}
+.before-after input[type="radio"]{
+  width:18px;height:18px;cursor:pointer;
+  accent-color:var(--primary-teal);
+}
 
 /* buttons */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:14px;
-  box-shadow:0 12px 30px rgba(24,57,89,0.10);color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 24px;border-radius:6px;border:none;cursor:pointer;
+  font-weight:600;font-size:14px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);color:#fff;
+  transition:all 0.2s ease;
 }
-.btn.save{background:var(--save-green)}
-.btn.add{background:var(--add-gradient)}
-.btn:disabled{background:var(--disabled-bg) !important;color:var(--disabled-text) !important;cursor:not-allowed;box-shadow:none}
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 4px 8px rgba(0,0,0,0.15);
+}
+.btn.save{
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+}
+.btn.add{
+  background:var(--primary-teal);
+}
+.btn:disabled{
+  background:#d1d5db !important;
+  color:#9ca3af !important;
+  cursor:not-allowed;
+  box-shadow:none;
+  transform:none;
+}
 
 /* add button width behavior */
 #addBottomBtn{display:inline-block;width:auto}
@@ -132,162 +302,276 @@ textarea{min-height:80px}
 .form-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:14px;align-items:center}
 
 /* blood test box */
-#bloodTestBox{margin-top:14px;border-radius:10px;padding:12px;background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid rgba(11,18,35,0.04)}
-#bloodSelectedLabel,#followUpLabel{margin-top:12px;font-weight:600;color:#183159}
+#bloodTestBox{margin-top:14px}
+#bloodSelectedLabel,#followUpLabel{margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px}
 
 /* saved items list */
-.meds-list{margin-top:22px;border-radius:12px;padding:12px;background:#fff;border:1px solid rgba(11,18,35,0.04);box-shadow:0 8px 28px rgba(9,30,66,0.03)}
-.meds-list .list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.meds-list{margin-top:0}
+.meds-list .list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
 .meds-list .list-head > div { display:block; }
-.meds-list table{width:100%;border-collapse:collapse;font-size:14px}
-.meds-list th,.meds-list td{padding:10px;border-bottom:1px solid rgba(11,18,35,0.04);text-align:left;vertical-align:middle}
-.meds-list thead th{font-weight:600;color:var(--muted);font-size:13px}
+.meds-list table{width:100%;border-collapse:collapse;font-size:13px}
+.meds-list th,.meds-list td{padding:12px 10px;border-bottom:1px solid var(--border-light);text-align:left;vertical-align:top}
+.meds-list thead{
+  background:var(--bg-light);
+}
+.meds-list thead th{font-weight:700;color:var(--text-dark);font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+.meds-list tbody tr:hover{background:rgba(0,169,165,0.03)}
 
 /* responsive tweaks */
 @media (max-width:980px){
-  :root{ --compact-gap:10px; --container-max:900px; }
-  .med-form{padding:14px}
+  .content{padding:20px;}
+  .med-form{padding:16px}
   #addBottomBtn{width:100%}
+  .patient-details{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:760px){
-  body{padding:12px}
-  .container{padding:14px;border-radius:12px}
+  .header{padding:16px 20px}
+  .header h1{font-size:20px}
+  .content{padding:16px;}
+  .section{padding:16px}
   .form-actions{flex-direction:column-reverse;align-items:stretch}
   .form-actions .btn{width:100%}
   .meds-list .list-head{flex-direction:column;align-items:flex-start;gap:8px}
   .meds-list .list-head > div{width:100%;display:flex;justify-content:flex-end}
-  .med-form{padding:12px}
+  .med-form{padding:16px}
   .removeMini{right:10px;top:10px;width:30px;height:30px}
   .selectedBtn{padding:12px}
   .med-form .notesInput{min-height:72px}
+  .patient-details{grid-template-columns:1fr}
+  .meds-list table{font-size:12px}
+  .meds-list th,.meds-list td{padding:8px 6px}
 }
 @media (max-width:420px){
-  .container{padding:12px}
-  h2{font-size:18px}
-  .selectedBtn{padding:10px;font-size:14px}
-  .med-form{padding:10px}
-  .removeMini{padding:6px}
-  .btn{padding:10px}
-  .meds-list table{font-size:13px}
+  .header{padding:12px 16px}
+  .header h1{font-size:18px}
+  .content{padding:12px}
+  .section{padding:12px}
+  h2{font-size:16px}
+  .selectedBtn{padding:10px;font-size:13px}
+  .med-form{padding:12px}
+  .btn{padding:10px 16px;font-size:13px}
+  .section-header{font-size:14px}
+  .meds-list table{overflow-x:auto;display:block}
 }
 
 /* focus outline */
-:focus{outline:3px solid rgba(122,75,255,0.08);outline-offset:2px}
+input:focus, select:focus, textarea:focus, .selectedBtn:focus{
+  outline:none;
+}
 
 /* small utility */
 .hidden{display:none!important}
+
 /* container for the Add button */
 .add-holder{
   display:flex;
-  justify-content:flex-end;   /* puts button to the right on wide screens */
+  justify-content:flex-end;
   align-items:center;
+  margin-top:16px;
 }
 
 /* mobile: stack and make button full width */
 @media (max-width:760px){
-  .add-holder{ justify-content:flex-start; } /* you already make button full width below */
+  .add-holder{ justify-content:flex-start; }
   #addBottomBtn{ width:100%; }
+}
+
+/* table responsive wrapper */
+.table-wrapper{
+  overflow-x:auto;
+  margin-top:12px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+}
+
+/* action button group */
+.action-btn-group{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:20px;
+}
+@media (max-width:760px){
+  .action-btn-group{
+    flex-direction:column;
+  }
+  .action-btn-group .btn{
+    width:100%;
+  }
 }
 
 </style>
 </head>
 <body>
 <main class="container">
-  <h2>Add Prescription</h2>
-
-  <!-- PATIENT SELECT -->
-  <div style="margin-bottom:10px;">
-    <label class="small">Select Patient</label>
-    <div class="patient-dropdown" id="patientDropdown">
-      <div class="selectedBtn" id="patientSelectedBtn">
-        <span id="patientLabel">-- Select patient --</span>
-        <span style="opacity:0.7">▾</span>
-      </div>
-
-      <div class="listPanel hidden" id="patientPanel">
-        <div class="search"><input id="patientSearch" type="search" placeholder="Search patients..."></div>
-        <div class="items" id="patientItems" style="max-height:220px;overflow:auto;margin-top:8px"></div>
-      </div>
-
-      <input type="hidden" id="selectedPatientId" value="">
-    </div>
+  <!-- HEADER -->
+  <div class="header">
+    <h1><i class="fas fa-prescription-bottle-alt"></i> Add Prescription</h1>
+    <div class="subtitle">Create and manage patient prescriptions</div>
   </div>
 
-  <!-- PATIENT DETAILS -->
-  <div id="patientDetails">
-    <div class="row">
-      <div><strong id="pdName">-</strong></div>
-      <div>Mobile: <span id="pdMobile">-</span></div>
-      <div>Age: <span id="pdAge">-</span></div>
-      <div>Weight: <span id="pdWeight">-</span></div>
-    </div>
-  </div>
+  <!-- CONTENT AREA -->
+  <div class="content">
+    <!-- PATIENT SELECTION SECTION -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-user-circle"></i>
+        <span>Patient Information</span>
+      </div>
+      
+      <div style="margin-bottom:16px;">
+        <label class="small">Select Patient <span class="required-star">*</span></label>
+        <div class="patient-dropdown" id="patientDropdown">
+          <div class="selectedBtn" id="patientSelectedBtn">
+            <span id="patientLabel">-- Select patient --</span>
+            <span style="opacity:0.7">▾</span>
+          </div>
 
-  <!-- FORMS AREA -->
-  <div id="formsArea" style="display:none;">
-    <div class="section-title">Medicine entries</div>
+          <div class="listPanel hidden" id="patientPanel">
+            <div class="search"><input id="patientSearch" type="search" placeholder="Search patients..."></div>
+            <div class="items" id="patientItems" style="max-height:220px;overflow:auto;margin-top:8px"></div>
+          </div>
 
-    <!-- Symptoms (top-level) -->
-    <div style="margin-top:10px;margin-bottom:10px;">
-      <label class="small">Symptoms <span class="required-star">*</span></label>
-      <input id="topSymptoms" type="text" placeholder="Enter patient's symptoms (required)..." />
-    </div>
-
-    <div class="meds-forms" id="medsFormsContainer"></div>
-
-    <!-- +Add moved here (after meds-forms and after notes) -->
-   <div class="add-holder" style="margin-top:10px;">
-  <button id="addBottomBtn" class="btn add" disabled style="display:inline-block">+ Add Medicine</button>
-</div>
-
-
-    <div id="bloodTestBox">
-      <label class="small">Recommended blood test</label>
-      <div class="blood-dropdown" id="bloodDropdown" style="margin-top:8px;">
-        <div class="selectedBtn" id="bloodSelectedBtn"><span id="bloodLabel">Choose blood test...</span> <span style="opacity:0.6">▾</span></div>
-        <div class="listPanel hidden" id="bloodPanel">
-          <div class="search"><input id="bloodSearch" type="search" placeholder="Search blood tests..."></div>
-          <div class="items" id="bloodItems" style="max-height:200px;overflow:auto;margin-top:8px"></div>
+          <input type="hidden" id="selectedPatientId" value="">
         </div>
-        <input type="hidden" id="selectedBloodId" value="">
-        <input type="hidden" id="selectedBloodName" value="">
       </div>
 
-      <!-- Follow-up date (top-level) -->
-      <div style="margin-top:12px;">
-        <label class="small">Follow-up date</label>
-        <input id="topFollowUp" type="date">
+      <!-- PATIENT DETAILS CARD -->
+      <div id="patientDetails">
+        <div class="patient-info-card">
+          <div class="patient-name">
+            <i class="fas fa-user"></i> <span id="pdName">-</span>
+          </div>
+          <div class="patient-details">
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Mobile Number</span>
+              <span class="patient-detail-value" id="pdMobile">-</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Age</span>
+              <span class="patient-detail-value"><span id="pdAge">-</span> yrs</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Weight</span>
+              <span class="patient-detail-value"><span id="pdWeight">-</span> kg</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="form-actions" style="margin-top:18px;">
-      <button id="savePrescription" class="btn save" disabled>Save Prescription</button>
-    </div>
-  </div>
-
-  <!-- SAVED ITEMS -->
-  <div id="savedItemsContainer" style="display:none;">
-    <div class="meds-list">
-      <div class="list-head">
-        <strong>Prescription Items (saved)</strong>
+    <!-- PRESCRIPTION FORM AREA -->
+    <div id="formsArea" style="display:none;">
+      <!-- CHIEF COMPLAINTS SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-stethoscope"></i>
+          <span>Chief Complaints</span>
+        </div>
         <div>
-          <button id="printPrescriptionTop" class="btn add" disabled>Print</button>
+          <label class="small">Symptoms / Complaints <span class="required-star">*</span></label>
+          <textarea id="topSymptoms" placeholder="Enter patient's symptoms and complaints (e.g., fever, headache, cough with sputum...)" rows="3"></textarea>
         </div>
       </div>
 
-      <div style="overflow-x:auto;margin-top:8px;">
-        <table id="medTable">
-          <thead>
-            <tr>
-              <th>Prescription</th><th>Symptoms</th><th>Medicine</th><th>Type</th><th>Duration</th><th>Time</th><th>Before/After</th><th>Notes</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+      <!-- MEDICATION PRESCRIBED SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-pills"></i>
+          <span>Medication Prescribed</span>
+        </div>
+        
+        <div class="meds-forms" id="medsFormsContainer"></div>
+
+        <div class="add-holder">
+          <button id="addBottomBtn" class="btn add" disabled>
+            <i class="fas fa-plus-circle"></i> Add Medicine
+          </button>
+        </div>
       </div>
 
-      <div id="bloodSelectedLabel" style="display:none;margin-top:12px;">Recommended blood test: <span id="bloodSelectedText"></span></div>
-      <div id="followUpLabel" style="display:none;margin-top:6px;">Follow-up date: <span id="followUpText"></span></div>
+      <!-- DIAGNOSTIC TESTS SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-flask"></i>
+          <span>Diagnostic Tests</span>
+        </div>
+        
+        <div id="bloodTestBox">
+          <label class="small">Recommended Blood Test</label>
+          <div class="blood-dropdown" id="bloodDropdown" style="margin-top:8px;">
+            <div class="selectedBtn" id="bloodSelectedBtn">
+              <span id="bloodLabel">Choose blood test...</span> 
+              <span style="opacity:0.6">▾</span>
+            </div>
+            <div class="listPanel hidden" id="bloodPanel">
+              <div class="search"><input id="bloodSearch" type="search" placeholder="Search blood tests..."></div>
+              <div class="items" id="bloodItems" style="max-height:200px;overflow:auto;margin-top:8px"></div>
+            </div>
+            <input type="hidden" id="selectedBloodId" value="">
+            <input type="hidden" id="selectedBloodName" value="">
+          </div>
+
+          <!-- Follow-up date -->
+          <div style="margin-top:16px;">
+            <label class="small">Follow-up Date</label>
+            <input id="topFollowUp" type="date">
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="action-btn-group">
+        <button id="savePrescription" class="btn save" disabled>
+          <i class="fas fa-save"></i> Save Prescription
+        </button>
+      </div>
+    </div>
+
+    <!-- SAVED PRESCRIPTIONS -->
+    <div id="savedItemsContainer" style="display:none;">
+      <div class="section">
+        <div class="meds-list">
+          <div class="list-head">
+            <div>
+              <div class="section-header" style="margin-bottom:0;border:none;padding-bottom:0">
+                <i class="fas fa-file-medical"></i>
+                <span>Prescription History</span>
+              </div>
+            </div>
+            <div>
+              <button id="printPrescriptionTop" class="btn add" disabled>
+                <i class="fas fa-print"></i> Print
+              </button>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table id="medTable">
+              <thead>
+                <tr>
+                  <th>Prescription</th>
+                  <th>Symptoms</th>
+                  <th>Medicine</th>
+                  <th>Type</th>
+                  <th>Duration</th>
+                  <th>Time</th>
+                  <th>Before/After</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div id="bloodSelectedLabel" style="display:none;">
+            <i class="fas fa-vial"></i> <strong>Recommended Blood Test:</strong> <span id="bloodSelectedText"></span>
+          </div>
+          <div id="followUpLabel" style="display:none;">
+            <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </main>
@@ -485,10 +769,13 @@ function createMiniForm(prefill={}){
   const uid = 'ba_' + Math.floor(Math.random()*1000000);
 
   wrapper.innerHTML = `
-    <button class="removeMini smallBtn" title="Remove" style="display:none">✖</button>
+    <button class="removeMini" title="Remove" style="display:none">
+      <i class="fas fa-times"></i>
+    </button>
+    
     <div class="row">
       <div class="col">
-        <label class="label-required">Medicine<span class="required-star">*</span></label>
+        <label class="label-required"><i class="fas fa-capsules" style="color:var(--primary-teal);margin-right:6px"></i>Medicine Name <span class="required-star">*</span></label>
         <div class="med-dropdown">
           <div class="selectedBtn"><span class="medLabel">${prefill.medicine_name?escapeHtml(prefill.medicine_name):'Choose medicine...'}</span><span style="opacity:0.6">▾</span></div>
           <div class="listPanel hidden">
@@ -500,34 +787,48 @@ function createMiniForm(prefill={}){
       </div>
 
       <div class="col">
-        <label class="label-required" style="display:none;">Type<span class="required-star">*</span></label>
+        <label class="label-required" style="display:none;"><i class="fas fa-tag" style="color:var(--primary-teal);margin-right:6px"></i>Type <span class="required-star">*</span></label>
         <select class="typeInput" style="display:none;">
           <option value="">-- Select type --</option>
           <option>Tablet</option><option>Syrup</option><option>Injection</option><option>Other</option>
         </select>
 
-        <label class="label-required" style="margin-top:8px;display:none;">Duration<span class="required-star">*</span></label>
+        <label class="label-required" style="margin-top:12px;display:none;"><i class="fas fa-clock" style="color:var(--primary-teal);margin-right:6px"></i>Duration <span class="required-star">*</span></label>
         <input class="durationInput" type="text" placeholder="e.g., 3 days, 1 week" style="display:none;">
 
-        <label class="label-required" style="margin-top:8px;display:none;">Time of day<span class="required-star">*</span></label>
-        <div class="timeGroup" style="display:none;margin-top:6px;gap:10px;">
-          <label><input type="checkbox" class="tMorning"> <span style="margin-left:6px">Morning</span></label>
-          <label><input type="checkbox" class="tAfternoon"> <span style="margin-left:6px">Afternoon</span></label>
-          <label><input type="checkbox" class="tNight"> <span style="margin-left:6px">Night</span></label>
+        <label class="label-required" style="margin-top:12px;display:none;"><i class="fas fa-calendar-day" style="color:var(--primary-teal);margin-right:6px"></i>Time of Day <span class="required-star">*</span></label>
+        <div class="timeGroup" style="display:none;margin-top:8px;gap:10px;">
+          <label style="cursor:pointer">
+            <input type="checkbox" class="tMorning"> 
+            <span style="margin-left:6px">Morning</span>
+          </label>
+          <label style="cursor:pointer">
+            <input type="checkbox" class="tAfternoon"> 
+            <span style="margin-left:6px">Afternoon</span>
+          </label>
+          <label style="cursor:pointer">
+            <input type="checkbox" class="tNight"> 
+            <span style="margin-left:6px">Night</span>
+          </label>
         </div>
 
         <div class="before-after">
-          <div style="font-weight:600;margin-top:8px;margin-bottom:-8px">Before / After meal <span class="required-star">*</span></div>
-          <br>
-          <label><input type="radio" name="${uid}" value="Before" class="beforeRadio"> Before meal</label>
-          <label><input type="radio" name="${uid}" value="After" class="afterRadio"> After meal</label>
+          <div style="font-weight:600;margin-top:12px;margin-bottom:8px;font-size:13px;color:var(--text-dark)">
+            <i class="fas fa-utensils" style="color:var(--primary-teal);margin-right:6px"></i>Before / After Meal <span class="required-star">*</span>
+          </div>
+          <label style="cursor:pointer;margin-right:16px">
+            <input type="radio" name="${uid}" value="Before" class="beforeRadio"> Before meal
+          </label>
+          <label style="cursor:pointer">
+            <input type="radio" name="${uid}" value="After" class="afterRadio"> After meal
+          </label>
           <input type="hidden" class="beforeAfterInput" value="">
         </div>
       </div>
 
       <div class="col">
-        <label class="small">Notes</label>
-        <textarea class="notesInput" placeholder="Notes...">${prefill.notes?escapeHtml(prefill.notes):''}</textarea>
+        <label class="small"><i class="fas fa-sticky-note" style="color:var(--primary-teal);margin-right:6px"></i>Additional Notes (Optional)</label>
+        <textarea class="notesInput" placeholder="Add any special instructions or notes...">${prefill.notes?escapeHtml(prefill.notes):''}</textarea>
       </div>
     </div>
   `;
