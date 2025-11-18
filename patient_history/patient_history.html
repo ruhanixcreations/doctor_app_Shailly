@@ -80,7 +80,7 @@
     .search-field{
       position:relative;
       display:block;
-      margin-bottom:12px;
+      margin-bottom:18px;
     }
     .search-field input{
       width:100%;
@@ -94,15 +94,6 @@
       border-color:var(--brand);
       box-shadow:0 0 0 3px rgba(59,130,246,0.15);
       outline:none;
-    }
-    .patient-select{
-      width:100%;
-      border-radius:12px;
-      border:1px solid var(--border);
-      padding:11px 14px;
-      font-size:14px;
-      background:#fff;
-      margin-bottom:18px;
     }
     .search-field svg{
       position:absolute;
@@ -455,9 +446,6 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
       </label>
-      <select id="patientDropdown" class="patient-select">
-        <option value="">-- Select patient --</option>
-      </select>
       <div id="patientList" class="patient-list">
         <div class="sidebar-empty">Loading patients…</div>
       </div>
@@ -544,7 +532,6 @@
 
     const els = {
       patientList: document.getElementById('patientList'),
-      patientDropdown: document.getElementById('patientDropdown'),
       searchInput: document.getElementById('patientSearch'),
       emptyState: document.getElementById('emptyState'),
       detailView: document.getElementById('detailView'),
@@ -578,10 +565,8 @@
     async function loadPatients(query = '') {
       els.patientList.innerHTML = '<div class="sidebar-empty">Loading patients…</div>';
       try{
-        let data = await fetchPatients('list_patients', query);
-        if(!data.success || !Array.isArray(data.patients)){
-          data = await fetchPatients('list', query);
-        }
+        const res = await fetch(`patient_history.php?action=list_patients&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
         if(!data.success) throw new Error(data.message || 'Unable to load patients');
         state.patients = data.patients || [];
         renderPatientList();
@@ -595,12 +580,6 @@
         console.error(err);
         els.patientList.innerHTML = `<div class="sidebar-empty">Failed to load patients.<br>${err.message}</div>`;
       }
-    }
-
-    async function fetchPatients(action, query){
-      const url = `patient_history.php?action=${action}&q=${encodeURIComponent(query||'')}`;
-      const res = await fetch(url);
-      return res.json();
     }
 
     function renderPatientList(){
@@ -626,7 +605,6 @@
         card.addEventListener('click', ()=> selectPatient(patient.patient_id));
         els.patientList.appendChild(card);
       });
-      populateDropdown();
     }
 
     function selectPatient(patientId){
@@ -634,23 +612,6 @@
       state.selectedPatientId = patientId;
       renderPatientList();
       loadPatientDetail(patientId);
-      if(els.patientDropdown){
-        els.patientDropdown.value = patientId;
-      }
-    }
-
-    function populateDropdown(){
-      const select = els.patientDropdown;
-      if(!select) return;
-      const current = state.selectedPatientId || '';
-      select.innerHTML = '<option value="">-- Select patient --</option>';
-      state.patients.forEach(p=>{
-        const opt = document.createElement('option');
-        opt.value = p.patient_id;
-        opt.textContent = `${p.patient_name || 'Unnamed'} (${p.patient_id})`;
-        if(p.patient_id === current) opt.selected = true;
-        select.appendChild(opt);
-      });
     }
 
     async function loadPatientDetail(patientId){
@@ -807,18 +768,6 @@
       searchTimer = setTimeout(()=> loadPatients(els.searchInput.value.trim()), 350);
     });
     els.refreshBtn.addEventListener('click', ()=> loadPatients(els.searchInput.value.trim()));
-    if(els.patientDropdown){
-      els.patientDropdown.addEventListener('change', (e)=>{
-        const val = e.target.value;
-        if(val){
-          selectPatient(val);
-        } else {
-          state.selectedPatientId = null;
-          els.detailView.classList.add('hidden');
-          els.emptyState.classList.remove('hidden');
-        }
-      });
-    }
 
     document.addEventListener('DOMContentLoaded', ()=> {
       loadPatients();
