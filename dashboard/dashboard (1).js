@@ -6,43 +6,6 @@
 //   * receptionalist -> hide: card-new-prescription, card-add-reception
 //   * user         -> hide: card-add-patient
 
-/* ------------------ Header Fetch Logic ------------------ */
-async function loadHeader() {
-  try {
-    const response = await fetch('../header/header.html');
-    if (!response.ok) {
-      throw new Error('Failed to load header');
-    }
-    const headerHTML = await response.text();
-    const headerPlaceholder = document.getElementById('header-placeholder');
-    if (headerPlaceholder) {
-      headerPlaceholder.innerHTML = headerHTML;
-    }
-  } catch (error) {
-    console.error('Error loading header:', error);
-    // Fallback: show a simple header if fetch fails
-    const headerPlaceholder = document.getElementById('header-placeholder');
-    if (headerPlaceholder) {
-      headerPlaceholder.innerHTML = `
-        <header class="main-header" style="background: linear-gradient(135deg, #00A9A5, #1a75bb); color: white; padding: 16px 24px;">
-          <div style="max-width: 1600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-size: 20px; font-weight: 700;">
-              <i class="fas fa-stethoscope"></i> Ruhanix Healthcare
-            </div>
-          </div>
-        </header>
-      `;
-    }
-  }
-}
-
-// Load header when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadHeader);
-} else {
-  loadHeader();
-}
-
 /* ------------------ Loading overlay helpers ------------------ */
 function createLoadingOverlay() {
   const overlay = document.createElement('div');
