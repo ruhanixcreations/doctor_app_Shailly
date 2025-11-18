@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Add New Patient — Capture & Create PDF</title>
+
+<style>
+:root{
+  --sea-dark: #183159;
+  --sea: #6f9ef0;
+  --disabled-bg: #e0e0e0;
+}
+
+/* Page layout */
+body{font-family:Inter,Arial,sans-serif;background:#f5f7fb;padding:12px;color:#333;}
+.card{max-width:940px;margin:12px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.08);}
+h1{margin:0 0 16px;font-size:24px;color:#1a202c;}
+.row{display:flex;gap:20px;flex-wrap:wrap;}
+.col-main{flex:1 1 100%;}
+label{display:block;font-weight:600;margin-bottom:6px;font-size:14px;}
+input, select, button, textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:16px;box-sizing:border-box;transition:border-color 0.2s, box-shadow 0.2s;}
+input:focus, select:focus, textarea:focus {border-color: var(--sea-dark); outline: none;}
+.inline-group{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.inline-item{flex:1 1 auto; min-width: 80px;}
+.inline-item.w-small{width:110px; flex:0 0 110px;}
+.inline-item.w-medium{width:130px; flex:0 0 130px;}
+.controls{display:flex;gap:10px;margin-top:15px;flex-wrap:wrap;align-items:center;}
+.small{font-size:14px;color:#666;margin-top:8px;}
+.thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.thumb-wrap{position:relative;width:100px;height:100px;border-radius:8px;overflow:hidden;border:1px solid #ddd;background:#fafafa;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.05);}
+.thumb-wrap img{width:100%;height:100%;object-fit:cover;}
+.remove-btn{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:22px;padding:0;}
+#pdfName{margin-top:8px;font-size:15px;color:#0a66c2;font-weight:600;}
+status{display:block;}
+
+/* Buttons - use same gradient as 'Add Test' file */
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 14px;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  background: linear-gradient(90deg, var(--sea-dark), var(--sea));
+  box-shadow: 0 10px 26px rgba(24,57,89,0.10);
+  min-height:44px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.btn.ghost{ background:#fff; color:var(--sea-dark); border:1px solid rgba(11,18,35,0.06) }
+.btn.delete{ background: linear-gradient(90deg,#ff6b6b,#ff4b4b); box-shadow:none; padding:8px 12px; border-radius:8px; font-size:14px; }
+.btn[disabled]{ background: var(--disabled-bg); color:#7a7a7a; cursor:not-allowed; box-shadow:none }
+
+/* Camera action buttons container - ensure one row, no wrap */
+.camera-actions-row{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+  flex-wrap:nowrap;         /* important: don't wrap to second line */
+  align-items:center;
+}
+
+/* Video & canvas */
+video{width:100%;border-radius:8px;background:#000;max-height:360px;display:block;}
+canvas{display:none;}
+
+/* Small responsive tweaks */
+@media (max-width:560px){
+  .inline-group{flex-direction:column;}
+  .inline-item.w-small,.inline-item.w-medium{flex:1 1 100%; width:100%;}
+  .camera-actions-row{flex-wrap:wrap; /* if device is tiny, allow wrap as fallback */ }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="card">
+  <h1>Add New Patient</h1>
+
+  <form id="patientForm" enctype="multipart/form-data" autocomplete="off" novalidate>
+    <input type="hidden" id="client_id" name="client_id">
+
+    <div class="row">
+      <div class="col-main">
+        <label for="patient_name">Patient Name *</label>
+        <input id="patient_name" name="patient_name" required autocomplete="name" />
+
+        <div class="inline-group" style="margin-top:10px;">
+          <div class="inline-item">
+            <label for="mobile">Mobile *</label>
+            <input id="mobile" name="mobile" inputmode="tel" required autocomplete="tel" />
+          </div>
+
+          <div class="inline-item w-small">
+            <label for="age">Age *</label>
+            <input id="age" name="age" type="number" min="0" required />
+          </div>
+
+          <div class="inline-item w-medium">
+            <label for="weight">Weight (kg) *</label>
+            <input id="weight" name="weight" type="number" step="0.1" min="0" required />
+          </div>
+        </div>
+
+        <label for="doctor" style="margin-top:16px;">Doctor *</label>
+        <select id="doctor" name="doctor" required>
+          <option value="" disabled selected>Select Doctor</option>
+                  </select>
+      </div>
+    </div>
+
+    <hr style="margin:18px 0;">
+    <label>Camera (capture multiple photos)</label>
+    <div class="controls" id="cameraControls">
+      <button type="button" id="openCamera" class="btn">Open Camera</button>
+    </div>
+
+    <div style="margin-top:10px;">
+      <video id="video" autoplay playsinline style="display:none;"></video>
+      <canvas id="canvas"></canvas>
+    </div>
+
+        <div id="cameraActionButtons" class="camera-actions-row" style="display:none;">
+      <button type="button" id="takePhoto" class="btn" disabled>Take Photo</button>
+      <button type="button" id="stopCamera" class="btn" disabled>Stop Camera</button>
+    </div>
+
+    <hr style="margin:18px 0;">
+
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+      <div class="small">Captured files (click ✕ to remove)</div>
+      <div class="controls" style="margin-top:0;">
+        <button type="button" id="createPdf" class="btn" disabled>Create PDF from Photos</button>
+      </div>
+    </div>
+
+    <div id="thumbs" class="thumbs"></div>
+    <div id="pdfName" style="display:none;"></div>
+
+    <div style="margin-top:20px;" class="controls">
+      <button type="submit" id="submitBtn" class="btn" disabled>💾 Save & Submit</button>
+      <input type="file" id="fileUpload" style="display:none;" accept="image/*,application/pdf" multiple>
+    </div>
+
+    <div id="status" class="small" style="margin-top:10px;"></div>
+  </form>
+</div>
+
+<script>
+(async function(){
+  const { jsPDF } = window.jspdf;
+
+  // Elements
+  const clientInput = document.getElementById('client_id');
+  const form = document.getElementById('patientForm');
+  const nameInput = document.getElementById('patient_name');
+  const mobileInput = document.getElementById('mobile');
+  const ageInput = document.getElementById('age');
+  const weightInput = document.getElementById('weight');
+  const doctorSelect = document.getElementById('doctor'); 
+
+  const openCameraBtn = document.getElementById('openCamera');
+  const takePhotoBtn = document.getElementById('takePhoto');
+  const stopCameraBtn = document.getElementById('stopCamera');
+  const createPdfBtn = document.getElementById('createPdf');
+  const submitBtn = document.getElementById('submitBtn');
+
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const cameraActionButtons = document.getElementById('cameraActionButtons');
+  const thumbsEl = document.getElementById('thumbs');
+  const pdfNameEl = document.getElementById('pdfName');
+  const statusEl = document.getElementById('status');
+
+  let stream = null;
+  let filesArray = [];
+
+  // Load client id and fetch doctors on load
+  document.addEventListener('DOMContentLoaded', ()=> {
+    clientInput.value = localStorage.getItem('client_id') || '';
+    fetchDoctors(); 
+    updateControls();
+  });
+
+  // Function to fetch doctors and populate the dropdown
+  async function fetchDoctors(){
+    try {
+      const res = await fetch('add_new_patient.php?action=get_doctors');
+      const json = await res.json();
+      
+      if (json.success && Array.isArray(json.doctors)){
+        json.doctors.forEach(doctor => {
+          const option = document.createElement('option');
+          option.value = doctor.id; // The value is the doctor's user ID
+          // MODIFIED: Include client_id in the displayed text
+          option.textContent = `${doctor.name} (Client ID: ${doctor.client_id})`; 
+          doctorSelect.appendChild(option);
+        });
+      } else {
+        console.error('Failed to load doctors:', json.message || 'Unknown error');
+        statusEl.textContent = 'Warning: Failed to load doctors list.';
+      }
+    } catch(err) {
+      console.error('Fetch error:', err);
+      statusEl.textContent = 'Error: Could not connect to the server to fetch doctor list.';
+    }
+  }
+
+
+  // ---------- Strict input prevention ----------
+  // Name: only letters and spaces (prevent typing invalid characters)
+  nameInput.addEventListener('keypress', (e) => {
+    const char = String.fromCharCode(e.which || e.keyCode);
+    if (!/^[a-zA-Z\s]$/.test(char)) e.preventDefault();
+  });
+  // Clean pasted input & on input
+  nameInput.addEventListener('input', ()=> {
+    const cleaned = nameInput.value.replace(/[^a-zA-Z\s]/g, '');
+    if (nameInput.value !== cleaned) nameInput.value = cleaned;
+    updateControls();
+  });
+
+  // Mobile: digits only, max 10 (prevent typing invalid characters)
+  mobileInput.addEventListener('keypress', (e) => {
+    const char = String.fromCharCode(e.which || e.keyCode);
+    if (!/^\d$/.test(char) || mobileInput.value.length >= 10) e.preventDefault();
+  });
+  mobileInput.addEventListener('input', ()=> {
+    const cleaned = mobileInput.value.replace(/\D/g, '').slice(0,10);
+    if (mobileInput.value !== cleaned) mobileInput.value = cleaned;
+    updateControls();
+  });
+
+  // Other fields update validation on input
+  [ageInput, weightInput].forEach(el => el.addEventListener('input', updateControls));
+  doctorSelect.addEventListener('change', updateControls); 
+
+
+  // ---------- Utility functions ----------
+  function dataURLtoBlob(dataurl){
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    const u8 = new Uint8Array(bstr.length);
+    for (let i = 0; i < bstr.length; i++) u8[i] = bstr.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+  }
+
+  function readFileAsDataURL(file){
+    return new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = e => res(e.target.result);
+      fr.onerror = rej;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function loadImage(dataUrl){
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = dataUrl;
+    });
+  }
+
+  function renderThumbs(){
+    thumbsEl.innerHTML = '';
+    filesArray.forEach((item, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'thumb-wrap';
+      if (item.isPdf){
+        const label = document.createElement('div');
+        label.style.textAlign = 'center';
+        label.innerHTML = `<strong>PDF</strong><div style="font-size:11px;margin-top:6px;">${item.file.name || 'file.pdf'}</div>`;
+        wrap.appendChild(label);
+      } else {
+        const img = document.createElement('img');
+        img.src = item.dataUrl;
+        img.alt = item.file.name || ('img'+idx);
+        wrap.appendChild(img);
+      }
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'remove-btn';
+      btn.innerText = '✕';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        filesArray.splice(idx,1);
+        renderThumbs();
+        updateControls();
+      });
+      wrap.appendChild(btn);
+      thumbsEl.appendChild(wrap);
+    });
+  }
+
+  function addFile(file, dataUrl = null){
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    filesArray.push({ file, dataUrl, isPdf });
+    renderThumbs();
+  }
+
+  // ---------- Validation & control enabling ----------
+  function isNameValid(){ return /^[A-Za-z\s]+$/.test(nameInput.value.trim()); }
+  function isMobileValid(){ return /^\d{10}$/.test(mobileInput.value.trim()); }
+  function isAgeValid(){ return ageInput.value !== '' && Number(ageInput.value) >= 0; }
+  function isWeightValid(){ return weightInput.value !== '' && Number(weightInput.value) >= 0; }
+  function isDoctorValid(){ return doctorSelect.value !== ''; } 
+  function hasCapturedFiles(){ return filesArray.length > 0; }
+
+  function updateControls(){
+    // createPdf enabled when at least one image (or file) exists and there is at least one non-pdf? We'll enable if any images exist or files exist.
+    createPdfBtn.disabled = filesArray.length === 0;
+
+    // take/stop camera buttons reflect stream state in event handlers
+    // Save button: require all fields valid and at least one captured file
+    const allOk = isNameValid() && isMobileValid() && isAgeValid() && isWeightValid() && isDoctorValid() && hasCapturedFiles();
+    submitBtn.disabled = !allOk;
+
+    // small UI status
+    if (!isNameValid() && nameInput.value.length > 0) {
+      nameInput.style.borderColor = '#ff6b6b';
+    } else {
+      nameInput.style.borderColor = '';
+    }
+    if (!isMobileValid() && mobileInput.value.length > 0) {
+      mobileInput.style.borderColor = '#ff6b6b';
+    } else {
+      mobileInput.style.borderColor = '';
+    }
+    // Highlight doctor field if invalid
+    if (!isDoctorValid() && doctorSelect.value !== '') {
+      doctorSelect.style.borderColor = '#ff6b6b';
+    } else {
+      doctorSelect.style.borderColor = '';
+    }
+  }
+
+  // ---------- Camera handlers ----------
+  openCameraBtn.addEventListener('click', async () => {
+    if (!stream) {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        video.srcObject = stream;
+        video.style.display = 'block';
+        cameraActionButtons.style.display = 'flex'; // show action buttons row
+        takePhotoBtn.disabled = false;
+        stopCameraBtn.disabled = false;
+        openCameraBtn.innerText = 'Camera Open';
+      } catch (err) {
+        alert('Could not open camera: ' + (err && err.message ? err.message : err));
+      }
+    }
+  });
+
+  takePhotoBtn.addEventListener('click', () => {
+    if (!stream) return;
+    const w = video.videoWidth || 1280;
+    const h = video.videoHeight || 720;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, w, h);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    const blob = dataURLtoBlob(dataUrl);
+    const file = new File([blob], 'capture_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+    addFile(file, dataUrl);
+    statusEl.textContent = `Captured photo (${filesArray.length} total)`;
+    updateControls();
+  });
+
+  stopCameraBtn.addEventListener('click', () => {
+    if (stream){
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+      video.style.display = 'none';
+      cameraActionButtons.style.display = 'none';
+      takePhotoBtn.disabled = true;
+      stopCameraBtn.disabled = true;
+      openCameraBtn.innerText = 'Open Camera';
+    }
+  });
+
+  // ---------- Create PDF ----------
+  createPdfBtn.addEventListener('click', async () => {
+    const images = filesArray.filter(f => !f.isPdf);
+    if (images.length === 0) {
+      alert('No images to create PDF');
+      return;
+    }
+    statusEl.textContent = 'Generating PDF...';
+    try {
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      for (let i = 0; i < images.length; i++){
+        const dataUrl = images[i].dataUrl || await readFileAsDataURL(images[i].file);
+        const img = await loadImage(dataUrl);
+        const pw = pdf.internal.pageSize.getWidth();
+        const ph = pdf.internal.pageSize.getHeight();
+        let iw = img.width, ih = img.height;
+        const ratio = Math.min(pw/iw, ph/ih);
+        iw *= ratio; ih *= ratio;
+        pdf.addImage(dataUrl, 'JPEG', (pw - iw)/2, (ph - ih)/2, iw, ih);
+        if (i < images.length - 1) pdf.addPage();
+      }
+      const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
+      const pdfFile = new File([blob], 'report_' + Date.now() + '.pdf', { type: 'application/pdf' });
+
+      // remove existing PDFs from filesArray and add created PDF
+      filesArray = filesArray.filter(f => !f.isPdf);
+      addFile(pdfFile, null);
+      pdfNameEl.style.display = 'block';
+      pdfNameEl.textContent = `Created PDF: ${pdfFile.name} (${images.length} page(s))`;
+      statusEl.textContent = 'PDF generated.';
+      updateControls();
+    } catch (err) {
+      alert('PDF generation failed: ' + (err && err.message ? err.message : err));
+      statusEl.textContent = '';
+    }
+  });
+
+  // ---------- Form submit ----------
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    updateControls();
+    // final validation
+    if (!(isNameValid() && isMobileValid() && isAgeValid() && isWeightValid() && isDoctorValid() && hasCapturedFiles())){
+      alert('Please fill all required fields correctly and capture at least one photo or PDF.');
+      return;
+    }
+
+    if (!clientInput.value) {
+      clientInput.value = '';
+    }
+
+    const formData = new FormData();
+    formData.append('client_id', clientInput.value);
+    formData.append('patient_name', nameInput.value.trim());
+    formData.append('mobile', mobileInput.value.trim());
+    formData.append('age', ageInput.value);
+    formData.append('weight', weightInput.value);
+    formData.append('doctor', doctorSelect.value.trim()); 
+
+    // if there's a PDF file in filesArray, send it as report_pdf else send images
+    const pdfItem = filesArray.find(f => f.isPdf);
+    if (pdfItem){
+      formData.append('report_pdf', pdfItem.file, pdfItem.file.name);
+    } else {
+      filesArray.forEach((f, idx) => formData.append('files[]', f.file, f.file.name));
+    }
+
+    statusEl.textContent = 'Uploading...';
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch('add_new_patient.php', { method: 'POST', body: formData });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Server error');
+      statusEl.textContent = 'Saved: ' + (json.message || 'OK') + (json.patient_id ? (' (ID: '+json.patient_id+')') : '');
+      // reset
+      filesArray = [];
+      renderThumbs();
+      pdfNameEl.style.display = 'none';
+      form.reset();
+      // Reset the doctor dropdown back to "Select Doctor"
+      doctorSelect.value = ''; 
+      if (stream){ stream.getTracks().forEach(t => t.stop()); stream = null; video.style.display = 'none'; cameraActionButtons.style.display = 'none'; }
+      updateControls();
+    } catch (err) {
+      statusEl.textContent = 'Upload failed: ' + (err && err.message ? err.message : err);
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Initial controls update
+  updateControls();
+
+})();
+</script>
+</body>
+</html>
+
+
