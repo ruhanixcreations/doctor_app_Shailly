@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Patient History</title>
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+/* ---------- GLOBAL UI IMPROVEMENTS ---------- */
+body {
+  margin:0;
+  padding:0;
+  font-family: "Inter", Arial, sans-serif;
+  background:#f4f6f9;
+}
+
+/* Page Container */
+.container {
+  max-width:1100px;
+  margin:28px auto;
+  padding:22px;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+
+/* Headline */
+h2 {
+  margin-bottom:12px;
+  font-weight:700;
+  letter-spacing:-0.5px;
+  color:#333;
+}
+
+/* Row + Col */
+.row {
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.col {
+  flex:1 1 330px;
+  min-width:280px;
+}
+
+/* Labels */
+.label {
+  font-weight:600;
+  margin-bottom:8px;
+  display:block;
+  color:#444;
+  font-size:14px;
+}
+
+/* Select dropdown */
+#patientSelect {
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #dcdcdc;
+  background:white;
+  font-size:15px;
+  transition:0.2s;
+}
+
+#patientSelect:focus {
+  border-color:#7a4bff;
+  box-shadow:0 0 0 3px rgba(122,75,255,0.15);
+  outline:none;
+}
+
+/* Section Boxes */
+  .section {
+  margin-top:14px;
+  background:#fafafa;
+  padding:16px;
+  border-radius:10px;
+  border:1px solid #eee;
+}
+
+  .section strong {
+    display:block;
+    font-size:15px;
+    margin-bottom:6px;
+    color:#333;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+
+  .count-pill{
+    font-size:12px;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:999px;
+    background:#eef0ff;
+    color:#4b4f8f;
+  }
+
+  .empty-state{
+    padding:12px;
+    border:1px dashed #cfd3ff;
+    border-radius:10px;
+    background:#f8f9ff;
+    color:#5d6291;
+    margin-top:8px;
+  }
+
+/* Lists */
+  .list {
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+
+  .list li {
+    padding:8px 6px;
+    border-bottom:1px solid #eee;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .list li .left {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    text-align:left;
+  }
+
+  .list li:last-child {
+    border-bottom:none;
+  }
+
+/* Buttons next to each report */
+.report-actions {
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.btn {
+  font-size:13px;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid transparent;
+  cursor:pointer;
+  background:#fff;
+  box-shadow:0 1px 2px rgba(0,0,0,0.03);
+}
+
+.btn-view {
+  border-color:#7a4bff;
+  color:#fff;
+  background:linear-gradient(180deg,#7a4bff,#6b3bff);
+  padding:8px 12px;
+}
+
+.btn-link {
+  background:transparent;
+  color:#1a73e8;
+  padding:6px 8px;
+  border-radius:6px;
+  border:1px solid rgba(26,115,232,0.08);
+}
+
+/* Small grey text */
+.small {
+  font-size:13px;
+  color:#555;
+}
+
+/* Hover improvements */
+  .list li:hover {
+    background:#f1f0ff;
+    transition:0.2s;
+  }
+
+  /* Timeline */
+  .timeline-list{
+    list-style:none;
+    margin:0;
+    padding-left:16px;
+    border-left:2px solid #e0e4ff;
+  }
+
+  .timeline-item{
+    margin-bottom:18px;
+    position:relative;
+    padding-left:16px;
+  }
+
+  .timeline-item:last-child{
+    margin-bottom:6px;
+  }
+
+  .timeline-item::before{
+    content:'';
+    position:absolute;
+    left:-22px;
+    top:8px;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#7a4bff;
+    box-shadow:0 0 0 4px rgba(122,75,255,0.15);
+  }
+
+  .timeline-meta{
+    font-weight:600;
+    color:#1f244b;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+  }
+
+  .timeline-meta span{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  .timeline-meta span + span::before{
+    content:'|';
+    color:#a8adcf;
+    margin:0 6px;
+    font-weight:400;
+  }
+
+  .timeline-notes{
+    margin:6px 0 0;
+    color:#4d5273;
+    line-height:1.4;
+  }
+
+  .appointments-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:18px;
+  }
+
+  .sub-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#333;
+  }
+
+/* Patient ID Quick box */
+#quickInfo {
+  background:#f7f7ff;
+  border-left:4px solid #7a4bff;
+}
+
+/* Section Titles */
+h3 {
+  margin-top:22px;
+  margin-bottom:10px;
+  font-size:20px;
+  color:#222;
+  letter-spacing:-0.3px;
+}
+
+/* Modal (PDF viewer) */
+.modal-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:18px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+
+.modal-overlay.open {
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal {
+  width:100%;
+  max-width:1000px;
+  height:85vh;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid #eee;
+  background:#fafafa;
+}
+
+.modal-title { font-weight:700; font-size:15px; color:#222; }
+.modal-body { flex:1 1 auto; }
+.modal-body iframe {
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+
+/* Close button */
+.btn-close {
+  background:#fff;
+  border:1px solid #e0e0e0;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* Mobile Fixes */
+@media(max-width:600px){
+  .container {
+    padding:16px;
+  }
+
+  #patientSelect {
+    font-size:14px;
+  }
+
+  .list li {
+    padding:10px 8px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .report-actions {
+    width:100%;
+    margin-top:8px;
+    justify-content:flex-start;
+  }
+
+  .modal { height:92vh; }
+}
+</style>
+
+</head>
+<body>
+  <main class="container">
+    <h2>Patient History</h2>
+
+    <div class="row">
+      <div class="col">
+        <label class="label">Select Patient</label>
+        <select id="patientSelect"></select>
+      </div>
+
+      <div class="col">
+        <label class="label">Quick Info</label>
+        <div id="quickInfo" class="section small">Select a patient to view details.</div>
+      </div>
+    </div>
+
+    <div id="details" style="margin-top:18px; display:none;">
+      <h3>Full Details</h3>
+
+      <div class="section">
+        <strong>Patient Info</strong>
+        <div id="patientInfo" class="small"></div>
+      </div>
+
+        <div class="section" style="margin-top:12px;">
+          <div class="section-head">
+            <strong>Appointments History</strong>
+            <span id="appointmentsCount" class="count-pill">—</span>
+          </div>
+          <div class="appointments-grid">
+            <div>
+              <div class="sub-head">
+                <span>Upcoming</span>
+                <span id="appointmentsUpcomingCount" class="count-pill">—</span>
+              </div>
+              <div id="appointmentsUpcomingEmpty" class="empty-state small">Select a patient to see their appointment history.</div>
+              <ul id="appointmentsUpcomingTimeline" class="timeline-list small"></ul>
+            </div>
+            <div>
+              <div class="sub-head">
+                <span>Completed</span>
+                <span id="appointmentsPastCount" class="count-pill">—</span>
+              </div>
+              <div id="appointmentsPastEmpty" class="empty-state small">Select a patient to see their appointment history.</div>
+              <ul id="appointmentsPastTimeline" class="timeline-list small"></ul>
+            </div>
+          </div>
+        </div>
+
+      <div class="section" style="margin-top:12px;">
+        <strong>Uploaded Reports</strong>
+        <ul id="reports" class="list small"></ul>
+      </div>
+
+      <div class="section" style="margin-top:12px;">
+        <strong>Other Related Info</strong>
+        <div id="otherInfo" class="small">—</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- PDF Viewer Modal -->
+  <div id="pdfModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Report Preview</div>
+        <div>
+          <a id="pdfDownload" class="btn btn-link" href="#" target="_blank" download>Download</a>
+          <button id="closeModal" class="btn btn-close">Close</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfFrame" src="" title="PDF preview"></iframe>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* --------------------- YOUR JS (mostly unchanged) ---------------------- */
+async function loadPatients(){
+  const sel = document.getElementById('patientSelect');
+  sel.innerHTML = '<option>Loading…</option>';
+  try{
+    const res = await fetch('patient_history.php?action=list');
+    const j = await res.json();
+    if(!j.success) throw new Error(j.message||'Failed');
+    sel.innerHTML = '<option value="">-- Select patient --</option>';
+    j.patients.forEach(p=>{
+      const opt = document.createElement('option');
+      opt.value = p.patient_id;
+      opt.textContent = `${p.patient_name} — ${p.patient_id}`;
+      sel.appendChild(opt);
+    });
+  }catch(e){
+    sel.innerHTML = '<option value="">Failed to load</option>';
+    console.error(e);
+  }
+}
+
+function createReportListItem(r) {
+  // r: { id, file_name, file_path }
+  const li = document.createElement('li');
+
+  const left = document.createElement('div');
+  left.className = 'left';
+  const title = document.createElement('div');
+  title.innerHTML = `<strong>${escapeHtml(r.file_name||r.file_path)}</strong>`;
+  const subtitle = document.createElement('div');
+  subtitle.className = 'small';
+  subtitle.textContent = r.file_path || '';
+  left.appendChild(title);
+  left.appendChild(subtitle);
+
+  const actions = document.createElement('div');
+  actions.className = 'report-actions';
+
+  // Open in new tab link (existing behavior)
+  const a = document.createElement('a');
+  a.href = r.file_path;
+  a.target = '_blank';
+  a.className = 'btn btn-link';
+  a.textContent = 'Open';
+  actions.appendChild(a);
+
+  // View button -> open modal with embedded iframe
+  const viewBtn = document.createElement('button');
+  viewBtn.type = 'button';
+  viewBtn.className = 'btn btn-view';
+  viewBtn.textContent = 'View';
+  viewBtn.addEventListener('click', ()=> openPdfModal(r.file_path, r.file_name));
+  actions.appendChild(viewBtn);
+
+  li.appendChild(left);
+  li.appendChild(actions);
+  return li;
+}
+
+function parseTimeToMinutes(raw){
+  if(!raw) return null;
+  const str = raw.trim();
+  if(!str) return null;
+  const ampm = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)$/i);
+  if(ampm){
+    let hours = parseInt(ampm[1],10);
+    const minutes = parseInt(ampm[2],10);
+    const meridian = ampm[4].toUpperCase();
+    if(hours === 12) hours = 0;
+    if(meridian === 'PM') hours += 12;
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  const twentyFour = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if(twentyFour){
+    const hours = parseInt(twentyFour[1],10);
+    const minutes = parseInt(twentyFour[2],10);
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  return null;
+}
+
+function createTimelineItem(appt){
+  const li = document.createElement('li');
+  li.className = 'timeline-item';
+  const dateLabel = escapeHtml(appt.date || '—');
+  const timeLabel = appt.time ? escapeHtml(appt.time) : '';
+  const doctorLabel = escapeHtml(appt.doctor || 'Doctor');
+  const metaParts = [`<span class="timeline-date">${dateLabel}</span>`];
+  if(timeLabel) metaParts.push(`<span class="timeline-time">${timeLabel}</span>`);
+  metaParts.push(`<span class="timeline-doctor">${doctorLabel}</span>`);
+  const notesText = escapeHtml(appt.notes || 'No notes recorded.');
+  li.innerHTML = `
+    <div class="timeline-meta">${metaParts.join('')}</div>
+    <p class="timeline-notes">${notesText}</p>
+  `;
+  return li;
+}
+
+function renderAppointments(list, patientName){
+  const countEl = document.getElementById('appointmentsCount');
+  const upcomingCountEl = document.getElementById('appointmentsUpcomingCount');
+  const pastCountEl = document.getElementById('appointmentsPastCount');
+  const upcomingEmpty = document.getElementById('appointmentsUpcomingEmpty');
+  const pastEmpty = document.getElementById('appointmentsPastEmpty');
+  const upcomingTimeline = document.getElementById('appointmentsUpcomingTimeline');
+  const pastTimeline = document.getElementById('appointmentsPastTimeline');
+
+  upcomingTimeline.innerHTML = '';
+  pastTimeline.innerHTML = '';
+
+  const total = Array.isArray(list) ? list.length : 0;
+
+  if(!patientName){
+    countEl.textContent = '—';
+    upcomingCountEl.textContent = '—';
+    pastCountEl.textContent = '—';
+    upcomingEmpty.style.display = 'block';
+    pastEmpty.style.display = 'block';
+    upcomingEmpty.textContent = 'Select a patient to see their upcoming appointments.';
+    pastEmpty.textContent = 'Select a patient to see completed appointments.';
+    return;
+  }
+
+  countEl.textContent = total ? `${total} record${total > 1 ? 's' : ''}` : '0 records';
+
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  const currentMinutes = today.getHours() * 60 + today.getMinutes();
+
+  const upcoming = [];
+  const past = [];
+
+  list.forEach(appt=>{
+    const dateStr = (appt.date || '').toString().slice(0,10);
+    let bucket = upcoming;
+    if(dateStr){
+      if(dateStr < todayStr){
+        bucket = past;
+      } else if(dateStr === todayStr){
+        const apptMinutes = parseTimeToMinutes(appt.time);
+        if(apptMinutes !== null && apptMinutes < currentMinutes){
+          bucket = past;
+        }
+      }
+    }
+    bucket.push(appt);
+  });
+
+  upcomingCountEl.textContent = upcoming.length.toString();
+  pastCountEl.textContent = past.length.toString();
+
+  if(!upcoming.length){
+    upcomingEmpty.style.display = 'block';
+    upcomingEmpty.textContent = `No upcoming appointments for ${patientName}.`;
+  } else {
+    upcomingEmpty.style.display = 'none';
+    upcoming.forEach(appt=> upcomingTimeline.appendChild(createTimelineItem(appt)));
+  }
+
+  if(!past.length){
+    pastEmpty.style.display = 'block';
+    pastEmpty.textContent = `No completed appointments for ${patientName}.`;
+  } else {
+    pastEmpty.style.display = 'none';
+    past.forEach(appt=> pastTimeline.appendChild(createTimelineItem(appt)));
+  }
+}
+
+async function loadDetails(patient_id){
+  if(!patient_id) {
+    document.getElementById('details').style.display = 'none';
+    document.getElementById('quickInfo').textContent = 'Select a patient to view details.';
+    renderAppointments([], null);
+    return;
+  }
+  document.getElementById('quickInfo').textContent = 'Loading patient details…';
+  try{
+    const res = await fetch(`patient_history.php?action=detail&patient_id=${encodeURIComponent(patient_id)}`);
+    const j = await res.json();
+    if(!j.success) throw new Error(j.message||'No data');
+    document.getElementById('details').style.display = 'block';
+    const p = j.patient;
+    document.getElementById('patientInfo').innerHTML =
+      `<div><strong>Name:</strong> ${escapeHtml(p.patient_name)}</div>
+       <div><strong>ID:</strong> ${escapeHtml(p.patient_id)}</div>
+       <div><strong>Mobile:</strong> ${escapeHtml(p.mobile||'—')}</div>
+       <div><strong>Age:</strong> ${escapeHtml(p.age||'—')}</div>
+       <div><strong>Weight:</strong> ${escapeHtml(p.weight||'—')}</div>
+       <div><strong>Doctor:</strong> ${escapeHtml(p.doctor||'—')}</div>`;
+
+    renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
+
+    // reports
+    const rptEl = document.getElementById('reports'); rptEl.innerHTML = '';
+    (j.reports||[]).forEach(r=>{
+      rptEl.appendChild(createReportListItem(r));
+    });
+    if((j.reports||[]).length===0) rptEl.innerHTML = '<li>No reports uploaded</li>';
+
+    document.getElementById('otherInfo').textContent = j.other_info || '—';
+    document.getElementById('quickInfo').textContent = `${p.patient_name} — ${p.patient_id}`;
+  }catch(e){
+    console.error(e);
+    document.getElementById('quickInfo').textContent = 'Error loading details';
+  }
+}
+
+/* ---------------- PDF modal logic ---------------- */
+const pdfModal = document.getElementById('pdfModal');
+const pdfFrame = document.getElementById('pdfFrame');
+const modalTitle = document.getElementById('modalTitle');
+const pdfDownload = document.getElementById('pdfDownload');
+const closeModalBtn = document.getElementById('closeModal');
+
+function openPdfModal(url, name) {
+  if(!url) return;
+  modalTitle.textContent = name || 'Report Preview';
+  pdfFrame.src = url;
+  pdfDownload.href = url;
+  pdfDownload.setAttribute('download', name || '');
+  pdfModal.classList.add('open');
+  pdfModal.setAttribute('aria-hidden', 'false');
+}
+
+function closePdfModal() {
+  pdfModal.classList.remove('open');
+  pdfModal.setAttribute('aria-hidden', 'true');
+  // clear src to stop PDF streaming
+  pdfFrame.src = '';
+}
+
+closeModalBtn.addEventListener('click', closePdfModal);
+pdfModal.addEventListener('click', (ev)=>{
+  if(ev.target === pdfModal) closePdfModal(); // click overlay to close
+});
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closePdfModal(); });
+
+function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadPatients();
+  document.getElementById('patientSelect').addEventListener('change',(e)=>loadDetails(e.target.value));
+});
+</script>
+</body>
+</html>
