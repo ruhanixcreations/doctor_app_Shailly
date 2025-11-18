@@ -80,39 +80,66 @@ h2 {
   border:1px solid #eee;
 }
 
-.section strong {
-  display:block;
-  font-size:15px;
-  margin-bottom:6px;
-  color:#333;
-}
+  .section strong {
+    display:block;
+    font-size:15px;
+    margin-bottom:6px;
+    color:#333;
+  }
+
+  .section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+
+  .count-pill{
+    font-size:12px;
+    font-weight:600;
+    padding:4px 10px;
+    border-radius:999px;
+    background:#eef0ff;
+    color:#4b4f8f;
+  }
+
+  .empty-state{
+    padding:12px;
+    border:1px dashed #cfd3ff;
+    border-radius:10px;
+    background:#f8f9ff;
+    color:#5d6291;
+    margin-top:8px;
+  }
 
 /* Lists */
-.list {
-  list-style:none;
-  padding:0;
-  margin:0;
-}
+  .list {
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
 
-.list li {
-  padding:8px 6px;
-  border-bottom:1px solid #eee;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
+  .list li {
+    padding:8px 6px;
+    border-bottom:1px solid #eee;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
 
-.list li .left {
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  text-align:left;
-}
+  .list li .left {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    text-align:left;
+  }
 
-.list li:last-child {
-  border-bottom:none;
-}
+  .list li:last-child {
+    border-bottom:none;
+  }
 
 /* Buttons next to each report */
 .report-actions {
@@ -153,10 +180,68 @@ h2 {
 }
 
 /* Hover improvements */
-.list li:hover {
-  background:#f1f0ff;
-  transition:0.2s;
-}
+  .list li:hover {
+    background:#f1f0ff;
+    transition:0.2s;
+  }
+
+  /* Timeline */
+  .timeline-list{
+    list-style:none;
+    margin:0;
+    padding-left:16px;
+    border-left:2px solid #e0e4ff;
+  }
+
+  .timeline-item{
+    margin-bottom:18px;
+    position:relative;
+    padding-left:16px;
+  }
+
+  .timeline-item:last-child{
+    margin-bottom:6px;
+  }
+
+  .timeline-item::before{
+    content:'';
+    position:absolute;
+    left:-22px;
+    top:8px;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#7a4bff;
+    box-shadow:0 0 0 4px rgba(122,75,255,0.15);
+  }
+
+  .timeline-meta{
+    font-weight:600;
+    color:#1f244b;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+  }
+
+  .timeline-meta span{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+  }
+
+  .timeline-meta span + span::before{
+    content:'|';
+    color:#a8adcf;
+    margin:0 6px;
+    font-weight:400;
+  }
+
+  .timeline-notes{
+    margin:6px 0 0;
+    color:#4d5273;
+    line-height:1.4;
+  }
 
 /* Patient ID Quick box */
 #quickInfo {
@@ -283,10 +368,14 @@ h3 {
         <div id="patientInfo" class="small"></div>
       </div>
 
-      <div class="section" style="margin-top:12px;">
-        <strong>Appointments</strong>
-        <ul id="appointments" class="list small"></ul>
-      </div>
+        <div class="section" style="margin-top:12px;">
+          <div class="section-head">
+            <strong>Appointments History</strong>
+            <span id="appointmentsCount" class="count-pill">—</span>
+          </div>
+          <div id="appointmentsEmpty" class="empty-state small">Select a patient to see their appointment history.</div>
+          <ul id="appointmentsTimeline" class="timeline-list small"></ul>
+        </div>
 
       <div class="section" style="margin-top:12px;">
         <strong>Uploaded Reports</strong>
@@ -376,10 +465,57 @@ function createReportListItem(r) {
   return li;
 }
 
+function renderAppointments(list, patientName){
+  const timeline = document.getElementById('appointmentsTimeline');
+  const emptyState = document.getElementById('appointmentsEmpty');
+  const countEl = document.getElementById('appointmentsCount');
+
+  timeline.innerHTML = '';
+  const total = Array.isArray(list) ? list.length : 0;
+
+  if(!patientName){
+    countEl.textContent = '—';
+    emptyState.style.display = 'block';
+    emptyState.textContent = 'Select a patient to see their appointment history.';
+    return;
+  }
+
+  countEl.textContent = total ? `${total} record${total > 1 ? 's' : ''}` : '0 records';
+
+  if(total === 0){
+    emptyState.style.display = 'block';
+    emptyState.textContent = `No appointments recorded for ${patientName}.`;
+    return;
+  }
+
+  emptyState.style.display = 'none';
+
+  list.forEach(appt=>{
+    const li = document.createElement('li');
+    li.className = 'timeline-item';
+    const metaParts = [];
+    const dateLabel = escapeHtml(appt.date || '—');
+    const timeLabel = appt.time ? escapeHtml(appt.time) : '';
+    const doctorLabel = escapeHtml(appt.doctor || 'Doctor');
+    metaParts.push(`<span class="timeline-date">${dateLabel}</span>`);
+    if(timeLabel) metaParts.push(`<span class="timeline-time">${timeLabel}</span>`);
+    metaParts.push(`<span class="timeline-doctor">${doctorLabel}</span>`);
+
+    const notesText = escapeHtml(appt.notes || 'No notes recorded.');
+
+    li.innerHTML = `
+      <div class="timeline-meta">${metaParts.join('')}</div>
+      <p class="timeline-notes">${notesText}</p>
+    `;
+    timeline.appendChild(li);
+  });
+}
+
 async function loadDetails(patient_id){
   if(!patient_id) {
     document.getElementById('details').style.display = 'none';
     document.getElementById('quickInfo').textContent = 'Select a patient to view details.';
+    renderAppointments([], null);
     return;
   }
   document.getElementById('quickInfo').textContent = 'Loading patient details…';
@@ -397,14 +533,7 @@ async function loadDetails(patient_id){
        <div><strong>Weight:</strong> ${escapeHtml(p.weight||'—')}</div>
        <div><strong>Doctor:</strong> ${escapeHtml(p.doctor||'—')}</div>`;
 
-    // appointments
-    const apptEl = document.getElementById('appointments'); apptEl.innerHTML = '';
-    (j.appointments||[]).forEach(a=>{
-      const li = document.createElement('li');
-      li.innerHTML = `<strong>${escapeHtml(a.doctor||'Doctor')}</strong> — ${escapeHtml(a.date)} ${a.time?(' @ '+escapeHtml(a.time)) : ''} <div class="small">${escapeHtml(a.notes||'')}</div>`;
-      apptEl.appendChild(li);
-    });
-    if((j.appointments||[]).length===0) apptEl.innerHTML = '<li>No appointments found</li>';
+    renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
 
     // reports
     const rptEl = document.getElementById('reports'); rptEl.innerHTML = '';
