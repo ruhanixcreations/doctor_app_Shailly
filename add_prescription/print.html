@@ -4,72 +4,477 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Print Prescription</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <!-- html2pdf for Save PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  body{font-family:Inter,system-ui,Arial,sans-serif;padding:18px;color:#071123;background:#f7fbff}
-  .paper{background:#fff;padding:18px;border-radius:8px;max-width:960px;margin:0 auto;box-shadow:0 8px 30px rgba(9,30,66,0.06)}
-  h1{font-size:18px;margin-bottom:12px}
-  .top-actions{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px}
-  .btn{padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:700}
-  .btn.save{background:#28a745;color:#fff}
-  .btn.print{background:#0b63c6;color:#fff}
-  .meta{font-size:14px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px}
-  .meta .item{min-width:160px}
-  .label{font-weight:700;color:#183159}
-  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
-  th,td{padding:8px;border:1px solid #eee;text-align:left;vertical-align:top}
-  thead th{background:#f6f9ff}
-  @media print {
-    .top-actions { display: none; }
-    body { background: #fff; padding: 0; }
-    .paper { box-shadow:none; border-radius:0; margin:0; padding:0.5in; }
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  padding:20px;
+  color:var(--text-dark);
+  background:#f5f7fa;
+  -webkit-font-smoothing:antialiased;
+}
+
+.top-actions{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+  margin-bottom:20px;
+  max-width:1000px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.btn{
+  padding:10px 20px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  transition:all 0.2s ease;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn.save{
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+}
+
+.btn.print{
+  background:var(--primary-teal);
+  color:#fff;
+}
+
+.paper{
+  background:var(--bg-white);
+  padding:0;
+  border-radius:8px;
+  max-width:1000px;
+  margin:0 auto;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  overflow:hidden;
+}
+
+/* Header Section */
+.prescription-header{
+  background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
+  padding:24px 30px;
+  color:white;
+  border-bottom:4px solid #007a77;
+}
+
+.prescription-header h1{
+  font-size:28px;
+  font-weight:700;
+  margin:0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.prescription-header h1 i{
+  font-size:32px;
+}
+
+.prescription-header .subtitle{
+  font-size:14px;
+  opacity:0.9;
+  margin-top:6px;
+  font-weight:400;
+}
+
+/* Content Area */
+.prescription-content{
+  padding:30px;
+}
+
+/* Patient Info Section */
+.patient-section{
+  background:linear-gradient(to right,#f8f9fa,#ffffff);
+  border-left:4px solid var(--primary-teal);
+  padding:20px;
+  border-radius:6px;
+  margin-bottom:24px;
+}
+
+.patient-name-header{
+  font-size:20px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:2px solid #dc3545;
+  display:inline-block;
+}
+
+.patient-name-header i{
+  color:var(--primary-teal);
+  margin-right:8px;
+}
+
+.meta-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+  margin-top:16px;
+}
+
+.meta-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.meta-label{
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+
+.meta-value{
+  font-weight:600;
+  color:var(--text-dark);
+  font-size:15px;
+}
+
+/* Prescription Section */
+.prescription-section{
+  margin-bottom:24px;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.section-title i{
+  color:var(--primary-teal);
+  font-size:20px;
+}
+
+/* Table Styles */
+.table-wrapper{
+  overflow-x:auto;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  margin-top:12px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+thead{
+  background:var(--bg-light);
+}
+
+th{
+  padding:12px 10px;
+  text-align:left;
+  font-weight:700;
+  color:var(--text-dark);
+  border-bottom:2px solid var(--border-light);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+td{
+  padding:12px 10px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:top;
+  color:var(--text-dark);
+}
+
+tbody tr:hover{
+  background:rgba(0,169,165,0.03);
+}
+
+tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* Additional Info Boxes */
+.info-box{
+  background:var(--bg-light);
+  padding:12px 16px;
+  border-radius:6px;
+  margin-top:12px;
+  border-left:4px solid var(--primary-teal);
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.info-box i{
+  color:var(--primary-teal);
+  font-size:16px;
+}
+
+.info-box strong{
+  color:var(--text-dark);
+  margin-right:6px;
+}
+
+/* Print Styles */
+@media print {
+  body{
+    background:#fff;
+    padding:0;
   }
+  
+  .top-actions{
+    display:none !important;
+  }
+  
+  .paper{
+    box-shadow:none;
+    border-radius:0;
+    max-width:100%;
+    margin:0;
+  }
+  
+  .prescription-header{
+    background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+    color-adjust:exact;
+  }
+  
+  .patient-section{
+    background:linear-gradient(to right,#f8f9fa,#ffffff);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  thead{
+    background:var(--bg-light);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .info-box{
+    background:var(--bg-light);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .table-wrapper{
+    border:1px solid var(--border-light);
+  }
+  
+  /* Page break handling */
+  .prescription-section{
+    page-break-inside:avoid;
+  }
+  
+  table{
+    page-break-inside:auto;
+  }
+  
+  tr{
+    page-break-inside:avoid;
+    page-break-after:auto;
+  }
+  
+  thead{
+    display:table-header-group;
+  }
+}
+
+/* Responsive Design */
+@media (max-width:768px){
+  .prescription-header{
+    padding:20px;
+  }
+  
+  .prescription-header h1{
+    font-size:22px;
+  }
+  
+  .prescription-content{
+    padding:20px;
+  }
+  
+  .meta-grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  
+  table{
+    font-size:12px;
+  }
+  
+  th,td{
+    padding:8px 6px;
+  }
+}
+
+@media (max-width:480px){
+  body{
+    padding:12px;
+  }
+  
+  .top-actions{
+    flex-direction:column;
+  }
+  
+  .btn{
+    width:100%;
+    justify-content:center;
+  }
+  
+  .prescription-header{
+    padding:16px;
+  }
+  
+  .prescription-header h1{
+    font-size:20px;
+  }
+  
+  .prescription-content{
+    padding:16px;
+  }
+  
+  .patient-section{
+    padding:16px;
+  }
+}
 </style>
 </head>
 <body>
   <div class="top-actions">
-    <button id="savePdfBtn" class="btn save">Save PDF</button>
-    <button id="printBtn" class="btn print">Print</button>
+    <button id="savePdfBtn" class="btn save">
+      <i class="fas fa-file-pdf"></i> Save PDF
+    </button>
+    <button id="printBtn" class="btn print">
+      <i class="fas fa-print"></i> Print
+    </button>
   </div>
 
   <div id="printArea" class="paper" aria-live="polite">
-    <h1>Prescription</h1>
-
-    <div id="meta" class="meta">
-      <div class="item"><span class="label">Patient:</span> <span id="patientName">-</span></div>
-      <div class="item"><span class="label">Patient ID:</span> <span id="patientId">-</span></div>
-      <div class="item"><span class="label">Mobile:</span> <span id="patientMobile">-</span></div>
-      <div class="item"><span class="label">Age / Weight:</span> <span id="patientAgeWeight">-</span></div>
-      <div class="item"><span class="label">Prescription ID:</span> <span id="presId">-</span></div>
-      <div class="item"><span class="label">Date:</span> <span id="presDate">-</span></div>
+    <!-- HEADER -->
+    <div class="prescription-header">
+      <h1>
+        <i class="fas fa-prescription-bottle-alt"></i>
+        Medical Prescription
+      </h1>
+      <div class="subtitle">Official prescription document</div>
     </div>
 
-    <div style="overflow-x:auto">
-      <table id="printTable" role="table" aria-label="Prescription items">
-        <thead>
-          <tr>
-            <th style="width:48px">#</th>
-            <th>Symptoms</th>
-            <th>Medicine</th>
-            <th>Type</th>
-            <th>Duration</th>
-            <th>Time</th>
-            <th>Before/After</th>
-            <th>Notes</th>
-            <th>Recommended Test</th>
-            <th>Follow-up</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <!-- CONTENT -->
+    <div class="prescription-content">
+      <!-- PATIENT INFORMATION -->
+      <div class="patient-section">
+        <div class="patient-name-header">
+          <i class="fas fa-user"></i>
+          Patient Name - <span id="patientName">-</span>
+        </div>
+        
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Patient ID</span>
+            <span class="meta-value" id="patientId">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Mobile Number</span>
+            <span class="meta-value" id="patientMobile">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Age / Weight</span>
+            <span class="meta-value" id="patientAgeWeight">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Prescription ID</span>
+            <span class="meta-value" id="presId">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Prescription Date</span>
+            <span class="meta-value" id="presDate">-</span>
+          </div>
+        </div>
+      </div>
 
-    <div id="extras" style="margin-top:12px">
-      <!-- kept for compatibility; these are also displayed in the table -->
-      <div id="bloodLabel" style="display:none;margin-top:6px;"><span class="label">Recommended blood test:</span> <span id="bloodText"></span></div>
-      <div id="followLabel" style="display:none;margin-top:6px;"><span class="label">Follow-up date:</span> <span id="followText"></span></div>
+      <!-- PRESCRIPTION DETAILS -->
+      <div class="prescription-section">
+        <div class="section-title">
+          <i class="fas fa-pills"></i>
+          <span>Medication Prescribed</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table id="printTable" role="table" aria-label="Prescription items">
+            <thead>
+              <tr>
+                <th style="width:40px">#</th>
+                <th>Symptoms</th>
+                <th>Medicine</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Time</th>
+                <th>Before/After</th>
+                <th>Notes</th>
+                <th>Recommended Test</th>
+                <th>Follow-up</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADDITIONAL INFORMATION -->
+      <div id="extras">
+        <div id="bloodLabel" style="display:none;" class="info-box">
+          <i class="fas fa-vial"></i>
+          <div>
+            <strong>Recommended Blood Test:</strong>
+            <span id="bloodText"></span>
+          </div>
+        </div>
+        <div id="followLabel" style="display:none;" class="info-box">
+          <i class="fas fa-calendar-check"></i>
+          <div>
+            <strong>Follow-up Date:</strong>
+            <span id="followText"></span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -126,7 +531,7 @@ async function loadAndRender(){
     // render rows (if items empty, show a single "No items" row)
     if(items.length === 0){
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td colspan="10">No prescription items found for this prescription.</td>`;
+      tr.innerHTML = `<td colspan="10" style="text-align:center;padding:20px;color:var(--text-muted)">No prescription items found for this prescription.</td>`;
       tbody.appendChild(tr);
     } else {
       items.forEach((it, idx) => {
@@ -197,7 +602,7 @@ async function loadAndRender(){
 
     if(recommendedTest){
       document.getElementById('bloodText').textContent = recommendedTest;
-      document.getElementById('bloodLabel').style.display = 'block';
+      document.getElementById('bloodLabel').style.display = 'flex';
     } else {
       document.getElementById('bloodLabel').style.display = 'none';
     }
@@ -211,7 +616,7 @@ async function loadAndRender(){
     if(!followDate && metaSource && metaSource.follow_up_date) followDate = metaSource.follow_up_date;
     if(followDate){
       document.getElementById('followText').textContent = prettyDate(followDate);
-      document.getElementById('followLabel').style.display = 'block';
+      document.getElementById('followLabel').style.display = 'flex';
     } else {
       document.getElementById('followLabel').style.display = 'none';
     }
@@ -225,9 +630,15 @@ async function loadAndRender(){
 /* Save PDF (html2pdf) */
 document.getElementById('savePdfBtn').addEventListener('click', ()=>{
   const element = document.getElementById('printArea');
-  const opts = { margin:0.4, filename:`prescription_${presId||'print'}.pdf`, html2canvas:{scale:2}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+  const opts = { 
+    margin: 0.4, 
+    filename: `prescription_${presId||'print'}.pdf`, 
+    html2canvas: { scale: 2 }, 
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
+  };
   html2pdf().set(opts).from(element).save();
 });
+
 document.getElementById('printBtn').addEventListener('click', ()=> window.print());
 
 loadAndRender();
