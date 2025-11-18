@@ -26,6 +26,7 @@ $action = $_GET['action'] ?? 'list_patients';
 
 switch ($action) {
     case 'list_patients':
+    case 'list':
         handle_list_patients($mysqli);
         break;
     case 'detail':
