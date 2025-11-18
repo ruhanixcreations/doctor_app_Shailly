@@ -1,0 +1,28 @@
+[15-Nov-2025 07:24:48 UTC] PHP Warning:  Undefined variable $files_to_process in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:24:48 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:24:48 UTC] PHP Fatal error:  Uncaught Error: mysqli_stmt object is already closed in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php:163
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php(163): mysqli_stmt->bind_param('ssssssss', 'RUHA318429', 'PATIENT579234-1...', 'Shailly', '1111111111', '1', '0.1', '54', NULL)
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 163
+[15-Nov-2025 07:24:53 UTC] PHP Warning:  Undefined variable $files_to_process in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:24:53 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:24:53 UTC] PHP Fatal error:  Uncaught Error: mysqli_stmt object is already closed in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php:163
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php(163): mysqli_stmt->bind_param('ssssssss', 'RUHA318429', 'PATIENT213971-1...', 'Shailly', '1111111111', '1', '0.1', '54', NULL)
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 163
+[15-Nov-2025 07:24:54 UTC] PHP Warning:  Undefined variable $files_to_process in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:24:54 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:24:54 UTC] PHP Fatal error:  Uncaught Error: mysqli_stmt object is already closed in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php:163
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php(163): mysqli_stmt->bind_param('ssssssss', 'RUHA318429', 'PATIENT282072-1...', 'Shailly', '1111111111', '1', '0.1', '54', NULL)
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 163
+[15-Nov-2025 07:25:34 UTC] PHP Warning:  Undefined variable $files_to_process in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:25:34 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 154
+[15-Nov-2025 07:25:34 UTC] PHP Fatal error:  Uncaught Error: mysqli_stmt object is already closed in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php:163
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php(163): mysqli_stmt->bind_param('ssssssss', 'RUHA318429', 'PATIENT197561-1...', 'Shailly', '1111111111', '1', '0.1', '54', NULL)
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_new_patient/add_new_patient.php on line 163
