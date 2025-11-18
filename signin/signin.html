@@ -15,7 +15,6 @@
     --border-light:#e0e6ed;
     --bg-light:#f8f9fa;
     --bg-white:#ffffff;
-    --control-height:50px;
   }
   
   *{box-sizing:border-box;margin:0;padding:0}
@@ -41,80 +40,85 @@
   .card{
     background:var(--bg-white);
     border-radius:12px;
-    box-shadow:0 4px 16px rgba(0,0,0,0.1);
+    box-shadow:0 2px 12px rgba(0,0,0,0.08);
     border:1px solid var(--border-light);
-    overflow:visible; 
+    overflow:hidden;
     position:relative;
   }
   
   .card-header{
     background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
-    padding:30px 30px;
+    padding:16px 24px;
     color:white;
-    border-radius:12px 12px 0 0;
-    text-align:center;
+    display:flex;
+    align-items:center;
+    gap:14px;
   }
   
   .brand{
-    width:70px;
-    height:70px;
-    border-radius:50%;
+    width:42px;
+    height:42px;
+    border-radius:8px;
     background:rgba(255,255,255,0.2);
     display:flex;
     align-items:center;
     justify-content:center;
-    margin:0 auto 16px;
     backdrop-filter:blur(10px);
+    flex-shrink:0;
   }
   
   .brand i{
-    font-size:36px;
+    font-size:20px;
     color:white;
   }
   
+  .header-text{
+    flex:1;
+  }
+  
   .card-header .title{
-    font-size:26px; 
+    font-size:18px; 
     font-weight:700; 
-    margin-bottom:6px;
+    margin-bottom:2px;
+    line-height:1.2;
   }
   
   .card-header .subtitle{
-    font-size:14px; 
-    opacity:0.95;
+    font-size:12px; 
+    opacity:0.9;
     font-weight:400;
   }
 
   .card-body{
-    padding:30px;
+    padding:24px;
     background:var(--bg-white);
-    min-height:300px;
   }
   
   h1{
-    font-size:22px;
-    margin-bottom:8px;
+    font-size:20px;
+    margin-bottom:6px;
     color:var(--text-dark);
     font-weight:700;
   }
   
   p.lead{
-    font-size:14px;
+    font-size:13px;
     color:var(--text-muted);
-    margin-bottom:20px;
+    margin-bottom:18px;
   }
   
   .choices-row{
     display:flex;
-    gap:12px;
-    margin-bottom:20px;
+    gap:10px;
+    margin-bottom:18px;
   }
   
   .radio-item{
     flex:1;
     display:flex;
-    align-items:flex-start;
-    gap:10px;
-    padding:14px;
+    align-items:center;
+    gap:8px;
+    padding:12px;
     border-radius:8px;
     border:2px solid var(--border-light);
     background:var(--bg-white);
@@ -129,25 +133,26 @@
   
   .radio-item input{
     accent-color:var(--primary-teal);
-    width:18px;
-    height:18px;
-    margin-top:2px;
+    width:16px;
+    height:16px;
     cursor:pointer;
+    flex-shrink:0;
   }
   
-  .radio-item input:checked + div{
+  .radio-item input:checked ~ div{
     color:var(--primary-teal);
   }
   
   .radio-item strong{
-    font-size:14px;
+    font-size:13px;
     display:block;
-    margin-bottom:4px;
+    margin-bottom:2px;
+    font-weight:600;
   }
   
   .radio-item small{
     color:var(--text-muted);
-    font-size:12px;
+    font-size:11px;
   }
 
   input{
@@ -165,8 +170,8 @@
   input[type="password"], 
   input[type="text"]{
     width:100%; 
-    padding:12px 14px; 
-    height:var(--control-height); 
+    padding:11px 14px; 
+    height:44px; 
     border-radius:6px;
     border:1px solid var(--border-light);
     font-size:14px;
@@ -179,8 +184,8 @@
   }
 
   .btn{
-    height:var(--control-height); 
-    padding:12px 24px; 
+    height:44px; 
+    padding:10px 20px; 
     border-radius:6px; 
     border:none;
     background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
@@ -196,8 +201,8 @@
   }
   
   .btn:hover:not(:disabled){
-    transform:translateY(-2px);
-    box-shadow:0 4px 12px rgba(0,169,165,0.3);
+    transform:translateY(-1px);
+    box-shadow:0 3px 10px rgba(0,169,165,0.25);
   }
   
   .btn:disabled{
@@ -208,7 +213,7 @@
   
   .inline-error{
     color:#dc3545;
-    font-size:13px;
+    font-size:12px;
     margin-top:6px;
     padding:8px 12px;
     background:rgba(220,53,69,0.05);
@@ -216,27 +221,23 @@
     border-radius:4px;
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:6px;
   }
   
   .hint{
-    font-size:13px;
+    font-size:12px;
     color:var(--text-muted);
   }
 
   .form-panel{
-    margin-top:20px; 
+    margin-top:18px; 
     display:block;
-  }
-  
-  .right{
-    margin-left:auto;
   }
 
   .small-note{
-    font-size:13px;
+    font-size:12px;
     color:var(--text-muted); 
-    margin-top:10px;
+    margin-top:8px;
   }
   
   .visually-hidden{
@@ -249,9 +250,9 @@
   }
 
   .signup-row{
-    margin-top:20px; 
+    margin-top:18px; 
     text-align:center; 
-    font-size:14px; 
+    font-size:13px; 
     color:var(--text-muted);
   }
   
@@ -300,7 +301,7 @@
   
   .server-popup h4{
     margin:0 0 12px 0; 
-    font-size:20px; 
+    font-size:18px; 
     color:#dc3545; 
     font-weight:700;
   }
@@ -330,7 +331,7 @@
   /* Mobile */
   @media(max-width:600px){
     body{
-      padding:12px;
+      padding:16px;
     }
     
     .wrap{
@@ -338,20 +339,24 @@
     }
     
     .card-header{
-      padding:24px 20px;
+      padding:14px 18px;
     }
     
     .brand{
-      width:60px;
-      height:60px;
+      width:38px;
+      height:38px;
     }
     
     .brand i{
-      font-size:30px;
+      font-size:18px;
     }
     
     .card-header .title{
-      font-size:22px;
+      font-size:16px;
+    }
+    
+    .card-header .subtitle{
+      font-size:11px;
     }
     
     .card-body{
@@ -359,37 +364,57 @@
     }
     
     h1{
-      font-size:20px;
+      font-size:18px;
+    }
+    
+    p.lead{
+      font-size:12px;
     }
     
     .choices-row{
       flex-direction:column;
-      gap:10px;
+      gap:8px;
     }
     
     .radio-item{
       width:100%;
+      padding:10px;
+    }
+    
+    .radio-item strong{
+      font-size:12px;
     }
     
     input[type="email"], 
     input[type="password"], 
     input[type="text"]{
-      height:48px;
+      height:46px;
+      font-size:14px;
     }
     
     .btn{
-      height:48px;
+      height:46px;
       width:100%;
+      font-size:14px;
+    }
+    
+    .inline-error{
+      font-size:11px;
+      padding:6px 10px;
     }
   }
 
   @media(max-width:420px){
+    .card-header{
+      padding:12px 16px;
+    }
+    
     .card-header .title{
-      font-size:20px;
+      font-size:15px;
     }
     
     h1{
-      font-size:18px;
+      font-size:17px;
     }
   }
 </style>
@@ -402,8 +427,10 @@
         <div class="brand">
           <i class="fas fa-user-md"></i>
         </div>
-        <div class="title">Sign In</div>
-        <div class="subtitle">Secure sign-in with password or email OTP</div>
+        <div class="header-text">
+          <div class="title">Sign In</div>
+          <div class="subtitle">Secure access with password or email OTP</div>
+        </div>
       </div>
 
       <!-- backdrop and server popup -->
@@ -419,7 +446,7 @@
 
       <div class="card-body">
         <h1 id="signInHeading">Welcome Back</h1>
-        <p class="lead">Choose how you'd like to sign in</p>
+        <p class="lead">Choose your preferred sign-in method</p>
 
         <!-- radio choices -->
         <div class="choices-row" role="radiogroup" aria-label="Sign in mode">
@@ -427,7 +454,7 @@
             <input id="mode-otp" name="signinMode" type="radio" value="otp" checked>
             <div>
               <strong>Email OTP</strong><br>
-              <small>Get a one-time code</small>
+              <small>One-time code</small>
             </div>
           </label>
 
@@ -435,7 +462,7 @@
             <input id="mode-password" name="signinMode" type="radio" value="password">
             <div>
               <strong>Password</strong><br>
-              <small>Use your password</small>
+              <small>Use password</small>
             </div>
           </label>
         </div>
@@ -484,7 +511,7 @@
                 </button>
               </div>
               <div id="resendRow" style="display:none; text-align:center;" class="small-note">
-                Didn't receive OTP? <span id="resendBtn" style="color:var(--primary-teal); cursor:pointer; font-weight:700">Resend</span>
+                Didn't receive OTP? <span id="resendBtn" style="color:var(--primary-teal); cursor:pointer; font-weight:600">Resend</span>
               </div>
             </div>
           </div>
