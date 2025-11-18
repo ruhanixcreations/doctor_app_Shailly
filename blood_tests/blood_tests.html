@@ -4,7 +4,8 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Blood Tests</title>
-<link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="../styles/workspace.css">
 <style>
 :root{
   --bg:#f7fbff;
@@ -27,16 +28,15 @@
 html,body{height:100%}
 body{
   font-family:Inter,system-ui,Arial,sans-serif;
-  background:linear-gradient(180deg,#eaf3ff 0%,#fbfdff 100%);
   color:var(--navy);
   -webkit-font-smoothing:antialiased;
-  padding:18px;
+  margin:0;
 }
 
 /* Container */
-.container{
+.tests-panel{
   max-width:900px;
-  margin:20px auto;
+  margin:0 auto;
   padding:18px;
   background:var(--card);
   border-radius:var(--radius);
@@ -197,9 +197,10 @@ h2{font-size:20px;margin-bottom:10px}
 .helper{ font-size:12px; color:var(--muted) }
 </style>
 </head>
-<body>
+<body class="app-shell" data-app-root="..">
 
-<main class="container">
+<main class="page-shell">
+  <section class="workspace-panel tests-panel">
   <h2>Blood Test List</h2>
 
   <div class="controls">
@@ -218,7 +219,10 @@ h2{font-size:20px;margin-bottom:10px}
     <thead><tr><th>Name</th></tr></thead>
     <tbody id="tbl"></tbody>
   </table>
+</section>
 </main>
+
+<script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
 
 <!-- Modal used to add test -->
 <div id="modalOverlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">

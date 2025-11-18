@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>All Medicines</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="../styles/workspace.css">
   <style>
     :root{
       --navy:#0b2340;
@@ -26,29 +28,24 @@
 
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
-    body{
-      font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
-      background:var(--bg);
-      min-height:100vh;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:22px;
-      color:#071123;
-      -webkit-font-smoothing:antialiased;
-    }
+      body{
+        font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
+        color:#071123;
+        margin:0;
+        -webkit-font-smoothing:antialiased;
+      }
 
-    .container {
-      width:100%;
-      max-width:980px;
-      margin:18px auto;
-      padding:16px;
-      background: var(--glass);
-      border-radius:var(--radius);
-      box-shadow: 0 20px 60px rgba(9,30,66,0.08);
-      border:1px solid rgba(16,42,83,0.04);
-      overflow:visible;
-    }
+      .medicine-panel {
+        width:100%;
+        max-width:980px;
+        margin:0 auto;
+        padding:16px;
+        background: var(--glass);
+        border-radius:var(--radius);
+        box-shadow: 0 20px 60px rgba(9,30,66,0.08);
+        border:1px solid rgba(16,42,83,0.04);
+        overflow:visible;
+      }
 
     h2{
       font-size:20px;
@@ -175,8 +172,8 @@
     .modal-foot{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
     .note-small{ font-size:13px; color:var(--muted); margin-top:6px; text-align:right; }
 
-    @media(max-width:760px){
-      .container{ padding:12px; }
+      @media(max-width:760px){
+        .medicine-panel{ padding:12px; }
       .modal{ max-width:520px; width:94%; padding:14px; border-radius:10px; }
       .modal-title{ font-size:15px; }
       .form-row{ flex-direction:column; }
@@ -200,8 +197,9 @@
     .visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px); white-space:nowrap; }
   </style>
 </head>
-<body>
-<main class="container" role="main">
+  <body class="app-shell" data-app-root="..">
+  <main class="page-shell">
+    <section class="workspace-panel medicine-panel" role="main">
   <h2>All Medicines</h2>
 
   <div class="top-row" style="margin-bottom:6px;">
@@ -226,7 +224,10 @@
       <tbody></tbody>
     </table>
   </div>
-</main>
+    </section>
+  </main>
+
+  <script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
 
 <!-- Modal -->
 <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
@@ -438,6 +439,6 @@
 
   // initial load
   load();
-</script>
-</body>
+  </script>
+  </body>
 </html>

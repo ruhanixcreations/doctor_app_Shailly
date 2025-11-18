@@ -6,6 +6,7 @@
 <title>Sign In</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../header/header.css">
 <style>
   :root{
     --navy:#0b2340; --sea:#6f9ef0; --sea-dark:#183159; --muted:#6f7f8f;
@@ -19,11 +20,11 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
+body.app-shell{
     font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
     background:linear-gradient(180deg,#e9f3ff 0%,#f7fbff 100%);
     min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:28px; -webkit-font-smoothing:antialiased; color:#071123;
+  padding:28px; padding-top:140px; -webkit-font-smoothing:antialiased; color:#071123;
   }
 
   .wrap{width:100%;max-width:var(--box-width);position:relative}
@@ -272,6 +273,7 @@
     </div>
   </div>
 
+<script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
 <script>
 /* Elements */
 const modeOtp = document.getElementById('mode-otp');

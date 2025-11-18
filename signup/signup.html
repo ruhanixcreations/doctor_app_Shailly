@@ -6,6 +6,7 @@
   <title>Sign up</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../header/header.css">
 <style>
   /* (kept your previous style unchanged) */
   :root{
@@ -26,17 +27,18 @@
 
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
-    background:linear-gradient(180deg,#e9f3ff 0%,#f7fbff 100%);
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    color:#071123;
-    -webkit-font-smoothing:antialiased;
-  }
+body.app-shell{
+      font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
+      background:linear-gradient(180deg,#e9f3ff 0%,#f7fbff 100%);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      padding-top:140px;
+      color:#071123;
+      -webkit-font-smoothing:antialiased;
+    }
 
   .signup-wrapper{
     width:100%;
@@ -237,7 +239,7 @@
   input,textarea{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text}
 </style>
 </head>
-<body>
+  <body class="app-shell" data-app-root="..">
   <div class="signup-wrapper">
     <div class="signup-card" role="main" aria-labelledby="signupHeading">
       <div class="brand-row" aria-hidden="true">
@@ -297,6 +299,7 @@
 
   <div id="popupOverlay"><div class="popup-box"><p id="popupMessage"></p><button onclick="closePopup()">OK</button></div></div>
 
+<script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
 <script>
   /* ---------- element references ---------- */
   const nameInput = document.getElementById("name");

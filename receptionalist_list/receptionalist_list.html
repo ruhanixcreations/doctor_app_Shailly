@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Receptionist List — Ruhanix</title>
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="../styles/workspace.css">
 
 <style>
 :root{
@@ -26,15 +28,14 @@
 body{
   font-family:Inter,system-ui,Arial,sans-serif;
   margin:0;
-  background:var(--bg);
+  background:transparent;
   color:#0b2340;
-  padding:20px;
   -webkit-font-smoothing:antialiased;
 }
 
-.container{
+.reception-panel{
   max-width:980px;
-  margin:18px auto;
+  margin:0 auto;
   background:var(--card);
   padding:18px;
   border-radius:var(--radius);
@@ -142,7 +143,7 @@ h2{margin:0;font-size:20px}
 /* responsive layout + scrollable cell values */
 @media (max-width:760px){
   .modal{ width:100%; max-width:480px; padding:12px }
-  .container{ padding:12px }
+  .reception-panel{ padding:12px }
 
   .table thead{ display:none }
   .table, .table tbody, .table tr, .table td{ display:block; width:100% }
@@ -195,8 +196,9 @@ h2{margin:0;font-size:20px}
 .visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap }
 </style>
 </head>
-<body>
-  <main class="container" aria-live="polite">
+<body class="app-shell" data-app-root="..">
+  <main class="page-shell">
+    <section class="workspace-panel reception-panel" aria-live="polite">
     <div class="header">
       <h2>Receptionist List</h2>
       <div>
@@ -214,7 +216,10 @@ h2{margin:0;font-size:20px}
       <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Created</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
+    </section>
   </main>
+
+  <script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
 
   <div id="toast" class="toast" role="status" aria-hidden="true"></div>
 

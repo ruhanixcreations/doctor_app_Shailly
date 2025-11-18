@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ruhanix Care — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-SzlrxWriC3+1fR9JYG1VZJ7z0f0nIJ6c2e6GqMB1pIcT/8p1dC1Y9Vn0R12gKch0JJM8hG5B+7CXvN5m+MTLbw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="../header/header.css" />
+  <link rel="stylesheet" href="../styles/workspace.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body class="app-shell" data-app-root="..">
+  <main class="page-shell">
+    <section class="workspace-panel dashboard-hero">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Doctor workspace</p>
+          <h1>Care command center</h1>
+          <p class="panel-subtext">Jump straight into patient, pharmacy, diagnostic or team workflows. Everything is just one tap away.</p>
+        </div>
+        <div class="utility-bar">
+          <button class="pill-action" type="button" id="heroAddPatient">Add patient</button>
+          <button class="pill-action ghost" type="button" id="heroOpenMenu">Show menu</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span>Active role</span>
+          <strong data-stat-role>—</strong>
+          <small>Controls what you can access</small>
+        </div>
+        <div class="stat-card">
+          <span>Client ID</span>
+          <strong data-stat-client>—</strong>
+          <small>Linked to your prescriptions</small>
+        </div>
+        <div class="stat-card">
+          <span>Available shortcuts</span>
+          <strong data-stat-shortcuts>0</strong>
+          <small>Filtered by role &amp; search</small>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="surface-card shortcut-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Workspace shortcuts</p>
+          <h2>Pick a workflow to continue</h2>
+        </div>
+        <input type="search" id="cardFilter" class="card-search" placeholder="Filter by name or purpose" aria-label="Filter shortcuts" />
+      </div>
+
+      <div class="cards-grid" id="dashboardCards">
+        <a id="card-add-reception" class="shortcut-card" href="dashboard.php?role=receptionalist" title="Add Receptionalist">
+          <span class="card-icon"><i class="fa-solid fa-user-plus"></i></span>
+          <div class="card-copy">
+            <strong>Add Receptionalist</strong>
+            <span>Create a receptionist account with OTP verification.</span>
+            <span class="card-chip">Team</span>
+          </div>
+        </a>
+
+        <a id="card-view-patient" class="shortcut-card" href="../patient_history/patient_history.html" title="Patient History">
+          <span class="card-icon"><i class="fa-solid fa-users"></i></span>
+          <div class="card-copy">
+            <strong>Patient History</strong>
+            <span>Review visits, reports, and appointments.</span>
+            <span class="card-chip">Patients</span>
+          </div>
+        </a>
+
+        <a id="card-add-patient" class="shortcut-card" href="../add_new_patient/add_new_patient.html" title="Add New Patient">
+          <span class="card-icon"><i class="fa-solid fa-user"></i></span>
+          <div class="card-copy">
+            <strong>Add New Patient</strong>
+            <span>Capture demographics, vitals, and visit files.</span>
+            <span class="card-chip">Patients</span>
+          </div>
+        </a>
+
+        <a id="card-new-prescription" class="shortcut-card" href="../add_prescription/add_prescription.html" title="Add New Prescription">
+          <span class="card-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></span>
+          <div class="card-copy">
+            <strong>Add Prescription</strong>
+            <span>Draft or upload prescriptions in seconds.</span>
+            <span class="card-chip">Rx</span>
+          </div>
+        </a>
+
+        <a id="card-all-medicine" class="shortcut-card" href="../all_medicine/all_medicine.html" title="All Medicine">
+          <span class="card-icon"><i class="fa-solid fa-capsules"></i></span>
+          <div class="card-copy">
+            <strong>All Medicine</strong>
+            <span>Manage formulations, strengths, and brands.</span>
+            <span class="card-chip">Pharmacy</span>
+          </div>
+        </a>
+
+        <a id="card-doctors-list" class="shortcut-card" href="../doctors_list/doctors_list.html" title="Doctors List">
+          <span class="card-icon"><i class="fa-solid fa-user-doctor"></i></span>
+          <div class="card-copy">
+            <strong>Doctors List</strong>
+            <span>Invite doctors, manage OTP onboarding.</span>
+            <span class="card-chip">Team</span>
+          </div>
+        </a>
+
+        <a id="card-blood-tests" class="shortcut-card" href="../blood_tests/blood_tests.html" title="Blood Test List">
+          <span class="card-icon"><i class="fa-solid fa-vials"></i></span>
+          <div class="card-copy">
+            <strong>Blood Test List</strong>
+            <span>Maintain diagnostic catalogs and pricing.</span>
+            <span class="card-chip">Diagnostics</span>
+          </div>
+        </a>
+
+        <a id="card-receptionalist-list" class="shortcut-card" href="../receptionalist_list/receptionalist_list.html" title="Receptionalist List">
+          <span class="card-icon"><i class="fa-solid fa-id-badge"></i></span>
+          <div class="card-copy">
+            <strong>Receptionalist List</strong>
+            <span>Manage receptionist access and onboarding.</span>
+            <span class="card-chip">Team</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="cards-empty" id="cardsEmpty">No shortcuts match that search.</div>
+    </section>
+
+    <p class="dashboard-footer">© 2025 Ruhanix Healthcare System — crafted for doctors &amp; receptionists</p>
+  </main>
+
+  <script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
+  <script defer src="dashboard.js"></script>
+</body>
+</html>

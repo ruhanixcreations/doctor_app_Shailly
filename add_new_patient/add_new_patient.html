@@ -4,6 +4,11 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Add New Patient — Capture & Create PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="../styles/workspace.css">
 
 <style>
 :root{
@@ -13,9 +18,10 @@
 }
 
 /* Page layout */
-body{font-family:Inter,Arial,sans-serif;background:#f5f7fb;padding:12px;color:#333;}
-.card{max-width:940px;margin:12px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.08);}
-h1{margin:0 0 16px;font-size:24px;color:#1a202c;}
+body{font-family:'Inter',Arial,sans-serif;color:#333;margin:0;}
+.patient-panel{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:24px;}
+.patient-panel h2{margin:0 0 10px;font-size:28px;color:#1a202c;}
+.patient-form-card{padding:clamp(20px,3vw,36px);background:#fff;border-radius:20px;box-shadow:0 25px 70px rgba(8,18,40,.08);}
 .row{display:flex;gap:20px;flex-wrap:wrap;}
 .col-main{flex:1 1 100%;}
 label{display:block;font-weight:600;margin-bottom:6px;font-size:14px;}
@@ -77,11 +83,19 @@ canvas{display:none;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body>
-<div class="card">
-  <h1>Add New Patient</h1>
+<body class="app-shell" data-app-root="..">
+<main class="page-shell">
+  <section class="workspace-panel patient-panel">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">Patients</p>
+        <h2>Add new patient</h2>
+        <p class="panel-subtext">Capture demographics, vitals, and supporting files before generating a PDF bundle.</p>
+      </div>
+    </div>
 
-  <form id="patientForm" enctype="multipart/form-data" autocomplete="off" novalidate>
+    <div class="patient-form-card">
+      <form id="patientForm" enctype="multipart/form-data" autocomplete="off" novalidate>
     <input type="hidden" id="client_id" name="client_id">
 
     <div class="row">
@@ -146,9 +160,13 @@ canvas{display:none;}
       <input type="file" id="fileUpload" style="display:none;" accept="image/*,application/pdf" multiple>
     </div>
 
-    <div id="status" class="small" style="margin-top:10px;"></div>
-  </form>
-</div>
+      <div id="status" class="small" style="margin-top:10px;"></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script defer src="../header/header.js" data-header-root="../header" data-app-root=".."></script>
 
 <script>
 (async function(){

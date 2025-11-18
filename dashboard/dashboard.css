@@ -1,0 +1,182 @@
+:root {
+  --dash-card-bg: #ffffff;
+  --dash-card-border: rgba(15, 31, 61, 0.08);
+  --dash-card-shadow: 0 20px 40px rgba(10, 20, 50, 0.12);
+  --dash-card-hover: 0 25px 60px rgba(10, 20, 50, 0.16);
+  --dash-muted: #5d6784;
+  --dash-accent: #4b74ff;
+  --dash-gradient: linear-gradient(135deg, #4b74ff, #7a9dff);
+}
+
+.dashboard-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto -40% -60% 35%;
+  height: 260px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45), transparent 60%);
+  pointer-events: none;
+}
+
+.dashboard-hero .utility-bar {
+  justify-content: flex-end;
+}
+
+.dashboard-hero .pill-action[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 28px);
+  color: #0f1f3d;
+}
+
+.section-head .eyebrow {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dash-muted);
+  margin-bottom: 4px;
+}
+
+.card-search {
+  border-radius: 14px;
+  border: 1px solid var(--dash-card-border);
+  padding: 10px 14px;
+  min-width: 230px;
+  font-size: 15px;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: inset 0 1px 2px rgba(15, 31, 61, 0.08);
+}
+
+.card-search:focus {
+  border-color: var(--dash-accent);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(75, 116, 255, 0.15);
+}
+
+.cards-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.shortcut-card {
+  position: relative;
+  padding: 20px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--dash-card-border);
+  background: var(--dash-card-bg);
+  box-shadow: var(--dash-card-shadow);
+  text-decoration: none;
+  color: #0f1f3d;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.shortcut-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--dash-card-hover);
+}
+
+.shortcut-card[data-hidden="true"] {
+  display: none;
+}
+
+.card-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  background: var(--dash-gradient);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 22px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-copy strong {
+  font-size: 16px;
+}
+
+.card-copy span {
+  font-size: 13px;
+  color: var(--dash-muted);
+}
+
+.card-chip {
+  align-self: flex-start;
+  font-size: 12px;
+  color: var(--dash-accent);
+  background: rgba(75, 116, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.cards-empty {
+  display: none;
+  margin-top: 18px;
+  text-align: center;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px dashed var(--dash-card-border);
+  color: var(--dash-muted);
+}
+
+.cards-empty.visible {
+  display: block;
+}
+
+.role-alert {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(75, 116, 255, 0.08);
+  border: 1px solid rgba(75, 116, 255, 0.2);
+  color: var(--dash-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.dashboard-footer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--dash-muted);
+  margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+  .card-search {
+    width: 100%;
+  }
+  .shortcut-card {
+    flex-direction: row;
+  }
+}
