@@ -72,7 +72,7 @@ h2 {
 }
 
 /* Section Boxes */
-.section {
+  .section {
   margin-top:14px;
   background:#fafafa;
   padding:16px;
@@ -243,6 +243,21 @@ h2 {
     line-height:1.4;
   }
 
+  .appointments-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:18px;
+  }
+
+  .sub-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#333;
+  }
+
 /* Patient ID Quick box */
 #quickInfo {
   background:#f7f7ff;
@@ -373,8 +388,24 @@ h3 {
             <strong>Appointments History</strong>
             <span id="appointmentsCount" class="count-pill">—</span>
           </div>
-          <div id="appointmentsEmpty" class="empty-state small">Select a patient to see their appointment history.</div>
-          <ul id="appointmentsTimeline" class="timeline-list small"></ul>
+          <div class="appointments-grid">
+            <div>
+              <div class="sub-head">
+                <span>Upcoming</span>
+                <span id="appointmentsUpcomingCount" class="count-pill">—</span>
+              </div>
+              <div id="appointmentsUpcomingEmpty" class="empty-state small">Select a patient to see their appointment history.</div>
+              <ul id="appointmentsUpcomingTimeline" class="timeline-list small"></ul>
+            </div>
+            <div>
+              <div class="sub-head">
+                <span>Completed</span>
+                <span id="appointmentsPastCount" class="count-pill">—</span>
+              </div>
+              <div id="appointmentsPastEmpty" class="empty-state small">Select a patient to see their appointment history.</div>
+              <ul id="appointmentsPastTimeline" class="timeline-list small"></ul>
+            </div>
+          </div>
         </div>
 
       <div class="section" style="margin-top:12px;">
@@ -465,50 +496,115 @@ function createReportListItem(r) {
   return li;
 }
 
-function renderAppointments(list, patientName){
-  const timeline = document.getElementById('appointmentsTimeline');
-  const emptyState = document.getElementById('appointmentsEmpty');
-  const countEl = document.getElementById('appointmentsCount');
+function parseTimeToMinutes(raw){
+  if(!raw) return null;
+  const str = raw.trim();
+  if(!str) return null;
+  const ampm = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)$/i);
+  if(ampm){
+    let hours = parseInt(ampm[1],10);
+    const minutes = parseInt(ampm[2],10);
+    const meridian = ampm[4].toUpperCase();
+    if(hours === 12) hours = 0;
+    if(meridian === 'PM') hours += 12;
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  const twentyFour = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if(twentyFour){
+    const hours = parseInt(twentyFour[1],10);
+    const minutes = parseInt(twentyFour[2],10);
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  return null;
+}
 
-  timeline.innerHTML = '';
+function createTimelineItem(appt){
+  const li = document.createElement('li');
+  li.className = 'timeline-item';
+  const dateLabel = escapeHtml(appt.date || '—');
+  const timeLabel = appt.time ? escapeHtml(appt.time) : '';
+  const doctorLabel = escapeHtml(appt.doctor || 'Doctor');
+  const metaParts = [`<span class="timeline-date">${dateLabel}</span>`];
+  if(timeLabel) metaParts.push(`<span class="timeline-time">${timeLabel}</span>`);
+  metaParts.push(`<span class="timeline-doctor">${doctorLabel}</span>`);
+  const notesText = escapeHtml(appt.notes || 'No notes recorded.');
+  li.innerHTML = `
+    <div class="timeline-meta">${metaParts.join('')}</div>
+    <p class="timeline-notes">${notesText}</p>
+  `;
+  return li;
+}
+
+function renderAppointments(list, patientName){
+  const countEl = document.getElementById('appointmentsCount');
+  const upcomingCountEl = document.getElementById('appointmentsUpcomingCount');
+  const pastCountEl = document.getElementById('appointmentsPastCount');
+  const upcomingEmpty = document.getElementById('appointmentsUpcomingEmpty');
+  const pastEmpty = document.getElementById('appointmentsPastEmpty');
+  const upcomingTimeline = document.getElementById('appointmentsUpcomingTimeline');
+  const pastTimeline = document.getElementById('appointmentsPastTimeline');
+
+  upcomingTimeline.innerHTML = '';
+  pastTimeline.innerHTML = '';
+
   const total = Array.isArray(list) ? list.length : 0;
 
   if(!patientName){
     countEl.textContent = '—';
-    emptyState.style.display = 'block';
-    emptyState.textContent = 'Select a patient to see their appointment history.';
+    upcomingCountEl.textContent = '—';
+    pastCountEl.textContent = '—';
+    upcomingEmpty.style.display = 'block';
+    pastEmpty.style.display = 'block';
+    upcomingEmpty.textContent = 'Select a patient to see their upcoming appointments.';
+    pastEmpty.textContent = 'Select a patient to see completed appointments.';
     return;
   }
 
   countEl.textContent = total ? `${total} record${total > 1 ? 's' : ''}` : '0 records';
 
-  if(total === 0){
-    emptyState.style.display = 'block';
-    emptyState.textContent = `No appointments recorded for ${patientName}.`;
-    return;
-  }
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  const currentMinutes = today.getHours() * 60 + today.getMinutes();
 
-  emptyState.style.display = 'none';
+  const upcoming = [];
+  const past = [];
 
   list.forEach(appt=>{
-    const li = document.createElement('li');
-    li.className = 'timeline-item';
-    const metaParts = [];
-    const dateLabel = escapeHtml(appt.date || '—');
-    const timeLabel = appt.time ? escapeHtml(appt.time) : '';
-    const doctorLabel = escapeHtml(appt.doctor || 'Doctor');
-    metaParts.push(`<span class="timeline-date">${dateLabel}</span>`);
-    if(timeLabel) metaParts.push(`<span class="timeline-time">${timeLabel}</span>`);
-    metaParts.push(`<span class="timeline-doctor">${doctorLabel}</span>`);
-
-    const notesText = escapeHtml(appt.notes || 'No notes recorded.');
-
-    li.innerHTML = `
-      <div class="timeline-meta">${metaParts.join('')}</div>
-      <p class="timeline-notes">${notesText}</p>
-    `;
-    timeline.appendChild(li);
+    const dateStr = (appt.date || '').toString().slice(0,10);
+    let bucket = upcoming;
+    if(dateStr){
+      if(dateStr < todayStr){
+        bucket = past;
+      } else if(dateStr === todayStr){
+        const apptMinutes = parseTimeToMinutes(appt.time);
+        if(apptMinutes !== null && apptMinutes < currentMinutes){
+          bucket = past;
+        }
+      }
+    }
+    bucket.push(appt);
   });
+
+  upcomingCountEl.textContent = upcoming.length.toString();
+  pastCountEl.textContent = past.length.toString();
+
+  if(!upcoming.length){
+    upcomingEmpty.style.display = 'block';
+    upcomingEmpty.textContent = `No upcoming appointments for ${patientName}.`;
+  } else {
+    upcomingEmpty.style.display = 'none';
+    upcoming.forEach(appt=> upcomingTimeline.appendChild(createTimelineItem(appt)));
+  }
+
+  if(!past.length){
+    pastEmpty.style.display = 'block';
+    pastEmpty.textContent = `No completed appointments for ${patientName}.`;
+  } else {
+    pastEmpty.style.display = 'none';
+    past.forEach(appt=> pastTimeline.appendChild(createTimelineItem(appt)));
+  }
 }
 
 async function loadDetails(patient_id){
