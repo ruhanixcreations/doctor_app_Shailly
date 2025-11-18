@@ -5,21 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dashboard - Ruhanix</title>
   <link rel="stylesheet" href="dashboard (1).css">
+  <link rel="stylesheet" href="../header/header.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <i class="fa-solid fa-stethoscope"></i>
-      <span>Ruhanix Legal - Dashboard</span>
-    </div>
-    <div class="user-info" title="User Profile">
-      <i class="fa-solid fa-user-md"></i>
-    </div>
-  </header>
+  <!-- Header will be loaded here -->
+  <div id="header-container"></div>
 
   <main class="container">
     <h2 class="page-title">Quick Actions</h2>
@@ -120,6 +114,21 @@
     <div>© 2025 Ruhanix Healthcare System</div>
   </footer>
 
+  <!-- Load header -->
+  <script>
+    // Fetch and load header component
+    fetch('../header/header.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('header-container').innerHTML = html;
+        // Load header JS after HTML is inserted
+        const script = document.createElement('script');
+        script.src = '../header/header.js';
+        document.body.appendChild(script);
+      })
+      .catch(error => console.error('Error loading header:', error));
+  </script>
+  
   <script src="dashboard (1).js"></script>
 </body>
 </html>
