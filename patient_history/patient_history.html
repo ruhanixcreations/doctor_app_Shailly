@@ -131,6 +131,9 @@ body{
 .patient-detail-value{
   font-weight:600;
   color:var(--text-dark);
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+  word-break:break-word;
 }
 
 /* select dropdown */
@@ -889,7 +892,18 @@ async function loadDetails(patient_id){
     document.getElementById('pdMobile').textContent = p.mobile || '-';
     document.getElementById('pdAge').textContent = p.age || '-';
     document.getElementById('pdWeight').textContent = p.weight || '-';
-    document.getElementById('pdDoctor').textContent = p.doctor || '-';
+    
+    // Parse doctor field if it's JSON
+    let doctorName = '-';
+    if(p.doctor){
+      try{
+        const doctorObj = JSON.parse(p.doctor);
+        doctorName = doctorObj.name || '-';
+      }catch(e){
+        doctorName = p.doctor; // If not JSON, use as is
+      }
+    }
+    document.getElementById('pdDoctor').textContent = doctorName;
     
     // Update quick info
     quickInfo.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success-green)"></i> ${p.patient_name} — ${p.patient_id}`;
