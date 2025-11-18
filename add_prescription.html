@@ -304,9 +304,9 @@ textarea{min-height:80px;resize:vertical}
 /* blood test box */
 #bloodTestBox{margin-top:14px}
 #bloodSelectedLabel,#followUpLabel{margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px}
-.blood-test-checkboxes{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px;max-height:300px;overflow-y:auto;padding:10px;border:1px solid var(--border-light);border-radius:6px;background:var(--bg-white)}
-.blood-test-checkboxes label{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:4px;border:1px solid var(--border-light);background:var(--bg-white);font-size:14px;cursor:pointer;transition:all 0.2s ease}
-.blood-test-checkboxes label:hover{border-color:var(--primary-teal);background:rgba(0,169,165,0.05)}
+.blood-test-checkboxes{padding:8px;max-height:280px;overflow-y:auto}
+.blood-test-checkboxes label{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:4px;margin:4px 0;font-size:14px;cursor:pointer;transition:all 0.2s ease}
+.blood-test-checkboxes label:hover{background:rgba(0,169,165,0.08)}
 .blood-test-checkboxes input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--primary-teal)}
 #selectedBloodTestsList{margin-top:12px;padding:10px;background:var(--bg-light);border-radius:4px;display:none}
 #selectedBloodTestsList ol{margin:8px 0 0 20px;padding:0}
@@ -507,8 +507,17 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
         
         <div id="bloodTestBox">
           <label class="small">Recommended Blood Test (Select multiple)</label>
-          <div class="blood-test-checkboxes" id="bloodTestCheckboxes">
-            <!-- Blood test checkboxes will be populated here -->
+          <div class="blood-dropdown" id="bloodDropdown" style="margin-top:8px;">
+            <div class="selectedBtn" id="bloodSelectedBtn">
+              <span id="bloodLabel">Choose blood tests...</span> 
+              <span style="opacity:0.6">▾</span>
+            </div>
+            <div class="listPanel hidden" id="bloodPanel">
+              <div class="search"><input id="bloodSearch" type="search" placeholder="Search blood tests..."></div>
+              <div class="blood-test-checkboxes" id="bloodTestCheckboxes">
+                <!-- Blood test checkboxes will be populated here -->
+              </div>
+            </div>
           </div>
           
           <div id="selectedBloodTestsList">
@@ -726,22 +735,38 @@ function populatePatientItems(filter){
 patientSelectedBtn.addEventListener('click',(ev)=>{ ev.stopPropagation(); if(patientPanel.style.display==='block'){ hidePanel(patientPanel); } else { populatePatientItems(''); showPanelFixed(patientSelectedBtn, patientPanel); } });
 patientSearch.addEventListener('input',(e)=> populatePatientItems(e.target.value));
 
-/* ---------- BLOOD TEST CHECKBOXES ---------- */
+/* ---------- BLOOD TEST DROPDOWN WITH CHECKBOXES ---------- */
+const bloodDropdown = document.getElementById('bloodDropdown');
+const bloodSelectedBtn = document.getElementById('bloodSelectedBtn');
+const bloodPanel = document.getElementById('bloodPanel');
 const bloodTestCheckboxes = document.getElementById('bloodTestCheckboxes');
+const bloodSearch = document.getElementById('bloodSearch');
+const bloodLabel = document.getElementById('bloodLabel');
 const selectedBloodTestsList = document.getElementById('selectedBloodTestsList');
 const selectedBloodTestsOL = document.getElementById('selectedBloodTestsOL');
 
-function populateBloodTestCheckboxes(){
+function populateBloodTestCheckboxes(filter = ''){
   bloodTestCheckboxes.innerHTML = '';
-  if(!bloodTests.length){ bloodTestCheckboxes.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted)">No blood tests available</div>'; return; }
+  const q = (filter || '').trim().toLowerCase();
+  const list = bloodTests.filter(b => !q || (b.name && b.name.toLowerCase().includes(q)));
   
-  bloodTests.forEach(b => {
+  if(!list.length){ 
+    bloodTestCheckboxes.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">No blood tests found</div>'; 
+    return; 
+  }
+  
+  list.forEach(b => {
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = b.id;
     checkbox.dataset.name = b.name;
     checkbox.addEventListener('change', updateSelectedBloodTests);
+    
+    // Check if this test is already selected
+    if(selectedBloodTests.some(t => t.id == b.id)){
+      checkbox.checked = true;
+    }
     
     const span = document.createElement('span');
     span.textContent = b.name + (b.price ? ` — ₹${b.price}` : '');
@@ -762,6 +787,15 @@ function updateSelectedBloodTests(){
     });
   });
   
+  // Update button label
+  if(selectedBloodTests.length === 0){
+    bloodLabel.textContent = 'Choose blood tests...';
+  } else if(selectedBloodTests.length === 1){
+    bloodLabel.textContent = selectedBloodTests[0].name;
+  } else {
+    bloodLabel.textContent = `${selectedBloodTests.length} tests selected`;
+  }
+  
   // Update display list
   if(selectedBloodTests.length > 0){
     selectedBloodTestsOL.innerHTML = '';
@@ -778,6 +812,27 @@ function updateSelectedBloodTests(){
   updateFieldsCount();
   validateAllForms();
 }
+
+// Dropdown open/close
+bloodSelectedBtn.addEventListener('click', (ev) => { 
+  ev.stopPropagation(); 
+  if(bloodPanel.style.display === 'block'){ 
+    hidePanel(bloodPanel); 
+  } else { 
+    populateBloodTestCheckboxes(''); 
+    showPanelFixed(bloodSelectedBtn, bloodPanel); 
+  } 
+});
+
+// Search functionality
+bloodSearch.addEventListener('input', (e) => {
+  populateBloodTestCheckboxes(e.target.value);
+});
+
+// Prevent dropdown from closing when clicking inside the checkboxes area
+bloodTestCheckboxes.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
 
 /* ---------- MEDICINE MINI-FORM ---------- */
 const medsContainer = document.getElementById('medsFormsContainer');
@@ -1155,8 +1210,7 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     document.getElementById('topSymptoms').value = '';
     // Reset blood test selections
     selectedBloodTests = [];
-    const checkboxes = bloodTestCheckboxes.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => cb.checked = false);
+    bloodLabel.textContent = 'Choose blood tests...';
     selectedBloodTestsList.style.display = 'none';
     updateFieldsCount();
     validateAllForms();
@@ -1263,8 +1317,7 @@ async function onPatientSelected(patient_id, patientObj){
 
   document.getElementById('topSymptoms').value = '';
   selectedBloodTests = [];
-  const checkboxes = bloodTestCheckboxes.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(cb => cb.checked = false);
+  bloodLabel.textContent = 'Choose blood tests...';
   selectedBloodTestsList.style.display = 'none';
   if(!document.getElementById('topFollowUp').value) document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
   updateFollowUpLabelFromTop();
