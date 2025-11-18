@@ -31,7 +31,7 @@ body{
 
 .top-actions{
   display:flex;
-  gap:12px;
+  gap:10px;
   justify-content:flex-end;
   margin-bottom:20px;
   max-width:1000px;
@@ -40,17 +40,18 @@ body{
 }
 
 .btn{
-  padding:10px 20px;
+  padding:8px 16px;
   border-radius:6px;
   border:none;
   cursor:pointer;
   font-weight:600;
-  font-size:14px;
+  font-size:13px;
   display:inline-flex;
   align-items:center;
-  gap:8px;
+  gap:6px;
   box-shadow:0 2px 4px rgba(0,0,0,0.1);
   transition:all 0.2s ease;
+  white-space:nowrap;
 }
 
 .btn:hover{
@@ -80,30 +81,16 @@ body{
 
 /* Header Section */
 .prescription-header{
-  background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
-  padding:24px 30px;
-  color:white;
-  border-bottom:4px solid #007a77;
+  padding:20px 30px;
+  border-bottom:1px solid var(--border-light);
+  background:var(--bg-white);
 }
 
 .prescription-header h1{
-  font-size:28px;
+  font-size:24px;
   font-weight:700;
   margin:0;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.prescription-header h1 i{
-  font-size:32px;
-}
-
-.prescription-header .subtitle{
-  font-size:14px;
-  opacity:0.9;
-  margin-top:6px;
-  font-weight:400;
+  color:var(--text-dark);
 }
 
 /* Content Area */
@@ -270,10 +257,8 @@ tbody tr:last-child td{
   }
   
   .prescription-header{
-    background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-    color-adjust:exact;
+    background:var(--bg-white);
+    border-bottom:1px solid var(--border-light);
   }
   
   .patient-section{
@@ -351,16 +336,21 @@ tbody tr:last-child td{
   }
   
   .top-actions{
-    flex-direction:column;
+    gap:8px;
   }
   
   .btn{
-    width:100%;
-    justify-content:center;
+    padding:8px 12px;
+    font-size:12px;
+    gap:4px;
+  }
+  
+  .btn i{
+    font-size:12px;
   }
   
   .prescription-header{
-    padding:16px;
+    padding:16px 20px;
   }
   
   .prescription-header h1{
@@ -390,11 +380,7 @@ tbody tr:last-child td{
   <div id="printArea" class="paper" aria-live="polite">
     <!-- HEADER -->
     <div class="prescription-header">
-      <h1>
-        <i class="fas fa-prescription-bottle-alt"></i>
-        Medical Prescription
-      </h1>
-      <div class="subtitle">Official prescription document</div>
+      <h1>Report</h1>
     </div>
 
     <!-- CONTENT -->
