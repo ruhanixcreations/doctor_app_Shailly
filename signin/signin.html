@@ -5,169 +5,392 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
 <title>Sign In</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0b2340; --sea:#6f9ef0; --sea-dark:#183159; --muted:#6f7f8f;
-    --card-bg:#fff; --radius:14px; --box-width:780px; --control-height:50px;
-    --input-shadow: 0 14px 40px rgba(13,30,60,0.12);
-    --input-focus-shadow: 0 18px 50px rgba(25,72,160,0.18);
-    --btn-shadow: 0 14px 34px rgba(24,57,89,0.16);
-    --popup-bg: #fff8f6;
-    --popup-border: rgba(221,85,72,0.12);
-    --popup-backdrop: rgba(6,12,24,0.36);
+    --primary-teal:#00A9A5;
+    --primary-blue:#1a75bb;
+    --text-dark:#2c3e50;
+    --text-muted:#6c757d;
+    --border-light:#e0e6ed;
+    --bg-light:#f8f9fa;
+    --bg-white:#ffffff;
+    --control-height:50px;
   }
+  
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
-    font-family:"Inter","Poppins",system-ui,Arial,sans-serif;
-    background:linear-gradient(180deg,#e9f3ff 0%,#f7fbff 100%);
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:28px; -webkit-font-smoothing:antialiased; color:#071123;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:#f5f7fa;
+    min-height:100vh; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center;
+    padding:20px; 
+    color:var(--text-dark);
+    -webkit-font-smoothing:antialiased;
   }
 
-  .wrap{width:100%;max-width:var(--box-width);position:relative}
-  .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:0 22px 60px rgba(9,30,66,0.10);
-    border:1px solid rgba(16,42,83,0.06); overflow:visible; position:relative;}
+  .wrap{
+    width:100%;
+    max-width:500px;
+    position:relative;
+  }
+  
+  .card{
+    background:var(--bg-white);
+    border-radius:12px;
+    box-shadow:0 4px 16px rgba(0,0,0,0.1);
+    border:1px solid var(--border-light);
+    overflow:visible; 
+    position:relative;
+  }
+  
   .card-header{
-    background:linear-gradient(90deg,var(--navy) 0%,var(--sea-dark) 100%);
-    padding:20px 26px;color:#fff;display:flex;gap:16px;align-items:center;
-    border-top-left-radius:var(--radius); border-top-right-radius:var(--radius);
+    background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+    padding:30px 30px;
+    color:white;
+    border-radius:12px 12px 0 0;
+    text-align:center;
   }
+  
   .brand{
-    width:56px;height:56px;border-radius:12px;
-    background:linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0.03));
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;
-    font-size:18px; box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+    backdrop-filter:blur(10px);
   }
+  
+  .brand i{
+    font-size:36px;
+    color:white;
+  }
+  
   .card-header .title{
-    font-size:22px; font-weight:800; line-height:1; letter-spacing:0.2px;
-    color:#ffffff; text-shadow:0 1px 0 rgba(0,0,0,0.12);
+    font-size:26px; 
+    font-weight:700; 
+    margin-bottom:6px;
   }
+  
   .card-header .subtitle{
-    font-size:13px; color:rgba(255,255,255,0.9); margin-top:4px; font-weight:600;
+    font-size:14px; 
+    opacity:0.95;
+    font-weight:400;
   }
 
-  .card-body{padding:26px;background:linear-gradient(180deg,#fff,#fbfdff);position:relative;min-height:260px}
-  h1{font-size:24px;margin-bottom:8px;color:#071123;font-weight:800; line-height:1.1}
-  p.lead{font-size:15px;color:var(--muted);margin-bottom:12px}
-  .choices-row{display:flex;gap:12px;align-items:center;margin-top:12px}
+  .card-body{
+    padding:30px;
+    background:var(--bg-white);
+    min-height:300px;
+  }
+  
+  h1{
+    font-size:22px;
+    margin-bottom:8px;
+    color:var(--text-dark);
+    font-weight:700;
+  }
+  
+  p.lead{
+    font-size:14px;
+    color:var(--text-muted);
+    margin-bottom:20px;
+  }
+  
+  .choices-row{
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  
   .radio-item{
-    display:inline-flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
-    border:1px solid rgba(16,42,83,0.06);background:#fff;cursor:pointer; min-width:220px;
-    transition:box-shadow .12s,transform .08s;
+    flex:1;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:14px;
+    border-radius:8px;
+    border:2px solid var(--border-light);
+    background:var(--bg-white);
+    cursor:pointer;
+    transition:all 0.2s ease;
   }
-  .radio-item:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(8,18,40,0.06); }
-  .radio-item input{accent-color:var(--sea-dark); width:20px; height:20px;}
-  .radio-item strong{font-size:15px}
+  
+  .radio-item:hover{
+    border-color:var(--primary-teal);
+    background:rgba(0,169,165,0.02);
+  }
+  
+  .radio-item input{
+    accent-color:var(--primary-teal);
+    width:18px;
+    height:18px;
+    margin-top:2px;
+    cursor:pointer;
+  }
+  
+  .radio-item input:checked + div{
+    color:var(--primary-teal);
+  }
+  
+  .radio-item strong{
+    font-size:14px;
+    display:block;
+    margin-bottom:4px;
+  }
+  
+  .radio-item small{
+    color:var(--text-muted);
+    font-size:12px;
+  }
 
-  input, button { font-family:inherit; outline: none; font-size:15px; transition:box-shadow .12s, border-color .12s, transform .06s; }
-  input::placeholder { color: rgba(11,18,35,0.45); }
-  input[type="email"], input[type="password"], input[type="text"], input[type="tel"]{
-    width:100%; padding:12px 14px; height:var(--control-height); border-radius:12px;
-    border:1px solid rgba(16,42,83,0.08); font-size:15px; line-height:1.2;
-    background:linear-gradient(180deg,#ffffff,#fbfdff);
-    box-shadow: var(--input-shadow);
+  input{
+    font-family:inherit; 
+    outline:none; 
+    font-size:14px; 
+    transition:all 0.2s ease;
   }
-  input[type="email"], input[type="password"], input[type="text"], input[type="tel"]{
-    border-color: rgba(8,18,33,0.10);
+  
+  input::placeholder{
+    color:var(--text-muted);
   }
+  
+  input[type="email"], 
+  input[type="password"], 
+  input[type="text"]{
+    width:100%; 
+    padding:12px 14px; 
+    height:var(--control-height); 
+    border-radius:6px;
+    border:1px solid var(--border-light);
+    font-size:14px;
+    background:var(--bg-white);
+  }
+  
   input:focus{
-    border-color: var(--sea-dark);
-    box-shadow: var(--input-focus-shadow);
-    transform: translateY(-1px);
+    border-color:var(--primary-teal);
+    box-shadow:0 0 0 3px rgba(0,169,165,0.1);
   }
 
   .btn{
-    height:var(--control-height); padding:12px 16px; border-radius:12px; border:none;
-    background:linear-gradient(90deg,var(--sea),var(--sea-dark)); color:#fff; font-weight:800; cursor:pointer;
-    font-size:15px; box-shadow: var(--btn-shadow);
+    height:var(--control-height); 
+    padding:12px 24px; 
+    border-radius:6px; 
+    border:none;
+    background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+    color:#fff; 
+    font-weight:600; 
+    cursor:pointer;
+    font-size:14px;
+    transition:all 0.2s ease;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
   }
-  .btn:active{ transform: translateY(1px) scale(0.998); }
-  .btn.disabled{background: gray;          /* button background */
-  color: #fff;   opacity:.6; cursor:not-allowed; box-shadow: none}
-  .inline-error{color:#ef4444;font-size:14px;margin-top:8px}
-  .hint{font-size:14px;color:var(--muted)}
+  
+  .btn:hover:not(:disabled){
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(0,169,165,0.3);
+  }
+  
+  .btn:disabled{
+    background:#d1d5db;
+    color:#9ca3af;
+    cursor:not-allowed;
+  }
+  
+  .inline-error{
+    color:#dc3545;
+    font-size:13px;
+    margin-top:6px;
+    padding:8px 12px;
+    background:rgba(220,53,69,0.05);
+    border-left:3px solid #dc3545;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  
+  .hint{
+    font-size:13px;
+    color:var(--text-muted);
+  }
 
-  .form-panel{margin-top:18px; display:block; border-radius:12px; padding:16px; background:linear-gradient(180deg,#fbfdff,#ffffff); border:1px solid rgba(16,42,83,0.03)}
-  .row{display:flex; gap:10px; align-items:center}
-  .right { margin-left:auto; }
+  .form-panel{
+    margin-top:20px; 
+    display:block;
+  }
+  
+  .right{
+    margin-left:auto;
+  }
 
-  .small-note{font-size:13px;color:var(--muted); margin-top:10px}
-  .visually-hidden{position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px, 1px, 1px, 1px); white-space:nowrap;}
+  .small-note{
+    font-size:13px;
+    color:var(--text-muted); 
+    margin-top:10px;
+  }
+  
+  .visually-hidden{
+    position:absolute !important; 
+    height:1px; 
+    width:1px; 
+    overflow:hidden; 
+    clip:rect(1px, 1px, 1px, 1px); 
+    white-space:nowrap;
+  }
 
-  .signup-row { margin-top:16px; text-align:center; font-size:15px; color:var(--muted); }
+  .signup-row{
+    margin-top:20px; 
+    text-align:center; 
+    font-size:14px; 
+    color:var(--text-muted);
+  }
+  
+  .signup-row a{
+    color:var(--primary-teal);
+    font-weight:600;
+    text-decoration:none;
+  }
+  
+  .signup-row a:hover{
+    text-decoration:underline;
+  }
 
-  /* server popup backdrop inside card */
-  .server-popup-backdrop {
-    position:absolute;
+  /* server popup backdrop */
+  .server-popup-backdrop{
+    position:fixed;
     inset:0;
-    background: var(--popup-backdrop);
+    background:rgba(0,0,0,0.5);
     display:none;
-    z-index:75;
-    border-radius: var(--radius);
+    z-index:999;
   }
-  .server-popup-backdrop.show { display:block; }
+  
+  .server-popup-backdrop.show{
+    display:block;
+  }
 
-  /* BIG centered popup */
-  .server-popup {
-    position:absolute;
+  /* popup */
+  .server-popup{
+    position:fixed;
     left:50%;
     top:50%;
     transform:translate(-50%,-50%);
-    width:82%;
-    max-width:520px;
-    min-width:320px;
-    background: var(--popup-bg);
-    border:1px solid var(--popup-border);
-    border-radius:14px;
-    padding:20px 20px;
-    box-shadow: 0 30px 80px rgba(8,18,40,0.18);
+    width:90%;
+    max-width:400px;
+    background:var(--bg-white);
+    border-radius:12px;
+    padding:24px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
     display:none;
-    z-index:80;
+    z-index:1000;
   }
-  .server-popup.show { display:block; }
-  .server-popup h4{margin:0 0 10px 0; font-size:18px; color:#d14836; font-weight:800}
-  .server-popup p{margin:0 0 12px 0; color:#2d2d2d; font-size:15px; line-height:1.3}
-  .server-popup .popup-actions{display:flex; gap:8px; justify-content:flex-end; margin-top:6px}
+  
+  .server-popup.show{
+    display:block;
+  }
+  
+  .server-popup h4{
+    margin:0 0 12px 0; 
+    font-size:20px; 
+    color:#dc3545; 
+    font-weight:700;
+  }
+  
+  .server-popup p{
+    margin:0 0 16px 0; 
+    color:var(--text-dark); 
+    font-size:14px;
+  }
+  
+  .server-popup .popup-actions{
+    display:flex; 
+    gap:8px; 
+    justify-content:flex-end;
+  }
+  
   .server-popup .btn-secondary{
-    background:transparent; border:1px solid rgba(16,42,83,0.06); color:var(--muted); padding:10px 14px; border-radius:10px; cursor:pointer;
+    background:var(--primary-teal); 
+    border:none; 
+    color:white; 
+    padding:10px 20px; 
+    border-radius:6px; 
+    cursor:pointer;
+    font-weight:600;
   }
 
-  /* MOBILE / SMALL SCREENS */
-  @media(max-width:840px){
-    html,body{height:100%}
-    body{ padding:12px; }
-    :root{
-      --box-width:calc(100% - 18px);
-      --control-height:56px;
-      --input-shadow: 0 18px 46px rgba(13,30,60,0.14);
-      --input-focus-shadow: 0 24px 60px rgba(25,72,160,0.20);
-      --btn-shadow: 0 16px 40px rgba(24,57,89,0.18);
+  /* Mobile */
+  @media(max-width:600px){
+    body{
+      padding:12px;
     }
-    .wrap{max-width:var(--box-width);}
-    .card-body{padding:18px;}
-    .card-header{padding:16px 18px;}
-    .brand{width:48px;height:48px;font-size:16px}
-    .card-header .title{font-size:20px}
-    h1{font-size:20px}
-    .choices-row{flex-direction:row; gap:8px; justify-content:space-between; align-items:center}
-    .radio-item{flex:1; min-width:0; padding:10px; font-size:14px}
-    .form-panel{padding:14px;}
-    input[type="email"], input[type="password"], input[type="text"], input[type="tel"]{height:var(--control-height); padding:12px;}
-    .btn{height:var(--control-height); font-size:15px;}
-    .signup-row{margin-top:14px; font-size:14px}
-
-    .server-popup { width:90%; max-width:520px; padding:18px; left:50%; top:46%; transform:translate(-50%,-46%); min-width:260px; }
+    
+    .wrap{
+      max-width:100%;
+    }
+    
+    .card-header{
+      padding:24px 20px;
+    }
+    
+    .brand{
+      width:60px;
+      height:60px;
+    }
+    
+    .brand i{
+      font-size:30px;
+    }
+    
+    .card-header .title{
+      font-size:22px;
+    }
+    
+    .card-body{
+      padding:20px;
+    }
+    
+    h1{
+      font-size:20px;
+    }
+    
+    .choices-row{
+      flex-direction:column;
+      gap:10px;
+    }
+    
+    .radio-item{
+      width:100%;
+    }
+    
+    input[type="email"], 
+    input[type="password"], 
+    input[type="text"]{
+      height:48px;
+    }
+    
+    .btn{
+      height:48px;
+      width:100%;
+    }
   }
 
   @media(max-width:420px){
-    :root{ --box-width:calc(100% - 12px); --control-height:58px; }
-    .choices-row{flex-direction:column; gap:10px}
-    .radio-item{width:100%}
-    .card-header .title{font-size:18px}
-    h1{font-size:18px}
-    .server-popup { width:92%; left:50%; top:48%; transform:translate(-50%,-48%); }
+    .card-header .title{
+      font-size:20px;
+    }
+    
+    h1{
+      font-size:18px;
+    }
   }
 </style>
 </head>
@@ -176,96 +399,101 @@
   <div class="wrap" role="main" aria-labelledby="signInHeading">
     <div class="card" role="region" aria-label="Sign in card" id="cardRoot">
       <div class="card-header">
-        <div class="brand">SI</div>
-        <div>
-          <div class="title">Sign In</div>
-          <div class="subtitle">Secure sign-in with password or email OTP</div>
+        <div class="brand">
+          <i class="fas fa-user-md"></i>
         </div>
+        <div class="title">Sign In</div>
+        <div class="subtitle">Secure sign-in with password or email OTP</div>
       </div>
 
-      <!-- backdrop and server popup (centered and larger) -->
+      <!-- backdrop and server popup -->
       <div id="serverPopupBackdrop" class="server-popup-backdrop" aria-hidden="true"></div>
 
       <div id="serverPopup" class="server-popup" role="alertdialog" aria-modal="true" aria-labelledby="serverPopupTitle" aria-describedby="serverPopupDesc">
         <h4 id="serverPopupTitle">Notice</h4>
         <p id="serverPopupDesc">User not registered</p>
         <div class="popup-actions">
-          <button id="serverPopupOk" class="btn">OK</button>
+          <button id="serverPopupOk" class="btn-secondary">OK</button>
         </div>
       </div>
 
       <div class="card-body">
-        <h1 id="signInHeading">Welcome</h1>
+        <h1 id="signInHeading">Welcome Back</h1>
         <p class="lead">Choose how you'd like to sign in</p>
 
-        <!-- radio choices (default: otp) -->
+        <!-- radio choices -->
         <div class="choices-row" role="radiogroup" aria-label="Sign in mode">
           <label class="radio-item" for="mode-otp">
             <input id="mode-otp" name="signinMode" type="radio" value="otp" checked>
             <div>
-              <strong>Sign in with Email (OTP)</strong><br>
-              <small style="color:var(--muted)">Get a one-time code to your email</small>
+              <strong>Email OTP</strong><br>
+              <small>Get a one-time code</small>
             </div>
           </label>
 
           <label class="radio-item" for="mode-password">
             <input id="mode-password" name="signinMode" type="radio" value="password">
             <div>
-              <strong>Sign in with Password</strong><br>
-              <small style="color:var(--muted)">Enter your email and password</small>
+              <strong>Password</strong><br>
+              <small>Use your password</small>
             </div>
           </label>
         </div>
 
-        <!-- Inline form panel (shows fields depending on mode) -->
+        <!-- form panel -->
         <div id="formPanel" class="form-panel" aria-live="polite">
           <!-- shared email -->
-          <div>
+          <div style="margin-bottom:14px;">
             <label class="visually-hidden" for="email">Email</label>
             <input id="email" type="email" placeholder="Enter email" autocomplete="email" />
             <div id="emailError" class="inline-error" style="display:none"></div>
           </div>
 
           <!-- password area -->
-          <div id="passwordArea" style="display:none; margin-top:14px;">
-            <div>
+          <div id="passwordArea" style="display:none;">
+            <div style="margin-bottom:14px;">
               <label class="visually-hidden" for="password">Password</label>
               <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" />
               <div id="passwordError" class="inline-error" style="display:none"></div>
             </div>
-            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px">
-              <button id="signinBtn" class="btn" disabled>Sign In</button>
+            <div style="display:flex; justify-content:flex-end;">
+              <button id="signinBtn" class="btn" disabled>
+                <i class="fas fa-sign-in-alt"></i> Sign In
+              </button>
             </div>
           </div>
 
           <!-- OTP area -->
-          <div id="otpArea" style="margin-top:14px;">
-            <div style="display:flex; justify-content:flex-end">
-              <button id="sendOtpBtn" class="btn">Send OTP to Verify Email-Id</button>
+          <div id="otpArea">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+              <button id="sendOtpBtn" class="btn">
+                <i class="fas fa-paper-plane"></i> Send OTP
+              </button>
             </div>
-            <div id="sendStatus" class="hint" style="display:none; margin-top:10px"></div>
+            <div id="sendStatus" class="hint" style="display:none; margin-bottom:10px;"></div>
 
-            <div id="otpBlock" style="display:none; margin-top:12px">
-              <div>
+            <div id="otpBlock" style="display:none;">
+              <div style="margin-bottom:14px;">
                 <label class="visually-hidden" for="otp">OTP</label>
                 <input id="otp" type="text" placeholder="Enter OTP" inputmode="numeric" />
                 <div id="otpError" class="inline-error" style="display:none"></div>
               </div>
-              <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px">
-                <button id="verifyOtpBtn" class="btn" disabled>Verify OTP</button>
+              <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+                <button id="verifyOtpBtn" class="btn" disabled>
+                  <i class="fas fa-check-circle"></i> Verify OTP
+                </button>
               </div>
-              <div id="resendRow" style="display:none; text-align:center; margin-top:10px" class="small-note">
-                Didn't receive OTP? <span id="resendBtn" style="color:var(--sea-dark); cursor:pointer; font-weight:700">Resend</span>
+              <div id="resendRow" style="display:none; text-align:center;" class="small-note">
+                Didn't receive OTP? <span id="resendBtn" style="color:var(--primary-teal); cursor:pointer; font-weight:700">Resend</span>
               </div>
             </div>
           </div>
 
-          <div id="successMsg" class="hint" style="display:none; color:green; margin-top:12px"></div>
+          <div id="successMsg" class="hint" style="display:none; color:#28a745; margin-top:12px; font-weight:600;"></div>
         </div>
 
-        <!-- moved sign-up link below the input panel -->
         <div class="signup-row">
-          Don't have an account? <a href="/doctor_app/signup/signup.html" style="color:var(--sea-dark); font-weight:700">Sign up</a>
+          Don't have an account? <a href="/doctor_app/signup/signup.html">Sign up</a>
         </div>
 
       </div>
@@ -302,7 +530,7 @@ const serverPopupBackdrop = document.getElementById('serverPopupBackdrop');
 const serverPopupDesc = document.getElementById('serverPopupDesc');
 const serverPopupOk = document.getElementById('serverPopupOk');
 
-let currentMode = 'otp'; // defaults to otp
+let currentMode = 'otp';
 let otpTimer = null;
 let secondsLeft = 60;
 
@@ -311,7 +539,7 @@ function isValidEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function show(el){ el.style.display = 'block'; }
 function hide(el){ el.style.display = 'none'; }
 
-/* show server popup with message (no native alert) */
+/* show server popup */
 function showServerPopup(title, message){
   document.getElementById('serverPopupTitle').textContent = title || 'Notice';
   serverPopupDesc.textContent = message || '';
@@ -320,14 +548,14 @@ function showServerPopup(title, message){
   serverPopup.setAttribute('aria-hidden', 'false');
   serverPopupOk.focus();
 }
-/* hide popup */
+
 function hideServerPopup(){
   serverPopup.classList.remove('show');
   serverPopupBackdrop.classList.remove('show');
   serverPopup.setAttribute('aria-hidden', 'true');
 }
 
-/* initialize UI based on default */
+/* update UI based on mode */
 function updateModeUI(){
   currentMode = modeOtp.checked ? 'otp' : 'password';
   if(currentMode === 'password'){
@@ -337,12 +565,10 @@ function updateModeUI(){
     hide(otpBlock);
     hide(successMsg);
     signinBtn.disabled = true;
-    signinBtn.classList.add('disabled');
   } else {
     hide(passwordArea);
     show(otpArea);
     sendOtpBtn.disabled = false;
-    sendOtpBtn.classList.remove('disabled');
     hide(sendStatus);
     hide(otpBlock);
     hide(successMsg);
@@ -350,9 +576,9 @@ function updateModeUI(){
 }
 modeOtp.addEventListener('change', updateModeUI);
 modePassword.addEventListener('change', updateModeUI);
-updateModeUI(); // run once on load
+updateModeUI();
 
-/* password flow validation */
+/* password validation */
 email.addEventListener('input', ()=> { emailError.style.display='none'; if(currentMode==='password') validatePasswordForm(); });
 password.addEventListener('input', ()=> { passwordError.style.display='none'; validatePasswordForm(); });
 
@@ -361,17 +587,16 @@ function validatePasswordForm(){
   const p = password.value;
   const ok = isValidEmail(e) && p.trim().length >= 6;
   signinBtn.disabled = !ok;
-  signinBtn.classList.toggle('disabled', !ok);
 }
 
 /* password sign-in */
 signinBtn.addEventListener('click', async ()=>{
   const e = email.value.trim().toLowerCase();
   const p = password.value;
-  if(!isValidEmail(e)){ emailError.style.display='block'; emailError.textContent='Enter valid email'; return; }
-  if(!p || p.length < 6){ passwordError.style.display='block'; passwordError.textContent='Enter password (min 6 chars)'; return; }
+  if(!isValidEmail(e)){ emailError.style.display='block'; emailError.innerHTML='<i class="fas fa-exclamation-circle"></i> Enter valid email'; return; }
+  if(!p || p.length < 6){ passwordError.style.display='block'; passwordError.innerHTML='<i class="fas fa-exclamation-circle"></i> Enter password (min 6 chars)'; return; }
 
-  signinBtn.disabled = true; signinBtn.textContent = 'Signing...';
+  signinBtn.disabled = true; signinBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
   try {
     const resp = await fetch('signin.php', {
       method:'POST',
@@ -394,25 +619,24 @@ signinBtn.addEventListener('click', async ()=>{
       if(data.message && /register|not registered|not found/i.test(data.message)){
         showServerPopup('User not registered', data.message);
       } else {
-        passwordError.style.display = 'block'; passwordError.textContent = data.message || 'Invalid credentials';
+        passwordError.style.display = 'block'; passwordError.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.message || 'Invalid credentials');
       }
-      signinBtn.disabled = false; signinBtn.textContent = 'Sign In';
-      signinBtn.classList.remove('disabled');
+      signinBtn.disabled = false; signinBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
     }
   } catch(err){
     console.error(err);
-    passwordError.style.display = 'block'; passwordError.textContent = 'Something went wrong';
-    signinBtn.disabled = false; signinBtn.textContent = 'Sign In';
+    passwordError.style.display = 'block'; passwordError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Something went wrong';
+    signinBtn.disabled = false; signinBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
   }
 });
 
 /* OTP flow */
 sendOtpBtn.addEventListener('click', async ()=>{
   const e = email.value.trim().toLowerCase();
-  if(!isValidEmail(e)){ emailError.style.display='block'; emailError.textContent='Enter valid email'; return; }
+  if(!isValidEmail(e)){ emailError.style.display='block'; emailError.innerHTML='<i class="fas fa-exclamation-circle"></i> Enter valid email'; return; }
   emailError.style.display='none';
 
-  sendOtpBtn.disabled = true; sendOtpBtn.textContent = 'Sending...';
+  sendOtpBtn.disabled = true; sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
   try {
     const resp = await fetch('signin.php', {
       method:'POST',
@@ -422,13 +646,13 @@ sendOtpBtn.addEventListener('click', async ()=>{
     });
     const data = await resp.json();
     if(data.success){
-      sendStatus.style.display = 'block'; sendStatus.textContent = 'OTP sent';
+      sendStatus.style.display = 'block'; sendStatus.textContent = 'OTP sent to your email';
       show(otpBlock); show(resendRow);
-      sendOtpBtn.textContent = 'OTP Sent';
+      sendOtpBtn.innerHTML = '<i class="fas fa-check"></i> OTP Sent';
       startTimer();
       otp.focus();
     } else {
-      sendOtpBtn.disabled = false; sendOtpBtn.textContent = 'Send OTP';
+      sendOtpBtn.disabled = false; sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
       const msg = data.message || 'Failed to send OTP';
       if(/register|not registered|not found/i.test(msg)){
         showServerPopup('User not registered', msg);
@@ -438,7 +662,7 @@ sendOtpBtn.addEventListener('click', async ()=>{
     }
   } catch(e){
     console.error(e);
-    sendOtpBtn.disabled = false; sendOtpBtn.textContent = 'Send OTP';
+    sendOtpBtn.disabled = false; sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
     showServerPopup('Error', 'Error sending OTP — please try again');
   }
 });
@@ -456,7 +680,7 @@ function clearTimer(){ if(otpTimer){ clearInterval(otpTimer); otpTimer = null; }
 
 resendBtn.addEventListener('click', async ()=>{
   if(resendBtn.textContent.indexOf('Resend')===-1 && resendBtn.style.pointerEvents==='none') return;
-  sendOtpBtn.disabled = true; sendOtpBtn.textContent = 'Sending...';
+  sendOtpBtn.disabled = true; sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
   try {
     const resp = await fetch('signin.php', {
       method:'POST',
@@ -467,9 +691,9 @@ resendBtn.addEventListener('click', async ()=>{
     const data = await resp.json();
     if(data.success){
       sendStatus.style.display='block'; sendStatus.textContent='OTP resent';
-      startTimer(); sendOtpBtn.textContent='OTP Sent';
+      startTimer(); sendOtpBtn.innerHTML='<i class="fas fa-check"></i> OTP Sent';
     } else {
-      sendOtpBtn.disabled = false; sendOtpBtn.textContent='Send OTP';
+      sendOtpBtn.disabled = false; sendOtpBtn.innerHTML='<i class="fas fa-paper-plane"></i> Send OTP';
       const msg = data.message || 'Failed to resend';
       if(/register|not registered|not found/i.test(msg)){
         showServerPopup('User not registered', msg);
@@ -479,23 +703,23 @@ resendBtn.addEventListener('click', async ()=>{
     }
   } catch(e){
     console.error(e);
-    sendOtpBtn.disabled=false; sendOtpBtn.textContent='Send OTP';
+    sendOtpBtn.disabled=false; sendOtpBtn.innerHTML='<i class="fas fa-paper-plane"></i> Send OTP';
     showServerPopup('Error', 'Error resending OTP — please try again');
   }
 });
 
-/* OTP input & verify */
+/* OTP verify */
 otp.addEventListener('input', ()=>{
   otp.value = otp.value.replace(/\D/g,'').slice(0,6);
   const ok = otp.value.trim().length>0;
   verifyOtpBtn.disabled = !ok;
-  verifyOtpBtn.classList.toggle('disabled', !ok);
 });
 
 verifyOtpBtn.addEventListener('click', async ()=>{
-  const e = email.value.trim().toLowerCase(); const value = otp.value.trim();
+  const e = email.value.trim().toLowerCase(); 
+  const value = otp.value.trim();
   if(!e || !value) return;
-  verifyOtpBtn.disabled = true; verifyOtpBtn.textContent = 'Verifying...';
+  verifyOtpBtn.disabled = true; verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
   try {
     const resp = await fetch('signin.php', {
       method:'POST',
@@ -506,7 +730,6 @@ verifyOtpBtn.addEventListener('click', async ()=>{
     const data = await resp.json();
     if(data.success){
       successMsg.style.display='block'; successMsg.textContent='OTP verified — signing in...';
-      // complete server login
       const resp2 = await fetch('signin.php', {
         method:'POST',
         headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
@@ -521,39 +744,34 @@ verifyOtpBtn.addEventListener('click', async ()=>{
         if(d2.name) localStorage.setItem('userName', d2.name);
         if(d2.email) localStorage.setItem('signedInUserEmail', d2.email);
 
-        // show OTP verified label on the send button
-        sendOtpBtn.textContent = 'OTP verified';
+        sendOtpBtn.innerHTML = '<i class="fas fa-check-double"></i> OTP verified';
         sendOtpBtn.disabled = true;
-        // redirect after short delay
         const redirect = d2.redirect || '/doctor_app/dashboard/dashboard.html';
         setTimeout(()=> window.location.href = redirect, 220);
       } else {
-        // fallback redirect
-        sendOtpBtn.textContent = 'OTP verified';
+        sendOtpBtn.innerHTML = '<i class="fas fa-check-double"></i> OTP verified';
         sendOtpBtn.disabled = true;
         setTimeout(()=> window.location.href = '/doctor_app/dashboard/dashboard.html', 220);
       }
     } else {
       const otpError = document.getElementById('otpError');
-      otpError.style.display='block'; otpError.textContent = data.message || 'OTP mismatch';
-      verifyOtpBtn.disabled = false; verifyOtpBtn.textContent = 'Verify OTP';
+      otpError.style.display='block'; otpError.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.message || 'OTP mismatch');
+      verifyOtpBtn.disabled = false; verifyOtpBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify OTP';
     }
   } catch(e){
     console.error(e);
     const otpError = document.getElementById('otpError');
-    otpError.style.display='block'; otpError.textContent='Error verifying';
-    verifyOtpBtn.disabled=false; verifyOtpBtn.textContent='Verify OTP';
+    otpError.style.display='block'; otpError.innerHTML='<i class="fas fa-exclamation-circle"></i> Error verifying';
+    verifyOtpBtn.disabled=false; verifyOtpBtn.innerHTML='<i class="fas fa-check-circle"></i> Verify OTP';
   }
 });
 
-/* server popup: dismiss behavior */
+/* popup dismiss */
 serverPopupOk.addEventListener('click', ()=>{
   hideServerPopup();
-  // focus the email field so the user can correct or sign up
   email.focus();
 });
 
-/* also close popup if user presses Escape while it's open */
 document.addEventListener('keydown', (ev)=>{
   if(ev.key === 'Escape' && serverPopup.classList.contains('show')){
     hideServerPopup();
