@@ -10,6 +10,60 @@ $DB_NAME='ruhanixl_doctorApp';
 $mysqli = new mysqli($DB_HOST,$DB_USER,$DB_PASS,$DB_NAME);
 if($mysqli->connect_errno) { echo json_encode(['success'=>false,'message'=>'DB error']); exit; }
 
+function resolve_effective_client_id($mysqli, $patient_id, $client_candidate){
+    $candidate = trim((string)$client_candidate);
+    if($candidate !== ''){
+        return $candidate;
+    }
+    $patient_id = trim((string)$patient_id);
+    if($patient_id === ''){
+        return '';
+    }
+    $stmt = $mysqli->prepare("SELECT client_id FROM patient_list WHERE patient_id = ? LIMIT 1");
+    if(!$stmt){
+        error_log("resolve_effective_client_id prepare failed: ".$mysqli->error);
+        return '';
+    }
+    $stmt->bind_param('s', $patient_id);
+    if(!$stmt->execute()){
+        error_log("resolve_effective_client_id execute failed: ".$stmt->error);
+        $stmt->close();
+        return '';
+    }
+    $res = $stmt->get_result();
+    $client_id = '';
+    if($res){
+        $row = $res->fetch_assoc();
+        if($row && isset($row['client_id'])){
+            $client_id = trim((string)$row['client_id']);
+        }
+    }
+    $stmt->close();
+    return $client_id;
+}
+
+function ensure_appointments_client_id_column_supports_text($mysqli){
+    static $checked = false;
+    if($checked) return;
+    $checked = true;
+
+    $colRes = $mysqli->query("SHOW FULL COLUMNS FROM `appointments` LIKE 'client_id'");
+    if(!$colRes || !$colRes->num_rows){
+        return;
+    }
+    $col = $colRes->fetch_assoc();
+    $colRes->free();
+    if(!$col || !isset($col['Type'])){
+        return;
+    }
+    $type = strtolower($col['Type']);
+    if(strpos($type, 'char') === false && strpos($type, 'text') === false){
+        if(!$mysqli->query("ALTER TABLE `appointments` MODIFY `client_id` VARCHAR(64) DEFAULT NULL")){
+            error_log("Failed to alter appointments.client_id to VARCHAR: ".$mysqli->error);
+        }
+    }
+}
+
 $action = $_GET['action'] ?? 'list_medicines';
 
 /////////////////////////
@@ -76,8 +130,11 @@ if($action === 'save'){
     if(!$data || !isset($data['patient_id']) || !isset($data['items']) || !is_array($data['items'])) {
         echo json_encode(['success'=>false,'message'=>'Invalid payload']); exit;
     }
-    $patient_id = $data['patient_id'];
-    $client_id = isset($data['client_id']) ? $data['client_id'] : '';
+    $patient_id = trim((string)$data['patient_id']);
+    $client_id = resolve_effective_client_id($mysqli, $patient_id, $data['client_id'] ?? '');
+    if($client_id === ''){
+        echo json_encode(['success'=>false,'message'=>'Client ID missing for this prescription']); exit;
+    }
     $items = $data['items'];
     $blood_test_id = isset($data['blood_test_id']) ? $data['blood_test_id'] : null;
     $blood_test_name = isset($data['blood_test_name']) ? $data['blood_test_name'] : null;
@@ -156,6 +213,7 @@ if($action === 'save'){
         //  - find doctor name from users table by client_id and store it in appointments.doctor
         //  - leave time NULL / empty
         if(!empty($follow_up_date_top)){
+            ensure_appointments_client_id_column_supports_text($mysqli);
             // attempt to fetch doctor's name from users table using client_id
             $doctorName = '';
             if(!empty($client_id)){
