@@ -1,0 +1,440 @@
+:root {
+  --primary-teal: #00A9A5;
+  --primary-blue: #1a75bb;
+  --text-dark: #2c3e50;
+  --text-muted: #6c757d;
+  --border-light: #e0e6ed;
+  --bg-light: #f8f9fa;
+  --bg-white: #ffffff;
+  --bg-main: #f5f7fa;
+  --accent-purple: #7c3aed;
+  --accent-orange: #f59e0b;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* Global reset */
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+html, body {
+  height: 100%;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header bar with modern gradient */
+.topbar {
+  background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-blue) 100%);
+  color: white;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0,169,165,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1;
+  position: relative;
+  letter-spacing: 0.3px;
+}
+
+.brand i {
+  font-size: 28px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.user-info {
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  z-index: 1;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.user-info:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
+.user-info i {
+  font-size: 20px;
+}
+
+/* Container layout */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px 24px;
+}
+
+/* Page title with modern design */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  position: relative;
+  color: var(--text-dark);
+  display: inline-block;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary-teal), var(--primary-blue));
+  left: 0;
+  bottom: -8px;
+  border-radius: 2px;
+}
+
+/* Modern card grid layout */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+/* Enhanced card design with unique styling */
+.card {
+  position: relative;
+  background: var(--bg-white);
+  text-decoration: none;
+  color: inherit;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary-teal), var(--primary-blue));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-teal);
+}
+
+.card-gradient {
+  display: none;
+}
+
+/* Card header with icon */
+.card-icon {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0,169,165,0.1), rgba(26,117,187,0.1));
+  position: relative;
+  overflow: hidden;
+}
+
+.card-icon::before {
+  content: '';
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0,169,165,0.15) 0%, transparent 70%);
+  animation: pulse-bg 3s ease-in-out infinite;
+}
+
+@keyframes pulse-bg {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.card-icon i {
+  font-size: 48px;
+  color: var(--primary-teal);
+  z-index: 1;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.card:hover .card-icon i {
+  transform: scale(1.1) rotate(5deg);
+  color: var(--primary-blue);
+}
+
+/* Card content */
+.card-content {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+
+.card-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Unique color accents for different cards */
+#card-add-reception .card-icon i { color: var(--accent-purple); }
+#card-add-reception:hover .card-icon i { color: var(--accent-purple); filter: brightness(1.2); }
+#card-add-reception .card-icon { background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(124,58,237,0.05)); }
+
+#card-view-patient .card-icon i { color: var(--primary-blue); }
+#card-view-patient:hover .card-icon i { color: var(--primary-blue); filter: brightness(1.2); }
+#card-view-patient .card-icon { background: linear-gradient(135deg, rgba(26,117,187,0.1), rgba(26,117,187,0.05)); }
+
+#card-add-patient .card-icon i { color: var(--accent-green); }
+#card-add-patient:hover .card-icon i { color: var(--accent-green); filter: brightness(1.2); }
+#card-add-patient .card-icon { background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(16,185,129,0.05)); }
+
+#card-new-prescription .card-icon i { color: var(--primary-teal); }
+#card-new-prescription:hover .card-icon i { color: var(--primary-teal); filter: brightness(1.2); }
+#card-new-prescription .card-icon { background: linear-gradient(135deg, rgba(0,169,165,0.1), rgba(0,169,165,0.05)); }
+
+#card-all-medicine .card-icon i { color: var(--accent-orange); }
+#card-all-medicine:hover .card-icon i { color: var(--accent-orange); filter: brightness(1.2); }
+#card-all-medicine .card-icon { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05)); }
+
+#card-doctors-list .card-icon i { color: #3b82f6; }
+#card-doctors-list:hover .card-icon i { color: #3b82f6; filter: brightness(1.2); }
+#card-doctors-list .card-icon { background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.05)); }
+
+#card-blood-tests .card-icon i { color: var(--accent-red); }
+#card-blood-tests:hover .card-icon i { color: var(--accent-red); filter: brightness(1.2); }
+#card-blood-tests .card-icon { background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05)); }
+
+#card-receptionalist-list .card-icon i { color: #8b5cf6; }
+#card-receptionalist-list:hover .card-icon i { color: #8b5cf6; filter: brightness(1.2); }
+#card-receptionalist-list .card-icon { background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.05)); }
+
+/* Footer with better design */
+.footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 60px;
+  background: var(--bg-white);
+  border-top: 1px solid var(--border-light);
+  font-weight: 500;
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) {
+  .cards {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  
+  .container {
+    padding: 24px 20px;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .topbar {
+    padding: 16px 20px;
+  }
+  
+  .brand {
+    font-size: 18px;
+  }
+  
+  .brand i {
+    font-size: 24px;
+  }
+  
+  .user-info {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+  }
+  
+  .user-info i {
+    font-size: 18px;
+  }
+  
+  .container {
+    padding: 20px 16px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+  }
+  
+  .cards {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  
+  .card-icon {
+    height: 100px;
+  }
+  
+  .card-icon i {
+    font-size: 40px;
+  }
+  
+  .card-content {
+    padding: 16px 20px 20px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+  }
+  
+  .card-sub {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 14px 16px;
+  }
+  
+  .brand {
+    font-size: 16px;
+    gap: 8px;
+  }
+  
+  .brand i {
+    font-size: 20px;
+  }
+  
+  .container {
+    padding: 16px 12px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  
+  .card-icon {
+    height: 90px;
+  }
+  
+  .card-icon i {
+    font-size: 36px;
+  }
+  
+  .card-content {
+    padding: 14px 18px 18px;
+  }
+  
+  .card-title {
+    font-size: 15px;
+  }
+  
+  .card-sub {
+    font-size: 12px;
+  }
+  
+  .footer {
+    margin-top: 40px;
+    padding: 20px 16px;
+    font-size: 13px;
+  }
+}
+
+/* Loading animation (optional) */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.5s ease-out backwards;
+}
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+.card:nth-child(7) { animation-delay: 0.35s; }
+.card:nth-child(8) { animation-delay: 0.4s; }
+.card:nth-child(9) { animation-delay: 0.45s; }
