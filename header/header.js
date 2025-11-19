@@ -361,16 +361,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('has-header');
     console.log('✅ Body class added');
 
-    // Initialize header interactions
-    console.log('Calling initHeader()...');
-    initHeader();
-
-    // Setup user profile
-    console.log('Scheduling setupUserProfile()...');
+    // Wait for DOM to be ready before initializing
     setTimeout(() => {
+      console.log('Calling initHeader()...');
+      initHeader();
+      
       console.log('Calling setupUserProfile()...');
       setupUserProfile();
-    }, 100);
+    }, 200);
   } else {
     console.error('❌❌❌ header-placeholder element NOT FOUND! ❌❌❌');
     console.log('Available elements with id:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
