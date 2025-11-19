@@ -70,7 +70,22 @@ if($action === 'detail'){
     }
     $stmt->close();
 
-    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'reports'=>$reports,'other_info'=> '']);
+    // prescriptions: fetch prescription items for this patient
+    $prescriptions = [];
+    $stmt = $mysqli->prepare("SELECT pi.id, pi.prescription_id, p.created_at, pi.client_id, pi.patient_id, pi.symptoms, pi.medicine_name, pi.type, pi.duration, pi.times_of_day, pi.before_after, pi.notes, pi.recommended_blood_test, pi.follow_up_date
+                FROM prescription_items pi
+                LEFT JOIN prescriptions p ON p.id = pi.prescription_id
+                WHERE pi.patient_id = ?
+                ORDER BY p.created_at DESC, pi.id DESC");
+    $stmt->bind_param('s', $pid);
+    $stmt->execute();
+    $r = $stmt->get_result();
+    while($row = $r->fetch_assoc()){
+        $prescriptions[] = $row;
+    }
+    $stmt->close();
+
+    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'reports'=>$reports,'prescriptions'=>$prescriptions,'other_info'=> '']);
     exit;
 }
 

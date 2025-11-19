@@ -743,6 +743,17 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
       </div>
     </div>
 
+    <!-- VIEW PRESCRIPTION HISTORY BUTTON -->
+    <div id="viewHistoryButtonContainer" style="display:none;margin-bottom:20px;">
+      <div class="section">
+        <div style="text-align:center;padding:20px;">
+          <button id="viewPrescriptionHistory" class="btn save" style="font-size:15px;padding:14px 32px;">
+            <i class="fas fa-history"></i> View Prescription History
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- SAVED PRESCRIPTIONS -->
     <div id="savedItemsContainer" style="display:none;">
       <div class="section">
@@ -751,7 +762,7 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
             <div>
               <div class="section-header" style="margin-bottom:0;border:none;padding-bottom:0">
                 <i class="fas fa-file-medical"></i>
-                <span>Prescription History</span>
+                <span>Latest Prescription</span>
               </div>
             </div>
             <div>
@@ -1567,6 +1578,14 @@ function setPrintForId(presId){
   } else { pBtn.disabled=true; pBtn.onclick=null; }
 }
 
+/* ---------- VIEW PRESCRIPTION HISTORY ---------- */
+document.getElementById('viewPrescriptionHistory').addEventListener('click', ()=>{
+  const pid = document.getElementById('selectedPatientId').value;
+  if(!pid){ alert('No patient selected'); return; }
+  // Navigate to patient history page with patient_id parameter
+  window.location.href = `../patient_history/patient_history.html?patient_id=${encodeURIComponent(pid)}`;
+});
+
 /* ---------- ON PATIENT SELECTED ---------- */
 async function onPatientSelected(patient_id, patientObj){
   document.getElementById('formsArea').style.display='block';
@@ -1590,6 +1609,9 @@ async function onPatientSelected(patient_id, patientObj){
   
   // Show the single form
   singleMedForm.style.display = 'block';
+
+  // Show view history button
+  document.getElementById('viewHistoryButtonContainer').style.display = 'block';
 
   await loadPatientPrescriptions(patient_id);
 }
