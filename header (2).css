@@ -1,0 +1,200 @@
+/* --- Global Reset --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- Header Wrapper --- */
+.main-header {
+  background: linear-gradient(120deg, #4caf50, #8bc34a);
+  color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* --- Layout --- */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  padding-bottom: 0px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* --- Logo --- */
+.logo {
+  text-align: left;
+}
+
+.logo a {
+  color: white;
+  font-weight: 600;
+  font-size: 1.4rem;
+  text-decoration: none;
+}
+
+/* --- Hamburger (☰) --- */
+.menu-toggle {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.7rem;
+  cursor: pointer;
+  padding: 5px;
+  display: none; /* Hidden for all screens now */
+}
+
+/* --- Nav Buttons --- */
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.nav-buttons button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.signin-btn {
+  background-color: #fff;
+  color: #2e7d32;
+}
+
+.signup-btn {
+  background-color: #2e7d32;
+  color: #fff;
+}
+
+.signin-btn:hover {
+  background-color: #e8f5e9;
+}
+
+.signup-btn:hover {
+  background-color: #1b5e20;
+}
+
+/* --- Profile Icon --- */
+.profile-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #2e7d32;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  text-transform: uppercase;
+  border: 2px solid #c8e6c9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* --- Mobile Responsive --- */
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  /* Move logo to left */
+  .logo {
+    position: static;
+    transform: none;
+    text-align: left;
+  }
+
+  .logo a {
+    font-size: 1.1rem;
+  }
+
+  /* Hide hamburger */
+  .menu-toggle {
+    display: none;
+  }
+
+  /* Show Signin/Signup directly */
+  .nav-buttons {
+    display: flex;
+    flex-direction: row;
+    background: transparent;
+    position: static;
+    box-shadow: none;
+    padding: 0;
+    width: auto;
+  }
+
+  .nav-buttons button {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .profile-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+    border: 1.5px solid #a5d6a7;
+  }
+}
+
+/* --- Profile Container & Logout Menu --- */
+.profile-container {
+  position: relative;
+}
+
+.logout-menu {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: #ffffff;
+  color: #2e7d32;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  z-index: 999;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.logout-menu:hover {
+  background: #e8f5e9;
+}
+
+.logout-menu.show {
+  display: block;
+}
+
+/* Mobile adjust */
+@media (max-width: 768px) {
+  .logout-menu {
+    top: 45px;
+    right: 0;
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Environment Project Dashboard</title>
+
+  <!-- Open Graph Meta Tags for Facebook / LinkedIn -->
+  <meta property="og:title" content="Environment Project Dashboard" />
+  <meta property="og:description" content="Check out this amazing Environment Project Dashboard! 🌱 Track city-wise plantation counts and more." />
+  <meta property="og:image" content="https://ruhanixlegal.in/environment_project/assets/preview-image.jpg" />
+  <meta property="og:url" content="https://ruhanixlegal.in/environment_project/dashboard/dashboard.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Ruhanix Legal" />
+
+  <!-- Twitter Card (Optional) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Environment Project Dashboard" />
+  <meta name="twitter:description" content="Check out this amazing Environment Project Dashboard! 🌱 Track city-wise plantation counts and more." />
+  <meta name="twitter:image" content="https://ruhanixlegal.in/environment_project/assets/preview-image.jpg" />
+</head>
+<body>
+  <!-- Header -->
+  <div id="header-placeholder"></div>
+  <script src="/environment_project/common/header/header.js"></script>
+
+  <main class="main-content">
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+      <h2 class="gallery-title">City Wise Plantation Count</h2>
+      <p class="gallery-quote">“Grow Trees As Your Child Grows”</p>
+
+      <div class="gallery" id="gallery">
+        <!-- Video cards load here -->
+      </div>
+
+      <div class="button-container">
+        <a href="gallery.html" class="more-btn">View All Videos</a>
+        <button class="stats-btn" id="shareAppBtn">Share This App</button>
+      </div>
+    </section>
+
+    <!-- Popup Form (Commented Out)
+    <div id="uploadModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" id="closeModal">&times;</span>
+        <h3>What would you like to upload?</h3>
+        <div class="modal-options">
+          <button class="option-btn" id="uploadVideoBtn">🎥 Upload New Video</button>
+          <button class="option-btn" id="addPhotosBtn">📸 Add Photos to Existing Entry</button>
+        </div>
+      </div>
+    </div>
+    -->
+  </main>
+
+  <!-- Floating "+" Button (Commented Out)
+  <button id="addButton" class="add-btn">+</button>
+  -->
+
+  <div id="footer-placeholder"></div>
+  <script src="/environment_project/common/footer/footer-loader.js"></script>
+  <script src="dashboard.js"></script>
+
+  <script>
+    // Share App Button Logic (Works for WhatsApp and fallback for desktop)
+    document.addEventListener("DOMContentLoaded", () => {
+      const shareBtn = document.getElementById("shareAppBtn");
+      if (!shareBtn) return;
+
+      const shareUrl = "https://ruhanixlegal.in/environment_project/dashboard/dashboard.html";
+      const shareText = "Check out this amazing Environment Project Dashboard! 🌱";
+
+      shareBtn.addEventListener("click", async () => {
+        // Native mobile share API
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: "Environment Project",
+              text: shareText,
+              url: shareUrl
+            });
+            console.log("App shared successfully via native share.");
+          } catch (err) {
+            console.warn("Share cancelled or failed:", err);
+          }
+        } else {
+          // Desktop fallback: copy link to clipboard
+          try {
+            await navigator.clipboard.writeText(shareUrl);
+            alert("Link copied! You can share it manually on any platform.");
+          } catch (err) {
+            alert("Sharing not supported. Copy this link manually:\n" + shareUrl);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
