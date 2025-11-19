@@ -157,11 +157,11 @@ function setupUserProfile() {
     return;
   }
 
-  // Get user info from localStorage
-  let userName = localStorage.getItem('userName') || 
-                 localStorage.getItem('name') || 
-                 localStorage.getItem('username') || 
-                 localStorage.getItem('user');
+  // Get user info from localStorage - prioritize actual name over email
+  let userName = localStorage.getItem('name') ||           // First priority: actual name
+                 localStorage.getItem('userName') ||       // Second: userName 
+                 localStorage.getItem('username') ||       // Third: username
+                 localStorage.getItem('user');             // Last: user
   
   console.log('User name from localStorage:', userName);
 
@@ -178,15 +178,19 @@ function setupUserProfile() {
         if (data.success && data.user_id) {
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('user_id', data.user_id);
-          if (data.email) {
-            const nameFromEmail = data.email.split('@')[0];
-            localStorage.setItem('userName', nameFromEmail);
-            userName = nameFromEmail;
-          }
+          
+          // Prioritize actual name over email
           if (data.name) {
             localStorage.setItem('name', data.name);
             userName = data.name;
+            console.log('Using actual name:', userName);
+          } else if (data.email) {
+            const nameFromEmail = data.email.split('@')[0];
+            localStorage.setItem('userName', nameFromEmail);
+            userName = nameFromEmail;
+            console.log('Using email prefix:', userName);
           }
+          
           if (data.role) {
             localStorage.setItem('role', data.role);
           }
@@ -262,15 +266,16 @@ function updateProfileLetter() {
   const profileLetter = document.getElementById('profileLetter');
   if (!profileLetter) return;
 
-  const userName = localStorage.getItem('userName') || 
-                   localStorage.getItem('name') || 
-                   localStorage.getItem('username') || 
-                   localStorage.getItem('user');
+  // Prioritize actual name over email
+  const userName = localStorage.getItem('name') ||           // First priority: actual name
+                   localStorage.getItem('userName') ||       // Second: userName
+                   localStorage.getItem('username') ||       // Third: username
+                   localStorage.getItem('user');             // Last: user
 
   if (userName && userName.trim()) {
     const firstLetter = userName.trim().charAt(0).toUpperCase();
     profileLetter.textContent = firstLetter;
-    console.log('Profile letter updated to:', firstLetter);
+    console.log('Profile letter updated to:', firstLetter, 'from:', userName);
   } else {
     profileLetter.textContent = 'U';
   }
