@@ -105,6 +105,49 @@
   text-transform: uppercase;
 }
 
+/* Auth Buttons - Sign In/Sign Up */
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.signin-btn,
+.signup-btn {
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.signin-btn {
+  background-color: white;
+  color: #00A9A5;
+  border: 2px solid white;
+}
+
+.signup-btn {
+  background-color: white;
+  color: #1a75bb;
+  border: 2px solid white;
+}
+
+.signin-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.signup-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
 /* Logout Menu */
 .logout-menu {
   display: none;
@@ -313,6 +356,17 @@
     right: 16px;
     font-size: 14px;
     padding: 10px 16px;
+  }
+
+  /* Auth buttons mobile */
+  .auth-buttons {
+    gap: 8px;
+  }
+
+  .signin-btn,
+  .signup-btn {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
 

@@ -150,11 +150,10 @@ function initHeader() {
 // --- Setup User Profile ---
 function setupUserProfile() {
   console.log('setupUserProfile() called');
-  const profileIcon = document.getElementById('profileIcon');
-  const profileLetter = document.getElementById('profileLetter');
+  const headerRight = document.querySelector('.header-right');
   
-  if (!profileIcon || !profileLetter) {
-    console.error('❌ Profile elements not found!');
+  if (!headerRight) {
+    console.error('❌ Header right section not found!');
     return;
   }
 
@@ -170,7 +169,7 @@ function setupUserProfile() {
   console.log('Is logged in:', isLoggedIn);
 
   // If not logged in, check session
-  if (!isLoggedIn) {
+  if (!isLoggedIn || !userName) {
     console.log('Checking session...');
     fetch('../check_session.php', { credentials: 'include' })
       .then(res => res.json())
@@ -191,37 +190,71 @@ function setupUserProfile() {
           if (data.role) {
             localStorage.setItem('role', data.role);
           }
-          updateProfileLetter();
+          // User is logged in, show profile icon
+          showProfileIcon(userName);
           applyRoleBasedVisibility();
+        } else {
+          // User is not logged in, show sign in/sign up buttons
+          showAuthButtons();
         }
       })
-      .catch(err => console.error('Session check error:', err));
-  }
-
-  // Set profile letter
-  if (userName && userName.trim()) {
-    const firstLetter = userName.trim().charAt(0).toUpperCase();
-    profileLetter.textContent = firstLetter;
-    profileIcon.title = userName;
-    console.log('Profile letter set to:', firstLetter);
+      .catch(err => {
+        console.error('Session check error:', err);
+        // On error, show auth buttons
+        showAuthButtons();
+      });
   } else {
-    profileLetter.textContent = 'U';
-    console.log('Profile letter set to default: U');
+    // User is logged in, show profile icon
+    showProfileIcon(userName);
   }
+  
+  console.log('✅ Profile setup complete');
+}
+
+// --- Show Profile Icon (for logged in users) ---
+function showProfileIcon(userName) {
+  const headerRight = document.querySelector('.header-right');
+  if (!headerRight) return;
+
+  const firstLetter = userName && userName.trim() ? userName.trim().charAt(0).toUpperCase() : 'U';
+  
+  headerRight.innerHTML = `
+    <div class="profile-icon" id="profileIcon" title="${userName || 'User'}">
+      <span class="profile-letter" id="profileLetter">${firstLetter}</span>
+    </div>
+  `;
+
+  console.log('Profile letter set to:', firstLetter);
 
   // Profile icon click - show logout menu
-  profileIcon.addEventListener('click', (e) => {
-    console.log('Profile icon clicked');
-    e.stopPropagation();
-    toggleLogoutMenu();
-  });
+  const profileIcon = document.getElementById('profileIcon');
+  if (profileIcon) {
+    profileIcon.addEventListener('click', (e) => {
+      console.log('Profile icon clicked');
+      e.stopPropagation();
+      toggleLogoutMenu();
+    });
+  }
 
   // Hide logout menu when clicking outside
   document.addEventListener('click', () => {
     hideLogoutMenu();
   });
-  
-  console.log('✅ Profile setup complete');
+}
+
+// --- Show Auth Buttons (for logged out users) ---
+function showAuthButtons() {
+  const headerRight = document.querySelector('.header-right');
+  if (!headerRight) return;
+
+  headerRight.innerHTML = `
+    <div class="auth-buttons">
+      <button class="signin-btn" onclick="window.location.href='../signin/signin.html'">Sign In</button>
+      <button class="signup-btn" onclick="window.location.href='../signup/signup.html'">Sign Up</button>
+    </div>
+  `;
+
+  console.log('Auth buttons displayed');
 }
 
 // --- Update Profile Letter ---
