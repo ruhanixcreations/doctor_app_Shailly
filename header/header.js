@@ -1,4 +1,92 @@
 // Header Component JavaScript
+// --- Header HTML Template ---
+const headerHTML = `
+<!-- Header Component -->
+<header class="app-header">
+  <div class="header-left">
+    <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </div>
+
+  <div class="header-center">
+    <h1 class="header-title">Dashboard</h1>
+  </div>
+
+  <div class="header-right">
+    <div class="profile-icon" id="profileIcon" title="User Profile">
+      <span class="profile-letter" id="profileLetter">U</span>
+    </div>
+  </div>
+</header>
+
+<!-- Hamburger Menu Overlay -->
+<div class="hamburger-overlay" id="hamburgerOverlay"></div>
+
+<!-- Hamburger Menu Sidebar -->
+<nav class="hamburger-menu" id="hamburgerMenu">
+  <div class="menu-header">
+    <h2 class="menu-title">Navigation</h2>
+    <button class="menu-close-btn" id="menuCloseBtn" aria-label="Close menu">
+      <i class="fa-solid fa-times"></i>
+    </button>
+  </div>
+
+  <ul class="menu-list">
+    <li class="menu-item">
+      <a href="../dashboard/dashboard.php?role=receptionalist" class="menu-link" data-page="add-reception">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Add Receptionalist</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../patient_history/patient_history.html" class="menu-link" data-page="patient-history">
+        <i class="fa-solid fa-users"></i>
+        <span>Patient History</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../add_new_patient/add_new_patient.html" class="menu-link" data-page="add-patient">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Add New Patient</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../add_prescription/add_prescription.html" class="menu-link" data-page="add-prescription">
+        <i class="fa-solid fa-prescription-bottle-medical"></i>
+        <span>Add New Prescription</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../all_medicine/all_medicine.html" class="menu-link" data-page="all-medicine">
+        <i class="fa-solid fa-pills"></i>
+        <span>All Medicine</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../doctors_list/doctors_list.html" class="menu-link" data-page="doctors-list">
+        <i class="fa-solid fa-user-doctor"></i>
+        <span>Doctors List</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../blood_tests/blood_tests.html" class="menu-link" data-page="blood-tests">
+        <i class="fa-solid fa-vials"></i>
+        <span>Blood Test List</span>
+      </a>
+    </li>
+    <li class="menu-item">
+      <a href="../receptionalist_list/receptionalist_list.html" class="menu-link" data-page="receptionalist-list">
+        <i class="fa-solid fa-user-tie"></i>
+        <span>Receptionalist List</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+`;
+
 // --- Initialize Header ---
 function initHeader() {
   const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -6,7 +94,10 @@ function initHeader() {
   const hamburgerOverlay = document.getElementById('hamburgerOverlay');
   const hamburgerMenu = document.getElementById('hamburgerMenu');
 
-  if (!hamburgerBtn || !hamburgerMenu) return;
+  if (!hamburgerBtn || !hamburgerMenu) {
+    console.error('Header elements not found!');
+    return;
+  }
 
   // Hamburger menu toggle
   hamburgerBtn.addEventListener('click', () => {
@@ -48,27 +139,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const headerPlaceholder = document.getElementById('header-placeholder');
 
   if (headerPlaceholder) {
-    fetch('../header/header.html')
-      .then(res => res.text())
-      .then(html => {
-        headerPlaceholder.innerHTML = html;
+    // Insert header HTML
+    headerPlaceholder.innerHTML = headerHTML;
 
-        // Add body padding class
-        document.body.classList.add('has-header');
+    // Add body padding class
+    document.body.classList.add('has-header');
 
-        // Initialize header interactions
-        initHeader();
-
-        // Setup user profile
-        setTimeout(() => setupUserProfile(), 100);
-      })
-      .catch(err => {
-        console.error('Failed to load header:', err);
-        console.error('Make sure header.html exists at: ../header/header.html');
-      });
-  } else {
+    // Initialize header interactions
     initHeader();
-    setupUserProfile();
+
+    // Setup user profile
+    setTimeout(() => setupUserProfile(), 100);
+  } else {
+    console.error('header-placeholder not found!');
   }
 });
 
@@ -77,7 +160,10 @@ function setupUserProfile() {
   const profileIcon = document.getElementById('profileIcon');
   const profileLetter = document.getElementById('profileLetter');
   
-  if (!profileIcon || !profileLetter) return;
+  if (!profileIcon || !profileLetter) {
+    console.error('Profile icon or letter element not found!');
+    return;
+  }
 
   // Get user info from localStorage
   let userName = localStorage.getItem('userName') || 
@@ -250,3 +336,6 @@ function hideMenuItem(linkElement) {
 window.updateHeaderProfile = function() {
   updateProfileLetter();
 };
+
+// Debug info
+console.log('Header JS loaded successfully');
