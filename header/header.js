@@ -33,6 +33,12 @@ const headerHTML = `
 
   <ul class="menu-list">
     <li class="menu-item">
+      <a href="../dashboard/dashboard.html" class="menu-link" data-page="dashboard">
+        <i class="fa-solid fa-house"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li class="menu-item">
       <a href="../dashboard/dashboard.php?role=receptionalist" class="menu-link" data-page="add-reception">
         <i class="fa-solid fa-user-plus"></i>
         <span>Add Receptionalist</span>
