@@ -969,11 +969,18 @@ function setupDropdown(btnId, panelId, onOpen) {
   const btn = document.getElementById(btnId);
   const panel = document.getElementById(panelId);
   
-  if (!btn || !panel) return;
+  console.log('setupDropdown called for:', btnId, 'btn found:', !!btn, 'panel found:', !!panel);
+  
+  if (!btn || !panel) {
+    console.error('setupDropdown failed - missing elements');
+    return;
+  }
   
   btn.addEventListener('click', (e) => {
+    console.log('Dropdown button clicked:', btnId);
     e.stopPropagation();
     const isVisible = panel.classList.contains('show');
+    console.log('Panel visible before toggle:', isVisible);
     
     // Close all dropdowns first
     document.querySelectorAll('.listPanel').forEach(p => {
@@ -982,13 +989,17 @@ function setupDropdown(btnId, panelId, onOpen) {
     });
     
     if (!isVisible) {
+      console.log('Showing panel');
       showPanel(panel);
       // Call onOpen callback if provided
       if (typeof onOpen === 'function') {
+        console.log('Calling onOpen callback');
         onOpen();
       }
     }
   });
+  
+  console.log('setupDropdown complete for:', btnId);
 }
 
 // Close all dropdowns when clicking outside
@@ -1045,6 +1056,12 @@ async function loadBloodTests() {
 // ========== PATIENT DROPDOWN ==========
 function populatePatients(filter) {
   const container = document.getElementById('patientItems');
+  if (!container) {
+    console.error('patientItems container not found!');
+    return;
+  }
+  
+  console.log('populatePatients called, patients array length:', patients.length);
   container.innerHTML = '';
   
   const q = (filter || '').trim().toLowerCase();
@@ -1054,18 +1071,27 @@ function populatePatients(filter) {
            (p.mobile && p.mobile.includes(q));
   });
   
+  console.log('Filtered patients:', filtered.length);
+  
   if (filtered.length === 0) {
-    container.innerHTML = '<div class="item">No patients found</div>';
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">No patients found</div>';
     return;
   }
   
-  filtered.forEach(p => {
+  filtered.forEach((p, index) => {
     const div = document.createElement('div');
     div.className = 'item';
     div.textContent = `${p.patient_name} ${p.mobile ? '(' + p.mobile + ')' : ''}`;
-    div.addEventListener('click', () => selectPatient(p));
+    div.style.cursor = 'pointer';
+    div.addEventListener('click', () => {
+      console.log('Patient clicked:', p.patient_name);
+      selectPatient(p);
+    });
     container.appendChild(div);
+    console.log('Added patient item', index + 1);
   });
+  
+  console.log('populatePatients complete, container children:', container.children.length);
 }
 
 async function selectPatient(patient) {
