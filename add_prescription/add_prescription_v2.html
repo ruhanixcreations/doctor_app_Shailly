@@ -314,33 +314,26 @@ textarea {
   margin-bottom: 16px;
 }
 
-/* Desktop layout: Make form fields horizontal on larger screens */
-@media (min-width: 768px) {
-  /* Medicine, Type, Duration in one row */
-  .medicine-form > .form-group:first-child,
-  #typeGroup,
-  #durationGroup {
-    width: calc(33.333% - 11px);
-    display: inline-block;
-    vertical-align: top;
-    margin-right: 16px;
-  }
-  
-  #durationGroup {
-    margin-right: 0;
-  }
-  
-  /* Time and Meal in one row */
-  #timeGroup,
-  #mealGroup {
-    width: calc(50% - 8px);
-    display: inline-block;
-    vertical-align: top;
-    margin-right: 16px;
-  }
-  
-  #mealGroup {
-    margin-right: 0;
+/* Medicine, Type, Duration in ONE horizontal row */
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Time of Day and Before/After Meal in ONE horizontal row */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .form-row-3,
+  .form-row-2 {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -676,84 +669,90 @@ textarea {
       </div>
       
       <div class="medicine-form">
-        <!-- Medicine Selection -->
-        <div class="form-group">
-          <label class="form-label"><i class="fas fa-capsules"></i> Medicine Name <span class="required-star">*</span></label>
-          <div class="patient-dropdown">
-            <div class="selectedBtn" id="medicineBtn">
-              <span id="medicineLabel">Choose medicine...</span>
-              <span>▾</span>
-            </div>
-            <div class="listPanel" id="medicinePanel">
-              <div class="search">
-                <input type="search" id="medicineSearch" placeholder="Search medicines...">
+        <!-- Row 1: Medicine, Type, Duration (in one horizontal line) -->
+        <div class="form-row-3">
+          <!-- Medicine Selection -->
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-capsules"></i> Medicine Name <span class="required-star">*</span></label>
+            <div class="patient-dropdown">
+              <div class="selectedBtn" id="medicineBtn">
+                <span id="medicineLabel">Choose medicine...</span>
+                <span>▾</span>
               </div>
-              <div id="medicineItems"></div>
+              <div class="listPanel hidden" id="medicinePanel">
+                <div class="search">
+                  <input type="search" id="medicineSearch" placeholder="Search medicines...">
+                </div>
+                <div id="medicineItems"></div>
+              </div>
+              <input type="hidden" id="selectedMedicine">
             </div>
-            <input type="hidden" id="selectedMedicine">
           </div>
-        </div>
-        
-        <!-- Type (hidden initially) -->
-        <div class="form-group" id="typeGroup" style="display:none;">
-          <label class="form-label"><i class="fas fa-tag"></i> Type <span class="required-star">*</span></label>
-          <select id="medicineType">
-            <option value="">-- Select type --</option>
-            <option value="Tablet">Tablet</option>
-            <option value="Syrup">Syrup</option>
-            <option value="Injection">Injection</option>
-            <option value="Capsule">Capsule</option>
-            <option value="Ointment">Ointment</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        
-        <!-- Duration (hidden initially) -->
-        <div class="form-group" id="durationGroup" style="display:none;">
-          <label class="form-label"><i class="fas fa-clock"></i> Duration <span class="required-star">*</span></label>
-          <select id="medicineDuration">
-            <option value="">-- Select duration --</option>
-            <option value="1">1 day</option>
-            <option value="2">2 days</option>
-            <option value="3">3 days</option>
-            <option value="4">4 days</option>
-            <option value="5">5 days</option>
-            <option value="6">6 days</option>
-            <option value="7">7 days</option>
-          </select>
+          
+          <!-- Type (hidden initially) -->
+          <div class="form-group" id="typeGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-tag"></i> Type <span class="required-star">*</span></label>
+            <select id="medicineType">
+              <option value="">-- Select type --</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Syrup">Syrup</option>
+              <option value="Injection">Injection</option>
+              <option value="Capsule">Capsule</option>
+              <option value="Ointment">Ointment</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
+          <!-- Duration (hidden initially) -->
+          <div class="form-group" id="durationGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-clock"></i> Duration <span class="required-star">*</span></label>
+            <select id="medicineDuration">
+              <option value="">-- Select duration --</option>
+              <option value="1">1 day</option>
+              <option value="2">2 days</option>
+              <option value="3">3 days</option>
+              <option value="4">4 days</option>
+              <option value="5">5 days</option>
+              <option value="6">6 days</option>
+              <option value="7">7 days</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Time of Day (hidden initially) -->
-        <div class="form-group" id="timeGroup" style="display:none;">
-          <label class="form-label"><i class="fas fa-calendar-day"></i> Time of Day <span class="required-star">*</span></label>
-          <div class="time-group">
-            <label>
-              <input type="checkbox" id="timeMorning">
-              <span>Morning</span>
-            </label>
-            <label>
-              <input type="checkbox" id="timeAfternoon">
-              <span>Afternoon</span>
-            </label>
-            <label>
-              <input type="checkbox" id="timeNight">
-              <span>Night</span>
-            </label>
+        <!-- Row 2: Time of Day, Before/After Meal (in one horizontal line) -->
+        <div class="form-row-2">
+          <!-- Time of Day (hidden initially) -->
+          <div class="form-group" id="timeGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-calendar-day"></i> Time of Day <span class="required-star">*</span></label>
+            <div class="time-group">
+              <label>
+                <input type="checkbox" id="timeMorning">
+                <span>Morning</span>
+              </label>
+              <label>
+                <input type="checkbox" id="timeAfternoon">
+                <span>Afternoon</span>
+              </label>
+              <label>
+                <input type="checkbox" id="timeNight">
+                <span>Night</span>
+              </label>
+            </div>
           </div>
-        </div>
-        
-        <!-- Before/After Meal (hidden initially) -->
-        <div class="form-group" id="mealGroup" style="display:none;">
-          <label class="form-label"><i class="fas fa-utensils"></i> Before / After Meal <span class="required-star">*</span></label>
-          <div class="meal-group">
-            <label>
-              <input type="radio" name="beforeAfter" value="Before" id="beforeMeal">
-              <span>Before meal</span>
-            </label>
-            <label>
-              <input type="radio" name="beforeAfter" value="After" id="afterMeal">
-              <span>After meal</span>
-            </label>
+          
+          <!-- Before/After Meal (hidden initially) -->
+          <div class="form-group" id="mealGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-utensils"></i> Before / After Meal <span class="required-star">*</span></label>
+            <div class="meal-group">
+              <label>
+                <input type="radio" name="beforeAfter" value="Before" id="beforeMeal">
+                <span>Before meal</span>
+              </label>
+              <label>
+                <input type="radio" name="beforeAfter" value="After" id="afterMeal">
+                <span>After meal</span>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -797,9 +796,9 @@ textarea {
         <ol id="selectedTestsOL"></ol>
       </div>
 
-      <div style="margin-top:16px;">
+      <div style="margin-top:20px;">
         <label class="small">Follow-up Date</label>
-        <input type="date" id="followUpDate">
+        <input type="date" id="followUpDate" style="margin-top:8px;">
       </div>
     </div>
 
@@ -879,53 +878,84 @@ let editingIndex = null; // Track which entry is being edited
 let autosaveTimer = null;
 let currentPrescId = null;
 
-// ========== AUTOSAVE ==========
-function showAutosaveIndicator() {
+// ========== AUTOSAVE TO DATABASE ==========
+function showAutosaveIndicator(message = 'Auto-saved') {
   const indicator = document.getElementById('autosaveIndicator');
+  indicator.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
   indicator.classList.add('show');
   setTimeout(() => {
     indicator.classList.remove('show');
   }, 2000);
 }
 
-function autosave() {
+async function autosaveToDB() {
   const patientId = document.getElementById('selectedPatientId').value;
   if (!patientId) return;
   
+  // Don't autosave if no data is filled
+  const symptoms = document.getElementById('symptoms').value.trim();
+  if (!symptoms && medicineEntries.length === 0) return;
+  
   const data = {
-    patientId,
-    symptoms: document.getElementById('symptoms').value,
-    medicineEntries,
-    selectedBloodTests,
+    patient_id: patientId,
+    symptoms: symptoms,
+    medicineEntries: medicineEntries,
+    selectedBloodTests: selectedBloodTests,
     followUpDate: document.getElementById('followUpDate').value
   };
   
-  localStorage.setItem(`prescription_draft_${patientId}`, JSON.stringify(data));
-  showAutosaveIndicator();
+  try {
+    // Save draft to database
+    const res = await fetch('add_prescription.php?action=save_draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await res.json();
+    if (result.success) {
+      showAutosaveIndicator('Auto-saved to database');
+    }
+  } catch (e) {
+    console.error('Autosave error:', e);
+  }
 }
 
 function triggerAutosave() {
   clearTimeout(autosaveTimer);
-  autosaveTimer = setTimeout(autosave, 2000); // Auto-save after 2 seconds of inactivity
+  autosaveTimer = setTimeout(autosaveToDB, 3000); // Auto-save after 3 seconds of inactivity
 }
 
-function loadAutosave(patientId) {
-  const saved = localStorage.getItem(`prescription_draft_${patientId}`);
-  if (saved) {
-    const data = JSON.parse(saved);
-    document.getElementById('symptoms').value = data.symptoms || '';
-    medicineEntries = data.medicineEntries || [];
-    selectedBloodTests = data.selectedBloodTests || [];
-    document.getElementById('followUpDate').value = data.followUpDate || '';
+async function loadAutosave(patientId) {
+  try {
+    const res = await fetch(`add_prescription.php?action=load_draft&patient_id=${patientId}`);
+    const data = await res.json();
     
-    renderMedicineEntries();
-    updateBloodTestsDisplay();
-    validateForm();
+    if (data.success && data.draft) {
+      document.getElementById('symptoms').value = data.draft.symptoms || '';
+      medicineEntries = data.draft.medicineEntries || [];
+      selectedBloodTests = data.draft.selectedBloodTests || [];
+      document.getElementById('followUpDate').value = data.draft.followUpDate || '';
+      
+      renderMedicineEntries();
+      updateBloodTestsDisplay();
+      validateForm();
+    }
+  } catch (e) {
+    console.error('Load autosave error:', e);
   }
 }
 
-function clearAutosave(patientId) {
-  localStorage.removeItem(`prescription_draft_${patientId}`);
+async function clearAutosave(patientId) {
+  try {
+    await fetch('add_prescription.php?action=clear_draft', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ patient_id: patientId })
+    });
+  } catch (e) {
+    console.error('Clear autosave error:', e);
+  }
 }
 
 // ========== HELPERS ==========
@@ -968,9 +998,11 @@ function showPanel(panel) {
   panel.classList.add('show');
 }
 
-function setupDropdown(btnId, panelId, onSelect) {
+function setupDropdown(btnId, panelId) {
   const btn = document.getElementById(btnId);
   const panel = document.getElementById(panelId);
+  
+  if (!btn || !panel) return;
   
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -986,14 +1018,19 @@ function setupDropdown(btnId, panelId, onSelect) {
       showPanel(panel);
     }
   });
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!panel.contains(e.target) && !btn.contains(e.target)) {
-      hidePanel(panel);
-    }
-  });
 }
+
+// Close all dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  // Check if click is outside all dropdowns
+  const clickedInsideDropdown = e.target.closest('.patient-dropdown') || e.target.closest('.blood-dropdown');
+  if (!clickedInsideDropdown) {
+    document.querySelectorAll('.listPanel').forEach(p => {
+      p.classList.remove('show');
+      p.classList.add('hidden');
+    });
+  }
+});
 
 // ========== LOAD DATA ==========
 async function loadPatients() {
@@ -1094,6 +1131,12 @@ document.getElementById('patientSearch').addEventListener('input', (e) => {
   populatePatients(e.target.value);
 });
 
+// Setup patient dropdown
+setupDropdown('patientBtn', 'patientPanel');
+document.getElementById('patientBtn').addEventListener('click', () => {
+  populatePatients(''); // Load patients when dropdown opens
+});
+
 // ========== MEDICINE DROPDOWN ==========
 function populateMedicines(filter) {
   const container = document.getElementById('medicineItems');
@@ -1136,7 +1179,11 @@ document.getElementById('medicineSearch').addEventListener('input', (e) => {
   populateMedicines(e.target.value);
 });
 
-setupDropdown('medicineBtn', 'medicinePanel', selectMedicine);
+// Setup medicine dropdown with initial population
+setupDropdown('medicineBtn', 'medicinePanel');
+document.getElementById('medicineBtn').addEventListener('click', () => {
+  populateMedicines(''); // Load medicines when dropdown opens
+});
 
 // Progressive form logic - Type selected
 document.getElementById('medicineType').addEventListener('change', function() {
@@ -1175,11 +1222,22 @@ document.querySelectorAll('#timeMorning, #timeAfternoon, #timeNight').forEach(ch
 });
 
 // ========== BLOOD TESTS ==========
-function populateBloodTests() {
+function populateBloodTests(filter = '') {
   const container = document.getElementById('bloodTestChecks');
   container.innerHTML = '';
   
-  bloodTests.forEach(test => {
+  const q = (filter || '').trim().toLowerCase();
+  const filtered = bloodTests.filter(test => {
+    if (!q) return true;
+    return test.name && test.name.toLowerCase().includes(q);
+  });
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">No blood tests found</div>';
+    return;
+  }
+  
+  filtered.forEach(test => {
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -1204,6 +1262,10 @@ function populateBloodTests() {
     container.appendChild(label);
   });
 }
+
+document.getElementById('bloodSearch').addEventListener('input', (e) => {
+  populateBloodTests(e.target.value);
+});
 
 function updateBloodTestSelection() {
   selectedBloodTests = [];
@@ -1249,6 +1311,9 @@ function updateBloodTestsDisplay() {
 }
 
 setupDropdown('bloodBtn', 'bloodPanel');
+document.getElementById('bloodBtn').addEventListener('click', () => {
+  populateBloodTests(); // Load blood tests when dropdown opens
+});
 
 // ========== MEDICINE FORM VALIDATION ==========
 function validateMedicineForm() {
@@ -1300,7 +1365,7 @@ function clearMedicineForm() {
   validateForm();
 }
 
-function addOrUpdateMedicine() {
+async function addOrUpdateMedicine() {
   if (!validateMedicineForm()) {
     alert('Please fill all required fields');
     return;
@@ -1336,9 +1401,13 @@ function addOrUpdateMedicine() {
     medicineEntries.push(entry);
   }
   
+  // Show immediately in table
   renderMedicineEntries();
   clearMedicineForm();
-  triggerAutosave();
+  
+  // Save to database immediately
+  await autosaveToDB();
+  showAutosaveIndicator('Medicine added & saved');
 }
 
 function editMedicine(index) {
