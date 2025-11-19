@@ -171,10 +171,16 @@ function setupUserHeader() {
             }
           }
           setupUserHeader(); // Rebuild header correctly
+        } else {
+          // No session found, show auth buttons
+          console.log('No active session, showing auth buttons');
+          showAuthButtons();
         }
       })
       .catch((err) => {
         console.error('Session check error:', err);
+        // On error, show auth buttons
+        showAuthButtons();
       });
     return; // Exit and wait for callback
   }
@@ -219,16 +225,24 @@ function setupUserHeader() {
 
   } else {
     // Show Sign In / Sign Up buttons
-    navButtons.innerHTML = `
-      <div class="auth-buttons">
-        <button class="signin-btn" onclick="window.location.href='../signin/signin.html'">Sign In</button>
-        <button class="signup-btn" onclick="window.location.href='../signup/signup.html'">Sign Up</button>
-      </div>
-    `;
-    console.log('Auth buttons displayed');
+    showAuthButtons();
   }
 
   console.log('✅ User header setup complete');
+}
+
+// --- Show Auth Buttons (for logged out users) ---
+function showAuthButtons() {
+  const navButtons = document.getElementById("navButtons");
+  if (!navButtons) return;
+
+  navButtons.innerHTML = `
+    <div class="auth-buttons">
+      <button class="signin-btn" onclick="window.location.href='../signin/signin.html'">Sign In</button>
+      <button class="signup-btn" onclick="window.location.href='../signup/signup.html'">Sign Up</button>
+    </div>
+  `;
+  console.log('✅ Auth buttons displayed');
 }
 
 // --- Logout Handler ---
@@ -257,9 +271,14 @@ function handleLogout() {
         localStorage.removeItem('user');
         localStorage.removeItem('role');
 
-        console.log('Redirecting to signin...');
-        // Redirect to signin page
-        window.location.href = '../signin/signin.html';
+        console.log('Logout successful, showing auth buttons...');
+        // Show auth buttons immediately
+        showAuthButtons();
+        
+        // Optional: redirect after a short delay
+        setTimeout(() => {
+          window.location.href = '../signin/signin.html';
+        }, 500);
       } else {
         alert('Logout failed: ' + (data.message || 'Unknown error'));
       }
