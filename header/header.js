@@ -16,10 +16,8 @@ const headerHTML = `
     <h1 class="header-title">Dashboard</h1>
   </div>
 
-  <div class="header-right">
-    <div class="profile-icon" id="profileIcon" title="User Profile">
-      <span class="profile-letter" id="profileLetter">U</span>
-    </div>
+  <div class="header-right" id="navButtons">
+    <!-- Will be populated by JavaScript -->
   </div>
 </header>
 
@@ -96,13 +94,6 @@ function initHeader() {
   const hamburgerOverlay = document.getElementById('hamburgerOverlay');
   const hamburgerMenu = document.getElementById('hamburgerMenu');
 
-  console.log('Header elements:', {
-    hamburgerBtn: !!hamburgerBtn,
-    menuCloseBtn: !!menuCloseBtn,
-    hamburgerOverlay: !!hamburgerOverlay,
-    hamburgerMenu: !!hamburgerMenu
-  });
-
   if (!hamburgerBtn || !hamburgerMenu) {
     console.error('❌ Critical header elements not found!');
     return;
@@ -147,174 +138,106 @@ function initHeader() {
   console.log('✅ Header initialized successfully');
 }
 
-// --- Setup User Profile ---
-function setupUserProfile() {
-  console.log('setupUserProfile() called');
-  const headerRight = document.querySelector('.header-right');
-  
-  if (!headerRight) {
-    console.error('❌ Header right section not found!');
+// --- Setup User Header (matching reference implementation) ---
+function setupUserHeader() {
+  console.log('setupUserHeader() called');
+  const navButtons = document.getElementById("navButtons");
+  if (!navButtons) {
+    console.error('❌ navButtons element not found!');
     return;
   }
 
-  // Get user info from localStorage - prioritize actual name over email
-  let userName = localStorage.getItem('name') ||           // First priority: actual name
-                 localStorage.getItem('userName') ||       // Second: userName 
-                 localStorage.getItem('username') ||       // Third: username
-                 localStorage.getItem('user');             // Last: user
-  
-  console.log('User name from localStorage:', userName);
+  const userName = localStorage.getItem("userName");
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  console.log('Is logged in:', isLoggedIn);
+  console.log('userName:', userName);
+  console.log('isLoggedIn:', isLoggedIn);
 
-  // If not logged in, check session
-  if (!isLoggedIn || !userName) {
+  // 🟢 If localStorage isn't sure, verify PHP session live
+  if (!isLoggedIn) {
     console.log('Checking session...');
-    fetch('../check_session.php', { credentials: 'include' })
+    fetch("../check_session.php", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
         console.log('Session data:', data);
         if (data.success && data.user_id) {
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('user_id', data.user_id);
-          
-          // Prioritize actual name over email
-          if (data.name) {
-            localStorage.setItem('name', data.name);
-            userName = data.name;
-            console.log('Using actual name:', userName);
-          } else if (data.email) {
-            const nameFromEmail = data.email.split('@')[0];
-            localStorage.setItem('userName', nameFromEmail);
-            userName = nameFromEmail;
-            console.log('Using email prefix:', userName);
+          localStorage.setItem("isLoggedIn", "true");
+          // Only set userName if it doesn't exist
+          if (!localStorage.getItem("userName")) {
+            if (data.name) {
+              localStorage.setItem("userName", data.name);
+            } else if (data.email) {
+              localStorage.setItem("userName", data.email.split("@")[0]);
+            }
           }
-          
-          if (data.role) {
-            localStorage.setItem('role', data.role);
-          }
-          // User is logged in, show profile icon
-          showProfileIcon(userName);
-          applyRoleBasedVisibility();
-        } else {
-          // User is not logged in, show sign in/sign up buttons
-          showAuthButtons();
+          setupUserHeader(); // Rebuild header correctly
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Session check error:', err);
-        // On error, show auth buttons
-        showAuthButtons();
       });
-  } else {
-    // User is logged in, show profile icon
-    showProfileIcon(userName);
+    return; // Exit and wait for callback
   }
-  
-  console.log('✅ Profile setup complete');
-}
 
-// --- Show Profile Icon (for logged in users) ---
-function showProfileIcon(userName) {
-  const headerRight = document.querySelector('.header-right');
-  if (!headerRight) return;
+  if (userName && isLoggedIn) {
+    const firstLetter = userName.charAt(0).toUpperCase();
 
-  const firstLetter = userName && userName.trim() ? userName.trim().charAt(0).toUpperCase() : 'U';
-  
-  headerRight.innerHTML = `
-    <div class="profile-icon" id="profileIcon" title="${userName || 'User'}">
-      <span class="profile-letter" id="profileLetter">${firstLetter}</span>
-    </div>
-  `;
+    navButtons.innerHTML = `
+      <div class="profile-container">
+        <div class="profile-icon" title="${userName}">${firstLetter}</div>
+        <div class="logout-menu" id="logoutMenu">Logout</div>
+      </div>
+    `;
 
-  console.log('Profile letter set to:', firstLetter);
+    console.log('Profile icon created with letter:', firstLetter);
 
-  // Profile icon click - show logout menu
-  const profileIcon = document.getElementById('profileIcon');
-  if (profileIcon) {
-    profileIcon.addEventListener('click', (e) => {
-      console.log('Profile icon clicked');
-      e.stopPropagation();
-      toggleLogoutMenu();
+    const profileIcon = document.querySelector(".profile-icon");
+    const logoutMenu = document.getElementById("logoutMenu");
+
+    // Toggle logout menu on click
+    if (profileIcon) {
+      profileIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
+        logoutMenu.classList.toggle("show");
+        console.log('Logout menu toggled');
+      });
+    }
+
+    // Hide menu if clicked outside
+    document.addEventListener("click", () => {
+      if (logoutMenu) {
+        logoutMenu.classList.remove("show");
+      }
     });
-  }
 
-  // Hide logout menu when clicking outside
-  document.addEventListener('click', () => {
-    hideLogoutMenu();
-  });
-}
+    // ✅ Logout action
+    if (logoutMenu) {
+      logoutMenu.addEventListener("click", () => {
+        handleLogout();
+      });
+    }
 
-// --- Show Auth Buttons (for logged out users) ---
-function showAuthButtons() {
-  const headerRight = document.querySelector('.header-right');
-  if (!headerRight) return;
-
-  headerRight.innerHTML = `
-    <div class="auth-buttons">
-      <button class="signin-btn" onclick="window.location.href='../signin/signin.html'">Sign In</button>
-      <button class="signup-btn" onclick="window.location.href='../signup/signup.html'">Sign Up</button>
-    </div>
-  `;
-
-  console.log('Auth buttons displayed');
-}
-
-// --- Update Profile Letter ---
-function updateProfileLetter() {
-  const profileLetter = document.getElementById('profileLetter');
-  if (!profileLetter) return;
-
-  // Prioritize actual name over email
-  const userName = localStorage.getItem('name') ||           // First priority: actual name
-                   localStorage.getItem('userName') ||       // Second: userName
-                   localStorage.getItem('username') ||       // Third: username
-                   localStorage.getItem('user');             // Last: user
-
-  if (userName && userName.trim()) {
-    const firstLetter = userName.trim().charAt(0).toUpperCase();
-    profileLetter.textContent = firstLetter;
-    console.log('Profile letter updated to:', firstLetter, 'from:', userName);
   } else {
-    profileLetter.textContent = 'U';
+    // Show Sign In / Sign Up buttons
+    navButtons.innerHTML = `
+      <div class="auth-buttons">
+        <button class="signin-btn" onclick="window.location.href='../signin/signin.html'">Sign In</button>
+        <button class="signup-btn" onclick="window.location.href='../signup/signup.html'">Sign Up</button>
+      </div>
+    `;
+    console.log('Auth buttons displayed');
   }
+
+  console.log('✅ User header setup complete');
 }
 
-// --- Toggle Logout Menu ---
-function toggleLogoutMenu() {
-  console.log('toggleLogoutMenu() called');
-  let logoutMenu = document.querySelector('.logout-menu');
-  
-  if (!logoutMenu) {
-    console.log('Creating logout menu');
-    logoutMenu = document.createElement('div');
-    logoutMenu.className = 'logout-menu';
-    logoutMenu.textContent = 'Logout';
-    logoutMenu.addEventListener('click', (e) => {
-      e.stopPropagation();
-      handleLogout();
-    });
-    document.body.appendChild(logoutMenu);
-  }
-  
-  logoutMenu.classList.toggle('show');
-  console.log('Logout menu visible:', logoutMenu.classList.contains('show'));
-}
-
-// --- Hide Logout Menu ---
-function hideLogoutMenu() {
-  const logoutMenu = document.querySelector('.logout-menu');
-  if (logoutMenu) {
-    logoutMenu.classList.remove('show');
-  }
-}
-
-// --- Handle Logout ---
+// --- Logout Handler ---
 function handleLogout() {
   console.log('handleLogout() called');
+  
   if (confirm('Are you sure you want to logout?')) {
     console.log('Logging out...');
+    
     fetch('../logout.php', {
       method: 'POST',
       credentials: 'include',
@@ -324,7 +247,7 @@ function handleLogout() {
     .then(data => {
       console.log('Logout response:', data);
       if (data.success) {
-        // Clear localStorage
+        // ✅ Clear local session data
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('user_id');
         localStorage.removeItem('client_id');
@@ -333,9 +256,9 @@ function handleLogout() {
         localStorage.removeItem('username');
         localStorage.removeItem('user');
         localStorage.removeItem('role');
-        
+
         console.log('Redirecting to signin...');
-        // Redirect to signin
+        // Redirect to signin page
         window.location.href = '../signin/signin.html';
       } else {
         alert('Logout failed: ' + (data.message || 'Unknown error'));
@@ -384,14 +307,12 @@ function hideMenuItem(linkElement) {
 console.log('Setting up DOMContentLoaded listener...');
 document.addEventListener('DOMContentLoaded', () => {
   console.log('=== DOMContentLoaded fired ===');
-  console.log('Document ready state:', document.readyState);
   
   const headerPlaceholder = document.getElementById('header-placeholder');
   console.log('header-placeholder element:', headerPlaceholder);
 
   if (headerPlaceholder) {
     console.log('Inserting header HTML...');
-    // Insert header HTML
     headerPlaceholder.innerHTML = headerHTML;
     console.log('✅ Header HTML inserted');
 
@@ -404,18 +325,17 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log('Calling initHeader()...');
       initHeader();
       
-      console.log('Calling setupUserProfile()...');
-      setupUserProfile();
+      console.log('Calling setupUserHeader()...');
+      setupUserHeader();
     }, 200);
   } else {
     console.error('❌❌❌ header-placeholder element NOT FOUND! ❌❌❌');
-    console.log('Available elements with id:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
   }
 });
 
 // --- Expose Global Function ---
 window.updateHeaderProfile = function() {
-  updateProfileLetter();
+  setupUserHeader();
 };
 
 console.log('=== HEADER.JS FINISHED LOADING ===');
