@@ -740,6 +740,9 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
         <button id="savePrescription" class="btn save" disabled>
           <i class="fas fa-save"></i> Save Prescription
         </button>
+        <button id="printPrescriptionBtn" class="btn add" disabled>
+          <i class="fas fa-print"></i> Print Latest Saved Prescription
+        </button>
       </div>
     </div>
 
@@ -750,53 +753,6 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
           <button id="viewPrescriptionHistory" class="btn save" style="font-size:15px;padding:14px 32px;">
             <i class="fas fa-history"></i> View Prescription History
           </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SAVED PRESCRIPTIONS -->
-    <div id="savedItemsContainer" style="display:none;">
-      <div class="section">
-        <div class="meds-list">
-          <div class="list-head">
-            <div>
-              <div class="section-header" style="margin-bottom:0;border:none;padding-bottom:0">
-                <i class="fas fa-file-medical"></i>
-                <span>Latest Prescription</span>
-              </div>
-            </div>
-            <div>
-              <button id="printPrescriptionTop" class="btn add" disabled>
-                <i class="fas fa-print"></i> Print
-              </button>
-            </div>
-          </div>
-
-          <div class="table-wrapper">
-            <table id="medTable">
-              <thead>
-                <tr>
-                  <th>Prescription</th>
-                  <th>Symptoms</th>
-                  <th>Medicine</th>
-                  <th>Type</th>
-                  <th>Duration</th>
-                  <th>Time</th>
-                  <th>Before/After/Meal</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div id="bloodSelectedLabel" style="display:none;">
-            <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
-            <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
-          </div>
-          <div id="followUpLabel" style="display:none;">
-            <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
-          </div>
         </div>
       </div>
     </div>
@@ -1485,33 +1441,14 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
 });
 
 /* ---------- LOAD & SHOW SAVED ITEMS ---------- */
-function renderMedTableFromRows(rows){
-  const tb = document.querySelector('#medTable tbody'); tb.innerHTML='';
-  rows.forEach(m=>{
-    const presLabel = m.prescription_id ? `#${m.prescription_id} (${m.created_at?m.created_at.split(' ')[0]:''})` : '';
-    const times = m.times_of_day || m.times || '';
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${escapeHtml(presLabel)}</td><td>${escapeHtml(m.symptoms||'')}</td><td>${escapeHtml(m.medicine_name||'')}</td><td>${escapeHtml(m.type||'')}</td><td>${escapeHtml(m.duration||'')}</td><td>${escapeHtml(times)}</td><td>${escapeHtml(m.before_after||'')}</td><td>${escapeHtml(m.notes||'')}</td>`;
-    tb.appendChild(tr);
-  });
-}
-
 async function loadPatientPrescriptions(patient_id){
-  const savedContainer = document.getElementById('savedItemsContainer');
-  document.getElementById('bloodSelectedLabel').style.display='none';
-  document.getElementById('bloodSelectedText').textContent = '';
-  document.getElementById('followUpLabel').style.display='none';
-  document.getElementById('followUpText').textContent = '';
-
-  if(!patient_id){ renderMedTableFromRows([]); setPrintForId(null); savedContainer.style.display='none'; return; }
+  if(!patient_id){ setPrintForId(null); return; }
   try{
     const r = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patient_id)}`);
     const j = await r.json();
-    if(!j.success){ renderMedTableFromRows([]); setPrintForId(null); savedContainer.style.display='block'; return; }
+    if(!j.success){ setPrintForId(null); return; }
     
     const items = j.items || [];
-    renderMedTableFromRows(items);
-    savedContainer.style.display='block';
 
     // find latest prescription id
     let latestPrescription = null;
@@ -1521,53 +1458,19 @@ async function loadPatientPrescriptions(patient_id){
     }
     setPrintForId(latestPrescription ? latestPrescription.prescription_id : null);
 
-    // update recommended blood test (from latest)
-    if(latestPrescription && latestPrescription.recommended_blood_test){
-      const bloodTestsArray = latestPrescription.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
-      const bloodTextOL = document.getElementById('bloodSelectedText');
-      bloodTextOL.innerHTML = '';
-      bloodTestsArray.forEach(test => {
-        const li = document.createElement('li');
-        li.textContent = test;
-        li.style.margin = '4px 0';
-        li.style.fontSize = '14px';
-        li.style.color = 'var(--text-dark)';
-        bloodTextOL.appendChild(li);
-      });
-      document.getElementById('bloodSelectedLabel').style.display='block';
-    } else {
-      document.getElementById('bloodSelectedLabel').style.display='none';
-    }
-
     // update follow-up date (from latestPrescription)
     if(latestPrescription && latestPrescription.follow_up_date){
-      document.getElementById('followUpText').textContent = new Date(latestPrescription.follow_up_date).toLocaleDateString();
-      document.getElementById('followUpLabel').style.display = 'block';
       document.getElementById('topFollowUp').value = latestPrescription.follow_up_date;
     } else {
       if(!document.getElementById('topFollowUp').value) document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
-      updateFollowUpLabelFromTop();
     }
 
-  }catch(e){ console.error(e); renderMedTableFromRows([]); setPrintForId(null); savedContainer.style.display='block'; }
-}
-
-/* Collect follow-up date from top-level input and show label */
-function updateFollowUpLabelFromTop(){
-  const top = document.getElementById('topFollowUp').value;
-  if(top){
-    const pretty = new Date(top).toLocaleDateString();
-    document.getElementById('followUpText').textContent = pretty;
-    document.getElementById('followUpLabel').style.display='block';
-  } else {
-    document.getElementById('followUpText').textContent = '';
-    document.getElementById('followUpLabel').style.display='none';
-  }
+  }catch(e){ console.error(e); setPrintForId(null); }
 }
 
 /* print button: opens print.html */
 function setPrintForId(presId){
-  const pBtn = document.getElementById('printPrescriptionTop');
+  const pBtn = document.getElementById('printPrescriptionBtn');
   if(presId){
     pBtn.disabled=false;
     const pid = document.getElementById('selectedPatientId').value || '';
@@ -1626,7 +1529,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   
   // set top follow-up default
   document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
-  document.getElementById('savedItemsContainer').style.display='none';
 
   // update follow-up label when top input changes
   document.getElementById('topFollowUp').addEventListener('change', () => {
