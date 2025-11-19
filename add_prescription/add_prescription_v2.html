@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Add Prescription - Ruhanix Legal</title>
-<link rel="stylesheet" href="../header/header.css">
+<title>Add Prescription</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root{
@@ -25,11 +24,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f5f7fa;
   color: var(--text-dark);
-  padding-top: 70px;
-}
-
-body.has-header {
-  padding-top: 90px;
+  padding: 0;
 }
 
 .container {
@@ -585,9 +580,6 @@ textarea {
 </head>
 <body>
 
-<!-- Header Placeholder -->
-<div id="header-placeholder"></div>
-
 <div class="container">
   <!-- Patient Selection -->
   <div class="section">
@@ -602,7 +594,7 @@ textarea {
         <span id="patientLabel">-- Select patient --</span>
         <span>▾</span>
       </div>
-      <div class="listPanel" id="patientPanel">
+      <div class="listPanel hidden" id="patientPanel">
         <div class="search">
           <input type="search" id="patientSearch" placeholder="Search patients...">
         </div>
@@ -864,9 +856,6 @@ textarea {
   <i class="fas fa-check-circle"></i> Auto-saved
 </div>
 
-<!-- Load Header JS -->
-<script src="../header/header.js"></script>
-
 <script>
 // ========== GLOBAL STATE ==========
 let patients = [];
@@ -878,7 +867,7 @@ let editingIndex = null; // Track which entry is being edited
 let autosaveTimer = null;
 let currentPrescId = null;
 
-// ========== AUTOSAVE TO DATABASE ==========
+// ========== AUTOSAVE (localStorage) ==========
 function showAutosaveIndicator(message = 'Auto-saved') {
   const indicator = document.getElementById('autosaveIndicator');
   indicator.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
@@ -888,7 +877,7 @@ function showAutosaveIndicator(message = 'Auto-saved') {
   }, 2000);
 }
 
-async function autosaveToDB() {
+function autosave() {
   const patientId = document.getElementById('selectedPatientId').value;
   if (!patientId) return;
   
@@ -897,65 +886,43 @@ async function autosaveToDB() {
   if (!symptoms && medicineEntries.length === 0) return;
   
   const data = {
-    patient_id: patientId,
+    patientId: patientId,
     symptoms: symptoms,
     medicineEntries: medicineEntries,
     selectedBloodTests: selectedBloodTests,
     followUpDate: document.getElementById('followUpDate').value
   };
   
-  try {
-    // Save draft to database
-    const res = await fetch('add_prescription.php?action=save_draft', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    
-    const result = await res.json();
-    if (result.success) {
-      showAutosaveIndicator('Auto-saved to database');
-    }
-  } catch (e) {
-    console.error('Autosave error:', e);
-  }
+  localStorage.setItem(`prescription_draft_${patientId}`, JSON.stringify(data));
+  showAutosaveIndicator('Auto-saved');
 }
 
 function triggerAutosave() {
   clearTimeout(autosaveTimer);
-  autosaveTimer = setTimeout(autosaveToDB, 3000); // Auto-save after 3 seconds of inactivity
+  autosaveTimer = setTimeout(autosave, 2000); // Auto-save after 2 seconds of inactivity
 }
 
-async function loadAutosave(patientId) {
-  try {
-    const res = await fetch(`add_prescription.php?action=load_draft&patient_id=${patientId}`);
-    const data = await res.json();
-    
-    if (data.success && data.draft) {
-      document.getElementById('symptoms').value = data.draft.symptoms || '';
-      medicineEntries = data.draft.medicineEntries || [];
-      selectedBloodTests = data.draft.selectedBloodTests || [];
-      document.getElementById('followUpDate').value = data.draft.followUpDate || '';
+function loadAutosave(patientId) {
+  const saved = localStorage.getItem(`prescription_draft_${patientId}`);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      document.getElementById('symptoms').value = data.symptoms || '';
+      medicineEntries = data.medicineEntries || [];
+      selectedBloodTests = data.selectedBloodTests || [];
+      document.getElementById('followUpDate').value = data.followUpDate || '';
       
       renderMedicineEntries();
       updateBloodTestsDisplay();
       validateForm();
+    } catch (e) {
+      console.error('Load autosave error:', e);
     }
-  } catch (e) {
-    console.error('Load autosave error:', e);
   }
 }
 
-async function clearAutosave(patientId) {
-  try {
-    await fetch('add_prescription.php?action=clear_draft', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ patient_id: patientId })
-    });
-  } catch (e) {
-    console.error('Clear autosave error:', e);
-  }
+function clearAutosave(patientId) {
+  localStorage.removeItem(`prescription_draft_${patientId}`);
 }
 
 // ========== HELPERS ==========
@@ -1401,9 +1368,8 @@ async function addOrUpdateMedicine() {
   renderMedicineEntries();
   clearMedicineForm();
   
-  // Save to database immediately
-  await autosaveToDB();
-  showAutosaveIndicator('Medicine added & saved');
+  // Trigger autosave
+  triggerAutosave();
 }
 
 function editMedicine(index) {
@@ -1699,13 +1665,19 @@ document.getElementById('followUpDate').addEventListener('change', triggerAutosa
 
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('Page loaded, initializing...');
+  
   await loadPatients();
   await loadMedicines();
   await loadBloodTests();
   
-  // Setup patient dropdown
+  console.log('Patients loaded:', patients.length);
+  
+  // Setup patient dropdown - populate initially
+  populatePatients('');
   setupDropdown('patientBtn', 'patientPanel', () => {
-    populatePatients(''); // Load patients when dropdown opens
+    console.log('Patient dropdown opened');
+    populatePatients(''); // Refresh patients when dropdown opens
   });
   
   // Set default follow-up date
@@ -1715,6 +1687,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('savedItemsContainer').style.display = 'none';
   
   validateForm();
+  
+  console.log('Initialization complete');
 });
 
 // Make functions globally accessible for onclick handlers
