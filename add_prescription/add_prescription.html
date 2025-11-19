@@ -734,12 +734,9 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
 
       <!-- ACTION BUTTONS -->
       <div class="action-btn-group" style="margin-bottom:30px">
-        <div class="error-message" id="validationError">
-          <i class="fas fa-exclamation-triangle"></i> Fill all the required fields
+        <div id="autoSaveStatus" style="display:none;padding:12px;border-radius:6px;background:#e8f5e9;color:#2e7d32;font-size:14px;font-weight:600;">
+          <i class="fas fa-check-circle"></i> <span id="autoSaveText">Auto-saved successfully</span>
         </div>
-        <button id="savePrescription" class="btn save" disabled>
-          <i class="fas fa-save"></i> Save Prescription
-        </button>
         <button id="printPrescriptionTop" class="btn add" disabled>
           <i class="fas fa-print"></i> Print Latest Saved Prescription
         </button>
@@ -770,6 +767,8 @@ let selectedBloodTests = [];
 let filledFieldsCount = 0;
 let medicationRows = []; // Store medication rows
 let editingRowIndex = null; // Track which row is being edited
+let autoSaveTimeout = null; // For debouncing auto-save
+let isSaving = false; // Prevent multiple simultaneous saves
 
 function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatDateYYYYMMDD(d){ const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`; }
@@ -980,6 +979,9 @@ function updateSelectedBloodTests(){
   
   updateFieldsCount();
   validateAllForms();
+  
+  // Trigger auto-save when blood tests are updated
+  triggerAutoSave();
 }
 
 // Dropdown open/close
@@ -1285,6 +1287,9 @@ function deleteMedicationRow(index){
     renderMedicationRows();
     updateFieldsCount();
     validateAllForms();
+    
+    // Trigger auto-save when medication is deleted
+    triggerAutoSave();
   }
 }
 
@@ -1310,6 +1315,9 @@ addBottomBtn.addEventListener('click',(e)=>{
   clearMedicationForm();
   updateFieldsCount();
   validateAllForms();
+  
+  // Trigger auto-save when medication is added
+  triggerAutoSave();
 });
 
 /* ---------- VALIDATION ---------- */
@@ -1357,30 +1365,12 @@ function updateFieldsCount(){
 }
 
 function updateButtonStates(){
-  const saveBtn = document.getElementById('savePrescription');
-  const errorMsg = document.getElementById('validationError');
-  
   // Add Medicine button: only checks if medicine form fields are complete
   const medFormsValid = validateMedicineForms();
   if(medFormsValid){ 
     addBottomBtn.removeAttribute('disabled'); 
   } else { 
     addBottomBtn.setAttribute('disabled',''); 
-  }
-  
-  // Save Prescription button: checks symptoms AND at least one medication row
-  const allValid = validateForSave();
-  if(allValid){ 
-    saveBtn.removeAttribute('disabled');
-    errorMsg.style.display = 'none';
-  } else { 
-    saveBtn.setAttribute('disabled','');
-    // Show error message if user has filled 3 or more fields but not all required
-    if(filledFieldsCount >= 3){
-      errorMsg.style.display = 'block';
-    } else {
-      errorMsg.style.display = 'none';
-    }
   }
 }
 
@@ -1394,16 +1384,43 @@ function collectMiniForms(){
   return medicationRows;
 }
 
-/* Save handler */
-document.getElementById('savePrescription').addEventListener('click', async ()=>{
-  if(!validateForSave()){ 
-    alert('Please fill symptoms and add at least one medicine entry'); 
-    return; 
+/* ---------- AUTO-SAVE FUNCTIONALITY ---------- */
+function showAutoSaveStatus(message, success = true){
+  const statusEl = document.getElementById('autoSaveStatus');
+  const textEl = document.getElementById('autoSaveText');
+  textEl.textContent = message;
+  
+  if(success){
+    statusEl.style.background = '#e8f5e9';
+    statusEl.style.color = '#2e7d32';
+    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> <span id="autoSaveText">' + message + '</span>';
+  } else {
+    statusEl.style.background = '#ffebee';
+    statusEl.style.color = '#c62828';
+    statusEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span id="autoSaveText">' + message + '</span>';
   }
+  
+  statusEl.style.display = 'block';
+  
+  // Hide after 3 seconds
+  setTimeout(() => {
+    statusEl.style.display = 'none';
+  }, 3000);
+}
+
+async function autoSavePrescription(){
+  if(isSaving) return; // Prevent multiple simultaneous saves
+  if(!validateForSave()) return; // Don't save if not valid
+  
   const pid = document.getElementById('selectedPatientId').value;
-  if(!pid){ alert('Select patient'); return; }
+  if(!pid) return;
+  
   const items = collectMiniForms();
-  if(!items.length){ alert('Add medicines'); return; }
+  if(!items.length) return;
+  
+  isSaving = true;
+  showAutoSaveStatus('Saving...', true);
+  
   const client_id = localStorage.getItem('client_id') || '';
   const bloodTestIds = selectedBloodTests.map(t => t.id);
   const bloodTestNames = selectedBloodTests.map(t => t.name);
@@ -1417,28 +1434,33 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
       body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_ids: bloodTestIds, blood_test_names: bloodTestNames })
     });
     const j = await res.json();
-    if(!j.success){ alert('Save failed: '+(j.message||'')); return; }
-    alert('Prescription saved');
+    if(!j.success){ 
+      showAutoSaveStatus('Save failed: ' + (j.message || ''), false);
+      return; 
+    }
+    
+    showAutoSaveStatus('Prescription auto-saved successfully', true);
     currentPrescId = j.prescription_id || null;
     setPrintForId(currentPrescId);
     
-    // Clear medication rows
-    medicationRows = [];
-    renderMedicationRows();
-    clearMedicationForm();
-    
-    // reset follow-up default to 7 days from today
-    document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
-    document.getElementById('topSymptoms').value = '';
-    // Reset blood test selections
-    selectedBloodTests = [];
-    bloodLabel.textContent = 'Choose blood tests...';
-    selectedBloodTestsList.style.display = 'none';
-    updateFieldsCount();
-    validateAllForms();
     await loadPatientPrescriptions(pid);
-  }catch(e){ console.error(e); alert('Save failed'); }
-});
+  }catch(e){ 
+    console.error(e); 
+    showAutoSaveStatus('Auto-save failed', false);
+  } finally {
+    isSaving = false;
+  }
+}
+
+function triggerAutoSave(){
+  // Clear any existing timeout
+  if(autoSaveTimeout) clearTimeout(autoSaveTimeout);
+  
+  // Set a new timeout (debounce for 1 second)
+  autoSaveTimeout = setTimeout(() => {
+    autoSavePrescription();
+  }, 1000);
+}
 
 /* ---------- LOAD & SHOW SAVED ITEMS ---------- */
 async function loadPatientPrescriptions(patient_id){
@@ -1530,15 +1552,18 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   // set top follow-up default
   document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
 
-  // update fields count when top input changes
+  // update fields count and trigger auto-save when follow-up date changes
   document.getElementById('topFollowUp').addEventListener('change', () => {
     updateFieldsCount();
     validateAllForms();
+    triggerAutoSave();
   });
-  // validate when symptom typed
+  
+  // validate and trigger auto-save when symptom typed
   document.getElementById('topSymptoms').addEventListener('input', () => {
     updateFieldsCount();
     validateAllForms();
+    triggerAutoSave();
   });
 });
 </script>
