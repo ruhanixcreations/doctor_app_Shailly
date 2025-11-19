@@ -998,7 +998,7 @@ function showPanel(panel) {
   panel.classList.add('show');
 }
 
-function setupDropdown(btnId, panelId) {
+function setupDropdown(btnId, panelId, onOpen) {
   const btn = document.getElementById(btnId);
   const panel = document.getElementById(panelId);
   
@@ -1016,6 +1016,10 @@ function setupDropdown(btnId, panelId) {
     
     if (!isVisible) {
       showPanel(panel);
+      // Call onOpen callback if provided
+      if (typeof onOpen === 'function') {
+        onOpen();
+      }
     }
   });
 }
@@ -1131,12 +1135,6 @@ document.getElementById('patientSearch').addEventListener('input', (e) => {
   populatePatients(e.target.value);
 });
 
-// Setup patient dropdown
-setupDropdown('patientBtn', 'patientPanel');
-document.getElementById('patientBtn').addEventListener('click', () => {
-  populatePatients(''); // Load patients when dropdown opens
-});
-
 // ========== MEDICINE DROPDOWN ==========
 function populateMedicines(filter) {
   const container = document.getElementById('medicineItems');
@@ -1180,8 +1178,7 @@ document.getElementById('medicineSearch').addEventListener('input', (e) => {
 });
 
 // Setup medicine dropdown with initial population
-setupDropdown('medicineBtn', 'medicinePanel');
-document.getElementById('medicineBtn').addEventListener('click', () => {
+setupDropdown('medicineBtn', 'medicinePanel', () => {
   populateMedicines(''); // Load medicines when dropdown opens
 });
 
@@ -1310,8 +1307,7 @@ function updateBloodTestsDisplay() {
   }
 }
 
-setupDropdown('bloodBtn', 'bloodPanel');
-document.getElementById('bloodBtn').addEventListener('click', () => {
+setupDropdown('bloodBtn', 'bloodPanel', () => {
   populateBloodTests(); // Load blood tests when dropdown opens
 });
 
@@ -1706,6 +1702,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPatients();
   await loadMedicines();
   await loadBloodTests();
+  
+  // Setup patient dropdown
+  setupDropdown('patientBtn', 'patientPanel', () => {
+    populatePatients(''); // Load patients when dropdown opens
+  });
   
   // Set default follow-up date
   document.getElementById('followUpDate').value = formatDateYYYYMMDD(addDays(new Date(), 7));
