@@ -3,20 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard - Ruhanix</title>
+  <title>Dashboard - Ruhanix Legal</title>
+  <link rel="stylesheet" href="../header/header.css">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <i class="fa-solid fa-stethoscope"></i>
-      Ruhanix Legal - Dashboard
-    </div>
-    <div class="user-info">
-      <i class="fa-solid fa-user-md"></i>
-    </div>
-  </header>
+  <!-- Include Header -->
+  <div id="header-placeholder"></div>
 
   <main class="container">
     <h2 class="page-title">Quick Actions</h2>
@@ -61,16 +55,6 @@
         </div>
       </a>
 
-      <!-- Saved Prescriptions (if you still keep it) -->
-      <!-- <a id="card-saved-prescriptions" class="card" href="../saved_prescriptions/saved_prescriptions.html" title="Saved Prescriptions">
-        <div class="card-gradient"></div>
-        <div class="card-icon"><i class="fa-solid fa-folder-open"></i></div>
-        <div class="card-content">
-          <div class="card-title">Saved Prescriptions</div>
-          <div class="card-sub">View all saved prescriptions</div>
-        </div>
-      </a> -->
-
       <!-- All Medicine -->
       <a id="card-all-medicine" class="card" href="../all_medicine/all_medicine.html" title="All Medicine">
         <div class="card-gradient"></div>
@@ -114,9 +98,28 @@
   </main>
 
   <footer class="footer">
-    <div>© 2025 Ruhanix Healthcare System</div>
+    <div>© 2025 Ruhanix Legal Healthcare System</div>
   </footer>
 
   <script src="dashboard.js"></script>
+  <script>
+    // Load header HTML and JS
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('../header/header.html')
+        .then(response => response.text())
+        .then(html => {
+          document.getElementById('header-placeholder').innerHTML = html;
+          
+          // Load header.js dynamically after HTML is loaded
+          const script = document.createElement('script');
+          script.src = '../header/header.js';
+          script.onload = () => {
+            console.log('Header loaded successfully');
+          };
+          document.body.appendChild(script);
+        })
+        .catch(error => console.error('Error loading header:', error));
+    });
+  </script>
 </body>
 </html>

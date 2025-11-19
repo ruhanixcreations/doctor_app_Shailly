@@ -5,14 +5,14 @@
   left: 0;
   right: 0;
   height: 70px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 255, 0.98) 100%);
+  background: linear-gradient(135deg, #00A9A5 0%, #1a75bb 100%);
   backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  box-shadow: 0 4px 20px rgba(100, 116, 139, 0.08);
-  border-bottom: 1px solid rgba(125, 179, 232, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 169, 165, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 1000;
   animation: slideDown 0.5s ease-out;
 }
@@ -40,19 +40,19 @@
 }
 
 .hamburger-btn:hover {
-  background: rgba(125, 179, 232, 0.1);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .hamburger-line {
   width: 28px;
   height: 3px;
-  background: linear-gradient(135deg, #7db3e8 0%, #9fa8da 100%);
+  background: white;
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .hamburger-btn:hover .hamburger-line {
-  background: linear-gradient(135deg, #5a9dd8 0%, #818bc5 100%);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* Header Center - Title */
@@ -67,11 +67,9 @@
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #7db3e8 0%, #9fa8da 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
   margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Header Right - Profile */
@@ -83,25 +81,71 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7db3e8 0%, #9fa8da 100%);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(125, 179, 232, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .profile-icon:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(125, 179, 232, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 .profile-letter {
   font-size: 18px;
   font-weight: 700;
-  color: white;
+  background: linear-gradient(135deg, #00A9A5 0%, #1a75bb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-transform: uppercase;
+}
+
+/* Logout Menu */
+.logout-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 24px;
+  background: #ffffff;
+  color: #00A9A5;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 1001;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 169, 165, 0.2);
+}
+
+.logout-menu:hover {
+  background: #f0f9ff;
+  color: #1a75bb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.logout-menu.show {
+  display: block;
+  animation: fadeInDown 0.3s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Hamburger Menu Overlay */
@@ -111,7 +155,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   opacity: 0;
   visibility: hidden;
@@ -131,8 +175,8 @@
   left: -320px;
   width: 320px;
   height: 100%;
-  background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
-  box-shadow: 4px 0 20px rgba(100, 116, 139, 0.15);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
   z-index: 1200;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-y: auto;
@@ -148,14 +192,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 24px 20px;
-  border-bottom: 1px solid rgba(125, 179, 232, 0.15);
-  background: linear-gradient(135deg, rgba(125, 179, 232, 0.08) 0%, rgba(168, 181, 227, 0.08) 100%);
+  border-bottom: 1px solid rgba(0, 169, 165, 0.15);
+  background: linear-gradient(135deg, rgba(0, 169, 165, 0.08) 0%, rgba(26, 117, 187, 0.08) 100%);
 }
 
 .menu-title {
   font-size: 20px;
   font-weight: 700;
-  background: linear-gradient(135deg, #7db3e8 0%, #9fa8da 100%);
+  background: linear-gradient(135deg, #00A9A5 0%, #1a75bb 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -166,7 +210,7 @@
   background: transparent;
   border: none;
   font-size: 24px;
-  color: #7db3e8;
+  color: #00A9A5;
   cursor: pointer;
   padding: 8px;
   border-radius: 8px;
@@ -177,7 +221,7 @@
 }
 
 .menu-close-btn:hover {
-  background: rgba(125, 179, 232, 0.1);
+  background: rgba(0, 169, 165, 0.1);
   transform: rotate(90deg);
 }
 
@@ -212,13 +256,13 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background: linear-gradient(180deg, #7db3e8 0%, #9fa8da 100%);
+  background: linear-gradient(180deg, #00A9A5 0%, #1a75bb 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .menu-link:hover {
-  background: linear-gradient(90deg, rgba(125, 179, 232, 0.08) 0%, transparent 100%);
+  background: linear-gradient(90deg, rgba(0, 169, 165, 0.08) 0%, transparent 100%);
   color: #1a202c;
 }
 
@@ -228,7 +272,7 @@
 
 .menu-link i {
   font-size: 20px;
-  color: #7db3e8;
+  color: #00A9A5;
   width: 24px;
   text-align: center;
   transition: all 0.3s ease;
@@ -236,7 +280,7 @@
 
 .menu-link:hover i {
   transform: scale(1.1);
-  color: #5a9dd8;
+  color: #1a75bb;
 }
 
 /* Mobile Adjustments */
@@ -263,6 +307,13 @@
     width: 280px;
     left: -280px;
   }
+
+  .logout-menu {
+    top: 55px;
+    right: 16px;
+    font-size: 14px;
+    padding: 10px 16px;
+  }
 }
 
 /* Body padding to account for fixed header */
@@ -274,4 +325,22 @@ body.has-header {
   body.has-header {
     padding-top: 60px;
   }
+}
+
+/* Scrollbar styling for sidebar menu */
+.hamburger-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.hamburger-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.hamburger-menu::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00A9A5 0%, #1a75bb 100%);
+  border-radius: 10px;
+}
+
+.hamburger-menu::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #008b87 0%, #15609d 100%);
 }
