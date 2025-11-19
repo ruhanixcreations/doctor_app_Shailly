@@ -2,10 +2,10 @@
 (function() {
   'use strict';
 
-  // Wait for DOM to be ready
-  document.addEventListener('DOMContentLoaded', initializeHeader);
-
+  // Initialize function
   function initializeHeader() {
+    console.log('Header: Initializing header...');
+    
     // Get elements
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const menuCloseBtn = document.getElementById('menuCloseBtn');
@@ -15,6 +15,16 @@
     const profileLetter = document.getElementById('profileLetter');
     const menuLinks = document.querySelectorAll('.menu-link');
 
+    console.log('Header: Elements found:', {
+      hamburgerBtn: !!hamburgerBtn,
+      menuCloseBtn: !!menuCloseBtn,
+      hamburgerOverlay: !!hamburgerOverlay,
+      hamburgerMenu: !!hamburgerMenu,
+      profileIcon: !!profileIcon,
+      profileLetter: !!profileLetter,
+      menuLinksCount: menuLinks.length
+    });
+
     // Add body class for padding
     document.body.classList.add('has-header');
 
@@ -23,7 +33,10 @@
 
     // Hamburger menu toggle
     if (hamburgerBtn) {
+      console.log('Header: Adding click listener to hamburger button');
       hamburgerBtn.addEventListener('click', openMenu);
+    } else {
+      console.error('Header: Hamburger button not found!');
     }
 
     if (menuCloseBtn) {
@@ -36,7 +49,10 @@
 
     // Profile icon click to show logout
     if (profileIcon) {
+      console.log('Header: Adding click listener to profile icon');
       profileIcon.addEventListener('click', toggleLogoutMenu);
+    } else {
+      console.error('Header: Profile icon not found!');
     }
 
     // Handle menu link clicks
@@ -67,6 +83,7 @@
   }
 
   function openMenu() {
+    console.log('Header: Opening menu...');
     const hamburgerOverlay = document.getElementById('hamburgerOverlay');
     const hamburgerMenu = document.getElementById('hamburgerMenu');
     
@@ -74,6 +91,9 @@
       hamburgerMenu.classList.add('active');
       hamburgerOverlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+      console.log('Header: Menu opened successfully');
+    } else {
+      console.error('Header: Could not open menu - elements not found');
     }
   }
 
@@ -89,11 +109,13 @@
   }
 
   function toggleLogoutMenu(e) {
+    console.log('Header: Toggling logout menu...');
     e.stopPropagation();
     
     // Create logout menu if it doesn't exist
     let logoutMenu = document.querySelector('.logout-menu');
     if (!logoutMenu) {
+      console.log('Header: Creating logout menu');
       logoutMenu = document.createElement('div');
       logoutMenu.className = 'logout-menu';
       logoutMenu.textContent = 'Logout';
@@ -102,6 +124,7 @@
     }
     
     logoutMenu.classList.toggle('show');
+    console.log('Header: Logout menu toggled, visible:', logoutMenu.classList.contains('show'));
   }
 
   function hideLogoutMenu() {
@@ -304,5 +327,16 @@
   window.updateHeaderProfile = function() {
     setProfileLetter();
   };
+
+  // Auto-initialize when script loads or when DOM is ready
+  console.log('Header: Script loaded, readyState:', document.readyState);
+  if (document.readyState === 'loading') {
+    console.log('Header: Waiting for DOMContentLoaded...');
+    document.addEventListener('DOMContentLoaded', initializeHeader);
+  } else {
+    // DOM is already loaded, initialize immediately
+    console.log('Header: DOM already loaded, initializing immediately');
+    initializeHeader();
+  }
 
 })();

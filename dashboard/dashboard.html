@@ -105,20 +105,47 @@
   <script>
     // Load header HTML and JS
     document.addEventListener('DOMContentLoaded', () => {
+      console.log('Dashboard: Loading header...');
+      
+      // First load the header HTML
       fetch('../header/header.html')
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load header.html: ' + response.status);
+          }
+          return response.text();
+        })
         .then(html => {
-          document.getElementById('header-placeholder').innerHTML = html;
+          console.log('Dashboard: Header HTML loaded');
+          const placeholder = document.getElementById('header-placeholder');
+          if (!placeholder) {
+            console.error('Dashboard: header-placeholder not found!');
+            return;
+          }
           
-          // Load header.js dynamically after HTML is loaded
+          placeholder.innerHTML = html;
+          console.log('Dashboard: Header HTML inserted into DOM');
+          
+          // Verify elements are in DOM
+          const hamburgerBtn = document.getElementById('hamburgerBtn');
+          const profileIcon = document.getElementById('profileIcon');
+          console.log('Dashboard: Hamburger button exists:', !!hamburgerBtn);
+          console.log('Dashboard: Profile icon exists:', !!profileIcon);
+          
+          // Load header.js
           const script = document.createElement('script');
           script.src = '../header/header.js';
           script.onload = () => {
-            console.log('Header loaded successfully');
+            console.log('Dashboard: header.js loaded and should be initialized');
+          };
+          script.onerror = (error) => {
+            console.error('Dashboard: Failed to load header.js', error);
           };
           document.body.appendChild(script);
         })
-        .catch(error => console.error('Error loading header:', error));
+        .catch(error => {
+          console.error('Dashboard: Error loading header:', error);
+        });
     });
   </script>
 </body>
