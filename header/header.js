@@ -1,7 +1,8 @@
 // Header Component JavaScript
+console.log('=== HEADER.JS STARTED LOADING ===');
+
 // --- Header HTML Template ---
 const headerHTML = `
-<!-- Header Component -->
 <header class="app-header">
   <div class="header-left">
     <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
@@ -22,10 +23,8 @@ const headerHTML = `
   </div>
 </header>
 
-<!-- Hamburger Menu Overlay -->
 <div class="hamburger-overlay" id="hamburgerOverlay"></div>
 
-<!-- Hamburger Menu Sidebar -->
 <nav class="hamburger-menu" id="hamburgerMenu">
   <div class="menu-header">
     <h2 class="menu-title">Navigation</h2>
@@ -87,20 +86,31 @@ const headerHTML = `
 </nav>
 `;
 
+console.log('Header HTML template defined');
+
 // --- Initialize Header ---
 function initHeader() {
+  console.log('initHeader() called');
   const hamburgerBtn = document.getElementById('hamburgerBtn');
   const menuCloseBtn = document.getElementById('menuCloseBtn');
   const hamburgerOverlay = document.getElementById('hamburgerOverlay');
   const hamburgerMenu = document.getElementById('hamburgerMenu');
 
+  console.log('Header elements:', {
+    hamburgerBtn: !!hamburgerBtn,
+    menuCloseBtn: !!menuCloseBtn,
+    hamburgerOverlay: !!hamburgerOverlay,
+    hamburgerMenu: !!hamburgerMenu
+  });
+
   if (!hamburgerBtn || !hamburgerMenu) {
-    console.error('Header elements not found!');
+    console.error('❌ Critical header elements not found!');
     return;
   }
 
   // Hamburger menu toggle
   hamburgerBtn.addEventListener('click', () => {
+    console.log('Hamburger clicked');
     hamburgerMenu.classList.add('active');
     hamburgerOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -118,6 +128,7 @@ function initHeader() {
 
   // Close menu function
   function closeMenu() {
+    console.log('Closing menu');
     hamburgerMenu.classList.remove('active');
     hamburgerOverlay.classList.remove('active');
     document.body.style.overflow = '';
@@ -132,36 +143,18 @@ function initHeader() {
 
   // Apply role-based visibility
   applyRoleBasedVisibility();
+  
+  console.log('✅ Header initialized successfully');
 }
-
-// --- Load Header HTML ---
-document.addEventListener('DOMContentLoaded', () => {
-  const headerPlaceholder = document.getElementById('header-placeholder');
-
-  if (headerPlaceholder) {
-    // Insert header HTML
-    headerPlaceholder.innerHTML = headerHTML;
-
-    // Add body padding class
-    document.body.classList.add('has-header');
-
-    // Initialize header interactions
-    initHeader();
-
-    // Setup user profile
-    setTimeout(() => setupUserProfile(), 100);
-  } else {
-    console.error('header-placeholder not found!');
-  }
-});
 
 // --- Setup User Profile ---
 function setupUserProfile() {
+  console.log('setupUserProfile() called');
   const profileIcon = document.getElementById('profileIcon');
   const profileLetter = document.getElementById('profileLetter');
   
   if (!profileIcon || !profileLetter) {
-    console.error('Profile icon or letter element not found!');
+    console.error('❌ Profile elements not found!');
     return;
   }
 
@@ -171,13 +164,18 @@ function setupUserProfile() {
                  localStorage.getItem('username') || 
                  localStorage.getItem('user');
   
+  console.log('User name from localStorage:', userName);
+
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  console.log('Is logged in:', isLoggedIn);
 
   // If not logged in, check session
   if (!isLoggedIn) {
+    console.log('Checking session...');
     fetch('../check_session.php', { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
+        console.log('Session data:', data);
         if (data.success && data.user_id) {
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('user_id', data.user_id);
@@ -193,7 +191,6 @@ function setupUserProfile() {
           if (data.role) {
             localStorage.setItem('role', data.role);
           }
-          // Update profile letter after setting userName
           updateProfileLetter();
           applyRoleBasedVisibility();
         }
@@ -206,12 +203,15 @@ function setupUserProfile() {
     const firstLetter = userName.trim().charAt(0).toUpperCase();
     profileLetter.textContent = firstLetter;
     profileIcon.title = userName;
+    console.log('Profile letter set to:', firstLetter);
   } else {
     profileLetter.textContent = 'U';
+    console.log('Profile letter set to default: U');
   }
 
   // Profile icon click - show logout menu
   profileIcon.addEventListener('click', (e) => {
+    console.log('Profile icon clicked');
     e.stopPropagation();
     toggleLogoutMenu();
   });
@@ -220,6 +220,8 @@ function setupUserProfile() {
   document.addEventListener('click', () => {
     hideLogoutMenu();
   });
+  
+  console.log('✅ Profile setup complete');
 }
 
 // --- Update Profile Letter ---
@@ -235,6 +237,7 @@ function updateProfileLetter() {
   if (userName && userName.trim()) {
     const firstLetter = userName.trim().charAt(0).toUpperCase();
     profileLetter.textContent = firstLetter;
+    console.log('Profile letter updated to:', firstLetter);
   } else {
     profileLetter.textContent = 'U';
   }
@@ -242,9 +245,11 @@ function updateProfileLetter() {
 
 // --- Toggle Logout Menu ---
 function toggleLogoutMenu() {
+  console.log('toggleLogoutMenu() called');
   let logoutMenu = document.querySelector('.logout-menu');
   
   if (!logoutMenu) {
+    console.log('Creating logout menu');
     logoutMenu = document.createElement('div');
     logoutMenu.className = 'logout-menu';
     logoutMenu.textContent = 'Logout';
@@ -256,6 +261,7 @@ function toggleLogoutMenu() {
   }
   
   logoutMenu.classList.toggle('show');
+  console.log('Logout menu visible:', logoutMenu.classList.contains('show'));
 }
 
 // --- Hide Logout Menu ---
@@ -268,7 +274,9 @@ function hideLogoutMenu() {
 
 // --- Handle Logout ---
 function handleLogout() {
+  console.log('handleLogout() called');
   if (confirm('Are you sure you want to logout?')) {
+    console.log('Logging out...');
     fetch('../logout.php', {
       method: 'POST',
       credentials: 'include',
@@ -276,6 +284,7 @@ function handleLogout() {
     })
     .then(response => response.json())
     .then(data => {
+      console.log('Logout response:', data);
       if (data.success) {
         // Clear localStorage
         localStorage.removeItem('isLoggedIn');
@@ -287,6 +296,7 @@ function handleLogout() {
         localStorage.removeItem('user');
         localStorage.removeItem('role');
         
+        console.log('Redirecting to signin...');
         // Redirect to signin
         window.location.href = '../signin/signin.html';
       } else {
@@ -303,20 +313,20 @@ function handleLogout() {
 // --- Role-Based Visibility ---
 function applyRoleBasedVisibility() {
   const role = (localStorage.getItem('role') || '').trim().toLowerCase();
+  console.log('Applying role-based visibility. Role:', role);
   
   if (!role) return;
 
-  // Get menu items by data attribute
   const addReceptionLink = document.querySelector('.menu-link[data-page="add-reception"]');
   const addPrescriptionLink = document.querySelector('.menu-link[data-page="add-prescription"]');
   const addPatientLink = document.querySelector('.menu-link[data-page="add-patient"]');
 
   if (role === 'receptionalist') {
-    // Hide add prescription and add receptionist for receptionalists
+    console.log('Hiding items for receptionalist');
     hideMenuItem(addPrescriptionLink);
     hideMenuItem(addReceptionLink);
   } else if (role === 'user') {
-    // Hide add patient for regular users
+    console.log('Hiding items for user');
     hideMenuItem(addPatientLink);
   }
 }
@@ -332,10 +342,44 @@ function hideMenuItem(linkElement) {
   }
 }
 
+// --- Load Header HTML ---
+console.log('Setting up DOMContentLoaded listener...');
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('=== DOMContentLoaded fired ===');
+  console.log('Document ready state:', document.readyState);
+  
+  const headerPlaceholder = document.getElementById('header-placeholder');
+  console.log('header-placeholder element:', headerPlaceholder);
+
+  if (headerPlaceholder) {
+    console.log('Inserting header HTML...');
+    // Insert header HTML
+    headerPlaceholder.innerHTML = headerHTML;
+    console.log('✅ Header HTML inserted');
+
+    // Add body padding class
+    document.body.classList.add('has-header');
+    console.log('✅ Body class added');
+
+    // Initialize header interactions
+    console.log('Calling initHeader()...');
+    initHeader();
+
+    // Setup user profile
+    console.log('Scheduling setupUserProfile()...');
+    setTimeout(() => {
+      console.log('Calling setupUserProfile()...');
+      setupUserProfile();
+    }, 100);
+  } else {
+    console.error('❌❌❌ header-placeholder element NOT FOUND! ❌❌❌');
+    console.log('Available elements with id:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+  }
+});
+
 // --- Expose Global Function ---
 window.updateHeaderProfile = function() {
   updateProfileLetter();
 };
 
-// Debug info
-console.log('Header JS loaded successfully');
+console.log('=== HEADER.JS FINISHED LOADING ===');
