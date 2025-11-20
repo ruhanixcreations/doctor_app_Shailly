@@ -816,10 +816,14 @@ async function autoSavePrescription(){
   // Collect all items: completed rows + current form data
   const items = [...medicationRows]; // Copy existing rows
   
-  // Add current form data if it has at least medicine name filled (and not editing)
-  if(editingRowIndex === null){
-    const currentFormData = collectCurrentFormData();
-    if(currentFormData){
+  // Add or update current form data
+  const currentFormData = collectCurrentFormData();
+  if(currentFormData){
+    if(editingRowIndex !== null){
+      // If editing, replace the item at the editing index
+      items[editingRowIndex] = currentFormData;
+    } else {
+      // If adding new, append to the list
       items.push(currentFormData);
     }
   }
