@@ -53,16 +53,23 @@ if($action === 'detail'){
     // Files are stored as comma-separated paths in report_file column
     $reports = [];
     
-    // First, try to get from patient_reports table
-    $stmt = $mysqli->prepare("SELECT id, file_name FROM patient_reports WHERE patient_id=? ORDER BY id DESC");
+    // First, try to get from patient_reports table (blood reports uploaded by receptionist)
+    $stmt = $mysqli->prepare("SELECT id, file_name, file_path, uploaded_at as created_at FROM patient_reports WHERE patient_id=? ORDER BY uploaded_at DESC");
     if($stmt){
         $stmt->bind_param('s', $pid);
         $stmt->execute();
         $r = $stmt->get_result();
         while ($row = $r->fetch_assoc()) {
-            $fileName = $row['file_name'];
-            // Correct path from patient_history to add_new_patient/uploads
-            $row['file_path'] = "../add_new_patient/uploads/" . $fileName;
+            // file_path is already stored with correct relative path (blood_reports/...)
+            // We need to make it relative from patient_history folder
+            $filePath = $row['file_path'];
+            if(strpos($filePath, 'blood_reports/') === 0){
+                // Blood report uploaded by receptionist - path is relative to add_prescription folder
+                $row['file_path'] = '../add_prescription/' . $filePath;
+            } else {
+                // Legacy path handling
+                $row['file_path'] = "../add_new_patient/uploads/" . $row['file_name'];
+            }
             $reports[] = $row;
         }
         $stmt->close();

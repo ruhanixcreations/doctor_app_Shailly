@@ -930,10 +930,21 @@ function renderPrescriptions(prescriptions, patientData){
       <i class="fas fa-file-medical"></i> View
     </button>`;
     
-    // Blood report button (from blood tests)
-    const viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
-      <i class="fas fa-vial"></i> View Report
-    </button>`;
+    // Blood report button - different for doctor vs receptionist
+    const userRole = localStorage.getItem('role') || 'user';
+    let viewBloodReportBtn = '';
+    
+    if(userRole === 'receptionalist'){
+      // Receptionist: Show Upload button
+      viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
+        <i class="fas fa-upload"></i> Upload Report
+      </button>`;
+    } else {
+      // Doctor: Show View button
+      viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
+        <i class="fas fa-vial"></i> View Report
+      </button>`;
+    }
     
     // Previous report button (uploaded from add patient page)
     const viewPreviousReportBtn = cachedReports.length > 0 
@@ -979,6 +990,17 @@ function openBloodReport(patientId){
   } else {
     alert('No blood report file found');
   }
+}
+
+/* Upload blood report (for receptionists) */
+function uploadBloodReport(patientId, patientName, prescriptionId){
+  if(!patientId){
+    alert('Invalid patient ID');
+    return;
+  }
+  // Redirect to upload page with patient details
+  const url = `../add_prescription/upload_blood_report.html?patient_id=${encodeURIComponent(patientId)}&patient_name=${encodeURIComponent(patientName)}&prescription_id=${encodeURIComponent(prescriptionId)}`;
+  window.location.href = url;
 }
 
 /* Open previous report (uploaded from add patient page) */
