@@ -778,6 +778,31 @@ function formatDateYYYYMMDD(d){ const y=d.getFullYear();const m=String(d.getMont
 function addDays(date,days){ const n=new Date(date); n.setDate(n.getDate()+days); return n; }
 
 /* ---------- AUTO-SAVE FUNCTIONALITY ---------- */
+function collectCurrentFormData(){
+  // Collect data from the form currently being filled (even if incomplete)
+  const med = singleMedForm.querySelector('.medInput')?.value.trim() || '';
+  const type = singleMedForm.querySelector('.typeInput')?.value.trim() || '';
+  const duration = singleMedForm.querySelector('.durationInput')?.value.trim() || '';
+  const times = [];
+  if(singleMedForm.querySelector('.tMorning')?.checked) times.push('Morning');
+  if(singleMedForm.querySelector('.tAfternoon')?.checked) times.push('Afternoon');
+  if(singleMedForm.querySelector('.tNight')?.checked) times.push('Night');
+  const notes = singleMedForm.querySelector('.notesInput')?.value.trim() || '';
+  const before_after = singleMedForm.querySelector('.beforeAfterInput')?.value || '';
+  
+  // Only return if at least medicine name is filled
+  if(!med) return null;
+  
+  return {
+    medicine_name: med,
+    type: type,
+    duration: duration,
+    times_of_day: times.join(', '),
+    before_after: before_after,
+    notes: notes
+  };
+}
+
 async function autoSavePrescription(){
   const pid = document.getElementById('selectedPatientId').value;
   if(!pid) return; // No patient selected, skip auto-save
@@ -785,9 +810,19 @@ async function autoSavePrescription(){
   const client_id = localStorage.getItem('client_id') || '';
   const symptoms = document.getElementById('topSymptoms').value.trim() || '';
   const follow_up_date = document.getElementById('topFollowUp').value || null;
-  const items = collectMiniForms(); // Get current medication rows
   const bloodTestIds = selectedBloodTests.map(t => t.id);
   const bloodTestNames = selectedBloodTests.map(t => t.name);
+  
+  // Collect all items: completed rows + current form data
+  const items = [...medicationRows]; // Copy existing rows
+  
+  // Add current form data if it has at least medicine name filled (and not editing)
+  if(editingRowIndex === null){
+    const currentFormData = collectCurrentFormData();
+    if(currentFormData){
+      items.push(currentFormData);
+    }
+  }
   
   // Only auto-save if there's something to save
   if(!symptoms && items.length === 0) return;
@@ -1037,7 +1072,8 @@ function updateSelectedBloodTests(){
 bloodSelectedBtn.addEventListener('click', (ev) => { 
   ev.stopPropagation(); 
   if(bloodPanel.style.display === 'block'){ 
-    hidePanel(bloodPanel); 
+    hidePanel(bloodPanel);
+    triggerAutoSave(); // Auto-save when blood test dropdown closes
   } else { 
     populateBloodTestCheckboxes(''); 
     showPanelFixed(bloodSelectedBtn, bloodPanel); 
@@ -1619,6 +1655,22 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   const notesInput = singleMedForm.querySelector('.notesInput');
   if(notesInput){
     notesInput.addEventListener('blur', () => {
+      triggerAutoSave();
+    });
+  }
+  
+  // Auto-save when type dropdown changes (blur)
+  const typeInput = singleMedForm.querySelector('.typeInput');
+  if(typeInput){
+    typeInput.addEventListener('blur', () => {
+      triggerAutoSave();
+    });
+  }
+  
+  // Auto-save when duration dropdown changes (blur)
+  const durationInput = singleMedForm.querySelector('.durationInput');
+  if(durationInput){
+    durationInput.addEventListener('blur', () => {
       triggerAutoSave();
     });
   }
