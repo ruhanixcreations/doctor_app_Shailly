@@ -61,7 +61,8 @@ if($action === 'detail'){
         $r = $stmt->get_result();
         while ($row = $r->fetch_assoc()) {
             $fileName = $row['file_name'];
-            $row['file_path'] = "add_new_patient/uploads/" . $fileName;
+            // Correct path from patient_history to add_new_patient/uploads
+            $row['file_path'] = "../add_new_patient/uploads/" . $fileName;
             $reports[] = $row;
         }
         $stmt->close();
@@ -77,10 +78,13 @@ if($action === 'detail'){
             if($path){
                 // Extract filename from path
                 $fileName = basename($path);
+                // Correct path: files are in /doctor_app/add_new_patient/uploads/
+                // We're in /doctor_app/patient_history/, so use ../add_new_patient/
+                $correctedPath = '../add_new_patient/' . $path;
                 $reportItem = [
                     'id' => 'patient_list',
                     'file_name' => $fileName,
-                    'file_path' => $path
+                    'file_path' => $correctedPath
                 ];
                 $reports[] = $reportItem;
                 error_log("Added report to array: " . json_encode($reportItem));
