@@ -772,6 +772,7 @@ let medicationRows = []; // Store medication rows
 let editingRowIndex = null; // Track which row is being edited
 let draftPrescriptionId = null; // Track draft prescription for auto-save
 let autoSaveTimeout = null; // Debounce auto-save requests
+let isSaving = false; // Flag to prevent auto-save during manual save
 
 function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatDateYYYYMMDD(d){ const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`; }
@@ -806,6 +807,7 @@ function collectCurrentFormData(){
 async function autoSavePrescription(){
   const pid = document.getElementById('selectedPatientId').value;
   if(!pid) return; // No patient selected, skip auto-save
+  if(isSaving) return; // Don't auto-save while manual save is in progress
   
   const client_id = localStorage.getItem('client_id') || '';
   const symptoms = document.getElementById('topSymptoms').value.trim() || '';
@@ -831,6 +833,8 @@ async function autoSavePrescription(){
   // Only auto-save if there's something to save
   if(!symptoms && items.length === 0) return;
   
+  const previousDraftId = draftPrescriptionId;
+  
   try{
     const res = await fetch('add_prescription.php?action=auto_save', {
       method:'POST',
@@ -849,7 +853,13 @@ async function autoSavePrescription(){
     const j = await res.json();
     if(j.success){
       draftPrescriptionId = j.draft_prescription_id;
-      console.log('Auto-saved successfully (draft ID: ' + draftPrescriptionId + ')');
+      if(previousDraftId === null){
+        console.log('Auto-save: Created NEW draft prescription ID:', draftPrescriptionId);
+      } else if(previousDraftId === draftPrescriptionId){
+        console.log('Auto-save: Updated EXISTING draft prescription ID:', draftPrescriptionId);
+      } else {
+        console.warn('Auto-save: Draft ID changed from', previousDraftId, 'to', draftPrescriptionId);
+      }
     }
   }catch(e){ 
     console.error('Auto-save failed:', e); 
@@ -1507,6 +1517,14 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
   const symptoms = document.getElementById('topSymptoms').value.trim() || '';
   const follow_up_date = document.getElementById('topFollowUp').value || null;
 
+  console.log('Saving prescription with draft_prescription_id:', draftPrescriptionId);
+
+  // Set flag to prevent auto-save during manual save
+  isSaving = true;
+  
+  // Clear any pending auto-save
+  if(autoSaveTimeout) clearTimeout(autoSaveTimeout);
+
   try{
     const res = await fetch('add_prescription.php?action=save', {
       method:'POST',
@@ -1514,13 +1532,23 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
       body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_ids: bloodTestIds, blood_test_names: bloodTestNames, draft_prescription_id: draftPrescriptionId })
     });
     const j = await res.json();
-    if(!j.success){ alert('Save failed: '+(j.message||'')); return; }
+    if(!j.success){ 
+      isSaving = false; // Reset flag on error
+      alert('Save failed: '+(j.message||'')); 
+      return; 
+    }
+    
+    console.log('Prescription saved successfully. Returned prescription_id:', j.prescription_id);
+    console.log('Draft was:', draftPrescriptionId, 'Final is:', j.prescription_id);
+    
     alert('Prescription saved');
     currentPrescId = j.prescription_id || null;
     setPrintForId(currentPrescId);
     
-    // Reset draft prescription ID after successful save
+    // IMPORTANT: Reset draft prescription ID immediately to prevent auto-save from creating new one
+    const savedPrescriptionId = draftPrescriptionId;
     draftPrescriptionId = null;
+    isSaving = false; // Reset flag after successful save
     
     // Clear medication rows
     medicationRows = [];
