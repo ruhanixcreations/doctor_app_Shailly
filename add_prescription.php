@@ -132,7 +132,7 @@ if($action === 'get_doctor_info'){
         }
         
         // Query users table with client_id and role='user'
-        $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization FROM users WHERE client_id = ? AND role = 'user' LIMIT 1");
+        $stmt = $mysqli->prepare("SELECT name, email, mobile, role FROM users WHERE client_id = ? AND role = 'user' LIMIT 1");
         if(!$stmt){
             error_log("get_doctor_info: Prepare failed - " . $mysqli->error);
             echo json_encode(['success'=>false,'message'=>'Prepare failed: ' . $mysqli->error]); exit;
@@ -156,7 +156,7 @@ if($action === 'get_doctor_info'){
             $stmt->close();
             
             // Try without role filter to see if user exists
-            $stmt2 = $mysqli->prepare("SELECT name, email, mobile, role, specialization FROM users WHERE client_id = ? LIMIT 1");
+            $stmt2 = $mysqli->prepare("SELECT name, email, mobile, role FROM users WHERE client_id = ? LIMIT 1");
             if($stmt2){
                 $stmt2->bind_param('s', $client_id);
                 $stmt2->execute();
@@ -186,7 +186,7 @@ if($action === 'get_current_user'){
         echo json_encode(['success'=>false,'message'=>'username required']); exit;
     }
     
-    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization, client_id FROM users WHERE username = ? LIMIT 1");
+    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, client_id FROM users WHERE username = ? LIMIT 1");
     if(!$stmt){
         echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit;
     }

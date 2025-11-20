@@ -73,11 +73,6 @@ body{
   margin-bottom:4px;
 }
 
-.doctor-qualifications{
-  font-size:13px;
-  color:#555;
-  margin-bottom:8px;
-}
 
 .doctor-contact{
   display:flex;
@@ -345,10 +340,7 @@ body{
   
   .doctor-name{
     font-size:20px;
-  }
-  
-  .doctor-qualifications{
-    font-size:12px;
+    margin-bottom:8px;
   }
   
   .doctor-contact{
@@ -447,7 +439,6 @@ body{
   <!-- DOCTOR HEADER -->
   <div class="doctor-header">
     <div class="doctor-name" id="doctorName">Loading...</div>
-    <div class="doctor-qualifications" id="doctorQualifications">Medical Practitioner</div>
     <div class="doctor-contact">
       <span id="doctorMobile">Phone: <span id="docMobile">-</span></span>
       <span>|</span>
@@ -620,7 +611,6 @@ async function loadPrescription(){
         
         // Display doctor details from database
         document.getElementById('doctorName').textContent = 'Dr. ' + (doctor.name || currentUsername || 'Doctor');
-        document.getElementById('doctorQualifications').textContent = doctor.specialization || 'Medical Practitioner';
         document.getElementById('docMobile').textContent = doctor.mobile || '-';
         document.getElementById('docEmail').textContent = doctor.email || '-';
       } else {
