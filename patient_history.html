@@ -977,16 +977,31 @@ function openPrescription(prescriptionId, patientId){
 /* Open blood report */
 let cachedReports = [];
 function openBloodReport(patientId){
+  console.log('Opening blood report for patient:', patientId);
+  console.log('Available cached reports:', cachedReports);
+  
   // Find the latest blood report for this patient
   if(cachedReports.length === 0){
     alert('No blood reports uploaded for this patient');
     return;
   }
   
-  // Open the most recent report
-  const latestReport = cachedReports[0];
-  if(latestReport && latestReport.file_path){
-    openPdfModal(latestReport.file_path, latestReport.file_name || 'Blood Report');
+  // Filter to find blood reports (from patient_reports table)
+  // These typically have 'blood_report' in the filename
+  const bloodReports = cachedReports.filter(r => {
+    const fileName = r.file_name || '';
+    const filePath = r.file_path || '';
+    return fileName.includes('blood_report') || filePath.includes('blood_reports/');
+  });
+  
+  console.log('Filtered blood reports:', bloodReports);
+  
+  // If we found specific blood reports, use the latest one
+  const reportToOpen = bloodReports.length > 0 ? bloodReports[0] : cachedReports[0];
+  
+  if(reportToOpen && reportToOpen.file_path){
+    console.log('Opening report:', reportToOpen);
+    openPdfModal(reportToOpen.file_path, reportToOpen.file_name || 'Blood Report');
   } else {
     alert('No blood report file found');
   }
