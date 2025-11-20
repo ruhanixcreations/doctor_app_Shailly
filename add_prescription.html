@@ -770,10 +770,60 @@ let selectedBloodTests = [];
 let filledFieldsCount = 0;
 let medicationRows = []; // Store medication rows
 let editingRowIndex = null; // Track which row is being edited
+let draftPrescriptionId = null; // Track draft prescription for auto-save
+let autoSaveTimeout = null; // Debounce auto-save requests
 
 function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatDateYYYYMMDD(d){ const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`; }
 function addDays(date,days){ const n=new Date(date); n.setDate(n.getDate()+days); return n; }
+
+/* ---------- AUTO-SAVE FUNCTIONALITY ---------- */
+async function autoSavePrescription(){
+  const pid = document.getElementById('selectedPatientId').value;
+  if(!pid) return; // No patient selected, skip auto-save
+  
+  const client_id = localStorage.getItem('client_id') || '';
+  const symptoms = document.getElementById('topSymptoms').value.trim() || '';
+  const follow_up_date = document.getElementById('topFollowUp').value || null;
+  const items = collectMiniForms(); // Get current medication rows
+  const bloodTestIds = selectedBloodTests.map(t => t.id);
+  const bloodTestNames = selectedBloodTests.map(t => t.name);
+  
+  // Only auto-save if there's something to save
+  if(!symptoms && items.length === 0) return;
+  
+  try{
+    const res = await fetch('add_prescription.php?action=auto_save', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ 
+        patient_id: pid, 
+        client_id, 
+        symptoms, 
+        follow_up_date, 
+        items, 
+        blood_test_ids: bloodTestIds, 
+        blood_test_names: bloodTestNames,
+        draft_prescription_id: draftPrescriptionId 
+      })
+    });
+    const j = await res.json();
+    if(j.success){
+      draftPrescriptionId = j.draft_prescription_id;
+      console.log('Auto-saved successfully (draft ID: ' + draftPrescriptionId + ')');
+    }
+  }catch(e){ 
+    console.error('Auto-save failed:', e); 
+  }
+}
+
+function triggerAutoSave(){
+  // Debounce auto-save to avoid too many requests
+  if(autoSaveTimeout) clearTimeout(autoSaveTimeout);
+  autoSaveTimeout = setTimeout(() => {
+    autoSavePrescription();
+  }, 500); // Wait 500ms after last change
+}
 
 /* ---------- DROPDOWN: close on scroll/wheel/touchmove/resize ---------- */
 const _openPanels = new Map(); // panelEl -> { triggerEl }
@@ -980,6 +1030,7 @@ function updateSelectedBloodTests(){
   
   updateFieldsCount();
   validateAllForms();
+  triggerAutoSave(); // Auto-save when blood tests are selected/changed
 }
 
 // Dropdown open/close
@@ -1032,6 +1083,7 @@ function setupMedicineDropdown(){
         typeElem.previousElementSibling.style.display='block';
         updateFieldsCount();
         validateAllForms();
+        triggerAutoSave(); // Auto-save when medicine selected
       });
       itemsEl.appendChild(div);
     });
@@ -1055,6 +1107,7 @@ singleMedForm.addEventListener('change',(e)=>{
       durationEl.previousElementSibling.style.display='block';
       updateFieldsCount();
       validateAllForms();
+      triggerAutoSave(); // Auto-save when type selected
     }
   }
 });
@@ -1078,6 +1131,7 @@ singleMedForm.addEventListener('change', (e)=> {
     }
     updateFieldsCount();
     validateAllForms();
+    triggerAutoSave(); // Auto-save when duration selected
   }
 });
 
@@ -1098,6 +1152,7 @@ function updateBeforeAfterVisibility(){
   }
   updateFieldsCount();
   validateAllForms();
+  triggerAutoSave(); // Auto-save when time of day changes
 }
 timeCheckboxes.forEach(ch => ch.addEventListener('change', updateBeforeAfterVisibility));
 
@@ -1107,6 +1162,7 @@ singleMedForm.addEventListener('change',(e)=>{
     beforeAfterInput.value = e.target.value;
     updateFieldsCount();
     validateAllForms();
+    triggerAutoSave(); // Auto-save when before/after meal selected
   }
 });
 
@@ -1310,6 +1366,7 @@ addBottomBtn.addEventListener('click',(e)=>{
   clearMedicationForm();
   updateFieldsCount();
   validateAllForms();
+  triggerAutoSave(); // Auto-save when medicine is added
 });
 
 /* ---------- VALIDATION ---------- */
@@ -1422,6 +1479,9 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     currentPrescId = j.prescription_id || null;
     setPrintForId(currentPrescId);
     
+    // Reset draft prescription ID after successful save
+    draftPrescriptionId = null;
+    
     // Clear medication rows
     medicationRows = [];
     renderMedicationRows();
@@ -1510,6 +1570,9 @@ async function onPatientSelected(patient_id, patientObj){
   renderMedicationRows();
   clearMedicationForm();
   
+  // Reset draft prescription ID for new patient
+  draftPrescriptionId = null;
+  
   // Show the single form
   singleMedForm.style.display = 'block';
 
@@ -1540,6 +1603,25 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     updateFieldsCount();
     validateAllForms();
   });
+  
+  // ===== AUTO-SAVE EVENT LISTENERS =====
+  // Auto-save symptoms when user moves to next field
+  document.getElementById('topSymptoms').addEventListener('blur', () => {
+    triggerAutoSave();
+  });
+  
+  // Auto-save follow-up date when changed
+  document.getElementById('topFollowUp').addEventListener('blur', () => {
+    triggerAutoSave();
+  });
+  
+  // Auto-save notes field in medicine form
+  const notesInput = singleMedForm.querySelector('.notesInput');
+  if(notesInput){
+    notesInput.addEventListener('blur', () => {
+      triggerAutoSave();
+    });
+  }
 });
 </script>
 </body>
