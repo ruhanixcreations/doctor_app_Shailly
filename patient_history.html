@@ -722,15 +722,16 @@ tbody tr:last-child td{
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Report Name</th>
-                <th>File Path</th>
+                <th>Date</th>
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Mobile</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="reportsTable">
               <tr>
-                <td colspan="4" class="empty-state">No reports uploaded</td>
+                <td colspan="5" class="empty-state">No reports uploaded</td>
               </tr>
             </tbody>
           </table>
@@ -1013,21 +1014,41 @@ function openPreviousReport(patientId){
 }
 
 /* Render reports table */
-function renderReports(reports){
+function renderReports(reports, patientData){
   const tbody = document.getElementById('reportsTable');
   tbody.innerHTML = '';
   
   if(!reports || reports.length === 0){
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
     return;
   }
   
+  // Patient info
+  const patientId = patientData?.patient_id || '-';
+  const patientName = patientData?.patient_name || '-';
+  const mobile = patientData?.mobile || '-';
+  
   reports.forEach((r, idx)=>{
     const tr = document.createElement('tr');
+    
+    // Get upload date - try to extract from file name or use current date
+    let uploadDate = '-';
+    if(r.created_at){
+      uploadDate = new Date(r.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+    } else if(r.file_name){
+      // Try to extract date from filename (format: report_timestamp.pdf)
+      const match = r.file_name.match(/(\d{13})/);
+      if(match){
+        const timestamp = parseInt(match[1]);
+        uploadDate = new Date(timestamp).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+      }
+    }
+    
     tr.innerHTML = `
-      <td>${idx + 1}</td>
-      <td><strong>${escapeHtml(r.file_name || r.file_path)}</strong></td>
-      <td>${escapeHtml(r.file_path || '')}</td>
+      <td>${escapeHtml(uploadDate)}</td>
+      <td>${escapeHtml(patientId)}</td>
+      <td><strong>${escapeHtml(patientName)}</strong></td>
+      <td>${escapeHtml(mobile)}</td>
       <td>
         <div class="report-actions">
           <a href="${escapeHtml(r.file_path)}" target="_blank" class="btn btn-open">
@@ -1054,8 +1075,8 @@ async function loadDetails(patient_id){
     patientInfoCard.style.display = 'none';
     quickInfo.textContent = 'Select a patient to view details';
     renderAppointments([], null);
-    renderPrescriptions([]);
-    renderReports([]);
+    renderPrescriptions([], {});
+    renderReports([], {});
     return;
   }
   
@@ -1105,8 +1126,8 @@ async function loadDetails(patient_id){
     // Render prescriptions with patient data
     renderPrescriptions(j.prescriptions || [], p);
     
-    // Render reports
-    renderReports(j.reports || []);
+    // Render reports with patient data
+    renderReports(j.reports || [], p);
     
   }catch(e){
     console.error(e);
