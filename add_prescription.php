@@ -348,7 +348,13 @@ if($action === 'save'){
     try{
         // Check if we should reuse the draft prescription
         $pres_id = 0;
+        error_log("========== SAVE ACTION ==========");
+        error_log("save: Received draft_prescription_id from frontend: " . $draft_prescription_id);
+        error_log("save: Patient ID: " . $patient_id);
+        error_log("save: Number of items: " . count($items));
+        
         if($draft_prescription_id > 0){
+            error_log("save: Checking if draft ID " . $draft_prescription_id . " exists in DB...");
             $check = $mysqli->prepare("SELECT id FROM prescriptions WHERE id = ? AND patient_id = ?");
             $check->bind_param('is', $draft_prescription_id, $patient_id);
             $check->execute();
@@ -356,21 +362,28 @@ if($action === 'save'){
             if($result->num_rows > 0){
                 // Draft exists, reuse it
                 $pres_id = $draft_prescription_id;
-                error_log("save: Reusing draft prescription ID: " . $pres_id);
+                error_log("save: ✓ Found valid draft, REUSING prescription ID: " . $pres_id);
+            } else {
+                error_log("save: ✗ Draft ID " . $draft_prescription_id . " NOT found in DB or patient_id mismatch");
             }
             $check->close();
+        } else {
+            error_log("save: No draft_prescription_id provided (is 0 or null)");
         }
         
         // Create new prescription only if no valid draft exists
         if($pres_id === 0){
+            error_log("save: Creating BRAND NEW prescription...");
             $stmt = $mysqli->prepare("INSERT INTO prescriptions (patient_id, created_at) VALUES (?, NOW())");
             if(!$stmt) throw new Exception('Prepare failed: '.$mysqli->error);
             $stmt->bind_param('s', $patient_id);
             if(!$stmt->execute()) throw new Exception('Execute failed (prescriptions): '.$stmt->error);
             $pres_id = $mysqli->insert_id;
             $stmt->close();
-            error_log("save: Created new prescription ID: " . $pres_id);
+            error_log("save: ✓ Created BRAND NEW prescription ID: " . $pres_id);
         }
+        error_log("save: Final prescription ID being used: " . $pres_id);
+        error_log("================================");
         
         // Delete existing items for this prescription (in case of draft update)
         $del = $mysqli->prepare("DELETE FROM prescription_items WHERE prescription_id = ?");

@@ -835,34 +835,44 @@ async function autoSavePrescription(){
   
   const previousDraftId = draftPrescriptionId;
   
+  console.log('========== AUTO-SAVE ==========');
+  console.log('Auto-save: Current draftPrescriptionId:', draftPrescriptionId);
+  console.log('Auto-save: Sending', items.length, 'items');
+  
   try{
+    const payload = { 
+      patient_id: pid, 
+      client_id, 
+      symptoms, 
+      follow_up_date, 
+      items, 
+      blood_test_ids: bloodTestIds, 
+      blood_test_names: bloodTestNames,
+      draft_prescription_id: draftPrescriptionId 
+    };
+    console.log('Auto-save: Payload:', JSON.stringify(payload, null, 2));
+    
     const res = await fetch('add_prescription.php?action=auto_save', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ 
-        patient_id: pid, 
-        client_id, 
-        symptoms, 
-        follow_up_date, 
-        items, 
-        blood_test_ids: bloodTestIds, 
-        blood_test_names: bloodTestNames,
-        draft_prescription_id: draftPrescriptionId 
-      })
+      body: JSON.stringify(payload)
     });
     const j = await res.json();
     if(j.success){
       draftPrescriptionId = j.draft_prescription_id;
       if(previousDraftId === null){
-        console.log('Auto-save: Created NEW draft prescription ID:', draftPrescriptionId);
+        console.log('Auto-save: ✓ Created NEW draft prescription ID:', draftPrescriptionId);
       } else if(previousDraftId === draftPrescriptionId){
-        console.log('Auto-save: Updated EXISTING draft prescription ID:', draftPrescriptionId);
+        console.log('Auto-save: ✓ Updated EXISTING draft prescription ID:', draftPrescriptionId);
       } else {
-        console.warn('Auto-save: Draft ID changed from', previousDraftId, 'to', draftPrescriptionId);
+        console.warn('Auto-save: ⚠ Draft ID changed from', previousDraftId, 'to', draftPrescriptionId);
       }
+    } else {
+      console.error('Auto-save: Failed -', j.message);
     }
+    console.log('================================');
   }catch(e){ 
-    console.error('Auto-save failed:', e); 
+    console.error('Auto-save: Exception -', e); 
   }
 }
 
