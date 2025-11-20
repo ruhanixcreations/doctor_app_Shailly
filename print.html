@@ -449,8 +449,6 @@ body{
     <div class="doctor-name" id="doctorName">Loading...</div>
     <div class="doctor-qualifications" id="doctorQualifications">Medical Practitioner</div>
     <div class="doctor-contact">
-      <span id="doctorReg">Reg. No: <span id="regNumber">-</span></span>
-      <span>|</span>
       <span id="doctorMobile">Phone: <span id="docMobile">-</span></span>
       <span>|</span>
       <span id="doctorEmail">Email: <span id="docEmail">-</span></span>
@@ -574,6 +572,37 @@ async function loadPrescription(){
     return;
   }
 
+  // First, fetch the current logged-in user's details from localStorage
+  const currentUsername = localStorage.getItem('username');
+  console.log('Current logged-in username:', currentUsername); // Debug
+
+  // Fetch current user/doctor information
+  if(currentUsername){
+    try{
+      const userRes = await fetch(`add_prescription.php?action=get_current_user&username=${encodeURIComponent(currentUsername)}`);
+      const userData = await userRes.json();
+      
+      console.log('Current User Data:', userData); // Debug
+      
+      if(userData.success && userData.user){
+        const doctor = userData.user;
+        document.getElementById('doctorName').textContent = 'Dr. ' + (doctor.name || currentUsername);
+        document.getElementById('doctorQualifications').textContent = doctor.specialization || 'Medical Practitioner';
+        document.getElementById('docMobile').textContent = doctor.mobile || '-';
+        document.getElementById('docEmail').textContent = doctor.email || '-';
+      } else {
+        // Fallback to username
+        document.getElementById('doctorName').textContent = 'Dr. ' + currentUsername;
+      }
+    }catch(e){
+      console.error('Failed to fetch current user info:', e);
+      // Fallback to username
+      document.getElementById('doctorName').textContent = 'Dr. ' + currentUsername;
+    }
+  } else {
+    document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
+  }
+
   try{
     // Fetch prescription data
     const res = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patientId)}`);
@@ -596,58 +625,6 @@ async function loadPrescription(){
 
     // Get first item for meta data
     const firstItem = items[0];
-    let clientId = firstItem.client_id || '';
-    
-    // If no client_id in items, try localStorage
-    if(!clientId){
-      clientId = localStorage.getItem('client_id') || '';
-    }
-
-    console.log('Client ID:', clientId); // Debug
-
-    // Fetch doctor information
-    if(clientId){
-      try{
-        const docRes = await fetch(`add_prescription.php?action=get_doctor_info&client_id=${encodeURIComponent(clientId)}`);
-        const docData = await docRes.json();
-        
-        console.log('Doctor Data:', docData); // Debug
-        
-        if(docData.success && docData.doctor){
-          const doctor = docData.doctor;
-          document.getElementById('doctorName').textContent = 'Dr. ' + (doctor.name || 'Doctor Name');
-          document.getElementById('doctorQualifications').textContent = doctor.specialization || 'Medical Practitioner';
-          document.getElementById('regNumber').textContent = doctor.registration_number || '-';
-          document.getElementById('docMobile').textContent = doctor.mobile || '-';
-          document.getElementById('docEmail').textContent = doctor.email || '-';
-        } else {
-          // Fallback - try to get from localStorage username
-          const username = localStorage.getItem('username');
-          if(username){
-            document.getElementById('doctorName').textContent = 'Dr. ' + username;
-          } else {
-            document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
-          }
-        }
-      }catch(e){
-        console.error('Failed to fetch doctor info:', e);
-        // Fallback to username from localStorage
-        const username = localStorage.getItem('username');
-        if(username){
-          document.getElementById('doctorName').textContent = 'Dr. ' + username;
-        } else {
-          document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
-        }
-      }
-    } else {
-      // No client_id, use username from localStorage
-      const username = localStorage.getItem('username');
-      if(username){
-        document.getElementById('doctorName').textContent = 'Dr. ' + username;
-      } else {
-        document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
-      }
-    }
 
     // Fetch patient details
     try{

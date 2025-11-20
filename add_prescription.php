@@ -140,6 +140,33 @@ if($action === 'get_doctor_info'){
 }
 
 /////////////////////////
+// get_current_user: fetch current logged-in user details
+/////////////////////////
+if($action === 'get_current_user'){
+    $username = isset($_GET['username']) ? trim($_GET['username']) : '';
+    if($username === ''){
+        echo json_encode(['success'=>false,'message'=>'username required']); exit;
+    }
+    
+    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization, client_id FROM users WHERE username = ? LIMIT 1");
+    if(!$stmt){
+        echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit;
+    }
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    
+    if($res && $res->num_rows > 0){
+        $user = $res->fetch_assoc();
+        $stmt->close();
+        echo json_encode(['success'=>true,'user'=>$user]); exit;
+    } else {
+        $stmt->close();
+        echo json_encode(['success'=>false,'message'=>'User not found']); exit;
+    }
+}
+
+/////////////////////////
 // auto_save: saves partial prescription data as draft
 /////////////////////////
 if($action === 'auto_save'){
