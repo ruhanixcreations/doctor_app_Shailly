@@ -694,6 +694,7 @@ async function loadPrescription(){
 
   try{
     // Fetch prescription data
+    console.log('Fetching prescriptions for patient_id:', patientId);
     const res = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patientId)}`);
     const data = await res.json();
     
@@ -703,12 +704,24 @@ async function loadPrescription(){
     }
 
     const allItems = data.items || [];
+    console.log('Total prescription items fetched:', allItems.length);
+    console.log('Filtering by prescription_id:', prescriptionId);
+    
     const items = prescriptionId 
-      ? allItems.filter(item => String(item.prescription_id) === String(prescriptionId))
+      ? allItems.filter(item => {
+          const match = String(item.prescription_id) === String(prescriptionId);
+          if(match) console.log('Match found for item:', item);
+          return match;
+        })
       : allItems;
 
+    console.log('Filtered items count:', items.length);
+    console.log('Filtered items:', items);
+
     if(items.length === 0){
-      document.getElementById('medicationsBody').innerHTML = '<tr><td colspan="7" class="no-data">No medications found</td></tr>';
+      console.error('No items found for prescription_id:', prescriptionId);
+      console.log('All available prescription_ids:', [...new Set(allItems.map(i => i.prescription_id))]);
+      document.getElementById('medicationsBody').innerHTML = '<tr><td colspan="7" class="no-data">No medications found for this prescription</td></tr>';
       return;
     }
 

@@ -948,6 +948,7 @@ function renderPrescriptions(prescriptions, patientData){
 /* Open prescription in print page */
 function openPrescription(prescriptionId, patientId){
   if(!prescriptionId || !patientId) return;
+  // print.html is in the same directory
   const url = `print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
   window.open(url, '_blank');
 }
