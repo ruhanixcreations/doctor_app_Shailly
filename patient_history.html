@@ -948,8 +948,8 @@ function renderPrescriptions(prescriptions, patientData){
 /* Open prescription in print page */
 function openPrescription(prescriptionId, patientId){
   if(!prescriptionId || !patientId) return;
-  // print.html is in parent directory (go up one level from patient_history folder)
-  const url = `../print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
+  // print.html is in add_prescription folder (go up one level then into add_prescription)
+  const url = `../add_prescription/print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
   window.open(url, '_blank');
 }
 
