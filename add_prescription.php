@@ -113,6 +113,33 @@ if($action === 'list_blood_tests'){
 }
 
 /////////////////////////
+// get_doctor_info: fetch doctor details by client_id
+/////////////////////////
+if($action === 'get_doctor_info'){
+    $client_id = isset($_GET['client_id']) ? trim($_GET['client_id']) : '';
+    if($client_id === ''){
+        echo json_encode(['success'=>false,'message'=>'client_id required']); exit;
+    }
+    
+    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization, registration_number FROM users WHERE client_id = ? LIMIT 1");
+    if(!$stmt){
+        echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit;
+    }
+    $stmt->bind_param('s', $client_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    
+    if($res && $res->num_rows > 0){
+        $doctor = $res->fetch_assoc();
+        $stmt->close();
+        echo json_encode(['success'=>true,'doctor'=>$doctor]); exit;
+    } else {
+        $stmt->close();
+        echo json_encode(['success'=>false,'message'=>'Doctor not found']); exit;
+    }
+}
+
+/////////////////////////
 // auto_save: saves partial prescription data as draft
 /////////////////////////
 if($action === 'auto_save'){
