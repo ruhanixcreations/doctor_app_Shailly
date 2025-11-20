@@ -113,7 +113,7 @@ if($action === 'list_blood_tests'){
 }
 
 /////////////////////////
-// get_doctor_info: fetch doctor details by client_id
+// get_doctor_info: fetch doctor details by client_id where role='user'
 /////////////////////////
 if($action === 'get_doctor_info'){
     $client_id = isset($_GET['client_id']) ? trim($_GET['client_id']) : '';
@@ -121,7 +121,8 @@ if($action === 'get_doctor_info'){
         echo json_encode(['success'=>false,'message'=>'client_id required']); exit;
     }
     
-    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization, registration_number FROM users WHERE client_id = ? LIMIT 1");
+    // Query users table with client_id and role='user'
+    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization FROM users WHERE client_id = ? AND role = 'user' LIMIT 1");
     if(!$stmt){
         echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit;
     }
@@ -135,7 +136,7 @@ if($action === 'get_doctor_info'){
         echo json_encode(['success'=>true,'doctor'=>$doctor]); exit;
     } else {
         $stmt->close();
-        echo json_encode(['success'=>false,'message'=>'Doctor not found']); exit;
+        echo json_encode(['success'=>false,'message'=>'Doctor not found with role=user']); exit;
     }
 }
 

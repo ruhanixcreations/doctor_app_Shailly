@@ -572,42 +572,59 @@ async function loadPrescription(){
     return;
   }
 
-  // Get client_id from localStorage (set in add_prescription page)
+  // Step 1: Get client_id from localStorage (set in add_prescription page)
   const currentClientId = localStorage.getItem('client_id');
   const currentUsername = localStorage.getItem('username');
-  console.log('Client ID from localStorage:', currentClientId); // Debug
-  console.log('Username from localStorage:', currentUsername); // Debug
+  
+  console.log('=== PRINT PAGE DEBUG ===');
+  console.log('Client ID from localStorage:', currentClientId);
+  console.log('Username from localStorage:', currentUsername);
+  console.log('All localStorage keys:', Object.keys(localStorage));
+  console.log('=======================');
 
-  // Fetch doctor information using client_id
+  // Step 2: Fetch doctor information from users table where role='user'
   if(currentClientId){
     try{
+      console.log('Fetching doctor info for client_id:', currentClientId);
       const docRes = await fetch(`add_prescription.php?action=get_doctor_info&client_id=${encodeURIComponent(currentClientId)}`);
       const docData = await docRes.json();
       
-      console.log('Doctor Data:', docData); // Debug
+      console.log('API Response:', docData);
       
       if(docData.success && docData.doctor){
         const doctor = docData.doctor;
+        console.log('Doctor found in database:', doctor);
+        console.log('Doctor role:', doctor.role);
+        
+        // Display doctor details from database
         document.getElementById('doctorName').textContent = 'Dr. ' + (doctor.name || currentUsername || 'Doctor');
         document.getElementById('doctorQualifications').textContent = doctor.specialization || 'Medical Practitioner';
         document.getElementById('docMobile').textContent = doctor.mobile || '-';
         document.getElementById('docEmail').textContent = doctor.email || '-';
       } else {
+        console.warn('No doctor found in database with client_id:', currentClientId, 'and role=user');
         // Fallback to username
         document.getElementById('doctorName').textContent = 'Dr. ' + (currentUsername || 'Doctor Name');
+        document.getElementById('docMobile').textContent = '-';
+        document.getElementById('docEmail').textContent = '-';
       }
     }catch(e){
-      console.error('Failed to fetch doctor info:', e);
+      console.error('Error fetching doctor info:', e);
       // Fallback to username
       document.getElementById('doctorName').textContent = 'Dr. ' + (currentUsername || 'Doctor Name');
+      document.getElementById('docMobile').textContent = '-';
+      document.getElementById('docEmail').textContent = '-';
     }
   } else {
+    console.warn('No client_id found in localStorage');
     // No client_id, try with username
     if(currentUsername){
       document.getElementById('doctorName').textContent = 'Dr. ' + currentUsername;
     } else {
       document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
     }
+    document.getElementById('docMobile').textContent = '-';
+    document.getElementById('docEmail').textContent = '-';
   }
 
   try{
