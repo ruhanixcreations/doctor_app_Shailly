@@ -116,27 +116,64 @@ if($action === 'list_blood_tests'){
 // get_doctor_info: fetch doctor details by client_id where role='user'
 /////////////////////////
 if($action === 'get_doctor_info'){
-    $client_id = isset($_GET['client_id']) ? trim($_GET['client_id']) : '';
-    if($client_id === ''){
-        echo json_encode(['success'=>false,'message'=>'client_id required']); exit;
-    }
-    
-    // Query users table with client_id and role='user'
-    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization FROM users WHERE client_id = ? AND role = 'user' LIMIT 1");
-    if(!$stmt){
-        echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit;
-    }
-    $stmt->bind_param('s', $client_id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    
-    if($res && $res->num_rows > 0){
-        $doctor = $res->fetch_assoc();
-        $stmt->close();
-        echo json_encode(['success'=>true,'doctor'=>$doctor]); exit;
-    } else {
-        $stmt->close();
-        echo json_encode(['success'=>false,'message'=>'Doctor not found with role=user']); exit;
+    try{
+        $client_id = isset($_GET['client_id']) ? trim($_GET['client_id']) : '';
+        if($client_id === ''){
+            echo json_encode(['success'=>false,'message'=>'client_id required']); exit;
+        }
+        
+        // Log the attempt
+        error_log("get_doctor_info: Looking for client_id: " . $client_id);
+        
+        // First check if users table exists and has data
+        $checkTable = $mysqli->query("SHOW TABLES LIKE 'users'");
+        if(!$checkTable || $checkTable->num_rows === 0){
+            echo json_encode(['success'=>false,'message'=>'users table not found']); exit;
+        }
+        
+        // Query users table with client_id and role='user'
+        $stmt = $mysqli->prepare("SELECT name, email, mobile, role, specialization FROM users WHERE client_id = ? AND role = 'user' LIMIT 1");
+        if(!$stmt){
+            error_log("get_doctor_info: Prepare failed - " . $mysqli->error);
+            echo json_encode(['success'=>false,'message'=>'Prepare failed: ' . $mysqli->error]); exit;
+        }
+        
+        $stmt->bind_param('s', $client_id);
+        if(!$stmt->execute()){
+            error_log("get_doctor_info: Execute failed - " . $stmt->error);
+            echo json_encode(['success'=>false,'message'=>'Execute failed: ' . $stmt->error]); exit;
+        }
+        
+        $res = $stmt->get_result();
+        
+        if($res && $res->num_rows > 0){
+            $doctor = $res->fetch_assoc();
+            error_log("get_doctor_info: Found doctor - " . $doctor['name']);
+            $stmt->close();
+            echo json_encode(['success'=>true,'doctor'=>$doctor]); exit;
+        } else {
+            error_log("get_doctor_info: No doctor found with client_id: " . $client_id . " and role=user");
+            $stmt->close();
+            
+            // Try without role filter to see if user exists
+            $stmt2 = $mysqli->prepare("SELECT name, email, mobile, role, specialization FROM users WHERE client_id = ? LIMIT 1");
+            if($stmt2){
+                $stmt2->bind_param('s', $client_id);
+                $stmt2->execute();
+                $res2 = $stmt2->get_result();
+                if($res2 && $res2->num_rows > 0){
+                    $user = $res2->fetch_assoc();
+                    error_log("get_doctor_info: Found user but role is: " . $user['role']);
+                    echo json_encode(['success'=>true,'doctor'=>$user,'note'=>'Found user with different role']); exit;
+                }
+                $stmt2->close();
+            }
+            
+            echo json_encode(['success'=>false,'message'=>'Doctor not found with role=user','client_id'=>$client_id]); exit;
+        }
+    }catch(Exception $e){
+        error_log("get_doctor_info: Exception - " . $e->getMessage());
+        echo json_encode(['success'=>false,'message'=>'Exception: ' . $e->getMessage()]); exit;
     }
 }
 
