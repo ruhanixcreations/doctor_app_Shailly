@@ -57,54 +57,50 @@ body{
   margin:0 auto;
   background:white;
   box-shadow:0 0 15px rgba(0,0,0,0.1);
-  position:relative;
 }
 
 /* Doctor Header */
 .doctor-header{
   border-bottom:3px solid #00A9A5;
-  padding:25px 35px;
+  padding:25px 35px 20px;
   background:#fafafa;
 }
 
 .doctor-name{
-  font-size:26px;
+  font-size:24px;
   font-weight:700;
   color:#1a1a1a;
-  margin-bottom:5px;
+  margin-bottom:4px;
 }
 
 .doctor-qualifications{
-  font-size:14px;
+  font-size:13px;
   color:#555;
-  margin-bottom:3px;
+  margin-bottom:8px;
 }
 
 .doctor-contact{
   display:flex;
   gap:20px;
-  margin-top:8px;
-  font-size:13px;
+  font-size:12px;
   color:#666;
   flex-wrap:wrap;
 }
 
 .doctor-contact span{
-  display:flex;
-  align-items:center;
-  gap:5px;
+  display:inline-block;
 }
 
 /* Patient Info Bar */
 .patient-bar{
   background:#f9f9f9;
   border-left:4px solid #00A9A5;
-  padding:18px 35px;
+  padding:16px 35px;
   border-bottom:1px solid #e0e0e0;
 }
 
 .patient-name{
-  font-size:18px;
+  font-size:17px;
   font-weight:700;
   color:#1a1a1a;
   margin-bottom:10px;
@@ -112,14 +108,14 @@ body{
 
 .patient-details{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:12px 20px;
-  font-size:13px;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px 20px;
+  font-size:12px;
 }
 
 .detail-item{
   display:flex;
-  gap:6px;
+  gap:5px;
 }
 
 .detail-label{
@@ -134,15 +130,7 @@ body{
 
 /* Prescription Content */
 .prescription-content{
-  padding:30px 35px;
-}
-
-.rx-symbol{
-  font-size:48px;
-  font-weight:700;
-  color:#00A9A5;
-  font-family:serif;
-  margin-bottom:20px;
+  padding:25px 35px;
 }
 
 /* Section */
@@ -151,85 +139,71 @@ body{
 }
 
 .section-title{
-  font-size:15px;
+  font-size:14px;
   font-weight:700;
   color:#1a1a1a;
   margin-bottom:10px;
   text-transform:uppercase;
   letter-spacing:0.5px;
   border-bottom:2px solid #e0e0e0;
-  padding-bottom:5px;
+  padding-bottom:6px;
 }
 
 .section-content{
-  font-size:14px;
-  line-height:1.7;
+  font-size:13px;
+  line-height:1.6;
   color:#333;
-  padding:8px 0;
+  padding:10px;
+  background:#fafafa;
+  border-radius:4px;
+  border:1px solid #e8e8e8;
 }
 
-/* Medications List */
-.medication-list{
-  list-style:none;
-  padding:0;
+/* Medications Table */
+.medications-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+  border:1px solid #ddd;
+  margin-top:10px;
 }
 
-.medication-item{
-  padding:15px 0;
-  border-bottom:1px dashed #ddd;
+.medications-table thead{
+  background:#f5f5f5;
 }
 
-.medication-item:last-child{
-  border-bottom:none;
+.medications-table th{
+  padding:10px 8px;
+  text-align:left;
+  font-weight:700;
+  color:#1a1a1a;
+  border:1px solid #ddd;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
 }
 
-.med-header{
-  display:flex;
-  align-items:baseline;
-  gap:8px;
-  margin-bottom:8px;
+.medications-table td{
+  padding:10px 8px;
+  border:1px solid #ddd;
+  vertical-align:top;
+  color:#333;
+}
+
+.medications-table tbody tr:nth-child(even){
+  background:#fafafa;
 }
 
 .med-number{
   font-weight:700;
   color:#00A9A5;
-  font-size:16px;
-  min-width:25px;
+  text-align:center;
 }
 
 .med-name{
-  font-size:16px;
   font-weight:700;
   color:#1a1a1a;
-}
-
-.med-type{
   font-size:13px;
-  color:#666;
-  font-weight:500;
-}
-
-.med-instructions{
-  margin-left:33px;
-  font-size:14px;
-  color:#444;
-  line-height:1.6;
-}
-
-.instruction-line{
-  margin-bottom:4px;
-}
-
-.instruction-label{
-  color:#666;
-  font-weight:500;
-  display:inline-block;
-  min-width:120px;
-}
-
-.instruction-value{
-  color:#1a1a1a;
-  font-weight:600;
 }
 
 /* Tests */
@@ -240,17 +214,19 @@ body{
 
 .tests-list li{
   margin-bottom:5px;
-  font-size:14px;
+  font-size:13px;
   color:#333;
+  line-height:1.6;
 }
 
 /* Follow-up */
 .followup-box{
   background:#e8f5e9;
   border-left:4px solid #4caf50;
-  padding:15px 20px;
+  padding:12px 16px;
   border-radius:4px;
-  font-size:14px;
+  font-size:13px;
+  margin-top:10px;
 }
 
 .followup-box strong{
@@ -260,8 +236,8 @@ body{
 
 /* Footer */
 .prescription-footer{
-  margin-top:50px;
-  padding-top:30px;
+  margin-top:40px;
+  padding-top:25px;
   border-top:1px solid #e0e0e0;
 }
 
@@ -274,21 +250,21 @@ body{
   width:200px;
   margin-left:auto;
   margin-bottom:8px;
-  margin-top:50px;
+  margin-top:40px;
 }
 
 .signature-label{
-  font-size:13px;
+  font-size:12px;
   color:#666;
   font-weight:600;
 }
 
 .prescription-note{
-  margin-top:25px;
-  font-size:12px;
+  margin-top:20px;
+  font-size:11px;
   color:#888;
   text-align:center;
-  padding-top:15px;
+  padding-top:12px;
   border-top:1px dashed #ddd;
 }
 
@@ -320,6 +296,24 @@ body{
     print-color-adjust:exact;
   }
   
+  .section-content{
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .medications-table thead{
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .medications-table tbody tr:nth-child(even){
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
   .followup-box{
     background:#e8f5e9;
     -webkit-print-color-adjust:exact;
@@ -327,6 +321,14 @@ body{
   }
   
   .section{
+    page-break-inside:avoid;
+  }
+  
+  .medications-table{
+    page-break-inside:auto;
+  }
+  
+  .medications-table tr{
     page-break-inside:avoid;
   }
 }
@@ -338,96 +340,99 @@ body{
   }
   
   .doctor-header{
-    padding:20px 20px;
+    padding:20px 20px 16px;
   }
   
   .doctor-name{
-    font-size:22px;
+    font-size:20px;
   }
   
   .doctor-qualifications{
-    font-size:13px;
+    font-size:12px;
   }
   
   .doctor-contact{
-    font-size:12px;
+    font-size:11px;
     gap:12px;
   }
   
   .patient-bar{
-    padding:15px 20px;
+    padding:14px 20px;
   }
   
   .patient-name{
-    font-size:16px;
+    font-size:15px;
   }
   
   .patient-details{
     grid-template-columns:1fr;
     gap:8px;
-    font-size:12px;
+    font-size:11px;
   }
   
   .prescription-content{
     padding:20px 20px;
   }
   
-  .rx-symbol{
-    font-size:40px;
-  }
-  
   .section-title{
-    font-size:14px;
+    font-size:13px;
   }
   
   .section-content{
-    font-size:13px;
-  }
-  
-  .med-name{
-    font-size:15px;
-  }
-  
-  .med-instructions{
-    font-size:13px;
-    margin-left:25px;
-  }
-  
-  .instruction-label{
-    min-width:100px;
     font-size:12px;
   }
   
+  .medications-table{
+    font-size:11px;
+  }
+  
+  .medications-table th,
+  .medications-table td{
+    padding:8px 6px;
+  }
+  
   .btn{
-    padding:8px 16px;
-    font-size:13px;
+    padding:8px 14px;
+    font-size:12px;
   }
 }
 
 @media (max-width:480px){
   .doctor-name{
-    font-size:20px;
+    font-size:18px;
   }
   
   .patient-name{
-    font-size:15px;
-  }
-  
-  .rx-symbol{
-    font-size:36px;
+    font-size:14px;
   }
   
   .prescription-content{
-    padding:15px 15px;
+    padding:16px 16px;
   }
   
   .doctor-header{
-    padding:15px 15px;
+    padding:16px 16px 12px;
   }
   
   .patient-bar{
-    padding:12px 15px;
+    padding:12px 16px;
   }
+  
+  .medications-table{
+    font-size:10px;
+  }
+  
+  .medications-table th,
+  .medications-table td{
+    padding:6px 4px;
+  }
+}
+
+.no-data{
+  text-align:center;
+  padding:20px;
+  color:#999;
+  font-style:italic;
 }
 </style>
 </head>
@@ -441,18 +446,20 @@ body{
 <div id="prescription" class="prescription-page">
   <!-- DOCTOR HEADER -->
   <div class="doctor-header">
-    <div class="doctor-name" id="doctorName">Dr. [Doctor Name]</div>
+    <div class="doctor-name" id="doctorName">Loading...</div>
     <div class="doctor-qualifications" id="doctorQualifications">Medical Practitioner</div>
     <div class="doctor-contact">
-      <span id="doctorReg">📋 Reg. No: <span id="regNumber">-</span></span>
-      <span id="doctorMobile">📞 <span id="docMobile">-</span></span>
-      <span id="doctorEmail">✉️ <span id="docEmail">-</span></span>
+      <span id="doctorReg">Reg. No: <span id="regNumber">-</span></span>
+      <span>|</span>
+      <span id="doctorMobile">Phone: <span id="docMobile">-</span></span>
+      <span>|</span>
+      <span id="doctorEmail">Email: <span id="docEmail">-</span></span>
     </div>
   </div>
 
   <!-- PATIENT INFO BAR -->
   <div class="patient-bar">
-    <div class="patient-name" id="patientName">Patient: -</div>
+    <div class="patient-name" id="patientName">Patient: Loading...</div>
     <div class="patient-details">
       <div class="detail-item">
         <span class="detail-label">Patient ID:</span>
@@ -479,7 +486,6 @@ body{
 
   <!-- PRESCRIPTION CONTENT -->
   <div class="prescription-content">
-    <div class="rx-symbol">℞</div>
 
     <!-- SYMPTOMS -->
     <div class="section" id="symptomsSection">
@@ -487,12 +493,28 @@ body{
       <div class="section-content" id="symptomsText">-</div>
     </div>
 
-    <!-- MEDICATIONS -->
+    <!-- MEDICATIONS TABLE -->
     <div class="section">
       <div class="section-title">Medications Prescribed</div>
-      <ul class="medication-list" id="medicationsList">
-        <!-- Medications will be added here -->
-      </ul>
+      
+      <table class="medications-table">
+        <thead>
+          <tr>
+            <th style="width:40px">#</th>
+            <th>Medicine Name</th>
+            <th>Type</th>
+            <th>Duration</th>
+            <th>Time of Day</th>
+            <th>Before/After Meal</th>
+            <th>Instructions</th>
+          </tr>
+        </thead>
+        <tbody id="medicationsBody">
+          <tr>
+            <td colspan="7" class="no-data">Loading medications...</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- DIAGNOSTIC TESTS -->
@@ -533,7 +555,7 @@ const prescriptionId = getQueryParam('prescription_id');
 const patientId = getQueryParam('patient_id');
 
 function escapeHtml(text){
-  if(!text || text === '') return '-';
+  if(!text || text === '' || text === null || text === undefined) return '-';
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
@@ -568,19 +590,28 @@ async function loadPrescription(){
       : allItems;
 
     if(items.length === 0){
-      alert('No prescription data found');
+      document.getElementById('medicationsBody').innerHTML = '<tr><td colspan="7" class="no-data">No medications found</td></tr>';
       return;
     }
 
     // Get first item for meta data
     const firstItem = items[0];
-    const clientId = firstItem.client_id || localStorage.getItem('client_id') || '';
+    let clientId = firstItem.client_id || '';
+    
+    // If no client_id in items, try localStorage
+    if(!clientId){
+      clientId = localStorage.getItem('client_id') || '';
+    }
+
+    console.log('Client ID:', clientId); // Debug
 
     // Fetch doctor information
     if(clientId){
       try{
         const docRes = await fetch(`add_prescription.php?action=get_doctor_info&client_id=${encodeURIComponent(clientId)}`);
         const docData = await docRes.json();
+        
+        console.log('Doctor Data:', docData); // Debug
         
         if(docData.success && docData.doctor){
           const doctor = docData.doctor;
@@ -589,9 +620,32 @@ async function loadPrescription(){
           document.getElementById('regNumber').textContent = doctor.registration_number || '-';
           document.getElementById('docMobile').textContent = doctor.mobile || '-';
           document.getElementById('docEmail').textContent = doctor.email || '-';
+        } else {
+          // Fallback - try to get from localStorage username
+          const username = localStorage.getItem('username');
+          if(username){
+            document.getElementById('doctorName').textContent = 'Dr. ' + username;
+          } else {
+            document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
+          }
         }
       }catch(e){
         console.error('Failed to fetch doctor info:', e);
+        // Fallback to username from localStorage
+        const username = localStorage.getItem('username');
+        if(username){
+          document.getElementById('doctorName').textContent = 'Dr. ' + username;
+        } else {
+          document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
+        }
+      }
+    } else {
+      // No client_id, use username from localStorage
+      const username = localStorage.getItem('username');
+      if(username){
+        document.getElementById('doctorName').textContent = 'Dr. ' + username;
+      } else {
+        document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
       }
     }
 
@@ -622,67 +676,47 @@ async function loadPrescription(){
     const symptoms = firstItem.symptoms || '-';
     document.getElementById('symptomsText').textContent = symptoms;
 
-    // Render medications
-    const medList = document.getElementById('medicationsList');
-    medList.innerHTML = '';
+    // Render medications in table
+    const tbody = document.getElementById('medicationsBody');
+    tbody.innerHTML = '';
 
     items.forEach((item, index) => {
-      const li = document.createElement('li');
-      li.className = 'medication-item';
+      const tr = document.createElement('tr');
       
-      const header = document.createElement('div');
-      header.className = 'med-header';
-      
-      const number = document.createElement('span');
+      const number = document.createElement('td');
       number.className = 'med-number';
-      number.textContent = (index + 1) + '.';
+      number.textContent = index + 1;
       
-      const name = document.createElement('span');
-      name.className = 'med-name';
-      name.textContent = item.medicine_name || '-';
+      const name = document.createElement('td');
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'med-name';
+      nameSpan.textContent = item.medicine_name || '-';
+      name.appendChild(nameSpan);
       
-      const type = document.createElement('span');
-      type.className = 'med-type';
-      type.textContent = item.type ? '(' + item.type + ')' : '';
+      const type = document.createElement('td');
+      type.textContent = item.type || '-';
       
-      header.appendChild(number);
-      header.appendChild(name);
-      header.appendChild(type);
+      const duration = document.createElement('td');
+      duration.textContent = item.duration || '-';
       
-      const instructions = document.createElement('div');
-      instructions.className = 'med-instructions';
+      const timing = document.createElement('td');
+      timing.textContent = item.times_of_day || '-';
       
-      if(item.duration){
-        const duration = document.createElement('div');
-        duration.className = 'instruction-line';
-        duration.innerHTML = `<span class="instruction-label">Duration:</span><span class="instruction-value">${escapeHtml(item.duration)}</span>`;
-        instructions.appendChild(duration);
-      }
+      const meal = document.createElement('td');
+      meal.textContent = item.before_after ? item.before_after + ' meal' : '-';
       
-      if(item.times_of_day){
-        const timing = document.createElement('div');
-        timing.className = 'instruction-line';
-        timing.innerHTML = `<span class="instruction-label">When to take:</span><span class="instruction-value">${escapeHtml(item.times_of_day)}</span>`;
-        instructions.appendChild(timing);
-      }
+      const instructions = document.createElement('td');
+      instructions.textContent = item.notes || '-';
       
-      if(item.before_after){
-        const meal = document.createElement('div');
-        meal.className = 'instruction-line';
-        meal.innerHTML = `<span class="instruction-label">Meal:</span><span class="instruction-value">${escapeHtml(item.before_after)} meal</span>`;
-        instructions.appendChild(meal);
-      }
+      tr.appendChild(number);
+      tr.appendChild(name);
+      tr.appendChild(type);
+      tr.appendChild(duration);
+      tr.appendChild(timing);
+      tr.appendChild(meal);
+      tr.appendChild(instructions);
       
-      if(item.notes){
-        const notes = document.createElement('div');
-        notes.className = 'instruction-line';
-        notes.innerHTML = `<span class="instruction-label">Instructions:</span><span class="instruction-value">${escapeHtml(item.notes)}</span>`;
-        instructions.appendChild(notes);
-      }
-      
-      li.appendChild(header);
-      li.appendChild(instructions);
-      medList.appendChild(li);
+      tbody.appendChild(tr);
     });
 
     // Diagnostic tests
