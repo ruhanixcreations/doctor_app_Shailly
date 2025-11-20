@@ -1511,7 +1511,7 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     const res = await fetch('add_prescription.php?action=save', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_ids: bloodTestIds, blood_test_names: bloodTestNames })
+      body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_ids: bloodTestIds, blood_test_names: bloodTestNames, draft_prescription_id: draftPrescriptionId })
     });
     const j = await res.json();
     if(!j.success){ alert('Save failed: '+(j.message||'')); return; }

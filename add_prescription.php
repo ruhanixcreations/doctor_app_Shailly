@@ -333,6 +333,7 @@ if($action === 'save'){
     $blood_test_id = !empty($blood_test_ids) ? $blood_test_ids[0] : null; // Use first ID for backward compatibility
     $symptoms = isset($data['symptoms']) ? $data['symptoms'] : '';
     $follow_up_date_top = isset($data['follow_up_date']) && $data['follow_up_date'] !== '' ? $data['follow_up_date'] : null;
+    $draft_prescription_id = isset($data['draft_prescription_id']) ? intval($data['draft_prescription_id']) : 0;
 
     // Basic server-side validations
     if(trim($symptoms) === ''){
@@ -345,12 +346,39 @@ if($action === 'save'){
     // Begin transaction
     $mysqli->begin_transaction();
     try{
-        $stmt = $mysqli->prepare("INSERT INTO prescriptions (patient_id, created_at) VALUES (?, NOW())");
-        if(!$stmt) throw new Exception('Prepare failed: '.$mysqli->error);
-        $stmt->bind_param('s', $patient_id);
-        if(!$stmt->execute()) throw new Exception('Execute failed (prescriptions): '.$stmt->error);
-        $pres_id = $mysqli->insert_id;
-        $stmt->close();
+        // Check if we should reuse the draft prescription
+        $pres_id = 0;
+        if($draft_prescription_id > 0){
+            $check = $mysqli->prepare("SELECT id FROM prescriptions WHERE id = ? AND patient_id = ?");
+            $check->bind_param('is', $draft_prescription_id, $patient_id);
+            $check->execute();
+            $result = $check->get_result();
+            if($result->num_rows > 0){
+                // Draft exists, reuse it
+                $pres_id = $draft_prescription_id;
+                error_log("save: Reusing draft prescription ID: " . $pres_id);
+            }
+            $check->close();
+        }
+        
+        // Create new prescription only if no valid draft exists
+        if($pres_id === 0){
+            $stmt = $mysqli->prepare("INSERT INTO prescriptions (patient_id, created_at) VALUES (?, NOW())");
+            if(!$stmt) throw new Exception('Prepare failed: '.$mysqli->error);
+            $stmt->bind_param('s', $patient_id);
+            if(!$stmt->execute()) throw new Exception('Execute failed (prescriptions): '.$stmt->error);
+            $pres_id = $mysqli->insert_id;
+            $stmt->close();
+            error_log("save: Created new prescription ID: " . $pres_id);
+        }
+        
+        // Delete existing items for this prescription (in case of draft update)
+        $del = $mysqli->prepare("DELETE FROM prescription_items WHERE prescription_id = ?");
+        if($del){
+            $del->bind_param('i', $pres_id);
+            $del->execute();
+            $del->close();
+        }
 
         // prepare insert for items
         // Order: prescription_id, symptoms, client_id, patient_id, medicine_name, type, duration, times_of_day, before_after, notes, recommended_blood_test, follow_up_date
