@@ -1,0 +1,1076 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Patient History</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+  --section-header:#183159;
+  --container-max:1200px;
+  --compact-gap:16px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;min-height:100vh}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* main container */
+.container{
+  width:100%;
+  max-width:var(--container-max);
+  margin:0 auto;
+  padding:0;
+  background:var(--bg-white);
+  min-height:100vh;
+}
+
+/* header section */
+.header{
+  background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
+  padding:20px 30px;
+  color:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header h1{
+  font-size:24px;
+  font-weight:600;
+  margin:0;
+  letter-spacing:0.3px;
+}
+.header .subtitle{
+  font-size:13px;
+  opacity:0.9;
+  margin-top:4px;
+}
+
+/* content area */
+.content{
+  padding:24px 30px;
+}
+
+/* section styling */
+.section{
+  background:var(--bg-white);
+  border:1px solid var(--border-light);
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.section-header{
+  font-size:16px;
+  font-weight:700;
+  color:var(--section-header);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.section-header i{
+  color:var(--primary-teal);
+  font-size:18px;
+}
+
+/* patient info card */
+.patient-info-card{
+  background:linear-gradient(to right,#f8f9fa,#ffffff);
+  border-left:4px solid var(--primary-teal);
+  padding:16px;
+  border-radius:6px;
+  margin-bottom:20px;
+}
+.patient-name{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:8px;
+  border-bottom:2px solid #dc3545;
+  padding-bottom:4px;
+  display:inline-block;
+}
+.patient-details{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+  margin-top:12px;
+  font-size:14px;
+}
+.patient-detail-item{
+  display:flex;
+  flex-direction:column;
+}
+.patient-detail-label{
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  font-weight:600;
+  letter-spacing:0.5px;
+  margin-bottom:2px;
+}
+.patient-detail-value{
+  font-weight:600;
+  color:var(--text-dark);
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+  word-break:break-word;
+}
+
+/* select dropdown */
+.small{font-size:13px;color:var(--text-muted);display:block;font-weight:600;margin-bottom:6px}
+select{
+  width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--border-light);
+  background:var(--bg-white);font-size:14px;outline:none;
+  transition:all 0.2s ease;
+}
+select:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+
+/* appointment cards grid */
+.appointments-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  margin-top:12px;
+}
+
+.appointment-card{
+  background:var(--bg-light);
+  border-radius:8px;
+  padding:16px;
+  border:1px solid var(--border-light);
+}
+
+.appointment-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.appointment-card-title{
+  font-weight:700;
+  font-size:15px;
+  color:var(--text-dark);
+}
+
+.count-badge{
+  background:var(--primary-teal);
+  color:white;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:700;
+}
+
+/* timeline */
+.timeline-list{
+  list-style:none;
+  margin:0;
+  padding-left:16px;
+  border-left:2px solid var(--border-light);
+}
+
+.timeline-item{
+  margin-bottom:16px;
+  position:relative;
+  padding-left:16px;
+}
+
+.timeline-item:last-child{
+  margin-bottom:0;
+}
+
+.timeline-item::before{
+  content:'';
+  position:absolute;
+  left:-22px;
+  top:6px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--primary-teal);
+  box-shadow:0 0 0 4px rgba(0,169,165,0.15);
+}
+
+.timeline-meta{
+  font-weight:600;
+  color:var(--text-dark);
+  font-size:14px;
+  margin-bottom:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+}
+
+.timeline-meta span + span::before{
+  content:'|';
+  color:var(--text-muted);
+  margin:0 6px;
+  font-weight:400;
+}
+
+.timeline-notes{
+  margin:4px 0 0;
+  color:var(--text-muted);
+  line-height:1.5;
+  font-size:13px;
+}
+
+.empty-state{
+  padding:16px;
+  border:1px dashed var(--border-light);
+  border-radius:6px;
+  background:var(--bg-light);
+  color:var(--text-muted);
+  text-align:center;
+  font-size:14px;
+}
+
+/* reports table */
+.table-wrapper{
+  overflow-x:auto;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  margin-top:12px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+thead{
+  background:var(--bg-light);
+}
+
+th{
+  padding:12px 10px;
+  text-align:left;
+  font-weight:700;
+  color:var(--text-dark);
+  border-bottom:2px solid var(--border-light);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+td{
+  padding:12px 10px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:middle;
+  color:var(--text-dark);
+}
+
+tbody tr:hover{
+  background:rgba(0,169,165,0.03);
+}
+
+tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* buttons */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:8px 16px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:13px;
+  transition:all 0.2s ease;
+  text-decoration:none;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-view{
+  background:var(--primary-teal);
+  color:white;
+  box-shadow:0 2px 4px rgba(0,169,165,0.2);
+}
+
+.btn-view:hover{
+  box-shadow:0 4px 8px rgba(0,169,165,0.3);
+}
+
+.btn-open{
+  background:transparent;
+  color:var(--primary-blue);
+  border:1px solid var(--primary-blue);
+}
+
+.btn-open:hover{
+  background:rgba(26,117,187,0.05);
+}
+
+.btn-close{
+  background:var(--bg-light);
+  color:var(--text-dark);
+  border:1px solid var(--border-light);
+}
+
+.btn-close:hover{
+  background:#e0e0e0;
+}
+
+.btn-download{
+  background:transparent;
+  color:var(--primary-teal);
+  border:1px solid var(--primary-teal);
+}
+
+.btn-download:hover{
+  background:rgba(0,169,165,0.05);
+}
+
+/* report actions */
+.report-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s ease;
+}
+
+.modal-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal{
+  width:100%;
+  max-width:1000px;
+  height:85vh;
+  background:var(--bg-white);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 10px 40px rgba(0,0,0,0.3);
+}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border-light);
+  background:var(--bg-light);
+}
+
+.modal-title{
+  font-weight:700;
+  font-size:16px;
+  color:var(--text-dark);
+}
+
+.modal-body{
+  flex:1 1 auto;
+  overflow:hidden;
+}
+
+.modal-body iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+
+/* quick info placeholder */
+#quickInfo{
+  padding:12px 16px;
+  background:var(--bg-light);
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  color:var(--text-muted);
+  font-size:14px;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .patient-details{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .patient-details{
+    grid-template-columns:repeat(2,1fr);
+  }
+  
+  .appointments-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header{
+    padding:16px 20px;
+  }
+  
+  .header h1{
+    font-size:20px;
+  }
+  
+  .content{
+    padding:16px;
+  }
+  
+  .section{
+    padding:16px;
+  }
+  
+  .patient-details{
+    grid-template-columns:1fr;
+  }
+  
+  .report-actions{
+    flex-direction:column;
+    width:100%;
+  }
+  
+  .report-actions .btn{
+    width:100%;
+  }
+  
+  table{
+    font-size:12px;
+  }
+  
+  th,td{
+    padding:8px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header{
+    padding:12px 16px;
+  }
+  
+  .header h1{
+    font-size:18px;
+  }
+  
+  .content{
+    padding:12px;
+  }
+  
+  .section{
+    padding:12px;
+  }
+  
+  .modal{
+    height:92vh;
+  }
+  
+  .modal-header{
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-start;
+  }
+  
+  .modal-header .report-actions{
+    width:100%;
+  }
+}
+
+/* Loading state */
+.loading{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--text-muted);
+}
+
+.loading i{
+  font-size:32px;
+  color:var(--primary-teal);
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+</style>
+</head>
+<body>
+<main class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1><i class="fas fa-history"></i> Patient History</h1>
+    <div class="subtitle">View and manage patient records and appointments</div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+    <!-- PATIENT SELECTION SECTION -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-user-circle"></i>
+        <span>Select Patient</span>
+      </div>
+      
+      <div style="margin-bottom:16px;">
+        <label class="small">Choose a patient to view their history</label>
+        <select id="patientSelect">
+          <option value="">Loading patients...</option>
+        </select>
+      </div>
+
+      <!-- Quick Info -->
+      <div id="quickInfo">Select a patient to view details</div>
+    </div>
+
+    <!-- PATIENT DETAILS AREA -->
+    <div id="detailsArea" style="display:none;">
+      <!-- PATIENT INFO CARD -->
+      <div id="patientInfoCard" style="display:none;">
+        <div class="patient-info-card">
+          <div class="patient-name">
+            <i class="fas fa-user"></i> Patient Name - <span id="pdName">-</span>
+          </div>
+          <div class="patient-details">
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Patient ID</span>
+              <span class="patient-detail-value" id="pdId">-</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Mobile Number</span>
+              <span class="patient-detail-value" id="pdMobile">-</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Age</span>
+              <span class="patient-detail-value"><span id="pdAge">-</span> yrs</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Weight</span>
+              <span class="patient-detail-value"><span id="pdWeight">-</span> kg</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Doctor</span>
+              <span class="patient-detail-value" id="pdDoctor">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPOINTMENTS SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Appointments History</span>
+          <span id="appointmentsCount" class="count-badge" style="margin-left:auto">0</span>
+        </div>
+        
+        <div class="appointments-grid">
+          <!-- Upcoming Appointments -->
+          <div class="appointment-card">
+            <div class="appointment-card-header">
+              <span class="appointment-card-title">
+                <i class="fas fa-clock"></i> Upcoming
+              </span>
+              <span id="appointmentsUpcomingCount" class="count-badge">0</span>
+            </div>
+            <div id="appointmentsUpcomingEmpty" class="empty-state">No upcoming appointments</div>
+            <ul id="appointmentsUpcomingTimeline" class="timeline-list"></ul>
+          </div>
+
+          <!-- Past Appointments -->
+          <div class="appointment-card">
+            <div class="appointment-card-header">
+              <span class="appointment-card-title">
+                <i class="fas fa-check-circle"></i> Completed
+              </span>
+              <span id="appointmentsPastCount" class="count-badge">0</span>
+            </div>
+            <div id="appointmentsPastEmpty" class="empty-state">No completed appointments</div>
+            <ul id="appointmentsPastTimeline" class="timeline-list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRESCRIPTION HISTORY SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <span>Prescription History</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Prescription</th>
+                <th>Symptoms</th>
+                <th>Medicine</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Time</th>
+                <th>Before/After Meal</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="prescriptionTable">
+              <tr>
+                <td colspan="8" class="empty-state">No prescriptions found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="bloodSelectedLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
+          <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
+          <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
+        </div>
+        <div id="followUpLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
+          <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
+        </div>
+      </div>
+
+      <!-- REPORTS SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-file-medical"></i>
+          <span>Uploaded Reports</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Report Name</th>
+                <th>File Path</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTable">
+              <tr>
+                <td colspan="4" class="empty-state">No reports uploaded</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- PDF Viewer Modal -->
+<div id="pdfModal" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Report Preview</div>
+      <div class="report-actions">
+        <a id="pdfDownload" class="btn btn-download" href="#" target="_blank" download>
+          <i class="fas fa-download"></i> Download
+        </a>
+        <button id="closeModal" class="btn btn-close">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <iframe id="pdfFrame" src="" title="PDF preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Helper function */
+function escapeHtml(s){ 
+  if(!s) return ''; 
+  return s.toString().replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
+}
+
+/* Load patients list */
+async function loadPatients(){
+  const sel = document.getElementById('patientSelect');
+  sel.innerHTML = '<option value="">Loading patients...</option>';
+  try{
+    const res = await fetch('patient_history.php?action=list');
+    const j = await res.json();
+    if(!j.success) throw new Error(j.message||'Failed');
+    sel.innerHTML = '<option value="">-- Select a patient --</option>';
+    j.patients.forEach(p=>{
+      const opt = document.createElement('option');
+      opt.value = p.patient_id;
+      opt.textContent = `${p.patient_name} — ${p.patient_id}`;
+      sel.appendChild(opt);
+    });
+  }catch(e){
+    sel.innerHTML = '<option value="">Failed to load patients</option>';
+    console.error(e);
+  }
+}
+
+/* Parse time to minutes for comparison */
+function parseTimeToMinutes(raw){
+  if(!raw) return null;
+  const str = raw.trim();
+  if(!str) return null;
+  const ampm = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)$/i);
+  if(ampm){
+    let hours = parseInt(ampm[1],10);
+    const minutes = parseInt(ampm[2],10);
+    const meridian = ampm[4].toUpperCase();
+    if(hours === 12) hours = 0;
+    if(meridian === 'PM') hours += 12;
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  const twentyFour = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if(twentyFour){
+    const hours = parseInt(twentyFour[1],10);
+    const minutes = parseInt(twentyFour[2],10);
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  return null;
+}
+
+/* Create timeline item */
+function createTimelineItem(appt){
+  const li = document.createElement('li');
+  li.className = 'timeline-item';
+  const dateLabel = escapeHtml(appt.date || '—');
+  const timeLabel = appt.time ? escapeHtml(appt.time) : '';
+  const doctorLabel = escapeHtml(appt.doctor || 'Doctor');
+  const metaParts = [`<span>${dateLabel}</span>`];
+  if(timeLabel) metaParts.push(`<span>${timeLabel}</span>`);
+  metaParts.push(`<span>${doctorLabel}</span>`);
+  const notesText = escapeHtml(appt.notes || 'No notes recorded.');
+  li.innerHTML = `
+    <div class="timeline-meta">${metaParts.join('')}</div>
+    <p class="timeline-notes">${notesText}</p>
+  `;
+  return li;
+}
+
+/* Render appointments */
+function renderAppointments(list, patientName){
+  const countEl = document.getElementById('appointmentsCount');
+  const upcomingCountEl = document.getElementById('appointmentsUpcomingCount');
+  const pastCountEl = document.getElementById('appointmentsPastCount');
+  const upcomingEmpty = document.getElementById('appointmentsUpcomingEmpty');
+  const pastEmpty = document.getElementById('appointmentsPastEmpty');
+  const upcomingTimeline = document.getElementById('appointmentsUpcomingTimeline');
+  const pastTimeline = document.getElementById('appointmentsPastTimeline');
+
+  upcomingTimeline.innerHTML = '';
+  pastTimeline.innerHTML = '';
+
+  const total = Array.isArray(list) ? list.length : 0;
+
+  if(!patientName){
+    countEl.textContent = '0';
+    upcomingCountEl.textContent = '0';
+    pastCountEl.textContent = '0';
+    upcomingEmpty.style.display = 'block';
+    pastEmpty.style.display = 'block';
+    upcomingEmpty.textContent = 'Select a patient to see their upcoming appointments';
+    pastEmpty.textContent = 'Select a patient to see completed appointments';
+    return;
+  }
+
+  countEl.textContent = total.toString();
+
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  const currentMinutes = today.getHours() * 60 + today.getMinutes();
+
+  const upcoming = [];
+  const past = [];
+
+  list.forEach(appt=>{
+    const dateStr = (appt.date || '').toString().slice(0,10);
+    let bucket = upcoming;
+    if(dateStr){
+      if(dateStr < todayStr){
+        bucket = past;
+      } else if(dateStr === todayStr){
+        const apptMinutes = parseTimeToMinutes(appt.time);
+        if(apptMinutes !== null && apptMinutes < currentMinutes){
+          bucket = past;
+        }
+      }
+    }
+    bucket.push(appt);
+  });
+
+  upcomingCountEl.textContent = upcoming.length.toString();
+  pastCountEl.textContent = past.length.toString();
+
+  if(!upcoming.length){
+    upcomingEmpty.style.display = 'block';
+    upcomingEmpty.textContent = `No upcoming appointments for ${patientName}`;
+  } else {
+    upcomingEmpty.style.display = 'none';
+    upcoming.forEach(appt=> upcomingTimeline.appendChild(createTimelineItem(appt)));
+  }
+
+  if(!past.length){
+    pastEmpty.style.display = 'block';
+    pastEmpty.textContent = `No completed appointments for ${patientName}`;
+  } else {
+    pastEmpty.style.display = 'none';
+    past.forEach(appt=> pastTimeline.appendChild(createTimelineItem(appt)));
+  }
+}
+
+/* Render prescriptions table */
+function renderPrescriptions(prescriptions){
+  const tbody = document.getElementById('prescriptionTable');
+  const bloodSelectedLabel = document.getElementById('bloodSelectedLabel');
+  const bloodSelectedText = document.getElementById('bloodSelectedText');
+  const followUpLabel = document.getElementById('followUpLabel');
+  const followUpText = document.getElementById('followUpText');
+  
+  tbody.innerHTML = '';
+  bloodSelectedLabel.style.display = 'none';
+  followUpLabel.style.display = 'none';
+  
+  if(!prescriptions || prescriptions.length === 0){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
+    return;
+  }
+  
+  prescriptions.forEach(m=>{
+    const presLabel = m.prescription_id ? `#${m.prescription_id} (${m.created_at?m.created_at.split(' ')[0]:''})` : '';
+    const times = m.times_of_day || m.times || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(presLabel)}</td>
+      <td>${escapeHtml(m.symptoms||'')}</td>
+      <td>${escapeHtml(m.medicine_name||'')}</td>
+      <td>${escapeHtml(m.type||'')}</td>
+      <td>${escapeHtml(m.duration||'')}</td>
+      <td>${escapeHtml(times)}</td>
+      <td>${escapeHtml(m.before_after||'')}</td>
+      <td>${escapeHtml(m.notes||'')}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  // Show blood tests and follow-up from latest prescription
+  if(prescriptions.length > 0){
+    const latest = prescriptions[0];
+    
+    if(latest.recommended_blood_test){
+      const bloodTestsArray = latest.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
+      bloodSelectedText.innerHTML = '';
+      bloodTestsArray.forEach(test => {
+        const li = document.createElement('li');
+        li.textContent = test;
+        li.style.margin = '4px 0';
+        li.style.fontSize = '14px';
+        li.style.color = 'var(--text-dark)';
+        bloodSelectedText.appendChild(li);
+      });
+      bloodSelectedLabel.style.display = 'block';
+    }
+    
+    if(latest.follow_up_date){
+      followUpText.textContent = new Date(latest.follow_up_date).toLocaleDateString();
+      followUpLabel.style.display = 'block';
+    }
+  }
+}
+
+/* Render reports table */
+function renderReports(reports){
+  const tbody = document.getElementById('reportsTable');
+  tbody.innerHTML = '';
+  
+  if(!reports || reports.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
+    return;
+  }
+  
+  reports.forEach((r, idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${idx + 1}</td>
+      <td><strong>${escapeHtml(r.file_name || r.file_path)}</strong></td>
+      <td>${escapeHtml(r.file_path || '')}</td>
+      <td>
+        <div class="report-actions">
+          <a href="${escapeHtml(r.file_path)}" target="_blank" class="btn btn-open">
+            <i class="fas fa-external-link-alt"></i> Open
+          </a>
+          <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(r.file_path)}', '${escapeHtml(r.file_name || '')}')">
+            <i class="fas fa-eye"></i> View
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Load patient details */
+async function loadDetails(patient_id){
+  const detailsArea = document.getElementById('detailsArea');
+  const patientInfoCard = document.getElementById('patientInfoCard');
+  const quickInfo = document.getElementById('quickInfo');
+  
+  if(!patient_id) {
+    detailsArea.style.display = 'none';
+    patientInfoCard.style.display = 'none';
+    quickInfo.textContent = 'Select a patient to view details';
+    renderAppointments([], null);
+    renderPrescriptions([]);
+    renderReports([]);
+    return;
+  }
+  
+  quickInfo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading patient details...';
+  
+  try{
+    const res = await fetch(`patient_history.php?action=detail&patient_id=${encodeURIComponent(patient_id)}`);
+    const j = await res.json();
+    if(!j.success) throw new Error(j.message||'No data');
+    
+    const p = j.patient;
+    
+    // Show details area
+    detailsArea.style.display = 'block';
+    patientInfoCard.style.display = 'block';
+    
+    // Populate patient info card
+    document.getElementById('pdName').textContent = p.patient_name || '-';
+    document.getElementById('pdId').textContent = p.patient_id || '-';
+    document.getElementById('pdMobile').textContent = p.mobile || '-';
+    document.getElementById('pdAge').textContent = p.age || '-';
+    document.getElementById('pdWeight').textContent = p.weight || '-';
+    
+    // Parse doctor field if it's JSON
+    let doctorName = '-';
+    if(p.doctor){
+      try{
+        const doctorObj = JSON.parse(p.doctor);
+        doctorName = doctorObj.name || '-';
+      }catch(e){
+        doctorName = p.doctor; // If not JSON, use as is
+      }
+    }
+    document.getElementById('pdDoctor').textContent = doctorName;
+    
+    // Update quick info
+    quickInfo.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success-green)"></i> ${p.patient_name} — ${p.patient_id}`;
+    
+    // Render appointments
+    renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
+    
+    // Render prescriptions
+    renderPrescriptions(j.prescriptions || []);
+    
+    // Render reports
+    renderReports(j.reports || []);
+    
+  }catch(e){
+    console.error(e);
+    quickInfo.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#dc3545"></i> Error loading details';
+    detailsArea.style.display = 'none';
+  }
+}
+
+/* PDF Modal */
+const pdfModal = document.getElementById('pdfModal');
+const pdfFrame = document.getElementById('pdfFrame');
+const modalTitle = document.getElementById('modalTitle');
+const pdfDownload = document.getElementById('pdfDownload');
+const closeModalBtn = document.getElementById('closeModal');
+
+function openPdfModal(url, name) {
+  if(!url) return;
+  modalTitle.textContent = name || 'Report Preview';
+  pdfFrame.src = url;
+  pdfDownload.href = url;
+  pdfDownload.setAttribute('download', name || '');
+  pdfModal.classList.add('open');
+  pdfModal.setAttribute('aria-hidden', 'false');
+}
+
+function closePdfModal() {
+  pdfModal.classList.remove('open');
+  pdfModal.setAttribute('aria-hidden', 'true');
+  pdfFrame.src = '';
+}
+
+closeModalBtn.addEventListener('click', closePdfModal);
+pdfModal.addEventListener('click', (ev)=>{
+  if(ev.target === pdfModal) closePdfModal();
+});
+document.addEventListener('keydown', (e)=>{ 
+  if(e.key === 'Escape') closePdfModal(); 
+});
+
+/* Initialize */
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadPatients();
+  document.getElementById('patientSelect').addEventListener('change',(e)=>loadDetails(e.target.value));
+  
+  // Check if patient_id is in URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const patientIdFromUrl = urlParams.get('patient_id');
+  
+  if(patientIdFromUrl){
+    // Wait for patients to load, then select the patient
+    setTimeout(()=>{
+      const selectEl = document.getElementById('patientSelect');
+      selectEl.value = patientIdFromUrl;
+      loadDetails(patientIdFromUrl);
+    }, 500);
+  }
+});
+</script>
+</body>
+</html>
