@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Print Prescription</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- html2pdf for Save PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  padding:20px;
+  color:var(--text-dark);
+  background:#f5f7fa;
+  -webkit-font-smoothing:antialiased;
+}
+
+.top-actions{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-bottom:20px;
+  max-width:1000px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.btn{
+  padding:8px 16px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:13px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 2px 4px rgba(0,0,0,0.1);
+  transition:all 0.2s ease;
+  white-space:nowrap;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 8px rgba(0,0,0,0.15);
+}
+
+.btn.save{
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+}
+
+.btn.print{
+  background:var(--primary-teal);
+  color:#fff;
+}
+
+.paper{
+  background:var(--bg-white);
+  padding:0;
+  border-radius:8px;
+  max-width:1000px;
+  margin:0 auto;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  overflow:hidden;
+}
+
+/* Header Section */
+.prescription-header{
+  padding:20px 30px;
+  border-bottom:1px solid var(--border-light);
+  background:var(--bg-white);
+}
+
+.prescription-header h1{
+  font-size:24px;
+  font-weight:700;
+  margin:0;
+  color:var(--text-dark);
+}
+
+/* Content Area */
+.prescription-content{
+  padding:30px;
+}
+
+/* Patient Info Section */
+.patient-section{
+  background:linear-gradient(to right,#f8f9fa,#ffffff);
+  border-left:4px solid var(--primary-teal);
+  padding:20px;
+  border-radius:6px;
+  margin-bottom:24px;
+}
+
+.patient-name-header{
+  font-size:20px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:2px solid #dc3545;
+  display:inline-block;
+}
+
+.patient-name-header i{
+  color:var(--primary-teal);
+  margin-right:8px;
+}
+
+.meta-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;
+  margin-top:16px;
+}
+
+.meta-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.meta-label{
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+
+.meta-value{
+  font-weight:600;
+  color:var(--text-dark);
+  font-size:15px;
+}
+
+/* Prescription Section */
+.prescription-section{
+  margin-bottom:24px;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.section-title i{
+  color:var(--primary-teal);
+  font-size:20px;
+}
+
+/* Table Styles */
+.table-wrapper{
+  overflow-x:auto;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  margin-top:12px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+thead{
+  background:var(--bg-light);
+}
+
+th{
+  padding:12px 10px;
+  text-align:left;
+  font-weight:700;
+  color:var(--text-dark);
+  border-bottom:2px solid var(--border-light);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+td{
+  padding:12px 10px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:top;
+  color:var(--text-dark);
+}
+
+tbody tr:hover{
+  background:rgba(0,169,165,0.03);
+}
+
+tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* Additional Info Boxes */
+.info-box{
+  background:var(--bg-light);
+  padding:12px 16px;
+  border-radius:6px;
+  margin-top:12px;
+  border-left:4px solid var(--primary-teal);
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.info-box i{
+  color:var(--primary-teal);
+  font-size:16px;
+}
+
+.info-box strong{
+  color:var(--text-dark);
+  margin-right:6px;
+}
+
+/* Print Styles */
+@media print {
+  body{
+    background:#fff;
+    padding:0;
+  }
+  
+  .top-actions{
+    display:none !important;
+  }
+  
+  .paper{
+    box-shadow:none;
+    border-radius:0;
+    max-width:100%;
+    margin:0;
+  }
+  
+  .prescription-header{
+    background:var(--bg-white);
+    border-bottom:1px solid var(--border-light);
+  }
+  
+  .patient-section{
+    background:linear-gradient(to right,#f8f9fa,#ffffff);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  thead{
+    background:var(--bg-light);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .info-box{
+    background:var(--bg-light);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .table-wrapper{
+    border:1px solid var(--border-light);
+  }
+  
+  /* Page break handling */
+  .prescription-section{
+    page-break-inside:avoid;
+  }
+  
+  table{
+    page-break-inside:auto;
+  }
+  
+  tr{
+    page-break-inside:avoid;
+    page-break-after:auto;
+  }
+  
+  thead{
+    display:table-header-group;
+  }
+}
+
+/* Responsive Design */
+@media (max-width:768px){
+  .prescription-header{
+    padding:20px;
+  }
+  
+  .prescription-header h1{
+    font-size:22px;
+  }
+  
+  .prescription-content{
+    padding:20px;
+  }
+  
+  .meta-grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  
+  table{
+    font-size:12px;
+  }
+  
+  th,td{
+    padding:8px 6px;
+  }
+}
+
+@media (max-width:480px){
+  body{
+    padding:12px;
+  }
+  
+  .top-actions{
+    gap:8px;
+  }
+  
+  .btn{
+    padding:8px 12px;
+    font-size:12px;
+    gap:4px;
+  }
+  
+  .btn i{
+    font-size:12px;
+  }
+  
+  .prescription-header{
+    padding:16px 20px;
+  }
+  
+  .prescription-header h1{
+    font-size:20px;
+  }
+  
+  .prescription-content{
+    padding:16px;
+  }
+  
+  .patient-section{
+    padding:16px;
+  }
+}
+</style>
+</head>
+<body>
+  <div class="top-actions">
+    <button id="savePdfBtn" class="btn save">
+      <i class="fas fa-file-pdf"></i> Save PDF
+    </button>
+    <button id="printBtn" class="btn print">
+      <i class="fas fa-print"></i> Print
+    </button>
+  </div>
+
+  <div id="printArea" class="paper" aria-live="polite">
+    <!-- HEADER -->
+    <div class="prescription-header">
+      <h1>Report</h1>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="prescription-content">
+      <!-- PATIENT INFORMATION -->
+      <div class="patient-section">
+        <div class="patient-name-header">
+          <i class="fas fa-user"></i>
+          Patient Name - <span id="patientName">-</span>
+        </div>
+        
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Patient ID</span>
+            <span class="meta-value" id="patientId">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Mobile Number</span>
+            <span class="meta-value" id="patientMobile">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Age / Weight</span>
+            <span class="meta-value" id="patientAgeWeight">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Prescription ID</span>
+            <span class="meta-value" id="presId">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Prescription Date</span>
+            <span class="meta-value" id="presDate">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRESCRIPTION DETAILS -->
+      <div class="prescription-section">
+        <div class="section-title">
+          <i class="fas fa-pills"></i>
+          <span>Medication Prescribed</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table id="printTable" role="table" aria-label="Prescription items">
+            <thead>
+              <tr>
+                <th style="width:40px">#</th>
+                <th>Symptoms</th>
+                <th>Medicine</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Time</th>
+                <th>Before/After/Meal</th>
+                <th>Notes</th>
+                <th>Recommended Test</th>
+                <th>Follow-up</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ADDITIONAL INFORMATION -->
+      <div id="extras">
+        <div id="bloodLabel" style="display:none;" class="info-box">
+          <i class="fas fa-vial"></i>
+          <div>
+            <strong>Recommended Blood Test:</strong>
+            <span id="bloodText"></span>
+          </div>
+        </div>
+        <div id="followLabel" style="display:none;" class="info-box">
+          <i class="fas fa-calendar-check"></i>
+          <div>
+            <strong>Follow-up Date:</strong>
+            <span id="followText"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+function q(name){ const p = new URLSearchParams(location.search); return p.get(name); }
+const presId = q('prescription_id');
+const patientIdFromQuery = q('patient_id');
+
+// escape helper
+function esc(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// format date (YYYY-MM-DD or date string) to a readable local date
+function prettyDate(d){
+  if(!d) return '';
+  const dt = new Date(d);
+  if(isNaN(dt.getTime())){
+    // try extracting yyyy-mm-dd from string
+    const m = (d+'').match(/(\d{4}-\d{2}-\d{2})/);
+    if(m) return new Date(m[1]).toLocaleDateString();
+    return d;
+  }
+  return dt.toLocaleDateString();
+}
+
+async function loadAndRender(){
+  if(!patientIdFromQuery){
+    alert('Missing patient_id in URL. Use print.html?prescription_id=...&patient_id=...');
+    return;
+  }
+
+  try{
+    const res = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patientIdFromQuery)}`);
+    const j = await res.json();
+    if(!j.success){
+      alert('Failed to load prescriptions: ' + (j.message || 'unknown'));
+      return;
+    }
+
+    const allItems = Array.isArray(j.items) ? j.items : [];
+    // filter for this prescription if presId provided
+    const items = presId ? allItems.filter(it => String(it.prescription_id) === String(presId)) : allItems;
+
+    // If items array is empty but there are items in DB (maybe prescription-level record exists),
+    // attempt to still determine date and patient info from the full list (allItems).
+    const tbody = document.querySelector('#printTable tbody');
+    tbody.innerHTML = '';
+
+    // If no items found for the specific presId but allItems contains entries for patient,
+    // try to use a representative prescription row for meta (choose latest by created_at).
+    let metaSource = null;
+    if(items.length > 0) metaSource = items[0];
+    else if(allItems.length > 0) metaSource = allItems[0];
+
+    // render rows (if items empty, show a single "No items" row)
+    if(items.length === 0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="10" style="text-align:center;padding:20px;color:var(--text-muted)">No prescription items found for this prescription.</td>`;
+      tbody.appendChild(tr);
+    } else {
+      items.forEach((it, idx) => {
+        const recommended = it.recommended_blood_test || it.blood_test_name || '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx+1}</td>
+          <td>${esc(it.symptoms)}</td>
+          <td>${esc(it.medicine_name)}</td>
+          <td>${esc(it.type)}</td>
+          <td>${esc(it.duration)}</td>
+          <td>${esc(it.times_of_day)}</td>
+          <td>${esc(it.before_after)}</td>
+          <td>${esc(it.notes)}</td>
+          <td>${esc(recommended)}</td>
+          <td>${esc(prettyDate(it.follow_up_date))}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Populate meta: patient name/mobile/age/weight.
+    // First try to derive from returned items (if server included patient fields).
+    let patientName = (metaSource && metaSource.patient_name) ? metaSource.patient_name : null;
+    let patientMobile = (metaSource && metaSource.mobile) ? metaSource.mobile : null;
+    let patientAge = (metaSource && metaSource.age) ? metaSource.age : null;
+    let patientWeight = (metaSource && metaSource.weight) ? metaSource.weight : null;
+    let presDate = (metaSource && metaSource.created_at) ? metaSource.created_at.split(' ')[0] : null;
+
+    // If patientName is missing, fetch list_patients to find details
+    if(!patientName){
+      try{
+        const rp = await fetch('add_prescription.php?action=list_patients');
+        const jp = await rp.json();
+        if(jp.success && Array.isArray(jp.patients)){
+          const p = jp.patients.find(x => String(x.patient_id) === String(patientIdFromQuery));
+          if(p){
+            patientName = p.patient_name || patientName;
+            patientMobile = p.mobile || patientMobile;
+            patientAge = p.age || patientAge;
+            patientWeight = p.weight || patientWeight;
+            // if list_patients included last_visit, and presDate not set, prefer that
+            if(!presDate && p.last_visit) presDate = p.last_visit;
+          }
+        }
+      }catch(e){
+        console.warn('Failed list_patients lookup', e);
+      }
+    }
+
+    // fill meta DOM
+    document.getElementById('patientName').textContent = patientName || '-';
+    document.getElementById('patientId').textContent = patientIdFromQuery || '-';
+    document.getElementById('patientMobile').textContent = patientMobile || '-';
+    document.getElementById('patientAgeWeight').textContent = (patientAge ? patientAge : '-') + ' / ' + (patientWeight ? patientWeight : '-');
+    document.getElementById('presId').textContent = presId || (metaSource && metaSource.prescription_id) || '-';
+    document.getElementById('presDate').textContent = presDate ? prettyDate(presDate) : new Date().toLocaleDateString();
+
+    // recommended blood test: prefer prescription-level (blood_test_name) then recommended_blood_test in item
+    let recommendedTest = '';
+    if(items.length){
+      const byPres = items.find(it => it.blood_test_name && it.blood_test_name.trim() !== '');
+      const byItem = items.find(it => it.recommended_blood_test && it.recommended_blood_test.trim() !== '');
+      recommendedTest = (byPres && byPres.blood_test_name) || (byItem && byItem.recommended_blood_test) || '';
+    } else if(allItems.length){
+      const byPres = allItems.find(it => it.blood_test_name && it.blood_test_name.trim() !== '');
+      const byItem = allItems.find(it => it.recommended_blood_test && it.recommended_blood_test.trim() !== '');
+      recommendedTest = (byPres && byPres.blood_test_name) || (byItem && byItem.recommended_blood_test) || '';
+    }
+
+    if(recommendedTest){
+      document.getElementById('bloodText').textContent = recommendedTest;
+      document.getElementById('bloodLabel').style.display = 'flex';
+    } else {
+      document.getElementById('bloodLabel').style.display = 'none';
+    }
+
+    // follow-up: first found follow_up_date in items (prefer pres items for this prescription), fallback to metaSource
+    let followDate = '';
+    if(items.length){
+      const anyFollow = items.find(it => it.follow_up_date && String(it.follow_up_date).trim() !== '');
+      if(anyFollow) followDate = anyFollow.follow_up_date;
+    }
+    if(!followDate && metaSource && metaSource.follow_up_date) followDate = metaSource.follow_up_date;
+    if(followDate){
+      document.getElementById('followText').textContent = prettyDate(followDate);
+      document.getElementById('followLabel').style.display = 'flex';
+    } else {
+      document.getElementById('followLabel').style.display = 'none';
+    }
+
+  }catch(err){
+    console.error(err);
+    alert('Failed to load data: ' + (err.message || err));
+  }
+}
+
+/* Save PDF (html2pdf) */
+document.getElementById('savePdfBtn').addEventListener('click', ()=>{
+  const element = document.getElementById('printArea');
+  const opts = { 
+    margin: 0.4, 
+    filename: `prescription_${presId||'print'}.pdf`, 
+    html2canvas: { scale: 2 }, 
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
+  };
+  html2pdf().set(opts).from(element).save();
+});
+
+document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+
+loadAndRender();
+</script>
+</body>
+</html>
