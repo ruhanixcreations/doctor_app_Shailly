@@ -154,13 +154,20 @@ body{
   border:1px solid #e8e8e8;
 }
 
+/* Table Wrapper for Scroll */
+.table-wrapper{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin-top:10px;
+}
+
 /* Medications Table */
 .medications-table{
   width:100%;
+  min-width:600px;
   border-collapse:collapse;
   font-size:12px;
   border:1px solid #ddd;
-  margin-top:10px;
 }
 
 .medications-table thead{
@@ -176,6 +183,7 @@ body{
   font-size:11px;
   text-transform:uppercase;
   letter-spacing:0.3px;
+  white-space:nowrap;
 }
 
 .medications-table td{
@@ -265,9 +273,15 @@ body{
 
 /* Print Styles */
 @media print {
+  @page{
+    size:A4;
+    margin:10mm;
+  }
+  
   body{
     background:white;
     padding:0;
+    margin:0;
   }
   
   .no-print{
@@ -277,6 +291,7 @@ body{
   .prescription-page{
     box-shadow:none;
     max-width:100%;
+    width:100%;
   }
   
   .doctor-header{
@@ -297,16 +312,38 @@ body{
     print-color-adjust:exact;
   }
   
+  .table-wrapper{
+    overflow:visible;
+  }
+  
+  .medications-table{
+    width:100%;
+    min-width:100%;
+    page-break-inside:auto;
+  }
+  
   .medications-table thead{
-    background:white;
+    background:#f5f5f5;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+    display:table-header-group;
+  }
+  
+  .medications-table tbody tr:nth-child(even){
+    background:#fafafa;
     -webkit-print-color-adjust:exact;
     print-color-adjust:exact;
   }
   
-  .medications-table tbody tr:nth-child(even){
-    background:white;
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
+  .medications-table tr{
+    page-break-inside:avoid;
+    page-break-after:auto;
+  }
+  
+  .medications-table th,
+  .medications-table td{
+    font-size:10px;
+    padding:6px 4px;
   }
   
   .followup-box{
@@ -316,14 +353,6 @@ body{
   }
   
   .section{
-    page-break-inside:avoid;
-  }
-  
-  .medications-table{
-    page-break-inside:auto;
-  }
-  
-  .medications-table tr{
     page-break-inside:avoid;
   }
 }
@@ -374,13 +403,23 @@ body{
     font-size:12px;
   }
   
+  .table-wrapper{
+    overflow-x:auto;
+    margin-left:-20px;
+    margin-right:-20px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  
   .medications-table{
     font-size:11px;
+    min-width:650px;
   }
   
   .medications-table th,
   .medications-table td{
     padding:8px 6px;
+    font-size:10px;
   }
   
   .btn{
@@ -410,13 +449,23 @@ body{
     padding:12px 16px;
   }
   
+  .table-wrapper{
+    overflow-x:auto;
+    margin-left:-16px;
+    margin-right:-16px;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  
   .medications-table{
     font-size:10px;
+    min-width:700px;
   }
   
   .medications-table th,
   .medications-table td{
     padding:6px 4px;
+    font-size:9px;
   }
 }
 
@@ -486,24 +535,26 @@ body{
     <div class="section">
       <div class="section-title">Medications Prescribed</div>
       
-      <table class="medications-table">
-        <thead>
-          <tr>
-            <th style="width:40px">#</th>
-            <th>Medicine Name</th>
-            <th>Type</th>
-            <th>Duration</th>
-            <th>Time of Day</th>
-            <th>Before/After Meal</th>
-            <th>Instructions</th>
-          </tr>
-        </thead>
-        <tbody id="medicationsBody">
-          <tr>
-            <td colspan="7" class="no-data">Loading medications...</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table class="medications-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Medicine Name</th>
+              <th>Type</th>
+              <th>Duration</th>
+              <th>Time of Day</th>
+              <th>Before/After Meal</th>
+              <th>Instructions</th>
+            </tr>
+          </thead>
+          <tbody id="medicationsBody">
+            <tr>
+              <td colspan="7" class="no-data">Loading medications...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- DIAGNOSTIC TESTS -->
@@ -778,10 +829,25 @@ async function loadPrescription(){
 function savePDF(){
   const element = document.getElementById('prescription');
   const options = {
-    margin: 0.4,
+    margin: [0.4, 0.4, 0.4, 0.4],
     filename: `prescription_${prescriptionId || 'print'}.pdf`,
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      windowWidth: 850,
+      width: 850
+    },
+    jsPDF: { 
+      unit: 'in', 
+      format: 'a4', 
+      orientation: 'portrait',
+      compress: true
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'css', 'legacy'],
+      avoid: '.section'
+    }
   };
   html2pdf().set(options).from(element).save();
 }
