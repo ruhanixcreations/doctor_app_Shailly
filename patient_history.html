@@ -253,6 +253,7 @@ select:focus{
 /* reports table */
 .table-wrapper{
   overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
   border-radius:6px;
   border:1px solid var(--border-light);
   margin-top:12px;
@@ -260,6 +261,7 @@ select:focus{
 
 table{
   width:100%;
+  min-width:600px;
   border-collapse:collapse;
   font-size:13px;
 }
@@ -480,12 +482,29 @@ tbody tr:last-child td{
     width:100%;
   }
   
+  .table-wrapper{
+    margin-left:-16px;
+    margin-right:-16px;
+    padding-left:16px;
+    padding-right:16px;
+    border:none;
+    border-top:1px solid var(--border-light);
+    border-bottom:1px solid var(--border-light);
+  }
+  
   table{
     font-size:12px;
+    min-width:700px;
   }
   
   th,td{
     padding:8px 6px;
+    font-size:11px;
+  }
+  
+  .btn{
+    padding:6px 12px;
+    font-size:12px;
   }
 }
 
@@ -504,6 +523,33 @@ tbody tr:last-child td{
   
   .section{
     padding:12px;
+  }
+  
+  .table-wrapper{
+    margin-left:-12px;
+    margin-right:-12px;
+    padding-left:12px;
+    padding-right:12px;
+  }
+  
+  table{
+    min-width:750px;
+    font-size:11px;
+  }
+  
+  th,td{
+    padding:6px 4px;
+    font-size:10px;
+  }
+  
+  .btn{
+    padding:5px 10px;
+    font-size:11px;
+    gap:4px;
+  }
+  
+  .btn i{
+    font-size:10px;
   }
   
   .modal{
@@ -647,30 +693,20 @@ tbody tr:last-child td{
           <table>
             <thead>
               <tr>
-                <th>Prescription</th>
-                <th>Symptoms</th>
-                <th>Medicine</th>
-                <th>Type</th>
-                <th>Duration</th>
-                <th>Time</th>
-                <th>Before/After Meal</th>
-                <th>Notes</th>
+                <th>Prescription Date</th>
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Mobile</th>
+                <th>View Prescription</th>
+                <th>View Blood Report</th>
               </tr>
             </thead>
             <tbody id="prescriptionTable">
               <tr>
-                <td colspan="8" class="empty-state">No prescriptions found</td>
+                <td colspan="6" class="empty-state">No prescriptions found</td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <div id="bloodSelectedLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
-          <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
-          <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
-        </div>
-        <div id="followUpLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
-          <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
         </div>
       </div>
 
@@ -866,61 +902,71 @@ function renderAppointments(list, patientName){
 }
 
 /* Render prescriptions table */
-function renderPrescriptions(prescriptions){
+function renderPrescriptions(prescriptions, patientData){
   const tbody = document.getElementById('prescriptionTable');
-  const bloodSelectedLabel = document.getElementById('bloodSelectedLabel');
-  const bloodSelectedText = document.getElementById('bloodSelectedText');
-  const followUpLabel = document.getElementById('followUpLabel');
-  const followUpText = document.getElementById('followUpText');
-  
   tbody.innerHTML = '';
-  bloodSelectedLabel.style.display = 'none';
-  followUpLabel.style.display = 'none';
   
   if(!prescriptions || prescriptions.length === 0){
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
     return;
   }
   
-  prescriptions.forEach(m=>{
-    const presLabel = m.prescription_id ? `#${m.prescription_id} (${m.created_at?m.created_at.split(' ')[0]:''})` : '';
-    const times = m.times_of_day || m.times || '';
+  prescriptions.forEach(pres=>{
     const tr = document.createElement('tr');
+    
+    // Format date
+    const presDate = pres.prescription_date ? new Date(pres.prescription_date).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '-';
+    
+    // Patient info
+    const patientId = patientData.patient_id || '-';
+    const patientName = patientData.patient_name || '-';
+    const mobile = patientData.mobile || '-';
+    
+    // Prescription button
+    const prescriptionId = pres.prescription_id;
+    const viewPrescriptionBtn = `<button type="button" class="btn btn-view" onclick="openPrescription('${prescriptionId}', '${patientId}')">
+      <i class="fas fa-file-medical"></i> View
+    </button>`;
+    
+    // Blood report button - get the latest report for this patient
+    const viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
+      <i class="fas fa-vial"></i> View Report
+    </button>`;
+    
     tr.innerHTML = `
-      <td>${escapeHtml(presLabel)}</td>
-      <td>${escapeHtml(m.symptoms||'')}</td>
-      <td>${escapeHtml(m.medicine_name||'')}</td>
-      <td>${escapeHtml(m.type||'')}</td>
-      <td>${escapeHtml(m.duration||'')}</td>
-      <td>${escapeHtml(times)}</td>
-      <td>${escapeHtml(m.before_after||'')}</td>
-      <td>${escapeHtml(m.notes||'')}</td>
+      <td>${escapeHtml(presDate)}</td>
+      <td>${escapeHtml(patientId)}</td>
+      <td><strong>${escapeHtml(patientName)}</strong></td>
+      <td>${escapeHtml(mobile)}</td>
+      <td>${viewPrescriptionBtn}</td>
+      <td>${viewBloodReportBtn}</td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+/* Open prescription in print page */
+function openPrescription(prescriptionId, patientId){
+  if(!prescriptionId || !patientId) return;
+  const url = `print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
+  window.open(url, '_blank');
+}
+
+/* Open blood report */
+let cachedReports = [];
+function openBloodReport(patientId){
+  // Find the latest blood report for this patient
+  if(cachedReports.length === 0){
+    alert('No blood reports uploaded for this patient');
+    return;
+  }
   
-  // Show blood tests and follow-up from latest prescription
-  if(prescriptions.length > 0){
-    const latest = prescriptions[0];
-    
-    if(latest.recommended_blood_test){
-      const bloodTestsArray = latest.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
-      bloodSelectedText.innerHTML = '';
-      bloodTestsArray.forEach(test => {
-        const li = document.createElement('li');
-        li.textContent = test;
-        li.style.margin = '4px 0';
-        li.style.fontSize = '14px';
-        li.style.color = 'var(--text-dark)';
-        bloodSelectedText.appendChild(li);
-      });
-      bloodSelectedLabel.style.display = 'block';
-    }
-    
-    if(latest.follow_up_date){
-      followUpText.textContent = new Date(latest.follow_up_date).toLocaleDateString();
-      followUpLabel.style.display = 'block';
-    }
+  // Open the most recent report
+  const latestReport = cachedReports[0];
+  if(latestReport && latestReport.file_path){
+    openPdfModal(latestReport.file_path, latestReport.file_name || 'Blood Report');
+  } else {
+    alert('No blood report file found');
   }
 }
 
@@ -1009,8 +1055,11 @@ async function loadDetails(patient_id){
     // Render appointments
     renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
     
-    // Render prescriptions
-    renderPrescriptions(j.prescriptions || []);
+    // Cache reports for blood report viewing
+    cachedReports = j.reports || [];
+    
+    // Render prescriptions with patient data
+    renderPrescriptions(j.prescriptions || [], p);
     
     // Render reports
     renderReports(j.reports || []);

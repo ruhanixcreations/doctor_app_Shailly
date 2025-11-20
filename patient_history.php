@@ -70,13 +70,22 @@ if($action === 'detail'){
     }
     $stmt->close();
 
-    // prescriptions: fetch prescription items for this patient
+    // prescriptions: fetch grouped by prescription_id (one row per prescription)
     $prescriptions = [];
-    $stmt = $mysqli->prepare("SELECT pi.id, pi.prescription_id, p.created_at, pi.client_id, pi.patient_id, pi.symptoms, pi.medicine_name, pi.type, pi.duration, pi.times_of_day, pi.before_after, pi.notes, pi.recommended_blood_test, pi.follow_up_date
-                FROM prescription_items pi
-                LEFT JOIN prescriptions p ON p.id = pi.prescription_id
-                WHERE pi.patient_id = ?
-                ORDER BY p.created_at DESC, pi.id DESC");
+    $stmt = $mysqli->prepare("SELECT 
+                p.id as prescription_id,
+                p.patient_id,
+                p.created_at as prescription_date,
+                COUNT(pi.id) as medicine_count,
+                GROUP_CONCAT(pi.medicine_name SEPARATOR ', ') as medicines,
+                MAX(pi.symptoms) as symptoms,
+                MAX(pi.recommended_blood_test) as recommended_blood_test,
+                MAX(pi.follow_up_date) as follow_up_date
+                FROM prescriptions p
+                LEFT JOIN prescription_items pi ON p.id = pi.prescription_id
+                WHERE p.patient_id = ?
+                GROUP BY p.id
+                ORDER BY p.created_at DESC");
     $stmt->bind_param('s', $pid);
     $stmt->execute();
     $r = $stmt->get_result();
