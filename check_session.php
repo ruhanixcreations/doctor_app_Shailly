@@ -2,7 +2,7 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Session configuration
+// Session configuration - MUST match signin.php exactly
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
@@ -12,8 +12,8 @@ session_set_cookie_params([
     'samesite' => 'Lax'
 ]);
 
-// Use the same session directory as other files
-$sessionDir = __DIR__ . "/sessions";
+// Use the PARENT directory sessions folder to match signin.php
+$sessionDir = __DIR__ . "/../sessions";
 if (!file_exists($sessionDir)) {
     mkdir($sessionDir, 0777, true);
 }

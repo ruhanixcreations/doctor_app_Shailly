@@ -378,29 +378,32 @@ function startSessionMonitoring() {
     fetch("../check_session.php", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
+        console.log('Session monitor check:', data);
         if (!data.success) {
-          // Session invalid or user disabled
+          // Only act if user is explicitly disabled, not for regular session issues
           if (data.disabled) {
             alert('Your account has been disabled by an administrator.');
+            // Clear local storage and redirect
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('client_id');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('user');
+            localStorage.removeItem('role');
+            
+            clearInterval(sessionCheckInterval);
+            window.location.href = '../signin/signin.html';
           }
-          // Clear local storage and redirect
-          localStorage.removeItem('isLoggedIn');
-          localStorage.removeItem('user_id');
-          localStorage.removeItem('client_id');
-          localStorage.removeItem('userName');
-          localStorage.removeItem('name');
-          localStorage.removeItem('username');
-          localStorage.removeItem('user');
-          localStorage.removeItem('role');
-          
-          clearInterval(sessionCheckInterval);
-          window.location.href = '../signin/signin.html';
+          // Don't logout for other session issues - let natural flow handle it
         }
       })
       .catch((err) => {
         console.error('Session monitoring error:', err);
+        // Don't logout on network errors
       });
-  }, 3000); // Check every 3 seconds
+  }, 5000); // Check every 5 seconds
 }
 
 // Start monitoring when user is logged in

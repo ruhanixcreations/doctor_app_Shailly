@@ -90,8 +90,8 @@ if($action === 'toggle_status'){
     
     // If user was disabled, delete their active sessions
     if($newStatus == 0){
-        // Delete session files for this user
-        $sessionDir = __DIR__ . "/sessions";
+        // Delete session files for this user - use parent directory to match signin.php
+        $sessionDir = __DIR__ . "/../sessions";
         if(is_dir($sessionDir)){
             $files = scandir($sessionDir);
             foreach($files as $file){
