@@ -278,9 +278,6 @@ canvas{
   </div>
 
   <div class="content">
-    <a href="javascript:history.back()" class="btn back-btn">
-      ← Back to Patient History
-    </a>
 
     <div class="patient-info">
       <h2>Patient Information</h2>
@@ -308,7 +305,6 @@ canvas{
       <h2>Camera (capture multiple photos)</h2>
       <div class="controls" id="cameraControls">
         <button type="button" id="openCamera" class="btn">📷 Open Camera</button>
-        <button type="button" id="chooseFiles" class="btn btn-secondary">📁 Choose Files</button>
       </div>
 
       <div style="margin-top:12px;">
@@ -377,7 +373,6 @@ if(!checkAuth()){
   const displayPrescriptionId = document.getElementById('displayPrescriptionId');
 
   const openCameraBtn = document.getElementById('openCamera');
-  const chooseFilesBtn = document.getElementById('chooseFiles');
   const takePhotoBtn = document.getElementById('takePhoto');
   const stopCameraBtn = document.getElementById('stopCamera');
   const createPdfBtn = document.getElementById('createPdf');
@@ -422,7 +417,7 @@ if(!checkAuth()){
       cameraActionButtons.style.display = 'flex';
       takePhotoBtn.disabled = false;
       stopCameraBtn.disabled = false;
-      openCameraBtn.disabled = true;
+      openCameraBtn.style.display = 'none';
       statusEl.textContent = 'Camera active';
     }catch(err){
       statusEl.textContent = 'Camera access denied: '+err.message;
@@ -450,26 +445,10 @@ if(!checkAuth()){
     video.style.display = 'none';
     video.srcObject = null;
     cameraActionButtons.style.display = 'none';
-    openCameraBtn.disabled = false;
+    openCameraBtn.style.display = 'block';
     statusEl.textContent = 'Camera stopped';
   });
 
-  // Choose files button
-  chooseFilesBtn.addEventListener('click', ()=>{
-    fileInput.click();
-  });
-
-  fileInput.addEventListener('change', async (e)=>{
-    const files = Array.from(e.target.files);
-    for(const file of files){
-      if(file.type.startsWith('image/') || file.type === 'application/pdf'){
-        const dataUrl = await readFileAsDataURL(file);
-        addFile(file, dataUrl);
-      }
-    }
-    statusEl.textContent = `Added ${files.length} file(s)`;
-    e.target.value = '';
-  });
 
   function readFileAsDataURL(file){
     return new Promise((resolve)=>{
@@ -561,7 +540,9 @@ if(!checkAuth()){
     filesArray = filesArray.filter(f => f.isPdf);
     addFile(pdfFile, null);
     
-    pdfNameEl.textContent = `✓ Created PDF: ${pdfFile.name} (${images.length} page(s))`;
+    // Create a URL for the PDF blob and display a link to view it
+    const pdfUrl = URL.createObjectURL(blob);
+    pdfNameEl.innerHTML = `✓ Created PDF: ${pdfFile.name} (${images.length} page(s)) - <a href="${pdfUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">View PDF</a>`;
     pdfNameEl.style.display = 'block';
     statusEl.textContent = 'PDF created successfully';
   });
