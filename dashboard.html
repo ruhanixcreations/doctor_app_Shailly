@@ -101,6 +101,28 @@
     <div>© 2025 Ruhanix Legal Healthcare System</div>
   </footer>
 
+  <!-- Authentication Check -->
+  <script>
+    /* Check Authentication from localStorage */
+    function checkAuth(){
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      
+      // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+      if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+        window.location.href = '../signin/signin.html';
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Run auth check immediately
+    if(!checkAuth()){
+      // Stop loading scripts if not authorized
+      throw new Error('Unauthorized access');
+    }
+  </script>
+  
   <!-- Load Header JS - it will insert the header -->
   <script src="../header/header.js"></script>
   <!-- Load Dashboard JS -->

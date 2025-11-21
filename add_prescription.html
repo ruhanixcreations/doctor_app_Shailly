@@ -761,6 +761,24 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
 </main>
 
 <script>
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
+
+// Run auth check immediately
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
 /* ---------- GLOBALS & HELPERS ---------- */
 let medicines = [];
 let patients = [];
