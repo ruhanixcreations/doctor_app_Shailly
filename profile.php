@@ -43,7 +43,7 @@ $action = $_GET['action'] ?? '';
 
 // Get user profile
 if ($action === 'get') {
-    $stmt = $conn->prepare("SELECT id, name, email, client_id, role, status FROM users WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, name, email, mobile, client_id, role, status FROM users WHERE id = ?");
     $stmt->bind_param("i", $user_id);
     
     if (!$stmt->execute()) {
@@ -76,8 +76,8 @@ if ($action === 'get') {
     exit;
 }
 
-// Update user profile
-if ($action === 'update') {
+// Send OTP for email verification
+if ($action === 'send_otp') {
     // Get JSON input
     $input = json_decode(file_get_contents('php://input'), true);
     
@@ -86,22 +86,10 @@ if ($action === 'update') {
         exit;
     }
     
-    $name = trim($input['name'] ?? '');
-    $email = trim($input['email'] ?? '');
-    
-    // Validation
-    if (empty($name)) {
-        echo json_encode(['success' => false, 'message' => 'Name is required']);
-        exit;
-    }
-    
-    if (empty($email)) {
-        echo json_encode(['success' => false, 'message' => 'Email is required']);
-        exit;
-    }
+    $email = strtolower(trim($input['email'] ?? ''));
     
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['success' => false, 'message' => 'Invalid email format']);
+        echo json_encode(['success' => false, 'message' => 'Invalid email address']);
         exit;
     }
     
@@ -118,9 +106,170 @@ if ($action === 'update') {
     }
     $stmt->close();
     
+    // Generate OTP
+    $otp = strval(rand(100000, 999999));
+    $_SESSION['profile_otp'] = $otp;
+    $_SESSION['profile_otp_email'] = $email;
+    $_SESSION['profile_otp_expiry'] = time() + 300; // 5 minutes
+    
+    // Send email (async)
+    $subject = "Your OTP Code - Profile Update";
+    $message = "Your OTP for profile update is: $otp\n\nValid for 5 minutes. Please do not share this code with anyone.";
+    $headers = "From: noreply@ruhanixlegal.in\r\nContent-Type: text/plain; charset=utf-8";
+    
+    echo json_encode(['success' => true, 'message' => 'OTP sent to your email']);
+    
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        if (ob_get_level()) ob_end_flush();
+        flush();
+    }
+    
+    @mail($email, $subject, $message, $headers);
+    exit;
+}
+
+// Verify OTP
+if ($action === 'verify_otp') {
+    // Get JSON input
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input) {
+        echo json_encode(['success' => false, 'message' => 'Invalid input']);
+        exit;
+    }
+    
+    $email = strtolower(trim($input['email'] ?? ''));
+    $otp = trim($input['otp'] ?? '');
+    
+    if (!isset($_SESSION['profile_otp']) || !isset($_SESSION['profile_otp_email'])) {
+        echo json_encode(['success' => false, 'message' => 'No OTP request found. Please send OTP first.']);
+        exit;
+    }
+    
+    if (strtolower($email) !== strtolower($_SESSION['profile_otp_email'])) {
+        echo json_encode(['success' => false, 'message' => 'Email mismatch']);
+        exit;
+    }
+    
+    if ($otp != $_SESSION['profile_otp']) {
+        echo json_encode(['success' => false, 'message' => 'Invalid OTP']);
+        exit;
+    }
+    
+    if (!isset($_SESSION['profile_otp_expiry']) || time() > $_SESSION['profile_otp_expiry']) {
+        unset($_SESSION['profile_otp']);
+        unset($_SESSION['profile_otp_email']);
+        unset($_SESSION['profile_otp_expiry']);
+        echo json_encode(['success' => false, 'message' => 'OTP expired. Please resend.']);
+        exit;
+    }
+    
+    $_SESSION['profile_otp_verified'] = true;
+    echo json_encode(['success' => true, 'message' => 'OTP verified successfully']);
+    exit;
+}
+
+// Update user profile
+if ($action === 'update') {
+    // Get JSON input
+    $input = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$input) {
+        echo json_encode(['success' => false, 'message' => 'Invalid input']);
+        exit;
+    }
+    
+    $name = trim($input['name'] ?? '');
+    $mobile = trim($input['mobile'] ?? '');
+    $email = trim($input['email'] ?? '');
+    
+    // Validation
+    if (empty($name)) {
+        echo json_encode(['success' => false, 'message' => 'Name is required']);
+        exit;
+    }
+    
+    // Name validation - only letters and spaces
+    if (!preg_match('/^[A-Za-z\s]+$/', $name)) {
+        echo json_encode(['success' => false, 'message' => 'Name should contain only letters']);
+        exit;
+    }
+    
+    if (empty($mobile)) {
+        echo json_encode(['success' => false, 'message' => 'Mobile number is required']);
+        exit;
+    }
+    
+    // Mobile validation - exactly 10 digits
+    $mobile_clean = preg_replace('/\D/', '', $mobile);
+    if (strlen($mobile_clean) !== 10) {
+        echo json_encode(['success' => false, 'message' => 'Mobile number must be exactly 10 digits']);
+        exit;
+    }
+    
+    if (empty($email)) {
+        echo json_encode(['success' => false, 'message' => 'Email is required']);
+        exit;
+    }
+    
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(['success' => false, 'message' => 'Invalid email format']);
+        exit;
+    }
+    
+    // Get current user data to check if email changed
+    $stmt = $conn->prepare("SELECT email FROM users WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $current_user = $result->fetch_assoc();
+    $stmt->close();
+    
+    // If email changed, verify OTP was completed
+    if (strtolower($current_user['email']) !== strtolower($email)) {
+        if (!isset($_SESSION['profile_otp_verified']) || $_SESSION['profile_otp_verified'] !== true) {
+            echo json_encode(['success' => false, 'message' => 'Please verify your new email with OTP']);
+            exit;
+        }
+        
+        // Clear OTP verification session after use
+        unset($_SESSION['profile_otp']);
+        unset($_SESSION['profile_otp_email']);
+        unset($_SESSION['profile_otp_expiry']);
+        unset($_SESSION['profile_otp_verified']);
+    }
+    
+    // Check if email is already used by another user
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+    $stmt->bind_param("si", $email, $user_id);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows > 0) {
+        echo json_encode(['success' => false, 'message' => 'Email is already in use by another account']);
+        $stmt->close();
+        exit;
+    }
+    $stmt->close();
+    
+    // Check if mobile is already used by another user
+    $stmt = $conn->prepare("SELECT id FROM users WHERE mobile = ? AND id != ?");
+    $stmt->bind_param("si", $mobile_clean, $user_id);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if ($stmt->num_rows > 0) {
+        echo json_encode(['success' => false, 'message' => 'Mobile number is already in use by another account']);
+        $stmt->close();
+        exit;
+    }
+    $stmt->close();
+    
     // Update user profile
-    $stmt = $conn->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
-    $stmt->bind_param("ssi", $name, $email, $user_id);
+    $stmt = $conn->prepare("UPDATE users SET name = ?, mobile = ?, email = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $name, $mobile_clean, $email, $user_id);
     
     if (!$stmt->execute()) {
         echo json_encode(['success' => false, 'message' => 'Failed to update profile']);
@@ -133,6 +282,7 @@ if ($action === 'update') {
     // Update session data
     $_SESSION['name'] = $name;
     $_SESSION['email'] = $email;
+    $_SESSION['mobile'] = $mobile_clean;
     
     echo json_encode(['success' => true, 'message' => 'Profile updated successfully']);
     exit;
