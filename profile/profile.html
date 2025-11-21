@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<parameter name="viewport" content="width=device-width,initial-scale=1"/>
 <link rel="stylesheet" href="../header.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <title>My Profile</title>
@@ -141,6 +141,36 @@ body{
   cursor:not-allowed;
 }
 
+.form-group input.error{
+  border-color:var(--error-red);
+}
+
+.error-message{
+  color:var(--error-red);
+  font-size:12px;
+  margin-top:6px;
+  display:none;
+  align-items:center;
+  gap:6px;
+}
+
+.error-message i{
+  font-size:12px;
+}
+
+.success-message{
+  color:var(--success-green);
+  font-size:12px;
+  margin-top:6px;
+  display:none;
+  align-items:center;
+  gap:6px;
+}
+
+.success-message i{
+  font-size:12px;
+}
+
 .info-text{
   font-size:13px;
   color:var(--text-muted);
@@ -152,6 +182,22 @@ body{
 
 .info-text i{
   font-size:12px;
+}
+
+.otp-section{
+  display:none;
+  gap:10px;
+  margin-top:10px;
+}
+
+.otp-input-group{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+}
+
+.otp-input-group input{
+  flex:1;
 }
 
 .btn-group{
@@ -182,6 +228,7 @@ body{
 .btn:disabled{
   opacity:0.6;
   cursor:not-allowed;
+  transform:none;
 }
 
 .btn-primary{
@@ -195,9 +242,10 @@ body{
   border:1px solid var(--border-light);
 }
 
-.btn-danger{
-  background:var(--error-red);
-  color:white;
+.btn-small{
+  padding:8px 16px;
+  font-size:13px;
+  white-space:nowrap;
 }
 
 .alert{
@@ -261,6 +309,23 @@ body{
   to{transform:rotate(360deg)}
 }
 
+.resend-timer{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-top:8px;
+}
+
+.resend-timer span{
+  font-weight:600;
+  color:var(--primary-teal);
+  cursor:pointer;
+}
+
+.resend-timer span.disabled{
+  opacity:0.5;
+  cursor:not-allowed;
+}
+
 @media (max-width:768px){
   body{
     padding:16px;
@@ -291,6 +356,15 @@ body{
   .btn{
     width:100%;
     justify-content:center;
+  }
+  
+  .otp-input-group{
+    flex-direction:column;
+  }
+  
+  .otp-input-group input,
+  .otp-input-group .btn{
+    width:100%;
   }
 }
 </style>
@@ -325,12 +399,58 @@ body{
 
         <div class="form-group">
           <label for="name">Full Name *</label>
-          <input type="text" id="name" name="name" required />
+          <input type="text" id="name" name="name" required autocomplete="name" />
+          <div class="error-message" id="nameError">
+            <i class="fas fa-exclamation-circle"></i>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="mobile">Mobile Number *</label>
+          <input type="tel" id="mobile" name="mobile" required maxlength="10" inputmode="numeric" autocomplete="tel" />
+          <div class="error-message" id="mobileError">
+            <i class="fas fa-exclamation-circle"></i>
+            <span></span>
+          </div>
         </div>
 
         <div class="form-group">
           <label for="email">Email Address *</label>
-          <input type="email" id="email" name="email" required />
+          <input type="email" id="email" name="email" required autocomplete="email" />
+          <div class="error-message" id="emailError">
+            <i class="fas fa-exclamation-circle"></i>
+            <span></span>
+          </div>
+          <div class="success-message" id="emailSuccess">
+            <i class="fas fa-check-circle"></i>
+            <span></span>
+          </div>
+          <button type="button" class="btn btn-secondary btn-small" id="sendOtpBtn" style="margin-top:10px;">
+            <i class="fas fa-paper-plane"></i> Send OTP
+          </button>
+        </div>
+
+        <div class="otp-section" id="otpSection">
+          <div class="form-group" style="margin-bottom:0;">
+            <div class="otp-input-group">
+              <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6" inputmode="numeric" />
+              <button type="button" class="btn btn-secondary btn-small" id="verifyOtpBtn">
+                <i class="fas fa-check"></i> Verify OTP
+              </button>
+            </div>
+            <div class="error-message" id="otpError">
+              <i class="fas fa-exclamation-circle"></i>
+              <span></span>
+            </div>
+            <div class="success-message" id="otpSuccess">
+              <i class="fas fa-check-circle"></i>
+              <span></span>
+            </div>
+            <div class="resend-timer" id="resendTimer">
+              Didn't receive OTP? <span id="resendLink" class="disabled">Resend in <span id="countdown">60</span>s</span>
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -367,11 +487,8 @@ body{
 
       <!-- Actions -->
       <div class="btn-group">
-        <button type="submit" class="btn btn-primary" id="saveBtn">
+        <button type="submit" class="btn btn-primary" id="saveBtn" disabled>
           <i class="fas fa-save"></i> Save Changes
-        </button>
-        <button type="button" class="btn btn-secondary" id="cancelBtn">
-          <i class="fas fa-times"></i> Cancel
         </button>
       </div>
     </form>
@@ -393,6 +510,11 @@ if(!checkAuth()){
   throw new Error('Unauthorized access');
 }
 
+/* Global Variables */
+let originalData = {};
+let isEmailVerified = false;
+let timerInterval = null;
+
 /* Show Alert */
 function showAlert(message, type = 'info'){
   const alertContainer = document.getElementById('alertContainer');
@@ -405,10 +527,306 @@ function showAlert(message, type = 'info'){
     </div>
   `;
   
-  // Auto remove after 5 seconds
   setTimeout(() => {
     alertContainer.innerHTML = '';
   }, 5000);
+}
+
+/* Show/Hide Error */
+function showError(elementId, message){
+  const errorEl = document.getElementById(elementId);
+  if(errorEl){
+    errorEl.querySelector('span').textContent = message;
+    errorEl.style.display = 'flex';
+  }
+}
+
+function hideError(elementId){
+  const errorEl = document.getElementById(elementId);
+  if(errorEl){
+    errorEl.style.display = 'none';
+  }
+}
+
+function showSuccess(elementId, message){
+  const successEl = document.getElementById(elementId);
+  if(successEl){
+    successEl.querySelector('span').textContent = message;
+    successEl.style.display = 'flex';
+  }
+}
+
+function hideSuccess(elementId){
+  const successEl = document.getElementById(elementId);
+  if(successEl){
+    successEl.style.display = 'none';
+  }
+}
+
+/* Validation Functions */
+function validateName(name){
+  // Only letters and spaces allowed
+  return /^[A-Za-z\s]+$/.test(name);
+}
+
+function validateMobile(mobile){
+  // Exactly 10 digits
+  return /^\d{10}$/.test(mobile);
+}
+
+function validateEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/* Check for Changes */
+function hasChanges(){
+  const name = document.getElementById('name').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const email = document.getElementById('email').value.trim();
+  
+  const nameChanged = name !== originalData.name;
+  const mobileChanged = mobile !== originalData.mobile;
+  const emailChanged = email !== originalData.email;
+  
+  // If email changed, it must be verified
+  if(emailChanged && !isEmailVerified){
+    return false;
+  }
+  
+  return nameChanged || mobileChanged || emailChanged;
+}
+
+/* Update Save Button State */
+function updateSaveButton(){
+  const saveBtn = document.getElementById('saveBtn');
+  const name = document.getElementById('name').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const email = document.getElementById('email').value.trim();
+  
+  const validName = validateName(name);
+  const validMobile = validateMobile(mobile);
+  const validEmail = validateEmail(email);
+  const changesExist = hasChanges();
+  
+  const emailChanged = email !== originalData.email;
+  
+  if(changesExist && validName && validMobile && validEmail){
+    if(emailChanged && !isEmailVerified){
+      saveBtn.disabled = true;
+    } else {
+      saveBtn.disabled = false;
+    }
+  } else {
+    saveBtn.disabled = true;
+  }
+}
+
+/* Name Input Handler */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const nameInput = document.getElementById('name');
+  
+  nameInput.addEventListener('input', (e)=>{
+    let value = e.target.value;
+    // Remove any non-letter, non-space characters
+    value = value.replace(/[^A-Za-z\s]/g, '');
+    e.target.value = value;
+    
+    if(value.trim() && !validateName(value.trim())){
+      showError('nameError', 'Name should contain only letters');
+      nameInput.classList.add('error');
+    } else {
+      hideError('nameError');
+      nameInput.classList.remove('error');
+    }
+    
+    updateSaveButton();
+  });
+});
+
+/* Mobile Input Handler */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const mobileInput = document.getElementById('mobile');
+  
+  mobileInput.addEventListener('input', (e)=>{
+    let value = e.target.value;
+    // Remove any non-digit characters
+    value = value.replace(/\D/g, '');
+    // Limit to 10 digits
+    if(value.length > 10){
+      value = value.slice(0, 10);
+    }
+    e.target.value = value;
+    
+    if(value.length > 0 && value.length < 10){
+      showError('mobileError', 'Mobile number must be exactly 10 digits');
+      mobileInput.classList.add('error');
+    } else if(value.length === 10){
+      hideError('mobileError');
+      mobileInput.classList.remove('error');
+    } else {
+      hideError('mobileError');
+      mobileInput.classList.remove('error');
+    }
+    
+    updateSaveButton();
+  });
+});
+
+/* Email Input Handler */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const emailInput = document.getElementById('email');
+  
+  emailInput.addEventListener('input', ()=>{
+    const email = emailInput.value.trim();
+    const emailChanged = email !== originalData.email;
+    
+    if(emailChanged){
+      isEmailVerified = false;
+      document.getElementById('otpSection').style.display = 'none';
+      hideSuccess('emailSuccess');
+      hideSuccess('otpSuccess');
+    } else {
+      isEmailVerified = true;
+      hideError('emailError');
+    }
+    
+    if(email && !validateEmail(email)){
+      showError('emailError', 'Please enter a valid email address');
+      emailInput.classList.add('error');
+    } else {
+      hideError('emailError');
+      emailInput.classList.remove('error');
+    }
+    
+    updateSaveButton();
+  });
+});
+
+/* Send OTP */
+document.getElementById('sendOtpBtn').addEventListener('click', async ()=>{
+  const email = document.getElementById('email').value.trim();
+  const sendOtpBtn = document.getElementById('sendOtpBtn');
+  
+  hideError('emailError');
+  hideSuccess('emailSuccess');
+  hideError('otpError');
+  hideSuccess('otpSuccess');
+  
+  if(!email){
+    showError('emailError', 'Please enter email address');
+    return;
+  }
+  
+  if(!validateEmail(email)){
+    showError('emailError', 'Please enter a valid email address');
+    return;
+  }
+  
+  sendOtpBtn.disabled = true;
+  sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  
+  try{
+    const res = await fetch('profile.php?action=send_otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ email })
+    });
+    
+    const data = await res.json();
+    
+    if(data.success){
+      showSuccess('emailSuccess', 'OTP sent to your email');
+      document.getElementById('otpSection').style.display = 'block';
+      sendOtpBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
+      startTimer();
+    } else {
+      showError('emailError', data.message || 'Failed to send OTP');
+      sendOtpBtn.disabled = false;
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+    }
+  }catch(err){
+    showError('emailError', 'Failed to send OTP. Please try again.');
+    sendOtpBtn.disabled = false;
+    sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+  }
+});
+
+/* Verify OTP */
+document.getElementById('verifyOtpBtn').addEventListener('click', async ()=>{
+  const otp = document.getElementById('otpInput').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+  
+  hideError('otpError');
+  hideSuccess('otpSuccess');
+  
+  if(!otp || otp.length !== 6){
+    showError('otpError', 'Please enter a valid 6-digit OTP');
+    return;
+  }
+  
+  verifyOtpBtn.disabled = true;
+  verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+  
+  try{
+    const res = await fetch('profile.php?action=verify_otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ email, otp })
+    });
+    
+    const data = await res.json();
+    
+    if(data.success){
+      isEmailVerified = true;
+      showSuccess('otpSuccess', 'Email verified successfully!');
+      hideError('otpError');
+      verifyOtpBtn.innerHTML = '<i class="fas fa-check-double"></i> Verified';
+      document.getElementById('sendOtpBtn').disabled = true;
+      document.getElementById('otpInput').disabled = true;
+      clearInterval(timerInterval);
+      updateSaveButton();
+    } else {
+      showError('otpError', data.message || 'Invalid OTP');
+      verifyOtpBtn.disabled = false;
+      verifyOtpBtn.innerHTML = '<i class="fas fa-check"></i> Verify OTP';
+    }
+  }catch(err){
+    showError('otpError', 'Failed to verify OTP. Please try again.');
+    verifyOtpBtn.disabled = false;
+    verifyOtpBtn.innerHTML = '<i class="fas fa-check"></i> Verify OTP';
+  }
+});
+
+/* Timer for Resend OTP */
+function startTimer(){
+  let timeLeft = 60;
+  const countdown = document.getElementById('countdown');
+  const resendLink = document.getElementById('resendLink');
+  
+  resendLink.classList.add('disabled');
+  resendLink.style.pointerEvents = 'none';
+  
+  if(timerInterval){
+    clearInterval(timerInterval);
+  }
+  
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    countdown.textContent = timeLeft;
+    
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      resendLink.innerHTML = 'Resend OTP';
+      resendLink.classList.remove('disabled');
+      resendLink.style.pointerEvents = 'auto';
+      resendLink.style.cursor = 'pointer';
+      
+      resendLink.onclick = ()=>{
+        document.getElementById('sendOtpBtn').click();
+      };
+    }
+  }, 1000);
 }
 
 /* Load Profile Data */
@@ -436,19 +854,26 @@ async function loadProfile(){
     
     // Populate form fields
     document.getElementById('name').value = user.name || '';
+    document.getElementById('mobile').value = user.mobile || '';
     document.getElementById('email').value = user.email || '';
     document.getElementById('client_id').value = user.client_id || '';
     document.getElementById('role').value = user.role || '';
     document.getElementById('status').value = user.status || '';
     
-    // Store original values for cancel functionality
-    window.originalFormData = {
+    // Store original values
+    originalData = {
       name: user.name || '',
+      mobile: user.mobile || '',
       email: user.email || ''
     };
     
+    // Mark email as verified initially (since it's their current email)
+    isEmailVerified = true;
+    
     loadingSection.style.display = 'none';
     profileForm.style.display = 'block';
+    
+    updateSaveButton();
     
   }catch(err){
     console.error('Error loading profile:', err);
@@ -458,22 +883,33 @@ async function loadProfile(){
 }
 
 /* Save Profile Changes */
-async function saveProfile(e){
+document.getElementById('profileForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
   
   const saveBtn = document.getElementById('saveBtn');
   const name = document.getElementById('name').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
   const email = document.getElementById('email').value.trim();
   
-  if(!name || !email){
-    showAlert('Please fill in all required fields', 'error');
+  // Validation
+  if(!validateName(name)){
+    showAlert('Name should contain only letters', 'error');
     return;
   }
   
-  // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRegex.test(email)){
+  if(!validateMobile(mobile)){
+    showAlert('Mobile number must be exactly 10 digits', 'error');
+    return;
+  }
+  
+  if(!validateEmail(email)){
     showAlert('Please enter a valid email address', 'error');
+    return;
+  }
+  
+  const emailChanged = email !== originalData.email;
+  if(emailChanged && !isEmailVerified){
+    showAlert('Please verify your new email address before saving', 'error');
     return;
   }
   
@@ -483,10 +919,8 @@ async function saveProfile(e){
   try{
     const res = await fetch('profile.php?action=update', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, email })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, mobile, email })
     });
     
     const data = await res.json();
@@ -498,8 +932,14 @@ async function saveProfile(e){
     // Update localStorage
     localStorage.setItem('userName', name);
     
-    // Update original form data
-    window.originalFormData = { name, email };
+    // Update original data
+    originalData = { name, mobile, email };
+    isEmailVerified = true;
+    
+    // Hide OTP section
+    document.getElementById('otpSection').style.display = 'none';
+    document.getElementById('sendOtpBtn').disabled = false;
+    document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
     
     showAlert('Profile updated successfully!', 'success');
     
@@ -508,31 +948,23 @@ async function saveProfile(e){
       window.updateHeaderProfile();
     }
     
+    // Update avatar
+    const firstLetter = name.charAt(0).toUpperCase();
+    document.getElementById('profileAvatar').textContent = firstLetter;
+    document.getElementById('profileHeaderName').textContent = name;
+    
   }catch(err){
     console.error('Error saving profile:', err);
     showAlert(err.message || 'Failed to save profile changes', 'error');
   }finally{
-    saveBtn.disabled = false;
+    saveBtn.disabled = true;
     saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+    updateSaveButton();
   }
-}
-
-/* Cancel Changes */
-function cancelChanges(){
-  if(window.originalFormData){
-    document.getElementById('name').value = window.originalFormData.name;
-    document.getElementById('email').value = window.originalFormData.email;
-    showAlert('Changes cancelled', 'info');
-  }
-}
+});
 
 /* Initialize */
-document.addEventListener('DOMContentLoaded', ()=>{
-  loadProfile();
-  
-  document.getElementById('profileForm').addEventListener('submit', saveProfile);
-  document.getElementById('cancelBtn').addEventListener('click', cancelChanges);
-});
+loadProfile();
 </script>
 <script src="../header.js"></script>
 
