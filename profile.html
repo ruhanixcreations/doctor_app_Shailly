@@ -265,7 +265,11 @@ body{
 
 @media (max-width:768px){
   body{
-    padding:16px;
+    padding:12px;
+  }
+  
+  .container{
+    margin:10px auto;
   }
   
   .header{
@@ -293,6 +297,48 @@ body{
   .btn{
     width:100%;
     justify-content:center;
+  }
+  
+  /* Email and OTP buttons on mobile */
+  .form-group input{
+    font-size:16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Stack email field and Send OTP button on mobile */
+  .email-btn-row,
+  .otp-btn-row{
+    flex-direction:column !important;
+    gap:10px !important;
+  }
+  
+  .email-btn-row > div,
+  .otp-btn-row > div{
+    flex:1 !important;
+    width:100% !important;
+  }
+  
+  .email-btn-row > button,
+  .otp-btn-row > button,
+  #sendOtpBtn,
+  #verifyOtpBtn{
+    width:100% !important;
+    height:46px !important;
+    padding:12px 18px !important;
+    white-space:normal !important;
+  }
+  
+  /* Popup on mobile */
+  #popupOverlay .popup-box{
+    width:calc(100% - 32px);
+    padding:24px;
+  }
+  
+  #popupOverlay .popup-box h3{
+    font-size:18px;
+  }
+  
+  #popupOverlay .popup-box p{
+    font-size:13px;
   }
 }
 </style>
@@ -338,7 +384,7 @@ body{
 
         <div class="form-group">
           <label for="email">Email Address *</label>
-          <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div class="email-btn-row" style="display:flex;gap:10px;align-items:flex-start;">
             <div style="flex:1;">
               <input type="email" id="email" name="email" required />
               <div id="emailError" class="info-text" style="display:none;color:var(--error-red);margin-top:4px;"></div>
@@ -354,7 +400,7 @@ body{
 
         <div class="form-group" id="otpSection" style="display:none;">
           <label for="otp">Enter OTP *</label>
-          <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div class="otp-btn-row" style="display:flex;gap:10px;align-items:flex-start;">
             <div style="flex:1;">
               <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" />
               <div id="otpError" class="info-text" style="display:none;color:var(--error-red);margin-top:4px;"></div>
