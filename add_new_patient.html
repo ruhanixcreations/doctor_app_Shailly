@@ -384,6 +384,51 @@ canvas{
 </div>
 
 <script>
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
+
+// Run auth check immediately
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+/* Periodic status check to logout disabled users */
+function checkUserStatus(){
+  fetch('../check_session.php', {credentials: 'include'})
+    .then(res => res.json())
+    .then(data => {
+      if(!data.success || data.disabled){
+        localStorage.setItem('isLoggedIn', 'false');
+        localStorage.removeItem('isLoggedIn');
+        alert('Your account has been disabled. You will be logged out.');
+        window.location.href = '../signin/signin.html';
+      }
+    })
+    .catch(err => console.error('Status check failed:', err));
+}
+
+// Check status every 3 seconds for real-time logout
+setInterval(checkUserStatus, 3000);
+// Check immediately
+checkUserStatus();
+
+// Also check when page becomes visible
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    checkUserStatus();
+  }
+});
+
 (async function(){
   const { jsPDF } = window.jspdf;
 
