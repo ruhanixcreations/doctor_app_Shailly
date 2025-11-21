@@ -253,6 +253,7 @@ select:focus{
 /* reports table */
 .table-wrapper{
   overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
   border-radius:6px;
   border:1px solid var(--border-light);
   margin-top:12px;
@@ -260,6 +261,7 @@ select:focus{
 
 table{
   width:100%;
+  min-width:600px;
   border-collapse:collapse;
   font-size:13px;
 }
@@ -480,12 +482,29 @@ tbody tr:last-child td{
     width:100%;
   }
   
+  .table-wrapper{
+    margin-left:-16px;
+    margin-right:-16px;
+    padding-left:16px;
+    padding-right:16px;
+    border:none;
+    border-top:1px solid var(--border-light);
+    border-bottom:1px solid var(--border-light);
+  }
+  
   table{
     font-size:12px;
+    min-width:700px;
   }
   
   th,td{
     padding:8px 6px;
+    font-size:11px;
+  }
+  
+  .btn{
+    padding:6px 12px;
+    font-size:12px;
   }
 }
 
@@ -504,6 +523,33 @@ tbody tr:last-child td{
   
   .section{
     padding:12px;
+  }
+  
+  .table-wrapper{
+    margin-left:-12px;
+    margin-right:-12px;
+    padding-left:12px;
+    padding-right:12px;
+  }
+  
+  table{
+    min-width:750px;
+    font-size:11px;
+  }
+  
+  th,td{
+    padding:6px 4px;
+    font-size:10px;
+  }
+  
+  .btn{
+    padding:5px 10px;
+    font-size:11px;
+    gap:4px;
+  }
+  
+  .btn i{
+    font-size:10px;
   }
   
   .modal{
@@ -647,30 +693,21 @@ tbody tr:last-child td{
           <table>
             <thead>
               <tr>
-                <th>Prescription</th>
-                <th>Symptoms</th>
-                <th>Medicine</th>
-                <th>Type</th>
-                <th>Duration</th>
-                <th>Time</th>
-                <th>Before/After Meal</th>
-                <th>Notes</th>
+                <th>Prescription Date</th>
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Mobile</th>
+                <th>View Prescription</th>
+                <th>View Blood Report</th>
+                <th>View Previous Report</th>
               </tr>
             </thead>
             <tbody id="prescriptionTable">
               <tr>
-                <td colspan="8" class="empty-state">No prescriptions found</td>
+                <td colspan="7" class="empty-state">No prescriptions found</td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <div id="bloodSelectedLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
-          <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
-          <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
-        </div>
-        <div id="followUpLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
-          <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
         </div>
       </div>
 
@@ -685,15 +722,16 @@ tbody tr:last-child td{
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Report Name</th>
-                <th>File Path</th>
+                <th>Date</th>
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Mobile</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="reportsTable">
               <tr>
-                <td colspan="4" class="empty-state">No reports uploaded</td>
+                <td colspan="5" class="empty-state">No reports uploaded</td>
               </tr>
             </tbody>
           </table>
@@ -866,80 +904,188 @@ function renderAppointments(list, patientName){
 }
 
 /* Render prescriptions table */
-function renderPrescriptions(prescriptions){
+function renderPrescriptions(prescriptions, patientData){
   const tbody = document.getElementById('prescriptionTable');
-  const bloodSelectedLabel = document.getElementById('bloodSelectedLabel');
-  const bloodSelectedText = document.getElementById('bloodSelectedText');
-  const followUpLabel = document.getElementById('followUpLabel');
-  const followUpText = document.getElementById('followUpText');
-  
   tbody.innerHTML = '';
-  bloodSelectedLabel.style.display = 'none';
-  followUpLabel.style.display = 'none';
   
   if(!prescriptions || prescriptions.length === 0){
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
     return;
   }
   
-  prescriptions.forEach(m=>{
-    const presLabel = m.prescription_id ? `#${m.prescription_id} (${m.created_at?m.created_at.split(' ')[0]:''})` : '';
-    const times = m.times_of_day || m.times || '';
+  prescriptions.forEach(pres=>{
     const tr = document.createElement('tr');
+    
+    // Format date
+    const presDate = pres.prescription_date ? new Date(pres.prescription_date).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '-';
+    
+    // Patient info
+    const patientId = patientData.patient_id || '-';
+    const patientName = patientData.patient_name || '-';
+    const mobile = patientData.mobile || '-';
+    
+    // Prescription button
+    const prescriptionId = pres.prescription_id;
+    const viewPrescriptionBtn = `<button type="button" class="btn btn-view" onclick="openPrescription('${prescriptionId}', '${patientId}')">
+      <i class="fas fa-file-medical"></i> View
+    </button>`;
+    
+    // Blood report button - different for doctor vs receptionist
+    const userRole = localStorage.getItem('role') || 'user';
+    let viewBloodReportBtn = '';
+    
+    if(userRole === 'receptionalist'){
+      // Receptionist: Show Upload button
+      viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
+        <i class="fas fa-upload"></i> Upload Report
+      </button>`;
+    } else {
+      // Doctor: Show View button
+      viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
+        <i class="fas fa-vial"></i> View Report
+      </button>`;
+    }
+    
+    // Previous report button (uploaded from add patient page)
+    const viewPreviousReportBtn = cachedReports.length > 0 
+      ? `<button type="button" class="btn btn-view" onclick="openPreviousReport('${patientId}')">
+          <i class="fas fa-file-pdf"></i> Open PDF
+        </button>`
+      : '<span style="color:var(--text-muted);font-size:12px">No file</span>';
+    
     tr.innerHTML = `
-      <td>${escapeHtml(presLabel)}</td>
-      <td>${escapeHtml(m.symptoms||'')}</td>
-      <td>${escapeHtml(m.medicine_name||'')}</td>
-      <td>${escapeHtml(m.type||'')}</td>
-      <td>${escapeHtml(m.duration||'')}</td>
-      <td>${escapeHtml(times)}</td>
-      <td>${escapeHtml(m.before_after||'')}</td>
-      <td>${escapeHtml(m.notes||'')}</td>
+      <td>${escapeHtml(presDate)}</td>
+      <td>${escapeHtml(patientId)}</td>
+      <td><strong>${escapeHtml(patientName)}</strong></td>
+      <td>${escapeHtml(mobile)}</td>
+      <td>${viewPrescriptionBtn}</td>
+      <td>${viewBloodReportBtn}</td>
+      <td>${viewPreviousReportBtn}</td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+/* Open prescription in print page */
+function openPrescription(prescriptionId, patientId){
+  if(!prescriptionId || !patientId) return;
+  // print.html is in add_prescription folder (go up one level then into add_prescription)
+  const url = `../add_prescription/print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
+  window.open(url, '_blank');
+}
+
+/* Open blood report */
+let cachedReports = [];
+function openBloodReport(patientId){
+  console.log('Opening blood report for patient:', patientId);
+  console.log('Available cached reports:', cachedReports);
   
-  // Show blood tests and follow-up from latest prescription
-  if(prescriptions.length > 0){
-    const latest = prescriptions[0];
-    
-    if(latest.recommended_blood_test){
-      const bloodTestsArray = latest.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
-      bloodSelectedText.innerHTML = '';
-      bloodTestsArray.forEach(test => {
-        const li = document.createElement('li');
-        li.textContent = test;
-        li.style.margin = '4px 0';
-        li.style.fontSize = '14px';
-        li.style.color = 'var(--text-dark)';
-        bloodSelectedText.appendChild(li);
-      });
-      bloodSelectedLabel.style.display = 'block';
-    }
-    
-    if(latest.follow_up_date){
-      followUpText.textContent = new Date(latest.follow_up_date).toLocaleDateString();
-      followUpLabel.style.display = 'block';
-    }
+  // Find the latest blood report for this patient
+  if(cachedReports.length === 0){
+    alert('No blood reports uploaded for this patient');
+    return;
+  }
+  
+  // Filter to find blood reports (from patient_reports table)
+  // These typically have 'blood_report' in the filename
+  const bloodReports = cachedReports.filter(r => {
+    const fileName = r.file_name || '';
+    const filePath = r.file_path || '';
+    return fileName.includes('blood_report') || filePath.includes('blood_reports/');
+  });
+  
+  console.log('Filtered blood reports:', bloodReports);
+  
+  // If we found specific blood reports, use the latest one
+  const reportToOpen = bloodReports.length > 0 ? bloodReports[0] : cachedReports[0];
+  
+  if(reportToOpen && reportToOpen.file_path){
+    console.log('Opening report:', reportToOpen);
+    openPdfModal(reportToOpen.file_path, reportToOpen.file_name || 'Blood Report');
+  } else {
+    alert('No blood report file found');
+  }
+}
+
+/* Upload blood report (for receptionists) */
+function uploadBloodReport(patientId, patientName, prescriptionId){
+  if(!patientId){
+    alert('Invalid patient ID');
+    return;
+  }
+  // Redirect to upload page with patient details
+  const url = `../add_prescription/upload_blood_report.html?patient_id=${encodeURIComponent(patientId)}&patient_name=${encodeURIComponent(patientName)}&prescription_id=${encodeURIComponent(prescriptionId)}`;
+  window.location.href = url;
+}
+
+/* Open previous report (uploaded from add patient page) */
+function openPreviousReport(patientId){
+  console.log('Opening previous report for patient:', patientId);
+  console.log('Cached reports:', cachedReports);
+  
+  if(cachedReports.length === 0){
+    alert('No previous reports uploaded for this patient');
+    return;
+  }
+  
+  // Find PDF files in the reports
+  const pdfReport = cachedReports.find(r => {
+    const path = r.file_path || '';
+    return path.toLowerCase().endsWith('.pdf');
+  });
+  
+  console.log('Found PDF report:', pdfReport);
+  
+  if(pdfReport && pdfReport.file_path){
+    // Open PDF in modal
+    console.log('Opening PDF modal with path:', pdfReport.file_path);
+    openPdfModal(pdfReport.file_path, pdfReport.file_name || 'Previous Report');
+  } else if(cachedReports.length > 0){
+    // If no PDF, open first available report
+    const firstReport = cachedReports[0];
+    console.log('No PDF found, opening first report:', firstReport);
+    openPdfModal(firstReport.file_path, firstReport.file_name || 'Previous Report');
+  } else {
+    alert('No report file found');
   }
 }
 
 /* Render reports table */
-function renderReports(reports){
+function renderReports(reports, patientData){
   const tbody = document.getElementById('reportsTable');
   tbody.innerHTML = '';
   
   if(!reports || reports.length === 0){
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
     return;
   }
   
+  // Patient info
+  const patientId = patientData?.patient_id || '-';
+  const patientName = patientData?.patient_name || '-';
+  const mobile = patientData?.mobile || '-';
+  
   reports.forEach((r, idx)=>{
     const tr = document.createElement('tr');
+    
+    // Get upload date - try to extract from file name or use current date
+    let uploadDate = '-';
+    if(r.created_at){
+      uploadDate = new Date(r.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+    } else if(r.file_name){
+      // Try to extract date from filename (format: report_timestamp.pdf)
+      const match = r.file_name.match(/(\d{13})/);
+      if(match){
+        const timestamp = parseInt(match[1]);
+        uploadDate = new Date(timestamp).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+      }
+    }
+    
     tr.innerHTML = `
-      <td>${idx + 1}</td>
-      <td><strong>${escapeHtml(r.file_name || r.file_path)}</strong></td>
-      <td>${escapeHtml(r.file_path || '')}</td>
+      <td>${escapeHtml(uploadDate)}</td>
+      <td>${escapeHtml(patientId)}</td>
+      <td><strong>${escapeHtml(patientName)}</strong></td>
+      <td>${escapeHtml(mobile)}</td>
       <td>
         <div class="report-actions">
           <a href="${escapeHtml(r.file_path)}" target="_blank" class="btn btn-open">
@@ -966,8 +1112,8 @@ async function loadDetails(patient_id){
     patientInfoCard.style.display = 'none';
     quickInfo.textContent = 'Select a patient to view details';
     renderAppointments([], null);
-    renderPrescriptions([]);
-    renderReports([]);
+    renderPrescriptions([], {});
+    renderReports([], {});
     return;
   }
   
@@ -1009,11 +1155,16 @@ async function loadDetails(patient_id){
     // Render appointments
     renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
     
-    // Render prescriptions
-    renderPrescriptions(j.prescriptions || []);
+    // Cache reports for blood report viewing
+    cachedReports = j.reports || [];
+    console.log('Loaded reports from backend:', cachedReports);
+    console.log('Total reports count:', cachedReports.length);
     
-    // Render reports
-    renderReports(j.reports || []);
+    // Render prescriptions with patient data
+    renderPrescriptions(j.prescriptions || [], p);
+    
+    // Render reports with patient data
+    renderReports(j.reports || [], p);
     
   }catch(e){
     console.error(e);

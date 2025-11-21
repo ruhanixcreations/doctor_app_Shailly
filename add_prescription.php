@@ -112,6 +112,195 @@ if($action === 'list_blood_tests'){
     echo json_encode(['success'=>true,'blood_tests'=>$out]); exit;
 }
 
+/////////////////////////
+// get_doctor_info: fetch doctor details by client_id where role='user'
+/////////////////////////
+if($action === 'get_doctor_info'){
+    try{
+        $client_id = isset($_GET['client_id']) ? trim($_GET['client_id']) : '';
+        if($client_id === ''){
+            echo json_encode(['success'=>false,'message'=>'client_id required']); exit;
+        }
+        
+        // Log the attempt
+        error_log("get_doctor_info: Looking for client_id: " . $client_id);
+        
+        // First check if users table exists and has data
+        $checkTable = $mysqli->query("SHOW TABLES LIKE 'users'");
+        if(!$checkTable || $checkTable->num_rows === 0){
+            echo json_encode(['success'=>false,'message'=>'users table not found']); exit;
+        }
+        
+        // Query users table with client_id and role='user'
+        $stmt = $mysqli->prepare("SELECT name, email, mobile, role FROM users WHERE client_id = ? AND role = 'user' LIMIT 1");
+        if(!$stmt){
+            error_log("get_doctor_info: Prepare failed - " . $mysqli->error);
+            echo json_encode(['success'=>false,'message'=>'Prepare failed: ' . $mysqli->error]); exit;
+        }
+        
+        $stmt->bind_param('s', $client_id);
+        if(!$stmt->execute()){
+            error_log("get_doctor_info: Execute failed - " . $stmt->error);
+            echo json_encode(['success'=>false,'message'=>'Execute failed: ' . $stmt->error]); exit;
+        }
+        
+        $res = $stmt->get_result();
+        
+        if($res && $res->num_rows > 0){
+            $doctor = $res->fetch_assoc();
+            error_log("get_doctor_info: Found doctor - " . $doctor['name']);
+            $stmt->close();
+            echo json_encode(['success'=>true,'doctor'=>$doctor]); exit;
+        } else {
+            error_log("get_doctor_info: No doctor found with client_id: " . $client_id . " and role=user");
+            $stmt->close();
+            
+            // Try without role filter to see if user exists
+            $stmt2 = $mysqli->prepare("SELECT name, email, mobile, role FROM users WHERE client_id = ? LIMIT 1");
+            if($stmt2){
+                $stmt2->bind_param('s', $client_id);
+                $stmt2->execute();
+                $res2 = $stmt2->get_result();
+                if($res2 && $res2->num_rows > 0){
+                    $user = $res2->fetch_assoc();
+                    error_log("get_doctor_info: Found user but role is: " . $user['role']);
+                    echo json_encode(['success'=>true,'doctor'=>$user,'note'=>'Found user with different role']); exit;
+                }
+                $stmt2->close();
+            }
+            
+            echo json_encode(['success'=>false,'message'=>'Doctor not found with role=user','client_id'=>$client_id]); exit;
+        }
+    }catch(Exception $e){
+        error_log("get_doctor_info: Exception - " . $e->getMessage());
+        echo json_encode(['success'=>false,'message'=>'Exception: ' . $e->getMessage()]); exit;
+    }
+}
+
+/////////////////////////
+// get_current_user: fetch current logged-in user details
+/////////////////////////
+if($action === 'get_current_user'){
+    $username = isset($_GET['username']) ? trim($_GET['username']) : '';
+    if($username === ''){
+        echo json_encode(['success'=>false,'message'=>'username required']); exit;
+    }
+    
+    $stmt = $mysqli->prepare("SELECT name, email, mobile, role, client_id FROM users WHERE username = ? LIMIT 1");
+    if(!$stmt){
+        echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit;
+    }
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    
+    if($res && $res->num_rows > 0){
+        $user = $res->fetch_assoc();
+        $stmt->close();
+        echo json_encode(['success'=>true,'user'=>$user]); exit;
+    } else {
+        $stmt->close();
+        echo json_encode(['success'=>false,'message'=>'User not found']); exit;
+    }
+}
+
+/////////////////////////
+// auto_save: saves partial prescription data as draft
+/////////////////////////
+if($action === 'auto_save'){
+    $raw = file_get_contents('php://input');
+    $data = json_decode($raw, true);
+    if(!$data || !isset($data['patient_id'])) {
+        echo json_encode(['success'=>false,'message'=>'Invalid payload']); exit;
+    }
+    
+    $patient_id = trim((string)$data['patient_id']);
+    $client_id = resolve_effective_client_id($mysqli, $patient_id, $data['client_id'] ?? '');
+    if($client_id === ''){
+        echo json_encode(['success'=>false,'message'=>'Client ID missing']); exit;
+    }
+    
+    $draft_prescription_id = isset($data['draft_prescription_id']) ? intval($data['draft_prescription_id']) : 0;
+    $symptoms = isset($data['symptoms']) ? trim($data['symptoms']) : '';
+    $follow_up_date = isset($data['follow_up_date']) && $data['follow_up_date'] !== '' ? $data['follow_up_date'] : null;
+    $items = isset($data['items']) && is_array($data['items']) ? $data['items'] : [];
+    $blood_test_ids = isset($data['blood_test_ids']) && is_array($data['blood_test_ids']) ? $data['blood_test_ids'] : [];
+    $blood_test_names = isset($data['blood_test_names']) && is_array($data['blood_test_names']) ? $data['blood_test_names'] : [];
+    $blood_test_name = !empty($blood_test_names) ? implode(', ', $blood_test_names) : null;
+    
+    $mysqli->begin_transaction();
+    try{
+        // If draft_prescription_id exists, check if it's valid
+        if($draft_prescription_id > 0){
+            $check = $mysqli->prepare("SELECT id FROM prescriptions WHERE id = ? AND patient_id = ?");
+            $check->bind_param('is', $draft_prescription_id, $patient_id);
+            $check->execute();
+            $result = $check->get_result();
+            if($result->num_rows === 0){
+                $draft_prescription_id = 0; // Invalid, create new
+            }
+            $check->close();
+        }
+        
+        // Create new draft prescription if needed
+        if($draft_prescription_id === 0){
+            $stmt = $mysqli->prepare("INSERT INTO prescriptions (patient_id, created_at) VALUES (?, NOW())");
+            if(!$stmt) throw new Exception('Prepare failed: '.$mysqli->error);
+            $stmt->bind_param('s', $patient_id);
+            if(!$stmt->execute()) throw new Exception('Execute failed: '.$stmt->error);
+            $draft_prescription_id = $mysqli->insert_id;
+            $stmt->close();
+        }
+        
+        // Delete existing items for this draft
+        $del = $mysqli->prepare("DELETE FROM prescription_items WHERE prescription_id = ?");
+        if($del){
+            $del->bind_param('i', $draft_prescription_id);
+            $del->execute();
+            $del->close();
+        }
+        
+        // Insert items if any exist
+        if(count($items) > 0){
+            $stmt = $mysqli->prepare("INSERT INTO prescription_items (prescription_id, symptoms, client_id, patient_id, medicine_name, type, duration, times_of_day, before_after, notes, recommended_blood_test, follow_up_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+            if(!$stmt) throw new Exception('Prepare failed (items): '.$mysqli->error);
+            
+            foreach($items as $it){
+                $m = isset($it['medicine_name']) ? $it['medicine_name'] : '';
+                $t = isset($it['type']) ? $it['type'] : '';
+                $d = isset($it['duration']) ? $it['duration'] : '';
+                $times = isset($it['times_of_day']) ? $it['times_of_day'] : '';
+                $before_after = isset($it['before_after']) ? $it['before_after'] : null;
+                $notes = isset($it['notes']) ? $it['notes'] : '';
+                $follow_date = $follow_up_date;
+                $recommended = $blood_test_name ?: null;
+                
+                $stmt->bind_param('isssssssssss', $draft_prescription_id, $symptoms, $client_id, $patient_id, $m, $t, $d, $times, $before_after, $notes, $recommended, $follow_date);
+                $stmt->execute();
+            }
+            $stmt->close();
+        } else if(!empty($symptoms)){
+            // Save symptoms only if no items yet
+            $stmt = $mysqli->prepare("INSERT INTO prescription_items (prescription_id, symptoms, client_id, patient_id, medicine_name, type, duration, times_of_day, before_after, notes, recommended_blood_test, follow_up_date) VALUES (?,?,?,?,'','','','','','',?,?)");
+            if($stmt){
+                $recommended = $blood_test_name ?: null;
+                $stmt->bind_param('isssss', $draft_prescription_id, $symptoms, $client_id, $patient_id, $recommended, $follow_up_date);
+                $stmt->execute();
+                $stmt->close();
+            }
+        }
+        
+        $mysqli->commit();
+        echo json_encode(['success'=>true,'draft_prescription_id'=>$draft_prescription_id]);
+        exit;
+        
+    } catch(Exception $ex){
+        $mysqli->rollback();
+        echo json_encode(['success'=>false,'message'=>'Auto-save failed: '.$ex->getMessage()]);
+        exit;
+    }
+}
+
 /*
  Save a new prescription:
  Request expected JSON:
@@ -144,6 +333,7 @@ if($action === 'save'){
     $blood_test_id = !empty($blood_test_ids) ? $blood_test_ids[0] : null; // Use first ID for backward compatibility
     $symptoms = isset($data['symptoms']) ? $data['symptoms'] : '';
     $follow_up_date_top = isset($data['follow_up_date']) && $data['follow_up_date'] !== '' ? $data['follow_up_date'] : null;
+    $draft_prescription_id = isset($data['draft_prescription_id']) ? intval($data['draft_prescription_id']) : 0;
 
     // Basic server-side validations
     if(trim($symptoms) === ''){
@@ -156,12 +346,52 @@ if($action === 'save'){
     // Begin transaction
     $mysqli->begin_transaction();
     try{
-        $stmt = $mysqli->prepare("INSERT INTO prescriptions (patient_id, created_at) VALUES (?, NOW())");
-        if(!$stmt) throw new Exception('Prepare failed: '.$mysqli->error);
-        $stmt->bind_param('s', $patient_id);
-        if(!$stmt->execute()) throw new Exception('Execute failed (prescriptions): '.$stmt->error);
-        $pres_id = $mysqli->insert_id;
-        $stmt->close();
+        // Check if we should reuse the draft prescription
+        $pres_id = 0;
+        error_log("========== SAVE ACTION ==========");
+        error_log("save: Received draft_prescription_id from frontend: " . $draft_prescription_id);
+        error_log("save: Patient ID: " . $patient_id);
+        error_log("save: Number of items: " . count($items));
+        
+        if($draft_prescription_id > 0){
+            error_log("save: Checking if draft ID " . $draft_prescription_id . " exists in DB...");
+            $check = $mysqli->prepare("SELECT id FROM prescriptions WHERE id = ? AND patient_id = ?");
+            $check->bind_param('is', $draft_prescription_id, $patient_id);
+            $check->execute();
+            $result = $check->get_result();
+            if($result->num_rows > 0){
+                // Draft exists, reuse it
+                $pres_id = $draft_prescription_id;
+                error_log("save: ✓ Found valid draft, REUSING prescription ID: " . $pres_id);
+            } else {
+                error_log("save: ✗ Draft ID " . $draft_prescription_id . " NOT found in DB or patient_id mismatch");
+            }
+            $check->close();
+        } else {
+            error_log("save: No draft_prescription_id provided (is 0 or null)");
+        }
+        
+        // Create new prescription only if no valid draft exists
+        if($pres_id === 0){
+            error_log("save: Creating BRAND NEW prescription...");
+            $stmt = $mysqli->prepare("INSERT INTO prescriptions (patient_id, created_at) VALUES (?, NOW())");
+            if(!$stmt) throw new Exception('Prepare failed: '.$mysqli->error);
+            $stmt->bind_param('s', $patient_id);
+            if(!$stmt->execute()) throw new Exception('Execute failed (prescriptions): '.$stmt->error);
+            $pres_id = $mysqli->insert_id;
+            $stmt->close();
+            error_log("save: ✓ Created BRAND NEW prescription ID: " . $pres_id);
+        }
+        error_log("save: Final prescription ID being used: " . $pres_id);
+        error_log("================================");
+        
+        // Delete existing items for this prescription (in case of draft update)
+        $del = $mysqli->prepare("DELETE FROM prescription_items WHERE prescription_id = ?");
+        if($del){
+            $del->bind_param('i', $pres_id);
+            $del->execute();
+            $del->close();
+        }
 
         // prepare insert for items
         // Order: prescription_id, symptoms, client_id, patient_id, medicine_name, type, duration, times_of_day, before_after, notes, recommended_blood_test, follow_up_date
