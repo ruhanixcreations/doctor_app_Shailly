@@ -16,7 +16,13 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at FROM users WHERE role='receptionalist' ORDER BY id DESC");
+    // Add is_active column if it doesn't exist (silently fail if already exists)
+    $checkCol = $mysqli->query("SHOW COLUMNS FROM users LIKE 'is_active'");
+    if($checkCol->num_rows == 0){
+        $mysqli->query("ALTER TABLE users ADD COLUMN is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'");
+    }
+    
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at, COALESCE(is_active, 1) as is_active FROM users WHERE role='receptionalist' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'receptionists'=>$out]);
@@ -60,6 +66,51 @@ if($action === 'delete'){
     $stmt->bind_param('i', $id);
     $ok = $stmt->execute();
     send_json(['success'=>$ok]);
+}
+
+if($action === 'toggle_status'){
+    $id = intval($_GET['id'] ?? 0);
+    if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
+    
+    // Get current status
+    $stmt = $mysqli->prepare("SELECT is_active FROM users WHERE id=? AND role='receptionalist'");
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    
+    if(!$user) send_json(['success'=>false,'message'=>'user not found']);
+    
+    // Toggle status
+    $newStatus = ($user['is_active'] == 1) ? 0 : 1;
+    $updateStmt = $mysqli->prepare("UPDATE users SET is_active=? WHERE id=? AND role='receptionalist'");
+    $updateStmt->bind_param('ii', $newStatus, $id);
+    $ok = $updateStmt->execute();
+    $updateStmt->close();
+    
+    // If user was disabled, delete their active sessions
+    if($newStatus == 0){
+        // Delete session files for this user - use parent directory to match signin.php
+        $sessionDir = __DIR__ . "/../sessions";
+        if(is_dir($sessionDir)){
+            $files = scandir($sessionDir);
+            foreach($files as $file){
+                if($file == '.' || $file == '..') continue;
+                $filePath = $sessionDir . '/' . $file;
+                if(is_file($filePath)){
+                    $sessionData = file_get_contents($filePath);
+                    // Check if this session belongs to the disabled user with exact match
+                    // Match pattern: user_id";i:123; where 123 is exact ID with semicolon after
+                    if(preg_match('/user_id";i:' . preg_quote($id, '/') . ';/', $sessionData)){
+                        unlink($filePath);
+                    }
+                }
+            }
+        }
+    }
+    
+    send_json(['success'=>$ok, 'new_status'=>$newStatus]);
 }
 
 send_json(['success'=>false,'message'=>'invalid action']);

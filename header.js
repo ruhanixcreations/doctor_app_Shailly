@@ -177,6 +177,7 @@ function setupUserHeader() {
             }
           }
           setupUserHeader(); // Rebuild header correctly
+          startSessionMonitoring(); // Start monitoring for disabled account
         } else {
           // No session found, show auth buttons
           console.log('No active session, showing auth buttons');
@@ -358,9 +359,62 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// --- Periodic Session Check (for immediate logout of disabled users) ---
+let sessionCheckInterval = null;
+
+function startSessionMonitoring() {
+  // Check session every 3 seconds
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+  }
+  
+  sessionCheckInterval = setInterval(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      clearInterval(sessionCheckInterval);
+      return;
+    }
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Session monitor check:', data);
+        if (!data.success) {
+          // Only act if user is explicitly disabled, not for regular session issues
+          if (data.disabled) {
+            alert('Your account has been disabled by an administrator.');
+            // Clear local storage and redirect
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('user_id');
+            localStorage.removeItem('client_id');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('user');
+            localStorage.removeItem('role');
+            
+            clearInterval(sessionCheckInterval);
+            window.location.href = '../signin/signin.html';
+          }
+          // Don't logout for other session issues - let natural flow handle it
+        }
+      })
+      .catch((err) => {
+        console.error('Session monitoring error:', err);
+        // Don't logout on network errors
+      });
+  }, 5000); // Check every 5 seconds
+}
+
+// Start monitoring when user is logged in
+if (localStorage.getItem("isLoggedIn") === "true") {
+  startSessionMonitoring();
+}
+
 // --- Expose Global Function ---
 window.updateHeaderProfile = function() {
   setupUserHeader();
+  startSessionMonitoring();
 };
 
 console.log('=== HEADER.JS FINISHED LOADING ===');
