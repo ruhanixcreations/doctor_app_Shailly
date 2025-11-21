@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>My Profile</title>
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+  --error-red:#dc3545;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.container{
+  max-width:800px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:24px 30px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.profile-avatar{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  font-weight:700;
+  color:var(--primary-teal);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  flex-shrink:0;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header-title{
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.header-subtitle{
+  font-size:14px;
+  opacity:0.9;
+}
+
+.content{
+  padding:30px;
+}
+
+.section{
+  margin-bottom:30px;
+}
+
+.section:last-child{
+  margin-bottom:0;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:16px;
+  padding-bottom:8px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.section-title i{
+  color:var(--primary-teal);
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+.form-group label{
+  display:block;
+  font-weight:600;
+  margin-bottom:8px;
+  font-size:14px;
+  color:var(--text-dark);
+}
+
+.form-group input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  transition:all 0.2s ease;
+  font-family:inherit;
+  background:var(--bg-white);
+}
+
+.form-group input:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.form-group input:disabled{
+  background:var(--bg-light);
+  color:var(--text-muted);
+  cursor:not-allowed;
+}
+
+.info-text{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-top:4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.info-text i{
+  font-size:12px;
+}
+
+.btn-group{
+  display:flex;
+  gap:12px;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:12px 24px;
+  border-radius:6px;
+  border:none;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,0,0,0.15);
+}
+
+.btn:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:white;
+}
+
+.btn-secondary{
+  background:var(--bg-light);
+  color:var(--text-dark);
+  border:1px solid var(--border-light);
+}
+
+.btn-danger{
+  background:var(--error-red);
+  color:white;
+}
+
+.alert{
+  padding:12px 16px;
+  border-radius:6px;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:14px;
+  animation:slideIn 0.3s ease;
+}
+
+.alert i{
+  font-size:16px;
+}
+
+.alert-success{
+  background:rgba(40,167,69,0.1);
+  border:1px solid rgba(40,167,69,0.3);
+  color:var(--success-green);
+}
+
+.alert-error{
+  background:rgba(220,53,69,0.1);
+  border:1px solid rgba(220,53,69,0.3);
+  color:var(--error-red);
+}
+
+.alert-info{
+  background:rgba(0,169,165,0.1);
+  border:1px solid rgba(0,169,165,0.3);
+  color:var(--primary-teal);
+}
+
+@keyframes slideIn{
+  from{
+    opacity:0;
+    transform:translateY(-10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.loading{
+  text-align:center;
+  padding:40px;
+  color:var(--text-muted);
+}
+
+.loading i{
+  font-size:32px;
+  color:var(--primary-teal);
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+@media (max-width:768px){
+  body{
+    padding:16px;
+  }
+  
+  .header{
+    padding:20px;
+  }
+  
+  .profile-avatar{
+    width:60px;
+    height:60px;
+    font-size:28px;
+  }
+  
+  .header-title{
+    font-size:22px;
+  }
+  
+  .content{
+    padding:20px;
+  }
+  
+  .btn-group{
+    flex-direction:column;
+  }
+  
+  .btn{
+    width:100%;
+    justify-content:center;
+  }
+}
+</style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="profile-avatar" id="profileAvatar">?</div>
+    <div class="header-text">
+      <div class="header-title" id="profileHeaderName">My Profile</div>
+      <div class="header-subtitle">Manage your account information</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="alertContainer"></div>
+
+    <div id="loadingSection" class="loading" style="display:none;">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading profile...</p>
+    </div>
+
+    <form id="profileForm" style="display:none;">
+      <!-- Personal Information Section -->
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-user"></i>
+          <span>Personal Information</span>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="client_id">Client ID</label>
+          <input type="text" id="client_id" name="client_id" disabled />
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Client ID cannot be changed
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Information Section -->
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-shield-alt"></i>
+          <span>Account Information</span>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role</label>
+          <input type="text" id="role" name="role" disabled />
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Role is assigned by administrator
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Account Status</label>
+          <input type="text" id="status" name="status" disabled />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary" id="saveBtn">
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+        <button type="button" class="btn btn-secondary" id="cancelBtn">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* Check Authentication */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  return true;
+}
+
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+/* Show Alert */
+function showAlert(message, type = 'info'){
+  const alertContainer = document.getElementById('alertContainer');
+  const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+  
+  alertContainer.innerHTML = `
+    <div class="alert alert-${type}">
+      <i class="fas fa-${icon}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    alertContainer.innerHTML = '';
+  }, 5000);
+}
+
+/* Load Profile Data */
+async function loadProfile(){
+  const loadingSection = document.getElementById('loadingSection');
+  const profileForm = document.getElementById('profileForm');
+  
+  loadingSection.style.display = 'block';
+  profileForm.style.display = 'none';
+  
+  try{
+    const res = await fetch('profile.php?action=get');
+    const data = await res.json();
+    
+    if(!data.success){
+      throw new Error(data.message || 'Failed to load profile');
+    }
+    
+    const user = data.user;
+    
+    // Update header avatar
+    const firstLetter = (user.name || user.email || '?').charAt(0).toUpperCase();
+    document.getElementById('profileAvatar').textContent = firstLetter;
+    document.getElementById('profileHeaderName').textContent = user.name || 'My Profile';
+    
+    // Populate form fields
+    document.getElementById('name').value = user.name || '';
+    document.getElementById('email').value = user.email || '';
+    document.getElementById('client_id').value = user.client_id || '';
+    document.getElementById('role').value = user.role || '';
+    document.getElementById('status').value = user.status || '';
+    
+    // Store original values for cancel functionality
+    window.originalFormData = {
+      name: user.name || '',
+      email: user.email || ''
+    };
+    
+    loadingSection.style.display = 'none';
+    profileForm.style.display = 'block';
+    
+  }catch(err){
+    console.error('Error loading profile:', err);
+    showAlert(err.message || 'Failed to load profile data', 'error');
+    loadingSection.style.display = 'none';
+  }
+}
+
+/* Save Profile Changes */
+async function saveProfile(e){
+  e.preventDefault();
+  
+  const saveBtn = document.getElementById('saveBtn');
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  
+  if(!name || !email){
+    showAlert('Please fill in all required fields', 'error');
+    return;
+  }
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRegex.test(email)){
+    showAlert('Please enter a valid email address', 'error');
+    return;
+  }
+  
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  
+  try{
+    const res = await fetch('profile.php?action=update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, email })
+    });
+    
+    const data = await res.json();
+    
+    if(!data.success){
+      throw new Error(data.message || 'Failed to save profile');
+    }
+    
+    // Update localStorage
+    localStorage.setItem('userName', name);
+    
+    // Update original form data
+    window.originalFormData = { name, email };
+    
+    showAlert('Profile updated successfully!', 'success');
+    
+    // Update header profile
+    if(window.updateHeaderProfile){
+      window.updateHeaderProfile();
+    }
+    
+  }catch(err){
+    console.error('Error saving profile:', err);
+    showAlert(err.message || 'Failed to save profile changes', 'error');
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+  }
+}
+
+/* Cancel Changes */
+function cancelChanges(){
+  if(window.originalFormData){
+    document.getElementById('name').value = window.originalFormData.name;
+    document.getElementById('email').value = window.originalFormData.email;
+    showAlert('Changes cancelled', 'info');
+  }
+}
+
+/* Initialize */
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadProfile();
+  
+  document.getElementById('profileForm').addEventListener('submit', saveProfile);
+  document.getElementById('cancelBtn').addEventListener('click', cancelChanges);
+});
+</script>
+<script src="../header/header.js"></script>
+
+</body>
+</html>
