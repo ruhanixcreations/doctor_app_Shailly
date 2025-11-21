@@ -552,17 +552,26 @@ function checkUserStatus(){
     .then(res => res.json())
     .then(data => {
       if(!data.success || data.disabled){
+        localStorage.setItem('isLoggedIn', 'false');
         localStorage.removeItem('isLoggedIn');
+        alert('Your account has been disabled. You will be logged out.');
         window.location.href = '../signin/signin.html';
       }
     })
     .catch(err => console.error('Status check failed:', err));
 }
 
-// Check status every 15 seconds
-setInterval(checkUserStatus, 15000);
-// Also check immediately after page load
-setTimeout(checkUserStatus, 2000);
+// Check status every 3 seconds for real-time logout
+setInterval(checkUserStatus, 3000);
+// Check immediately
+checkUserStatus();
+
+// Also check when page becomes visible
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) {
+    checkUserStatus();
+  }
+});
 
 const signupEndpoint = '../signup/signup.php';
 const apiList = 'doctors_list.php';
