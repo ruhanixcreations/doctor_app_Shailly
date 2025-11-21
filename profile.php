@@ -8,7 +8,7 @@ session_set_cookie_params([
     'samesite' => 'Lax'
 ]);
 
-$sessionDir = __DIR__ . "/../sessions";
+$sessionDir = __DIR__ . "/sessions";
 if (!file_exists($sessionDir)) mkdir($sessionDir, 0777, true);
 session_save_path($sessionDir);
 session_start();
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
 header("Content-Type: application/json; charset=UTF-8");
 
-require_once '../connections.php';
+require_once 'connections.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

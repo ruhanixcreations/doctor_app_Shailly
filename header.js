@@ -234,15 +234,8 @@ function setupUserHeader() {
     // ✅ Profile action
     if (profileMenuItem) {
       profileMenuItem.addEventListener("click", () => {
-        // Navigate to profile page (in root directory)
-        const currentPath = window.location.pathname;
-        const isInRoot = currentPath.includes('/workspace/') || !currentPath.includes('/');
-        
-        if (isInRoot) {
-          window.location.href = 'profile.html';
-        } else {
-          window.location.href = '../profile.html';
-        }
+        // Profile files are in root workspace directory, same as header files
+        window.location.href = '../profile.html';
       });
     }
 
