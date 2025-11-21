@@ -49,33 +49,26 @@ if($action === 'detail'){
     while($row = $r->fetch_assoc()) $appt[] = $row;
     $stmt->close();
 
-    // reports: Get files from patient_list.report_file column
-    // Files are stored as comma-separated paths in report_file column
-    $reports = [];
-    
-    // First, try to get from patient_reports table (blood reports uploaded by receptionist)
+    // Blood reports: Get from patient_reports table (uploaded via upload_blood_report page)
+    $blood_reports = [];
     $stmt = $mysqli->prepare("SELECT id, file_name, file_path, uploaded_at as created_at FROM patient_reports WHERE patient_id=? ORDER BY uploaded_at DESC");
     if($stmt){
         $stmt->bind_param('s', $pid);
         $stmt->execute();
         $r = $stmt->get_result();
         while ($row = $r->fetch_assoc()) {
-            // file_path is already stored with correct relative path (blood_reports/...)
-            // We need to make it relative from patient_history folder
+            // file_path is stored as 'blood_reports/client_id/patient_id/filename.pdf'
+            // Path correction: blood_reports folder is in patient_history folder
             $filePath = $row['file_path'];
-            if(strpos($filePath, 'blood_reports/') === 0){
-                // Blood report uploaded by receptionist - path is relative to add_prescription folder
-                $row['file_path'] = '../add_prescription/' . $filePath;
-            } else {
-                // Legacy path handling
-                $row['file_path'] = "../add_new_patient/uploads/" . $row['file_name'];
-            }
-            $reports[] = $row;
+            $row['file_path'] = $filePath; // Use path as is, since blood_reports is in same folder
+            $blood_reports[] = $row;
         }
         $stmt->close();
     }
     
-    // Also get from patient_list.report_file column (comma-separated paths)
+    // Uploaded reports: Get from patient_list.report_file column (uploaded via add_new_patient page)
+    // These are the reports uploaded when creating patient, NOT blood reports
+    $uploaded_reports = [];
     if(isset($patient['report_file']) && !empty($patient['report_file'])){
         error_log("Found report_file in patient_list: " . $patient['report_file']);
         $filePaths = explode(',', $patient['report_file']);
@@ -93,7 +86,7 @@ if($action === 'detail'){
                     'file_name' => $fileName,
                     'file_path' => $correctedPath
                 ];
-                $reports[] = $reportItem;
+                $uploaded_reports[] = $reportItem;
                 error_log("Added report to array: " . json_encode($reportItem));
             }
         }
@@ -125,7 +118,7 @@ if($action === 'detail'){
     }
     $stmt->close();
 
-    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'reports'=>$reports,'prescriptions'=>$prescriptions,'other_info'=> '']);
+    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'blood_reports'=>$blood_reports,'uploaded_reports'=>$uploaded_reports,'prescriptions'=>$prescriptions,'other_info'=> '']);
     exit;
 }
 
