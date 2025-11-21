@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Upload Blood Report</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.card{
+  max-width:940px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header .title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:24px;
+}
+
+h2{
+  font-size:16px;
+  color:var(--text-dark);
+  margin-bottom:14px;
+  font-weight:600;
+}
+
+.patient-info{
+  background:var(--bg-light);
+  border-radius:8px;
+  padding:16px;
+  margin-bottom:20px;
+  border:1px solid var(--border-light);
+}
+
+.patient-info-row{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.patient-info-item{
+  flex:1;
+  min-width:150px;
+}
+
+.patient-info-label{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:4px;
+}
+
+.patient-info-value{
+  font-size:15px;
+  font-weight:600;
+  color:var(--text-dark);
+}
+
+.btn{
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:white;
+  border:none;
+  padding:10px 20px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:600;
+  transition:all 0.2s;
+  box-shadow:0 2px 8px rgba(0,169,165,0.3);
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(0,169,165,0.4);
+}
+
+.btn:disabled{
+  background:linear-gradient(135deg,#ccc,#999);
+  cursor:not-allowed;
+  box-shadow:none;
+  transform:none;
+}
+
+.btn-secondary{
+  background:linear-gradient(135deg,#6c757d,#495057);
+  box-shadow:0 2px 8px rgba(108,117,125,0.3);
+}
+
+.btn-secondary:hover{
+  box-shadow:0 4px 12px rgba(108,117,125,0.4);
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.divider{
+  border:0;
+  height:1px;
+  background:var(--border-light);
+  margin:20px 0;
+}
+
+video{
+  width:100%;
+  max-width:640px;
+  border-radius:8px;
+  border:2px solid var(--border-light);
+}
+
+canvas{
+  display:none;
+  max-width:100%;
+  border-radius:8px;
+}
+
+.camera-actions-row{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+.thumbs{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+
+.thumb{
+  position:relative;
+  border-radius:8px;
+  overflow:hidden;
+  border:2px solid var(--border-light);
+  background:#f8f9fa;
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.thumb img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.thumb .remove{
+  position:absolute;
+  top:6px;
+  right:6px;
+  width:28px;
+  height:28px;
+  background:rgba(220,53,69,0.95);
+  color:white;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.2s;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+
+.thumb .remove:hover{
+  transform:scale(1.1);
+  background:rgba(220,53,69,1);
+}
+
+.small{
+  font-size:13px;
+  color:var(--text-muted);
+}
+
+.back-btn{
+  background:linear-gradient(135deg,#6c757d,#495057);
+  box-shadow:0 2px 8px rgba(108,117,125,0.3);
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  margin-bottom:16px;
+}
+
+.back-btn:hover{
+  box-shadow:0 4px 12px rgba(108,117,125,0.4);
+  transform:translateY(-1px);
+}
+
+@media(max-width:768px){
+  .patient-info-row{
+    flex-direction:column;
+  }
+  .thumbs{
+    grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  }
+}
+</style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<div class="card">
+  <div class="header">
+    <div class="brand">🩺</div>
+    <div class="header-text">
+      <div class="title">Upload Blood Report</div>
+      <div class="subtitle">Capture or upload patient blood test results</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <a href="javascript:history.back()" class="btn back-btn">
+      ← Back to Patient History
+    </a>
+
+    <div class="patient-info">
+      <h2>Patient Information</h2>
+      <div class="patient-info-row">
+        <div class="patient-info-item">
+          <div class="patient-info-label">Patient ID</div>
+          <div class="patient-info-value" id="displayPatientId">-</div>
+        </div>
+        <div class="patient-info-item">
+          <div class="patient-info-label">Patient Name</div>
+          <div class="patient-info-value" id="displayPatientName">-</div>
+        </div>
+        <div class="patient-info-item">
+          <div class="patient-info-label">Prescription ID</div>
+          <div class="patient-info-value" id="displayPrescriptionId">-</div>
+        </div>
+      </div>
+    </div>
+
+    <form id="uploadForm">
+      <input type="hidden" id="patientId" name="patient_id">
+      <input type="hidden" id="prescriptionId" name="prescription_id">
+      <input type="hidden" id="clientId" name="client_id">
+
+      <h2>Camera (capture multiple photos)</h2>
+      <div class="controls" id="cameraControls">
+        <button type="button" id="openCamera" class="btn">📷 Open Camera</button>
+        <button type="button" id="chooseFiles" class="btn btn-secondary">📁 Choose Files</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <video id="video" autoplay playsinline style="display:none;"></video>
+        <canvas id="canvas"></canvas>
+      </div>
+
+      <div id="cameraActionButtons" class="camera-actions-row" style="display:none;">
+        <button type="button" id="takePhoto" class="btn" disabled>📸 Take Photo</button>
+        <button type="button" id="stopCamera" class="btn btn-secondary" disabled>⏹ Stop Camera</button>
+      </div>
+
+      <hr class="divider">
+
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+        <div class="small">Captured files (click ✕ to remove)</div>
+        <div class="controls" style="margin-top:0;">
+          <button type="button" id="createPdf" class="btn" disabled>📄 Create PDF from Photos</button>
+        </div>
+      </div>
+
+      <div id="thumbs" class="thumbs"></div>
+      <div id="pdfName" class="small" style="display:none; margin-top:12px; color:green; font-weight:600;"></div>
+
+      <div style="margin-top:20px;" class="controls">
+        <button type="submit" id="submitBtn" class="btn" disabled>💾 Upload Blood Report</button>
+      </div>
+
+      <input type="file" id="fileInput" style="display:none;" accept="image/*,application/pdf" multiple>
+
+      <div id="status" class="small" style="margin-top:10px;"></div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
+
+// Run auth check immediately
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+(async function(){
+  const { jsPDF } = window.jspdf;
+
+  // Elements
+  const form = document.getElementById('uploadForm');
+  const patientIdInput = document.getElementById('patientId');
+  const prescriptionIdInput = document.getElementById('prescriptionId');
+  const clientIdInput = document.getElementById('clientId');
+  
+  const displayPatientId = document.getElementById('displayPatientId');
+  const displayPatientName = document.getElementById('displayPatientName');
+  const displayPrescriptionId = document.getElementById('displayPrescriptionId');
+
+  const openCameraBtn = document.getElementById('openCamera');
+  const chooseFilesBtn = document.getElementById('chooseFiles');
+  const takePhotoBtn = document.getElementById('takePhoto');
+  const stopCameraBtn = document.getElementById('stopCamera');
+  const createPdfBtn = document.getElementById('createPdf');
+  const submitBtn = document.getElementById('submitBtn');
+
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const cameraActionButtons = document.getElementById('cameraActionButtons');
+  const thumbsEl = document.getElementById('thumbs');
+  const pdfNameEl = document.getElementById('pdfName');
+  const statusEl = document.getElementById('status');
+  const fileInput = document.getElementById('fileInput');
+
+  let stream = null;
+  let filesArray = [];
+
+  // Load data from URL parameters
+  document.addEventListener('DOMContentLoaded', ()=> {
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id') || '';
+    const patientName = params.get('patient_name') || 'Unknown Patient';
+    const prescriptionId = params.get('prescription_id') || '';
+
+    patientIdInput.value = patientId;
+    prescriptionIdInput.value = prescriptionId;
+    clientIdInput.value = localStorage.getItem('client_id') || '';
+
+    displayPatientId.textContent = patientId || '-';
+    displayPatientName.textContent = patientName;
+    displayPrescriptionId.textContent = prescriptionId || '-';
+
+    updateControls();
+  });
+
+  // Camera functionality
+  openCameraBtn.addEventListener('click', async ()=>{
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment' }, audio:false });
+      video.srcObject = stream;
+      video.style.display = 'block';
+      canvas.style.display = 'none';
+      cameraActionButtons.style.display = 'flex';
+      takePhotoBtn.disabled = false;
+      stopCameraBtn.disabled = false;
+      openCameraBtn.disabled = true;
+      statusEl.textContent = 'Camera active';
+    }catch(err){
+      statusEl.textContent = 'Camera access denied: '+err.message;
+    }
+  });
+
+  takePhotoBtn.addEventListener('click', ()=>{
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    canvas.toBlob((blob)=>{
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      const file = new File([blob], 'capture_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+      addFile(file, dataUrl);
+      statusEl.textContent = `Captured photo (${filesArray.length} total)`;
+    }, 'image/jpeg', 0.85);
+  });
+
+  stopCameraBtn.addEventListener('click', ()=>{
+    if(stream){
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+    }
+    video.style.display = 'none';
+    video.srcObject = null;
+    cameraActionButtons.style.display = 'none';
+    openCameraBtn.disabled = false;
+    statusEl.textContent = 'Camera stopped';
+  });
+
+  // Choose files button
+  chooseFilesBtn.addEventListener('click', ()=>{
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', async (e)=>{
+    const files = Array.from(e.target.files);
+    for(const file of files){
+      if(file.type.startsWith('image/') || file.type === 'application/pdf'){
+        const dataUrl = await readFileAsDataURL(file);
+        addFile(file, dataUrl);
+      }
+    }
+    statusEl.textContent = `Added ${files.length} file(s)`;
+    e.target.value = '';
+  });
+
+  function readFileAsDataURL(file){
+    return new Promise((resolve)=>{
+      const fr = new FileReader();
+      fr.onload = ()=> resolve(fr.result);
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function addFile(file, dataUrl = null){
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    filesArray.push({ file, dataUrl, isPdf });
+    renderThumbs();
+    updateControls();
+  }
+
+  function renderThumbs(){
+    thumbsEl.innerHTML = '';
+    filesArray.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'thumb';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'remove';
+      btn.innerHTML = '✕';
+      btn.onclick = ()=>{
+        filesArray.splice(idx,1);
+        renderThumbs();
+        updateControls();
+        statusEl.textContent = `Removed file (${filesArray.length} remaining)`;
+      };
+      if(item.isPdf){
+        const label = document.createElement('div');
+        label.style.cssText = 'padding:10px;text-align:center;font-size:12px;';
+        label.innerHTML = `<strong>PDF</strong><div style="font-size:11px;margin-top:6px;">${item.file.name || 'file.pdf'}</div>`;
+        div.appendChild(label);
+      } else {
+        const img = document.createElement('img');
+        img.src = item.dataUrl;
+        img.alt = item.file.name || ('img'+idx);
+        div.appendChild(img);
+      }
+      div.appendChild(btn);
+      thumbsEl.appendChild(div);
+    });
+  }
+
+  function updateControls(){
+    createPdfBtn.disabled = filesArray.length === 0;
+    submitBtn.disabled = filesArray.length === 0;
+  }
+
+  // Create PDF from images
+  createPdfBtn.addEventListener('click', async ()=>{
+    const images = filesArray.filter(f => !f.isPdf);
+    if(images.length === 0){
+      alert('No images to create PDF');
+      return;
+    }
+
+    statusEl.textContent = 'Creating PDF...';
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    for(let i=0; i<images.length; i++){
+      if(i > 0) pdf.addPage();
+      const dataUrl = images[i].dataUrl || await readFileAsDataURL(images[i].file);
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise(r => img.onload = r);
+      
+      const ratio = img.width / img.height;
+      let w = pageWidth - 20;
+      let h = w / ratio;
+      if(h > pageHeight - 20){
+        h = pageHeight - 20;
+        w = h * ratio;
+      }
+      const x = (pageWidth - w) / 2;
+      const y = 10;
+      pdf.addImage(dataUrl, 'JPEG', x, y, w, h);
+    }
+
+    const blob = pdf.output('blob');
+    const pdfFile = new File([blob], 'blood_report_' + Date.now() + '.pdf', { type: 'application/pdf' });
+    
+    // Remove images, add PDF
+    filesArray = filesArray.filter(f => f.isPdf);
+    addFile(pdfFile, null);
+    
+    pdfNameEl.textContent = `✓ Created PDF: ${pdfFile.name} (${images.length} page(s))`;
+    pdfNameEl.style.display = 'block';
+    statusEl.textContent = 'PDF created successfully';
+  });
+
+  // Form submission
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    const patientId = patientIdInput.value;
+    const prescriptionId = prescriptionIdInput.value;
+    const clientId = clientIdInput.value;
+
+    if(!patientId){
+      alert('Patient ID is required');
+      return;
+    }
+
+    if(filesArray.length === 0){
+      alert('Please capture or upload at least one file');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('patient_id', patientId);
+    formData.append('prescription_id', prescriptionId);
+    formData.append('client_id', clientId);
+
+    // Check if there's a PDF file
+    const pdfItem = filesArray.find(f => f.isPdf);
+    if(pdfItem){
+      formData.append('blood_report_pdf', pdfItem.file, pdfItem.file.name);
+    } else {
+      // Add all files
+      filesArray.forEach((f, idx) => formData.append('files[]', f.file, f.file.name));
+    }
+
+    statusEl.textContent = 'Uploading...';
+    submitBtn.disabled = true;
+
+    try{
+      const res = await fetch('upload_blood_report.php', {
+        method: 'POST',
+        body: formData
+      });
+      const json = await res.json();
+      
+      if(json.success){
+        alert('Blood report uploaded successfully!');
+        statusEl.textContent = 'Upload successful!';
+        // Redirect back after 1 second
+        setTimeout(()=>{
+          window.location.href = '../patient_history/patient_history.html';
+        }, 1000);
+      } else {
+        alert('Upload failed: ' + (json.message || 'Unknown error'));
+        statusEl.textContent = 'Upload failed';
+        submitBtn.disabled = false;
+      }
+    }catch(err){
+      alert('Upload error: ' + err.message);
+      statusEl.textContent = 'Upload failed: ' + (err && err.message ? err.message : err);
+      submitBtn.disabled = false;
+    }
+  });
+
+})();
+</script>
+<script src="../header/header.js"></script>
+
+</body>
+</html>
