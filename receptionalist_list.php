@@ -16,8 +16,11 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    // Add is_active column if it doesn't exist
-    $mysqli->query("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'");
+    // Add is_active column if it doesn't exist (silently fail if already exists)
+    $checkCol = $mysqli->query("SHOW COLUMNS FROM users LIKE 'is_active'");
+    if($checkCol->num_rows == 0){
+        $mysqli->query("ALTER TABLE users ADD COLUMN is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'");
+    }
     
     $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at, COALESCE(is_active, 1) as is_active FROM users WHERE role='receptionalist' ORDER BY id DESC");
     $out = [];
