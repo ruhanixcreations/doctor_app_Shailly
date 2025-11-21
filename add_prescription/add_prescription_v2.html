@@ -1,0 +1,1726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Add Prescription</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+  --danger-red:#dc3545;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f5f7fa;
+  color: var(--text-dark);
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.section {
+  background: var(--bg-white);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.section-header {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-teal);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-teal);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-header i {
+  color: var(--primary-teal);
+}
+
+/* Patient Selection */
+.patient-dropdown {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.selectedBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-white);
+  cursor: pointer;
+  font-size: 14px;
+  min-height: 48px;
+  transition: all 0.2s ease;
+}
+
+.selectedBtn:hover {
+  border-color: var(--primary-teal);
+  box-shadow: 0 0 0 3px rgba(0,169,165,0.1);
+}
+
+.listPanel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 100;
+  border: 1px solid var(--border-light);
+  background: var(--bg-white);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  max-height: 320px;
+  overflow: auto;
+  padding: 8px;
+  display: none;
+}
+
+.listPanel.show {
+  display: block;
+}
+
+.listPanel .search input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.listPanel .item {
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 4px 0;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.listPanel .item:hover {
+  background: rgba(0,169,165,0.08);
+  color: var(--primary-teal);
+}
+
+/* Patient Details Card */
+.patient-card {
+  background: linear-gradient(to right, #f8f9fa, #ffffff);
+  border-left: 4px solid var(--primary-teal);
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.patient-card.show {
+  display: block;
+}
+
+.patient-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.patient-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  font-size: 14px;
+}
+
+.patient-detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-detail-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.patient-detail-value {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Form Labels */
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+
+.required-star {
+  color: var(--danger-red);
+  margin-left: 2px;
+}
+
+/* Form Inputs */
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-teal);
+  box-shadow: 0 0 0 3px rgba(0,169,165,0.1);
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Medicine Entries Table */
+.medicine-entries {
+  margin-bottom: 20px;
+  display: none;
+}
+
+.medicine-entries.show {
+  display: block;
+}
+
+.entries-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.entries-table thead {
+  background: var(--bg-light);
+}
+
+.entries-table th,
+.entries-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 13px;
+}
+
+.entries-table th {
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.entries-table tbody tr {
+  transition: background 0.2s;
+}
+
+.entries-table tbody tr:hover {
+  background: rgba(0,169,165,0.03);
+}
+
+/* Action Buttons in Table */
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-edit {
+  background: var(--primary-teal);
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #008b87;
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background: var(--danger-red);
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+/* Medicine Form */
+.medicine-form {
+  border: 2px solid var(--primary-teal);
+  border-radius: 8px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #ffffff, #f8fcfc);
+}
+
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+/* Medicine, Type, Duration in ONE horizontal row */
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Time of Day and Before/After Meal in ONE horizontal row */
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .form-row-3,
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Time checkboxes */
+.time-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.time-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.time-group label:hover {
+  border-color: var(--primary-teal);
+  background: rgba(0,169,165,0.05);
+}
+
+.time-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-teal);
+}
+
+/* Before/After radio */
+.meal-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.meal-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.meal-group input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-teal);
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-teal), var(--primary-blue));
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,169,165,0.3);
+}
+
+.btn-success {
+  background: var(--success-green);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  background: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Autosave Indicator */
+.autosave-indicator {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  padding: 8px 16px;
+  background: var(--success-green);
+  color: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 1000;
+}
+
+.autosave-indicator.show {
+  opacity: 1;
+}
+
+/* Blood Test Dropdown */
+.blood-dropdown {
+  position: relative;
+}
+
+.blood-test-checks {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.blood-test-checks label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  margin: 4px 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.blood-test-checks label:hover {
+  background: rgba(0,169,165,0.08);
+}
+
+.blood-test-checks input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--primary-teal);
+}
+
+.selected-tests-list {
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--bg-light);
+  border-radius: 4px;
+  display: none;
+}
+
+.selected-tests-list.show {
+  display: block;
+}
+
+.selected-tests-list ol {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+
+.selected-tests-list li {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body.has-header {
+    padding-top: 70px;
+  }
+  
+  .container {
+    padding: 12px;
+  }
+  
+  
+  .time-group {
+    flex-direction: column;
+  }
+  
+  .time-group label {
+    width: 100%;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .entries-table {
+    font-size: 12px;
+  }
+  
+  .entries-table th,
+  .entries-table td {
+    padding: 8px 6px;
+  }
+  
+  .action-btns {
+    flex-direction: column;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Prescription History styles */
+.meds-list{margin-top:0}
+.meds-list .list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.meds-list .list-head > div { display:block; }
+.meds-list table{width:100%;border-collapse:collapse;font-size:13px}
+.meds-list th,.meds-list td{padding:12px 10px;border-bottom:1px solid var(--border-light);text-align:left;vertical-align:top}
+.meds-list thead{
+  background:var(--bg-light);
+}
+.meds-list thead th{font-weight:700;color:var(--text-dark);font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+.meds-list tbody tr:hover{background:rgba(0,169,165,0.03)}
+
+.table-wrapper{
+  overflow-x:auto;
+  margin-top:12px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+}
+
+#bloodSelectedLabel,#followUpLabel{margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px}
+#bloodSelectedLabel ol li,#bloodSelectedText li{margin:4px 0;font-size:14px;color:var(--text-dark)}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Patient Selection -->
+  <div class="section">
+    <div class="section-header">
+      <i class="fas fa-user-circle"></i>
+      <span>Patient Information</span>
+    </div>
+    
+    <label class="form-label">Select Patient <span class="required-star">*</span></label>
+    <div class="patient-dropdown">
+      <div class="selectedBtn" id="patientBtn">
+        <span id="patientLabel">-- Select patient --</span>
+        <span>▾</span>
+      </div>
+      <div class="listPanel hidden" id="patientPanel">
+        <div class="search">
+          <input type="search" id="patientSearch" placeholder="Search patients...">
+        </div>
+        <div id="patientItems"></div>
+      </div>
+      <input type="hidden" id="selectedPatientId">
+    </div>
+    
+    <div class="patient-card" id="patientCard">
+      <div class="patient-name"><i class="fas fa-user"></i> <span id="pdName"></span></div>
+      <div class="patient-details">
+        <div class="patient-detail-item">
+          <span class="patient-detail-label">Mobile</span>
+          <span class="patient-detail-value" id="pdMobile"></span>
+        </div>
+        <div class="patient-detail-item">
+          <span class="patient-detail-label">Age</span>
+          <span class="patient-detail-value"><span id="pdAge"></span> yrs</span>
+        </div>
+        <div class="patient-detail-item">
+          <span class="patient-detail-label">Weight</span>
+          <span class="patient-detail-value"><span id="pdWeight"></span> kg</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forms Area (hidden until patient selected) -->
+  <div id="formsArea" class="hidden">
+    
+    <!-- Symptoms -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-stethoscope"></i>
+        <span>Symptoms</span>
+      </div>
+      <label class="form-label">Symptoms <span class="required-star">*</span></label>
+      <textarea id="symptoms" placeholder="Enter patient's symptoms"></textarea>
+    </div>
+
+    <!-- Medicine Section -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-pills"></i>
+        <span>Medication Prescrption</span>
+      </div>
+      
+      <!-- Medicine Entries (Saved List) -->
+      <div class="medicine-entries" id="medicineEntries">
+        <table class="entries-table">
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Type</th>
+              <th>Duration</th>
+              <th>Time of Day</th>
+              <th>Before/After Meal</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="entriesTableBody"></tbody>
+        </table>
+      </div>
+      
+      <div class="medicine-form">
+        <!-- Row 1: Medicine, Type, Duration (in one horizontal line) -->
+        <div class="form-row-3">
+          <!-- Medicine Selection -->
+          <div class="form-group">
+            <label class="form-label"><i class="fas fa-capsules"></i> Medicine Name <span class="required-star">*</span></label>
+            <div class="patient-dropdown">
+              <div class="selectedBtn" id="medicineBtn">
+                <span id="medicineLabel">Choose medicine...</span>
+                <span>▾</span>
+              </div>
+              <div class="listPanel hidden" id="medicinePanel">
+                <div class="search">
+                  <input type="search" id="medicineSearch" placeholder="Search medicines...">
+                </div>
+                <div id="medicineItems"></div>
+              </div>
+              <input type="hidden" id="selectedMedicine">
+            </div>
+          </div>
+          
+          <!-- Type (hidden initially) -->
+          <div class="form-group" id="typeGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-tag"></i> Type <span class="required-star">*</span></label>
+            <select id="medicineType">
+              <option value="">-- Select type --</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Syrup">Syrup</option>
+              <option value="Injection">Injection</option>
+              <option value="Capsule">Capsule</option>
+              <option value="Ointment">Ointment</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
+          <!-- Duration (hidden initially) -->
+          <div class="form-group" id="durationGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-clock"></i> Duration <span class="required-star">*</span></label>
+            <select id="medicineDuration">
+              <option value="">-- Select duration --</option>
+              <option value="1">1 day</option>
+              <option value="2">2 days</option>
+              <option value="3">3 days</option>
+              <option value="4">4 days</option>
+              <option value="5">5 days</option>
+              <option value="6">6 days</option>
+              <option value="7">7 days</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Time of Day, Before/After Meal (in one horizontal line) -->
+        <div class="form-row-2">
+          <!-- Time of Day (hidden initially) -->
+          <div class="form-group" id="timeGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-calendar-day"></i> Time of Day <span class="required-star">*</span></label>
+            <div class="time-group">
+              <label>
+                <input type="checkbox" id="timeMorning">
+                <span>Morning</span>
+              </label>
+              <label>
+                <input type="checkbox" id="timeAfternoon">
+                <span>Afternoon</span>
+              </label>
+              <label>
+                <input type="checkbox" id="timeNight">
+                <span>Night</span>
+              </label>
+            </div>
+          </div>
+          
+          <!-- Before/After Meal (hidden initially) -->
+          <div class="form-group" id="mealGroup" style="display:none;">
+            <label class="form-label"><i class="fas fa-utensils"></i> Before / After Meal <span class="required-star">*</span></label>
+            <div class="meal-group">
+              <label>
+                <input type="radio" name="beforeAfter" value="Before" id="beforeMeal">
+                <span>Before meal</span>
+              </label>
+              <label>
+                <input type="radio" name="beforeAfter" value="After" id="afterMeal">
+                <span>After meal</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Notes -->
+        <div class="form-group">
+          <label class="form-label"><i class="fas fa-sticky-note"></i> Advice & instructions (Optional)</label>
+          <textarea id="medicineNotes" placeholder="Add any special instructions or notes..."></textarea>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" id="addMedicineBtn" disabled>
+            <i class="fas fa-plus-circle"></i> Add Medicine
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blood Tests -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-flask"></i>
+        <span>Diagnostic Tests</span>
+      </div>
+      
+      <label class="form-label">Recommended Blood Test (Select multiple)</label>
+      <div class="blood-dropdown">
+        <div class="selectedBtn" id="bloodBtn">
+          <span id="bloodLabel">Choose blood tests...</span>
+          <span>▾</span>
+        </div>
+        <div class="listPanel" id="bloodPanel">
+          <div class="search">
+            <input type="search" id="bloodSearch" placeholder="Search blood tests...">
+          </div>
+          <div class="blood-test-checks" id="bloodTestChecks"></div>
+        </div>
+      </div>
+      
+      <div class="selected-tests-list" id="selectedTestsList">
+        <strong><i class="fas fa-vial"></i> Selected Blood Tests:</strong>
+        <ol id="selectedTestsOL"></ol>
+      </div>
+
+      <div style="margin-top:20px;">
+        <label class="small">Follow-up Date</label>
+        <input type="date" id="followUpDate" style="margin-top:8px;">
+      </div>
+    </div>
+
+    <!-- Save Prescription -->
+    <div class="btn-group" style="margin-bottom: 30px;">
+      <button class="btn btn-success" id="savePrescriptionBtn" disabled>
+        <i class="fas fa-save"></i> Save Prescription
+      </button>
+    </div>
+
+  </div>
+  
+  <!-- SAVED PRESCRIPTIONS -->
+  <div id="savedItemsContainer" style="display:none;">
+    <div class="section">
+      <div class="meds-list">
+        <div class="list-head">
+          <div>
+            <div class="section-header" style="margin-bottom:0;border:none;padding-bottom:0">
+              <i class="fas fa-file-medical"></i>
+              <span>Prescription History</span>
+            </div>
+          </div>
+          <div>
+            <button id="printPrescriptionTop" class="btn btn-primary" disabled>
+              <i class="fas fa-print"></i> Print
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table id="medTable">
+            <thead>
+              <tr>
+                <th>Prescription</th>
+                <th>Symptoms</th>
+                <th>Medicine</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Time</th>
+                <th>Before/After/Meal</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="bloodSelectedLabel" style="display:none;">
+          <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
+          <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
+        </div>
+        <div id="followUpLabel" style="display:none;">
+          <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Autosave Indicator -->
+<div class="autosave-indicator" id="autosaveIndicator">
+  <i class="fas fa-check-circle"></i> Auto-saved
+</div>
+
+<script>
+// ========== GLOBAL STATE ==========
+let patients = [];
+let medicines = [];
+let bloodTests = [];
+let selectedBloodTests = [];
+let medicineEntries = [];
+let editingIndex = null; // Track which entry is being edited
+let autosaveTimer = null;
+let currentPrescId = null;
+
+// ========== AUTOSAVE (localStorage) ==========
+function showAutosaveIndicator(message = 'Auto-saved') {
+  const indicator = document.getElementById('autosaveIndicator');
+  indicator.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+  indicator.classList.add('show');
+  setTimeout(() => {
+    indicator.classList.remove('show');
+  }, 2000);
+}
+
+function autosave() {
+  const patientId = document.getElementById('selectedPatientId').value;
+  if (!patientId) return;
+  
+  // Don't autosave if no data is filled
+  const symptoms = document.getElementById('symptoms').value.trim();
+  if (!symptoms && medicineEntries.length === 0) return;
+  
+  const data = {
+    patientId: patientId,
+    symptoms: symptoms,
+    medicineEntries: medicineEntries,
+    selectedBloodTests: selectedBloodTests,
+    followUpDate: document.getElementById('followUpDate').value
+  };
+  
+  localStorage.setItem(`prescription_draft_${patientId}`, JSON.stringify(data));
+  showAutosaveIndicator('Auto-saved');
+}
+
+function triggerAutosave() {
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(autosave, 2000); // Auto-save after 2 seconds of inactivity
+}
+
+function loadAutosave(patientId) {
+  const saved = localStorage.getItem(`prescription_draft_${patientId}`);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      document.getElementById('symptoms').value = data.symptoms || '';
+      medicineEntries = data.medicineEntries || [];
+      selectedBloodTests = data.selectedBloodTests || [];
+      document.getElementById('followUpDate').value = data.followUpDate || '';
+      
+      renderMedicineEntries();
+      updateBloodTestsDisplay();
+      validateForm();
+    } catch (e) {
+      console.error('Load autosave error:', e);
+    }
+  }
+}
+
+function clearAutosave(patientId) {
+  localStorage.removeItem(`prescription_draft_${patientId}`);
+}
+
+// ========== HELPERS ==========
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function formatDateForDisplay(dateStr) {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toLocaleDateString();
+}
+
+function addDays(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+function formatDateYYYYMMDD(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// ========== DROPDOWN LOGIC ==========
+function hidePanel(panel) {
+  if (!panel) return;
+  panel.classList.remove('show');
+  panel.classList.add('hidden');
+}
+
+function showPanel(panel) {
+  if (!panel) return;
+  panel.classList.remove('hidden');
+  panel.classList.add('show');
+}
+
+function setupDropdown(btnId, panelId, onOpen) {
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  
+  console.log('setupDropdown called for:', btnId, 'btn found:', !!btn, 'panel found:', !!panel);
+  
+  if (!btn || !panel) {
+    console.error('setupDropdown failed - missing elements');
+    return;
+  }
+  
+  btn.addEventListener('click', (e) => {
+    console.log('Dropdown button clicked:', btnId);
+    e.stopPropagation();
+    const isVisible = panel.classList.contains('show');
+    console.log('Panel visible before toggle:', isVisible);
+    
+    // Close all dropdowns first
+    document.querySelectorAll('.listPanel').forEach(p => {
+      p.classList.remove('show');
+      p.classList.add('hidden');
+    });
+    
+    if (!isVisible) {
+      console.log('Showing panel');
+      showPanel(panel);
+      // Call onOpen callback if provided
+      if (typeof onOpen === 'function') {
+        console.log('Calling onOpen callback');
+        onOpen();
+      }
+    }
+  });
+  
+  console.log('setupDropdown complete for:', btnId);
+}
+
+// Close all dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  // Check if click is outside all dropdowns
+  const clickedInsideDropdown = e.target.closest('.patient-dropdown') || e.target.closest('.blood-dropdown');
+  if (!clickedInsideDropdown) {
+    document.querySelectorAll('.listPanel').forEach(p => {
+      p.classList.remove('show');
+      p.classList.add('hidden');
+    });
+  }
+});
+
+// ========== LOAD DATA ==========
+async function loadPatients() {
+  try {
+    const res = await fetch('add_prescription.php?action=list_patients');
+    const data = await res.json();
+    if (data.success) {
+      patients = data.patients || [];
+      populatePatients('');
+    }
+  } catch (e) {
+    console.error('Error loading patients:', e);
+  }
+}
+
+async function loadMedicines() {
+  try {
+    const res = await fetch('add_prescription.php?action=list_medicines');
+    const data = await res.json();
+    if (data.success) {
+      medicines = data.medicines || [];
+    }
+  } catch (e) {
+    console.error('Error loading medicines:', e);
+  }
+}
+
+async function loadBloodTests() {
+  try {
+    const res = await fetch('add_prescription.php?action=list_blood_tests');
+    const data = await res.json();
+    if (data.success) {
+      bloodTests = data.blood_tests || [];
+      populateBloodTests();
+    }
+  } catch (e) {
+    console.error('Error loading blood tests:', e);
+  }
+}
+
+// ========== PATIENT DROPDOWN ==========
+function populatePatients(filter) {
+  const container = document.getElementById('patientItems');
+  if (!container) {
+    console.error('patientItems container not found!');
+    return;
+  }
+  
+  console.log('populatePatients called, patients array length:', patients.length);
+  container.innerHTML = '';
+  
+  const q = (filter || '').trim().toLowerCase();
+  const filtered = patients.filter(p => {
+    if (!q) return true;
+    return (p.patient_name && p.patient_name.toLowerCase().includes(q)) ||
+           (p.mobile && p.mobile.includes(q));
+  });
+  
+  console.log('Filtered patients:', filtered.length);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">No patients found</div>';
+    return;
+  }
+  
+  filtered.forEach((p, index) => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.textContent = `${p.patient_name} ${p.mobile ? '(' + p.mobile + ')' : ''}`;
+    div.style.cursor = 'pointer';
+    div.addEventListener('click', () => {
+      console.log('Patient clicked:', p.patient_name);
+      selectPatient(p);
+    });
+    container.appendChild(div);
+    console.log('Added patient item', index + 1);
+  });
+  
+  console.log('populatePatients complete, container children:', container.children.length);
+}
+
+async function selectPatient(patient) {
+  document.getElementById('selectedPatientId').value = patient.patient_id;
+  document.getElementById('patientLabel').textContent = patient.patient_name;
+  hidePanel(document.getElementById('patientPanel'));
+  
+  // Show patient details
+  document.getElementById('pdName').textContent = patient.patient_name || '-';
+  document.getElementById('pdMobile').textContent = patient.mobile || '-';
+  document.getElementById('pdAge').textContent = patient.age || '-';
+  document.getElementById('pdWeight').textContent = patient.weight || '-';
+  document.getElementById('patientCard').classList.add('show');
+  
+  // Show forms area
+  document.getElementById('formsArea').classList.remove('hidden');
+  
+  // Set default follow-up date (7 days from today)
+  const followUpInput = document.getElementById('followUpDate');
+  if (!followUpInput.value) {
+    followUpInput.value = formatDateYYYYMMDD(addDays(new Date(), 7));
+  }
+  
+  // Load autosave if exists
+  loadAutosave(patient.patient_id);
+  
+  // Load prescription history
+  await loadPatientPrescriptions(patient.patient_id);
+  
+  validateForm();
+}
+
+document.getElementById('patientSearch').addEventListener('input', (e) => {
+  populatePatients(e.target.value);
+});
+
+// ========== MEDICINE DROPDOWN ==========
+function populateMedicines(filter) {
+  const container = document.getElementById('medicineItems');
+  container.innerHTML = '';
+  
+  const q = (filter || '').trim().toLowerCase();
+  const filtered = medicines.filter(m => {
+    if (!q) return true;
+    return (m.name && m.name.toLowerCase().includes(q)) ||
+           (m.company && m.company.toLowerCase().includes(q));
+  }).slice(0, 100);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div class="item">No medicines found</div>';
+    return;
+  }
+  
+  filtered.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.textContent = `${m.name}${m.company ? ' — ' + m.company : ''}`;
+    div.addEventListener('click', () => selectMedicine(m));
+    container.appendChild(div);
+  });
+}
+
+function selectMedicine(medicine) {
+  document.getElementById('selectedMedicine').value = medicine.name;
+  document.getElementById('medicineLabel').textContent = medicine.name;
+  hidePanel(document.getElementById('medicinePanel'));
+  
+  // Progressive reveal: show Type field
+  document.getElementById('typeGroup').style.display = 'block';
+  
+  validateForm();
+  triggerAutosave();
+}
+
+document.getElementById('medicineSearch').addEventListener('input', (e) => {
+  populateMedicines(e.target.value);
+});
+
+// Setup medicine dropdown with initial population
+setupDropdown('medicineBtn', 'medicinePanel', () => {
+  populateMedicines(''); // Load medicines when dropdown opens
+});
+
+// Progressive form logic - Type selected
+document.getElementById('medicineType').addEventListener('change', function() {
+  if (this.value) {
+    document.getElementById('durationGroup').style.display = 'block';
+    validateForm();
+    triggerAutosave();
+  }
+});
+
+// Progressive form logic - Duration selected
+document.getElementById('medicineDuration').addEventListener('change', function() {
+  if (this.value) {
+    document.getElementById('timeGroup').style.display = 'block';
+    validateForm();
+    triggerAutosave();
+  }
+});
+
+// Progressive form logic - Time checkboxes changed
+document.querySelectorAll('#timeMorning, #timeAfternoon, #timeNight').forEach(checkbox => {
+  checkbox.addEventListener('change', function() {
+    const anyChecked = document.getElementById('timeMorning').checked ||
+                       document.getElementById('timeAfternoon').checked ||
+                       document.getElementById('timeNight').checked;
+    
+    if (anyChecked) {
+      document.getElementById('mealGroup').style.display = 'block';
+    } else {
+      document.getElementById('mealGroup').style.display = 'none';
+      document.querySelectorAll('input[name="beforeAfter"]').forEach(r => r.checked = false);
+    }
+    validateForm();
+    triggerAutosave();
+  });
+});
+
+// ========== BLOOD TESTS ==========
+function populateBloodTests(filter = '') {
+  const container = document.getElementById('bloodTestChecks');
+  container.innerHTML = '';
+  
+  const q = (filter || '').trim().toLowerCase();
+  const filtered = bloodTests.filter(test => {
+    if (!q) return true;
+    return test.name && test.name.toLowerCase().includes(q);
+  });
+  
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">No blood tests found</div>';
+    return;
+  }
+  
+  filtered.forEach(test => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = test.id;
+    checkbox.dataset.name = test.name;
+    
+    // Check if already selected
+    if (selectedBloodTests.some(t => t.id == test.id)) {
+      checkbox.checked = true;
+    }
+    
+    checkbox.addEventListener('change', () => {
+      updateBloodTestSelection();
+      triggerAutosave();
+    });
+    
+    const span = document.createElement('span');
+    span.textContent = test.name + (test.price ? ` — ₹${test.price}` : '');
+    
+    label.appendChild(checkbox);
+    label.appendChild(span);
+    container.appendChild(label);
+  });
+}
+
+document.getElementById('bloodSearch').addEventListener('input', (e) => {
+  populateBloodTests(e.target.value);
+});
+
+function updateBloodTestSelection() {
+  selectedBloodTests = [];
+  const checkboxes = document.querySelectorAll('#bloodTestChecks input[type="checkbox"]:checked');
+  
+  checkboxes.forEach(cb => {
+    selectedBloodTests.push({
+      id: cb.value,
+      name: cb.dataset.name
+    });
+  });
+  
+  updateBloodTestsDisplay();
+}
+
+function updateBloodTestsDisplay() {
+  const label = document.getElementById('bloodLabel');
+  const list = document.getElementById('selectedTestsList');
+  const ol = document.getElementById('selectedTestsOL');
+  
+  if (selectedBloodTests.length === 0) {
+    label.textContent = 'Choose blood tests...';
+    list.classList.remove('show');
+  } else if (selectedBloodTests.length === 1) {
+    label.textContent = selectedBloodTests[0].name;
+    ol.innerHTML = '';
+    selectedBloodTests.forEach(test => {
+      const li = document.createElement('li');
+      li.textContent = test.name;
+      ol.appendChild(li);
+    });
+    list.classList.add('show');
+  } else {
+    label.textContent = `${selectedBloodTests.length} tests selected`;
+    ol.innerHTML = '';
+    selectedBloodTests.forEach(test => {
+      const li = document.createElement('li');
+      li.textContent = test.name;
+      ol.appendChild(li);
+    });
+    list.classList.add('show');
+  }
+}
+
+setupDropdown('bloodBtn', 'bloodPanel', () => {
+  populateBloodTests(); // Load blood tests when dropdown opens
+});
+
+// ========== MEDICINE FORM VALIDATION ==========
+function validateMedicineForm() {
+  const medicine = document.getElementById('selectedMedicine').value.trim();
+  const type = document.getElementById('medicineType').value;
+  const duration = document.getElementById('medicineDuration').value;
+  const morning = document.getElementById('timeMorning').checked;
+  const afternoon = document.getElementById('timeAfternoon').checked;
+  const night = document.getElementById('timeNight').checked;
+  const beforeAfter = document.querySelector('input[name="beforeAfter"]:checked');
+  
+  const timeSelected = morning || afternoon || night;
+  
+  return medicine && type && duration && timeSelected && beforeAfter;
+}
+
+function validateForm() {
+  const symptoms = document.getElementById('symptoms').value.trim();
+  const hasEntries = medicineEntries.length > 0;
+  
+  // Add Medicine button - only validate current form
+  const addBtn = document.getElementById('addMedicineBtn');
+  addBtn.disabled = !validateMedicineForm();
+  
+  // Save Prescription button - validate symptoms AND at least one entry
+  const saveBtn = document.getElementById('savePrescriptionBtn');
+  saveBtn.disabled = !(symptoms && hasEntries);
+}
+
+// ========== ADD/EDIT MEDICINE ==========
+function clearMedicineForm() {
+  document.getElementById('selectedMedicine').value = '';
+  document.getElementById('medicineLabel').textContent = 'Choose medicine...';
+  document.getElementById('medicineType').value = '';
+  document.getElementById('medicineDuration').value = '';
+  document.getElementById('timeMorning').checked = false;
+  document.getElementById('timeAfternoon').checked = false;
+  document.getElementById('timeNight').checked = false;
+  document.getElementById('medicineNotes').value = '';
+  document.querySelectorAll('input[name="beforeAfter"]').forEach(r => r.checked = false);
+  
+  // Reset progressive form visibility
+  document.getElementById('typeGroup').style.display = 'none';
+  document.getElementById('durationGroup').style.display = 'none';
+  document.getElementById('timeGroup').style.display = 'none';
+  document.getElementById('mealGroup').style.display = 'none';
+  
+  editingIndex = null;
+  validateForm();
+}
+
+async function addOrUpdateMedicine() {
+  if (!validateMedicineForm()) {
+    alert('Please fill all required fields');
+    return;
+  }
+  
+  const medicine = document.getElementById('selectedMedicine').value;
+  const type = document.getElementById('medicineType').value;
+  const duration = document.getElementById('medicineDuration').value;
+  const notes = document.getElementById('medicineNotes').value;
+  
+  const times = [];
+  if (document.getElementById('timeMorning').checked) times.push('Morning');
+  if (document.getElementById('timeAfternoon').checked) times.push('Afternoon');
+  if (document.getElementById('timeNight').checked) times.push('Night');
+  
+  const beforeAfter = document.querySelector('input[name="beforeAfter"]:checked').value;
+  
+  const entry = {
+    medicine,
+    type,
+    duration: `${duration} day${duration > 1 ? 's' : ''}`,
+    times: times.join(', '),
+    beforeAfter,
+    notes
+  };
+  
+  if (editingIndex !== null) {
+    // Update existing entry
+    medicineEntries[editingIndex] = entry;
+    editingIndex = null;
+  } else {
+    // Add new entry
+    medicineEntries.push(entry);
+  }
+  
+  // Show immediately in table
+  renderMedicineEntries();
+  clearMedicineForm();
+  
+  // Trigger autosave
+  triggerAutosave();
+}
+
+function editMedicine(index) {
+  const entry = medicineEntries[index];
+  
+  document.getElementById('selectedMedicine').value = entry.medicine;
+  document.getElementById('medicineLabel').textContent = entry.medicine;
+  
+  // Show progressive fields
+  document.getElementById('typeGroup').style.display = 'block';
+  document.getElementById('medicineType').value = entry.type;
+  
+  document.getElementById('durationGroup').style.display = 'block';
+  // Extract number from "X day(s)"
+  const durationNum = entry.duration.match(/\d+/)[0];
+  document.getElementById('medicineDuration').value = durationNum;
+  
+  document.getElementById('timeGroup').style.display = 'block';
+  // Set time checkboxes
+  document.getElementById('timeMorning').checked = entry.times.includes('Morning');
+  document.getElementById('timeAfternoon').checked = entry.times.includes('Afternoon');
+  document.getElementById('timeNight').checked = entry.times.includes('Night');
+  
+  document.getElementById('mealGroup').style.display = 'block';
+  // Set before/after radio
+  if (entry.beforeAfter === 'Before') {
+    document.getElementById('beforeMeal').checked = true;
+  } else {
+    document.getElementById('afterMeal').checked = true;
+  }
+  
+  document.getElementById('medicineNotes').value = entry.notes || '';
+  
+  editingIndex = index;
+  validateForm();
+  
+  // Scroll to form
+  document.querySelector('.medicine-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function deleteMedicine(index) {
+  if (confirm('Are you sure you want to delete this medicine?')) {
+    medicineEntries.splice(index, 1);
+    renderMedicineEntries();
+    triggerAutosave();
+  }
+}
+
+function renderMedicineEntries() {
+  const tbody = document.getElementById('entriesTableBody');
+  tbody.innerHTML = '';
+  
+  if (medicineEntries.length === 0) {
+    document.getElementById('medicineEntries').classList.remove('show');
+    validateForm();
+    return;
+  }
+  
+  document.getElementById('medicineEntries').classList.add('show');
+  
+  medicineEntries.forEach((entry, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(entry.medicine)}</td>
+      <td>${escapeHtml(entry.type)}</td>
+      <td>${escapeHtml(entry.duration)}</td>
+      <td>${escapeHtml(entry.times)}</td>
+      <td>${escapeHtml(entry.beforeAfter)}</td>
+      <td>${escapeHtml(entry.notes || '-')}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn-edit" onclick="editMedicine(${index})">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn-delete" onclick="deleteMedicine(${index})">
+            <i class="fas fa-times"></i> Delete
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  validateForm();
+}
+
+// ========== SAVE PRESCRIPTION ==========
+async function savePrescription() {
+  const patientId = document.getElementById('selectedPatientId').value;
+  const symptoms = document.getElementById('symptoms').value.trim();
+  
+  if (!patientId || !symptoms || medicineEntries.length === 0) {
+    alert('Please fill symptoms and add at least one medicine');
+    return;
+  }
+  
+  const clientId = localStorage.getItem('client_id') || '';
+  const bloodTestIds = selectedBloodTests.map(t => t.id);
+  const bloodTestNames = selectedBloodTests.map(t => t.name);
+  const followUpDate = document.getElementById('followUpDate').value || null;
+  
+  // Convert medicine entries to API format
+  const items = medicineEntries.map(entry => ({
+    medicine_name: entry.medicine,
+    type: entry.type,
+    duration: entry.duration,
+    times_of_day: entry.times,
+    before_after: entry.beforeAfter,
+    notes: entry.notes
+  }));
+  
+  try {
+    const res = await fetch('add_prescription.php?action=save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patient_id: patientId,
+        client_id: clientId,
+        symptoms,
+        follow_up_date: followUpDate,
+        items,
+        blood_test_ids: bloodTestIds,
+        blood_test_names: bloodTestNames
+      })
+    });
+    
+    const data = await res.json();
+    
+    if (!data.success) {
+      alert('Save failed: ' + (data.message || ''));
+      return;
+    }
+    
+    alert('Prescription saved successfully!');
+    
+    currentPrescId = data.prescription_id || null;
+    setPrintForId(currentPrescId);
+    
+    // Clear form
+    document.getElementById('symptoms').value = '';
+    medicineEntries = [];
+    selectedBloodTests = [];
+    clearMedicineForm();
+    renderMedicineEntries();
+    updateBloodTestsDisplay();
+    
+    // Clear autosave
+    clearAutosave(patientId);
+    
+    // Reset follow-up date
+    document.getElementById('followUpDate').value = formatDateYYYYMMDD(addDays(new Date(), 7));
+    
+    validateForm();
+    
+    // Load prescription history
+    await loadPatientPrescriptions(patientId);
+    
+    // Open print page if available
+    if (data.prescription_id) {
+      const printUrl = `print.html?prescription_id=${data.prescription_id}&patient_id=${patientId}`;
+      window.open(printUrl, '_blank');
+    }
+    
+  } catch (e) {
+    console.error('Save error:', e);
+    alert('Save failed. Please try again.');
+  }
+}
+
+// ========== PRESCRIPTION HISTORY ==========
+function renderMedTableFromRows(rows) {
+  const tb = document.querySelector('#medTable tbody');
+  tb.innerHTML = '';
+  rows.forEach(m => {
+    const presLabel = m.prescription_id ? `#${m.prescription_id} (${m.created_at ? m.created_at.split(' ')[0] : ''})` : '';
+    const times = m.times_of_day || m.times || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(presLabel)}</td><td>${escapeHtml(m.symptoms || '')}</td><td>${escapeHtml(m.medicine_name || '')}</td><td>${escapeHtml(m.type || '')}</td><td>${escapeHtml(m.duration || '')}</td><td>${escapeHtml(times)}</td><td>${escapeHtml(m.before_after || '')}</td><td>${escapeHtml(m.notes || '')}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+async function loadPatientPrescriptions(patient_id) {
+  const savedContainer = document.getElementById('savedItemsContainer');
+  document.getElementById('bloodSelectedLabel').style.display = 'none';
+  document.getElementById('bloodSelectedText').textContent = '';
+  document.getElementById('followUpLabel').style.display = 'none';
+  document.getElementById('followUpText').textContent = '';
+
+  if (!patient_id) {
+    renderMedTableFromRows([]);
+    setPrintForId(null);
+    savedContainer.style.display = 'none';
+    return;
+  }
+  
+  try {
+    const r = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patient_id)}`);
+    const j = await r.json();
+    if (!j.success) {
+      renderMedTableFromRows([]);
+      setPrintForId(null);
+      savedContainer.style.display = 'block';
+      return;
+    }
+    
+    const items = j.items || [];
+    renderMedTableFromRows(items);
+    savedContainer.style.display = 'block';
+
+    // find latest prescription id
+    let latestPrescription = null;
+    if (items.length) {
+      const maxPrescriptionId = Math.max(...items.map(it => it.prescription_id).filter(x => x != null));
+      latestPrescription = items.find(it => it.prescription_id === maxPrescriptionId) || null;
+    }
+    setPrintForId(latestPrescription ? latestPrescription.prescription_id : null);
+
+    // update recommended blood test (from latest)
+    if (latestPrescription && latestPrescription.recommended_blood_test) {
+      const bloodTestsArray = latestPrescription.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
+      const bloodTextOL = document.getElementById('bloodSelectedText');
+      bloodTextOL.innerHTML = '';
+      bloodTestsArray.forEach(test => {
+        const li = document.createElement('li');
+        li.textContent = test;
+        li.style.margin = '4px 0';
+        li.style.fontSize = '14px';
+        li.style.color = 'var(--text-dark)';
+        bloodTextOL.appendChild(li);
+      });
+      document.getElementById('bloodSelectedLabel').style.display = 'block';
+    } else {
+      document.getElementById('bloodSelectedLabel').style.display = 'none';
+    }
+
+    // update follow-up date (from latestPrescription)
+    if (latestPrescription && latestPrescription.follow_up_date) {
+      document.getElementById('followUpText').textContent = new Date(latestPrescription.follow_up_date).toLocaleDateString();
+      document.getElementById('followUpLabel').style.display = 'block';
+      document.getElementById('followUpDate').value = latestPrescription.follow_up_date;
+    } else {
+      if (!document.getElementById('followUpDate').value) {
+        document.getElementById('followUpDate').value = formatDateYYYYMMDD(addDays(new Date(), 7));
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    renderMedTableFromRows([]);
+    setPrintForId(null);
+    savedContainer.style.display = 'block';
+  }
+}
+
+function setPrintForId(presId) {
+  const pBtn = document.getElementById('printPrescriptionTop');
+  if (presId) {
+    pBtn.disabled = false;
+    const pid = document.getElementById('selectedPatientId').value || '';
+    pBtn.onclick = () => {
+      const url = `print.html?prescription_id=${encodeURIComponent(presId)}&patient_id=${encodeURIComponent(pid)}`;
+      window.open(url, '_blank');
+    };
+  } else {
+    pBtn.disabled = true;
+    pBtn.onclick = null;
+  }
+}
+
+// ========== EVENT LISTENERS ==========
+document.getElementById('addMedicineBtn').addEventListener('click', addOrUpdateMedicine);
+document.getElementById('savePrescriptionBtn').addEventListener('click', savePrescription);
+
+// Setup patient dropdown
+setupDropdown('patientBtn', 'patientPanel');
+
+// Validate form on input changes
+document.getElementById('selectedMedicine').addEventListener('input', validateForm);
+document.getElementById('medicineType').addEventListener('change', validateForm);
+document.getElementById('medicineDuration').addEventListener('change', validateForm);
+document.getElementById('timeMorning').addEventListener('change', validateForm);
+document.getElementById('timeAfternoon').addEventListener('change', validateForm);
+document.getElementById('timeNight').addEventListener('change', validateForm);
+document.querySelectorAll('input[name="beforeAfter"]').forEach(radio => {
+  radio.addEventListener('change', validateForm);
+});
+document.getElementById('symptoms').addEventListener('input', () => {
+  validateForm();
+  triggerAutosave();
+});
+document.getElementById('medicineNotes').addEventListener('input', triggerAutosave);
+document.getElementById('followUpDate').addEventListener('change', triggerAutosave);
+
+// ========== INITIALIZATION ==========
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('Page loaded, initializing...');
+  
+  await loadPatients();
+  await loadMedicines();
+  await loadBloodTests();
+  
+  console.log('Patients loaded:', patients.length);
+  
+  // Setup patient dropdown - populate initially
+  populatePatients('');
+  setupDropdown('patientBtn', 'patientPanel', () => {
+    console.log('Patient dropdown opened');
+    populatePatients(''); // Refresh patients when dropdown opens
+  });
+  
+  // Set default follow-up date
+  document.getElementById('followUpDate').value = formatDateYYYYMMDD(addDays(new Date(), 7));
+  
+  // Hide prescription history initially
+  document.getElementById('savedItemsContainer').style.display = 'none';
+  
+  validateForm();
+  
+  console.log('Initialization complete');
+});
+
+// Make functions globally accessible for onclick handlers
+window.editMedicine = editMedicine;
+window.deleteMedicine = deleteMedicine;
+</script>
+
+</body>
+</html>

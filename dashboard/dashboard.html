@@ -3,25 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard - Ruhanix</title>
+  <title>Dashboard - Ruhanix Legal</title>
+  <link rel="stylesheet" href="../header/header.css">
   <link rel="stylesheet" href="dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <i class="fa-solid fa-stethoscope"></i>
-      Ruhanix Legal - Dashboard
-    </div>
-    <div class="user-info">
-      <i class="fa-solid fa-user-md"></i>
-    </div>
-  </header>
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
 
   <main class="container">
     <h2 class="page-title">Quick Actions</h2>
     <div class="cards">
-      <!-- Add Receptionalist (stays in dashboard folder) -->
+      <!-- Add Receptionalist -->
       <a id="card-add-reception" class="card" href="dashboard.php?role=receptionalist" title="Add Receptionalist">
         <div class="card-gradient"></div>
         <div class="card-icon"><i class="fa-solid fa-user-plus"></i></div>
@@ -60,16 +54,6 @@
           <div class="card-sub">Write or upload prescription</div>
         </div>
       </a>
-
-      <!-- Saved Prescriptions (if you still keep it) -->
-      <!-- <a id="card-saved-prescriptions" class="card" href="../saved_prescriptions/saved_prescriptions.html" title="Saved Prescriptions">
-        <div class="card-gradient"></div>
-        <div class="card-icon"><i class="fa-solid fa-folder-open"></i></div>
-        <div class="card-content">
-          <div class="card-title">Saved Prescriptions</div>
-          <div class="card-sub">View all saved prescriptions</div>
-        </div>
-      </a> -->
 
       <!-- All Medicine -->
       <a id="card-all-medicine" class="card" href="../all_medicine/all_medicine.html" title="All Medicine">
@@ -114,9 +98,12 @@
   </main>
 
   <footer class="footer">
-    <div>© 2025 Ruhanix Healthcare System</div>
+    <div>© 2025 Ruhanix Legal Healthcare System</div>
   </footer>
 
+  <!-- Load Header JS - it will insert the header -->
+  <script src="../header/header.js"></script>
+  <!-- Load Dashboard JS -->
   <script src="dashboard.js"></script>
 </body>
 </html>
