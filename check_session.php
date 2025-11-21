@@ -28,6 +28,8 @@ header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json; charset=UTF-8");
 
+require_once 'connections.php'; // $conn (mysqli)
+
 // Check session validity
 if (
     (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) ||
@@ -35,6 +37,31 @@ if (
 ) {
     if (!isset($_SESSION['logged_in'])) {
         $_SESSION['logged_in'] = true;
+    }
+
+    // Check if user is disabled in database
+    $userId = $_SESSION['user_id'] ?? null;
+    if($userId){
+        $stmt = $conn->prepare("SELECT status FROM users WHERE id=? LIMIT 1");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        
+        if($res->num_rows > 0){
+            $user = $res->fetch_assoc();
+            if(($user['status'] ?? 'active') === 'disabled'){
+                // User is disabled, destroy session
+                session_unset();
+                session_destroy();
+                echo json_encode([
+                    "success" => false,
+                    "message" => "Account disabled",
+                    "disabled" => true
+                ]);
+                exit;
+            }
+        }
+        $stmt->close();
     }
 
     echo json_encode([

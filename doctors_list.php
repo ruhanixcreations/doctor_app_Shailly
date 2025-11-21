@@ -16,7 +16,7 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at FROM users WHERE role='user' ORDER BY id DESC");
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at, status FROM users WHERE role='user' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'doctors'=>$out]);
@@ -56,6 +56,24 @@ if($action === 'delete'){
     $id = intval($_GET['id'] ?? 0);
     if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
     $stmt = $mysqli->prepare("DELETE FROM users WHERE id=? AND role='user'");
+    $stmt->bind_param('i', $id);
+    $ok = $stmt->execute();
+    send_json(['success'=>$ok]);
+}
+
+if($action === 'disable'){
+    $id = intval($_GET['id'] ?? 0);
+    if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
+    $stmt = $mysqli->prepare("UPDATE users SET status='disabled' WHERE id=? AND role='user'");
+    $stmt->bind_param('i', $id);
+    $ok = $stmt->execute();
+    send_json(['success'=>$ok]);
+}
+
+if($action === 'enable'){
+    $id = intval($_GET['id'] ?? 0);
+    if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
+    $stmt = $mysqli->prepare("UPDATE users SET status='active' WHERE id=? AND role='user'");
     $stmt->bind_param('i', $id);
     $ok = $stmt->execute();
     send_json(['success'=>$ok]);

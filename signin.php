@@ -83,6 +83,11 @@ if ($action === 'verify_otp') {
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user=$res->fetch_assoc();
+    // Check if user is disabled
+    if(($user['status'] ?? 'active') === 'disabled'){ 
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']); 
+        exit; 
+    }
     $_SESSION['pre_auth_user_id']=(int)$user['id'];
     $_SESSION['pre_auth_email']=$email;
     $_SESSION['pre_auth_time']=time();
@@ -136,6 +141,11 @@ if ($action === 'login_password') {
         echo json_encode(['success'=>false,'message'=>'No password set for this account. Use Forgot Password to set one.']); exit;
     }
     if (!$passwordOk) { echo json_encode(['success'=>false,'message'=>'Wrong password']); exit; }
+    // Check if user is disabled
+    if(($user['status'] ?? 'active') === 'disabled'){ 
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']); 
+        exit; 
+    }
     // create session
     session_regenerate_id(true);
     $_SESSION['user_id']=(int)$user['id'];

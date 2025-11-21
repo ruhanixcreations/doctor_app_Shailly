@@ -186,6 +186,24 @@ body{
   background:var(--primary-blue);
 }
 
+.action-btn.disable{
+  background:#ffc107;
+  color:#000;
+}
+
+.action-btn.disable:hover{
+  background:#e0a800;
+}
+
+.action-btn.enable{
+  background:#28a745;
+  color:#fff;
+}
+
+.action-btn.enable:hover{
+  background:#218838;
+}
+
 .action-btn.delete{
   background:var(--danger);
   color:#fff;
@@ -523,10 +541,28 @@ function checkAuth(){
   return true;
 }
 
+/* Periodic status check to logout disabled users */
+function checkUserStatus(){
+  fetch('../check_session.php', {credentials: 'include'})
+    .then(res => res.json())
+    .then(data => {
+      if(!data.success || data.disabled){
+        localStorage.removeItem('isLoggedIn');
+        window.location.href = '../signin/signin.html';
+      }
+    })
+    .catch(err => console.error('Status check failed:', err));
+}
+
 // Run auth check immediately
 (function(){
   const isAuthorized = checkAuth();
   if(!isAuthorized) return; // Stop execution if not authorized
+  
+  // Check status every 15 seconds
+  setInterval(checkUserStatus, 15000);
+  // Also check immediately after page load
+  setTimeout(checkUserStatus, 2000);
   
   // Continue with page initialization only if authorized
   initializePage();
@@ -667,6 +703,9 @@ function renderTable(){
        <td data-label="Created"><div class="cell-value">${escapeHtml(r.created_at||'')}</div></td>
        <td data-label="Actions">
          <button class="action-btn edit edit-rec" data-id="${r.id}" data-name="${escapeHtml(r.name)}" data-email="${escapeHtml(r.email)}" data-mobile="${escapeHtml(r.mobile||'')}">Edit</button>
+         ${r.status === 'disabled' 
+           ? '<button class="action-btn enable" data-id="'+r.id+'">Enable</button>' 
+           : '<button class="action-btn disable" data-id="'+r.id+'">Disable</button>'}
          <button class="action-btn delete" data-id="${r.id}">Delete</button>
        </td>`;
     tb.appendChild(tr);
@@ -692,6 +731,32 @@ function renderTable(){
       const email = e.target.dataset.email;
       const mobile = e.target.dataset.mobile;
       openEditModal(id, name, email, mobile);
+    });
+  });
+
+  tb.querySelectorAll('.disable').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      if(!confirm('Are you sure you want to disable this receptionist? They will be logged out from all devices and unable to login.')) return;
+      const id = e.target.dataset.id;
+      try{
+        const res = await fetch(apiList + '?action=disable&id=' + encodeURIComponent(id));
+        const jr = await res.json();
+        if(jr.success){ showToast('Receptionist disabled'); fetchList(); }
+        else showToast('Action failed: ' + (jr.message || ''));
+      }catch(err){ console.error(err); showToast('Action failed'); }
+    });
+  });
+
+  tb.querySelectorAll('.enable').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      if(!confirm('Are you sure you want to enable this receptionist?')) return;
+      const id = e.target.dataset.id;
+      try{
+        const res = await fetch(apiList + '?action=enable&id=' + encodeURIComponent(id));
+        const jr = await res.json();
+        if(jr.success){ showToast('Receptionist enabled'); fetchList(); }
+        else showToast('Action failed: ' + (jr.message || ''));
+      }catch(err){ console.error(err); showToast('Action failed'); }
     });
   });
 }
