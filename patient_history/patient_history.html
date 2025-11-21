@@ -636,6 +636,44 @@ tbody tr:last-child td{
         </div>
       </div>
 
+      <!-- PRESCRIPTION HISTORY SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <span>Prescription History</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Prescription</th>
+                <th>Symptoms</th>
+                <th>Medicine</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Time</th>
+                <th>Before/After Meal</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="prescriptionTable">
+              <tr>
+                <td colspan="8" class="empty-state">No prescriptions found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="bloodSelectedLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
+          <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
+          <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
+        </div>
+        <div id="followUpLabel" style="display:none;margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px">
+          <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
+        </div>
+      </div>
+
       <!-- REPORTS SECTION -->
       <div class="section">
         <div class="section-header">
@@ -827,6 +865,65 @@ function renderAppointments(list, patientName){
   }
 }
 
+/* Render prescriptions table */
+function renderPrescriptions(prescriptions){
+  const tbody = document.getElementById('prescriptionTable');
+  const bloodSelectedLabel = document.getElementById('bloodSelectedLabel');
+  const bloodSelectedText = document.getElementById('bloodSelectedText');
+  const followUpLabel = document.getElementById('followUpLabel');
+  const followUpText = document.getElementById('followUpText');
+  
+  tbody.innerHTML = '';
+  bloodSelectedLabel.style.display = 'none';
+  followUpLabel.style.display = 'none';
+  
+  if(!prescriptions || prescriptions.length === 0){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
+    return;
+  }
+  
+  prescriptions.forEach(m=>{
+    const presLabel = m.prescription_id ? `#${m.prescription_id} (${m.created_at?m.created_at.split(' ')[0]:''})` : '';
+    const times = m.times_of_day || m.times || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(presLabel)}</td>
+      <td>${escapeHtml(m.symptoms||'')}</td>
+      <td>${escapeHtml(m.medicine_name||'')}</td>
+      <td>${escapeHtml(m.type||'')}</td>
+      <td>${escapeHtml(m.duration||'')}</td>
+      <td>${escapeHtml(times)}</td>
+      <td>${escapeHtml(m.before_after||'')}</td>
+      <td>${escapeHtml(m.notes||'')}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  // Show blood tests and follow-up from latest prescription
+  if(prescriptions.length > 0){
+    const latest = prescriptions[0];
+    
+    if(latest.recommended_blood_test){
+      const bloodTestsArray = latest.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
+      bloodSelectedText.innerHTML = '';
+      bloodTestsArray.forEach(test => {
+        const li = document.createElement('li');
+        li.textContent = test;
+        li.style.margin = '4px 0';
+        li.style.fontSize = '14px';
+        li.style.color = 'var(--text-dark)';
+        bloodSelectedText.appendChild(li);
+      });
+      bloodSelectedLabel.style.display = 'block';
+    }
+    
+    if(latest.follow_up_date){
+      followUpText.textContent = new Date(latest.follow_up_date).toLocaleDateString();
+      followUpLabel.style.display = 'block';
+    }
+  }
+}
+
 /* Render reports table */
 function renderReports(reports){
   const tbody = document.getElementById('reportsTable');
@@ -869,6 +966,7 @@ async function loadDetails(patient_id){
     patientInfoCard.style.display = 'none';
     quickInfo.textContent = 'Select a patient to view details';
     renderAppointments([], null);
+    renderPrescriptions([]);
     renderReports([]);
     return;
   }
@@ -910,6 +1008,9 @@ async function loadDetails(patient_id){
     
     // Render appointments
     renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
+    
+    // Render prescriptions
+    renderPrescriptions(j.prescriptions || []);
     
     // Render reports
     renderReports(j.reports || []);
@@ -956,6 +1057,19 @@ document.addEventListener('keydown', (e)=>{
 document.addEventListener('DOMContentLoaded', ()=>{
   loadPatients();
   document.getElementById('patientSelect').addEventListener('change',(e)=>loadDetails(e.target.value));
+  
+  // Check if patient_id is in URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const patientIdFromUrl = urlParams.get('patient_id');
+  
+  if(patientIdFromUrl){
+    // Wait for patients to load, then select the patient
+    setTimeout(()=>{
+      const selectEl = document.getElementById('patientSelect');
+      selectEl.value = patientIdFromUrl;
+      loadDetails(patientIdFromUrl);
+    }, 500);
+  }
 });
 </script>
 </body>
