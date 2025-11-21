@@ -16,7 +16,7 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at FROM users WHERE role='receptionalist' ORDER BY id DESC");
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at, is_disabled FROM users WHERE role='receptionalist' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'receptionists'=>$out]);
@@ -60,6 +60,57 @@ if($action === 'delete'){
     $stmt->bind_param('i', $id);
     $ok = $stmt->execute();
     send_json(['success'=>$ok]);
+}
+
+if($action === 'toggle_disable'){
+    $id = intval($_GET['id'] ?? 0);
+    if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
+    
+    // Get current disabled status
+    $stmt = $mysqli->prepare("SELECT is_disabled FROM users WHERE id=? AND role='receptionalist'");
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if($row = $result->fetch_assoc()){
+        $newStatus = $row['is_disabled'] == 1 ? 0 : 1;
+        
+        // Update user status
+        $updateStmt = $mysqli->prepare("UPDATE users SET is_disabled=? WHERE id=? AND role='receptionalist'");
+        $updateStmt->bind_param('ii', $newStatus, $id);
+        $ok = $updateStmt->execute();
+        $updateStmt->close();
+        
+        // If disabling user, destroy all their sessions
+        if($newStatus == 1 && $ok){
+            // Get all session IDs for this user
+            $sessionStmt = $mysqli->prepare("SELECT session_id FROM user_sessions WHERE user_id=?");
+            $sessionStmt->bind_param('i', $id);
+            $sessionStmt->execute();
+            $sessionResult = $sessionStmt->get_result();
+            
+            $sessionDir = __DIR__ . "/sessions";
+            while($sessionRow = $sessionResult->fetch_assoc()){
+                $sessId = $sessionRow['session_id'];
+                // Delete session file
+                $sessFile = $sessionDir . "/sess_" . $sessId;
+                if(file_exists($sessFile)){
+                    @unlink($sessFile);
+                }
+            }
+            $sessionStmt->close();
+            
+            // Remove all session records for this user
+            $deleteSessionStmt = $mysqli->prepare("DELETE FROM user_sessions WHERE user_id=?");
+            $deleteSessionStmt->bind_param('i', $id);
+            $deleteSessionStmt->execute();
+            $deleteSessionStmt->close();
+        }
+        
+        send_json(['success'=>$ok, 'is_disabled'=>$newStatus]);
+    }
+    $stmt->close();
+    send_json(['success'=>false,'message'=>'user not found']);
 }
 
 send_json(['success'=>false,'message'=>'invalid action']);

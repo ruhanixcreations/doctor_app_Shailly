@@ -198,6 +198,43 @@ body{
   background:#c82333;
 }
 
+.action-btn.disable{
+  background:#f59e0b;
+  color:#fff;
+}
+
+.action-btn.disable:hover{
+  background:#d97706;
+}
+
+.action-btn.enable{
+  background:#10b981;
+  color:#fff;
+}
+
+.action-btn.enable:hover{
+  background:#059669;
+}
+
+.badge{
+  display:inline-block;
+  padding:3px 8px;
+  border-radius:4px;
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.badge.disabled{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+.badge.active{
+  background:#d1fae5;
+  color:#059669;
+}
+
 .toast{
   position:fixed;
   right:20px;
@@ -411,7 +448,7 @@ body{
       <div id="status" class="small" style="margin-bottom:10px"></div>
 
       <table class="table" id="tbl" role="table" aria-label="Doctors table">
-        <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Created</th><th></th></tr></thead>
+        <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Status</th><th>Created</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -648,23 +685,51 @@ function renderTable(){
   const list = (doctorsMemory||[]).filter(r => matchesFilter(r, q));
   if(list.length === 0){
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="small" colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No doctors found</td>`;
+    tr.innerHTML = `<td class="small" colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No doctors found</td>`;
     tb.appendChild(tr);
     return;
   }
   list.forEach(r=>{
     const tr = document.createElement('tr');
+    const isDisabled = r.is_disabled == 1;
+    const statusBadge = isDisabled ? '<span class="badge disabled">Disabled</span>' : '<span class="badge active">Active</span>';
+    const toggleBtn = isDisabled 
+      ? `<button class="action-btn enable toggle-disable" data-id="${r.id}" data-disabled="1">Enable</button>`
+      : `<button class="action-btn disable toggle-disable" data-id="${r.id}" data-disabled="0">Disable</button>`;
+    
     tr.innerHTML =
       `<td data-label="Name"><div class="cell-value">${escapeHtml(r.name)}</div></td>
        <td data-label="Email"><div class="cell-value">${escapeHtml(r.email)}</div></td>
        <td data-label="Mobile"><div class="cell-value">${escapeHtml(r.mobile||'')}</div></td>
        <td data-label="Role"><div class="cell-value">${escapeHtml(r.role||'')}</div></td>
+       <td data-label="Status"><div class="cell-value">${statusBadge}</div></td>
        <td data-label="Created"><div class="cell-value">${escapeHtml(r.created_at||'')}</div></td>
        <td data-label="Actions">
          <button class="action-btn edit edit-doc" data-id="${r.id}" data-name="${escapeHtml(r.name)}" data-email="${escapeHtml(r.email)}" data-mobile="${escapeHtml(r.mobile||'')}">Edit</button>
+         ${toggleBtn}
          <button class="action-btn delete" data-id="${r.id}">Delete</button>
        </td>`;
     tb.appendChild(tr);
+  });
+
+  tb.querySelectorAll('.toggle-disable').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const id = e.target.dataset.id;
+      const isDisabled = e.target.dataset.disabled === '1';
+      const action = isDisabled ? 'enable' : 'disable';
+      
+      if(!confirm(`Are you sure you want to ${action} this doctor?${!isDisabled ? ' They will be logged out from all devices immediately.' : ''}`)) return;
+      
+      try{
+        const res = await fetch(apiList + '?action=toggle_disable&id=' + encodeURIComponent(id));
+        const jr = await res.json();
+        if(jr.success){ 
+          showToast(isDisabled ? 'Doctor enabled' : 'Doctor disabled and logged out from all devices'); 
+          fetchList(); 
+        }
+        else showToast('Operation failed');
+      }catch(err){ console.error(err); showToast('Operation failed'); }
+    });
   });
 
   tb.querySelectorAll('.delete').forEach(btn=>{
