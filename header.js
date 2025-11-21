@@ -25,7 +25,7 @@ const headerHTML = `
 
 <nav class="hamburger-menu" id="hamburgerMenu">
   <div class="menu-header">
-    <a href="../profile.html" class="menu-profile-link">
+    <a href="../profile/profile.html" class="menu-profile-link">
       <i class="fa-solid fa-user-circle"></i>
       <span>Profile</span>
     </a>
@@ -237,8 +237,8 @@ function setupUserHeader() {
     // ✅ Profile action
     if (profileMenuItem) {
       profileMenuItem.addEventListener("click", () => {
-        // Profile files are in root workspace directory, same as header files
-        window.location.href = '../profile.html';
+        // Profile files are in profile subdirectory
+        window.location.href = '../profile/profile.html';
       });
     }
 
