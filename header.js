@@ -25,7 +25,10 @@ const headerHTML = `
 
 <nav class="hamburger-menu" id="hamburgerMenu">
   <div class="menu-header">
-    <h2 class="menu-title">Navigation</h2>
+    <a href="../profile/profile.html" class="menu-profile-link">
+      <i class="fa-solid fa-user-circle"></i>
+      <span>Profile</span>
+    </a>
     <button class="menu-close-btn" id="menuCloseBtn" aria-label="Close menu">
       <i class="fa-solid fa-times"></i>
     </button>
@@ -197,34 +200,51 @@ function setupUserHeader() {
     navButtons.innerHTML = `
       <div class="profile-container">
         <div class="profile-icon" title="${userName}">${firstLetter}</div>
-        <div class="logout-menu" id="logoutMenu">Logout</div>
+        <div class="profile-dropdown-menu" id="profileDropdownMenu">
+          <div class="profile-menu-item" id="profileMenuItem">
+            <i class="fas fa-user"></i> Profile
+          </div>
+          <div class="profile-menu-item" id="logoutMenuItem">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </div>
+        </div>
       </div>
     `;
 
     console.log('Profile icon created with letter:', firstLetter);
 
     const profileIcon = document.querySelector(".profile-icon");
-    const logoutMenu = document.getElementById("logoutMenu");
+    const profileDropdownMenu = document.getElementById("profileDropdownMenu");
+    const profileMenuItem = document.getElementById("profileMenuItem");
+    const logoutMenuItem = document.getElementById("logoutMenuItem");
 
-    // Toggle logout menu on click
+    // Toggle profile dropdown menu on click
     if (profileIcon) {
       profileIcon.addEventListener("click", (e) => {
         e.stopPropagation();
-        logoutMenu.classList.toggle("show");
-        console.log('Logout menu toggled');
+        profileDropdownMenu.classList.toggle("show");
+        console.log('Profile dropdown menu toggled');
       });
     }
 
     // Hide menu if clicked outside
     document.addEventListener("click", () => {
-      if (logoutMenu) {
-        logoutMenu.classList.remove("show");
+      if (profileDropdownMenu) {
+        profileDropdownMenu.classList.remove("show");
       }
     });
 
+    // ✅ Profile action
+    if (profileMenuItem) {
+      profileMenuItem.addEventListener("click", () => {
+        // Profile files are in profile subdirectory
+        window.location.href = '../profile/profile.html';
+      });
+    }
+
     // ✅ Logout action
-    if (logoutMenu) {
-      logoutMenu.addEventListener("click", () => {
+    if (logoutMenuItem) {
+      logoutMenuItem.addEventListener("click", () => {
         handleLogout();
       });
     }

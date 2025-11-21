@@ -702,13 +702,12 @@ tbody tr:last-child td{
                 <th>Patient Name</th>
                 <th>Mobile</th>
                 <th>View Prescription</th>
-                <th>View Blood Report</th>
-                <th>View Previous Report</th>
+                <th>Blood Report</th>
               </tr>
             </thead>
             <tbody id="prescriptionTable">
               <tr>
-                <td colspan="7" class="empty-state">No prescriptions found</td>
+                <td colspan="6" class="empty-state">No prescriptions found</td>
               </tr>
             </tbody>
           </table>
@@ -931,7 +930,7 @@ function renderPrescriptions(prescriptions, patientData){
   tbody.innerHTML = '';
   
   if(!prescriptions || prescriptions.length === 0){
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
     return;
   }
   
@@ -962,18 +961,15 @@ function renderPrescriptions(prescriptions, patientData){
         <i class="fas fa-upload"></i> Upload Report
       </button>`;
     } else {
-      // Doctor: Show View button
-      viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
-        <i class="fas fa-vial"></i> View Report
-      </button>`;
+      // Doctor: Show View button if blood report exists
+      if(cachedBloodReports.length > 0){
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
+          <i class="fas fa-vial"></i> View
+        </button>`;
+      } else {
+        viewBloodReportBtn = '<span style="color:var(--text-muted);font-size:12px">No report</span>';
+      }
     }
-    
-    // Previous report button (uploaded from add patient page)
-    const viewPreviousReportBtn = cachedReports.length > 0 
-      ? `<button type="button" class="btn btn-view" onclick="openPreviousReport('${patientId}')">
-          <i class="fas fa-file-pdf"></i> Open PDF
-        </button>`
-      : '<span style="color:var(--text-muted);font-size:12px">No file</span>';
     
     tr.innerHTML = `
       <td>${escapeHtml(presDate)}</td>
@@ -982,7 +978,6 @@ function renderPrescriptions(prescriptions, patientData){
       <td>${escapeHtml(mobile)}</td>
       <td>${viewPrescriptionBtn}</td>
       <td>${viewBloodReportBtn}</td>
-      <td>${viewPreviousReportBtn}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -997,16 +992,18 @@ function openPrescription(prescriptionId, patientId){
 }
 
 /* Open blood report */
-let cachedReports = [];
+let cachedBloodReports = [];
+let cachedUploadedReports = [];
+
 function openBloodReport(patientId){
-  // Find the latest blood report for this patient
-  if(cachedReports.length === 0){
+  // Find the latest blood report for this patient from patient_reports table
+  if(cachedBloodReports.length === 0){
     alert('No blood reports uploaded for this patient');
     return;
   }
   
-  // Open the most recent report
-  const latestReport = cachedReports[0];
+  // Open the most recent blood report
+  const latestReport = cachedBloodReports[0];
   if(latestReport && latestReport.file_path){
     openPdfModal(latestReport.file_path, latestReport.file_name || 'Blood Report');
   } else {
@@ -1025,39 +1022,8 @@ function uploadBloodReport(patientId, patientName, prescriptionId){
   window.location.href = url;
 }
 
-/* Open previous report (uploaded from add patient page) */
-function openPreviousReport(patientId){
-  console.log('Opening previous report for patient:', patientId);
-  console.log('Cached reports:', cachedReports);
-  
-  if(cachedReports.length === 0){
-    alert('No previous reports uploaded for this patient');
-    return;
-  }
-  
-  // Find PDF files in the reports
-  const pdfReport = cachedReports.find(r => {
-    const path = r.file_path || '';
-    return path.toLowerCase().endsWith('.pdf');
-  });
-  
-  console.log('Found PDF report:', pdfReport);
-  
-  if(pdfReport && pdfReport.file_path){
-    // Open PDF in modal
-    console.log('Opening PDF modal with path:', pdfReport.file_path);
-    openPdfModal(pdfReport.file_path, pdfReport.file_name || 'Previous Report');
-  } else if(cachedReports.length > 0){
-    // If no PDF, open first available report
-    const firstReport = cachedReports[0];
-    console.log('No PDF found, opening first report:', firstReport);
-    openPdfModal(firstReport.file_path, firstReport.file_name || 'Previous Report');
-  } else {
-    alert('No report file found');
-  }
-}
 
-/* Render reports table */
+/* Render reports table (only uploaded reports from add_new_patient, not blood reports) */
 function renderReports(reports, patientData){
   const tbody = document.getElementById('reportsTable');
   tbody.innerHTML = '';
@@ -1162,16 +1128,17 @@ async function loadDetails(patient_id){
     // Render appointments
     renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
     
-    // Cache reports for blood report viewing
-    cachedReports = j.reports || [];
-    console.log('Loaded reports from backend:', cachedReports);
-    console.log('Total reports count:', cachedReports.length);
+    // Cache blood reports and uploaded reports separately
+    cachedBloodReports = j.blood_reports || [];
+    cachedUploadedReports = j.uploaded_reports || [];
+    console.log('Loaded blood reports from backend:', cachedBloodReports);
+    console.log('Loaded uploaded reports from backend:', cachedUploadedReports);
     
     // Render prescriptions with patient data
     renderPrescriptions(j.prescriptions || [], p);
     
-    // Render reports with patient data
-    renderReports(j.reports || [], p);
+    // Render reports with patient data (only uploaded reports, not blood reports)
+    renderReports(j.uploaded_reports || [], p);
     
   }catch(e){
     console.error(e);

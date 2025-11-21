@@ -592,7 +592,7 @@ if(!checkAuth()){
         cameraActionButtons.style.display = 'flex';
         takePhotoBtn.disabled = false;
         stopCameraBtn.disabled = false;
-        openCameraBtn.innerText = 'Camera Open';
+        openCameraBtn.style.display = 'none';
       } catch (err) {
         alert('Could not open camera: ' + (err && err.message ? err.message : err));
       }
@@ -623,7 +623,7 @@ if(!checkAuth()){
       cameraActionButtons.style.display = 'none';
       takePhotoBtn.disabled = true;
       stopCameraBtn.disabled = true;
-      openCameraBtn.innerText = 'Open Camera';
+      openCameraBtn.style.display = 'block';
     }
   });
 
@@ -653,8 +653,11 @@ if(!checkAuth()){
 
       filesArray = filesArray.filter(f => !f.isPdf);
       addFile(pdfFile, null);
+      
+      // Create a URL for the PDF blob and display a link to view it
+      const pdfUrl = URL.createObjectURL(blob);
       pdfNameEl.style.display = 'block';
-      pdfNameEl.textContent = `Created PDF: ${pdfFile.name} (${images.length} page(s))`;
+      pdfNameEl.innerHTML = `Created PDF: ${pdfFile.name} (${images.length} page(s)) - <a href="${pdfUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline;">View PDF</a>`;
       statusEl.textContent = 'PDF generated.';
       updateControls();
     } catch (err) {
