@@ -25,7 +25,7 @@ const headerHTML = `
 
 <nav class="hamburger-menu" id="hamburgerMenu">
   <div class="menu-header">
-    <h2 class="menu-title">Navigation</h2>
+    <h2 class="menu-title">Menu</h2>
     <button class="menu-close-btn" id="menuCloseBtn" aria-label="Close menu">
       <i class="fa-solid fa-times"></i>
     </button>
