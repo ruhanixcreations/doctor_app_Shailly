@@ -510,6 +510,37 @@ body{
   </div>
 
 <script>
+/* Check Authentication */
+async function checkAuth(){
+  try{
+    const res = await fetch('check_session.php', { 
+      method: 'GET',
+      credentials: 'include'
+    });
+    const data = await res.json();
+    if(!data.success){
+      // User not logged in, redirect to signin
+      window.location.href = 'signin.html';
+      return false;
+    }
+    return true;
+  }catch(err){
+    console.error('Auth check failed:', err);
+    window.location.href = 'signin.html';
+    return false;
+  }
+}
+
+// Run auth check immediately
+(async function(){
+  const isAuthorized = await checkAuth();
+  if(!isAuthorized) return; // Stop execution if not authorized
+  
+  // Continue with page initialization only if authorized
+  initializePage();
+})();
+
+function initializePage(){
 const signupEndpoint = '../signup/signup.php';
 const apiList = 'receptionalist_list.php';
 
@@ -1044,6 +1075,7 @@ updateReceptionistBtn.addEventListener('click', async ()=>{
 });
 
 fetchList();
+} // End of initializePage function
 </script>
 </body>
 </html>
