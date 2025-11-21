@@ -25,7 +25,10 @@ const headerHTML = `
 
 <nav class="hamburger-menu" id="hamburgerMenu">
   <div class="menu-header">
-    <h2 class="menu-title">Menu</h2>
+    <a href="../profile.html" class="menu-profile-link">
+      <i class="fa-solid fa-user-circle"></i>
+      <span>Profile</span>
+    </a>
     <button class="menu-close-btn" id="menuCloseBtn" aria-label="Close menu">
       <i class="fa-solid fa-times"></i>
     </button>

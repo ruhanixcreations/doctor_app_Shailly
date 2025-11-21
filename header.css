@@ -261,14 +261,32 @@
   background: linear-gradient(135deg, rgba(0, 169, 165, 0.08) 0%, rgba(26, 117, 187, 0.08) 100%);
 }
 
-.menu-title {
+.menu-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 20px;
   font-weight: 700;
   background: linear-gradient(135deg, #00A9A5 0%, #1a75bb 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin: 0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.menu-profile-link i {
+  font-size: 24px;
+  background: linear-gradient(135deg, #00A9A5 0%, #1a75bb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.menu-profile-link:hover {
+  opacity: 0.8;
+  transform: translateX(3px);
 }
 
 .menu-close-btn {
