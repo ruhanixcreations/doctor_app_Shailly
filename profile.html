@@ -408,6 +408,19 @@ body{
   </div>
 </div>
 
+<div id="popupOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;justify-content:center;align-items:center;">
+  <div class="popup-box" style="background:var(--bg-white);padding:32px;border-radius:12px;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <div style="width:64px;height:64px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));display:flex;align-items:center;justify-content:center;">
+      <i class="fas fa-check" style="font-size:32px;color:white;"></i>
+    </div>
+    <h3 style="font-size:20px;font-weight:700;color:var(--text-dark);margin-bottom:12px;">Success!</h3>
+    <p id="popupMessage" style="font-size:14px;color:var(--text-muted);margin-bottom:24px;"></p>
+    <button onclick="closePopup()" style="width:100%;height:44px;padding:10px 20px;border-radius:6px;border:none;background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));color:#fff;font-weight:600;cursor:pointer;font-size:14px;transition:all 0.2s ease;">
+      <i class="fas fa-check-circle"></i> OK
+    </button>
+  </div>
+</div>
+
 <script>
 /* Check Authentication */
 function checkAuth(){
@@ -444,6 +457,17 @@ function showAlert(message, type = 'info'){
   setTimeout(() => {
     alertContainer.innerHTML = '';
   }, 5000);
+}
+
+/* Show Popup */
+function showPopup(message){
+  document.getElementById('popupMessage').textContent = message;
+  document.getElementById('popupOverlay').style.display = 'flex';
+}
+
+/* Close Popup */
+function closePopup(){
+  document.getElementById('popupOverlay').style.display = 'none';
 }
 
 /* Load Profile Data */
@@ -568,7 +592,8 @@ async function saveProfile(e){
     originalFormData = { name, mobile, email };
     isOtpVerified = true;
     
-    showAlert('Profile updated successfully!', 'success');
+    // Show success popup
+    showPopup('Profile updated successfully!');
     
     // Update header profile
     if(window.updateHeaderProfile){
