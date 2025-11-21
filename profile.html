@@ -559,10 +559,9 @@ async function loadProfile(){
     // Email is already verified since it's existing user data
     isOtpVerified = true;
     
-    // Set initial button states
+    // Set initial button states - show "Send OTP" disabled
     document.getElementById('sendOtpBtn').disabled = true;
-    document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-check-double"></i> Verified';
-    document.getElementById('emailVerifySuccess').style.display = 'flex';
+    document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
     
     // Setup change listeners
     setupChangeListeners();
@@ -714,19 +713,17 @@ function setupChangeListeners(){
       isOtpVerified = false;
       sendOtpBtn.disabled = false;
       emailVerifySuccess.style.display = 'none';
-      // Reset button text if it was previously verified
-      if(sendOtpBtn.innerHTML.includes('Verified')){
-        sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
-      }
+      // Reset button text
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
     }else{
       // Email is same as original or empty, disable OTP button
       sendOtpBtn.disabled = true;
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+      emailVerifySuccess.style.display = 'none';
+      
       if(currentEmail === originalFormData.email){
+        // Original email is already verified
         isOtpVerified = true;
-        emailVerifySuccess.style.display = 'flex';
-        sendOtpBtn.innerHTML = '<i class="fas fa-check-double"></i> Verified';
-      }else{
-        emailVerifySuccess.style.display = 'none';
       }
     }
     
@@ -854,6 +851,7 @@ async function verifyOtp(){
     isOtpVerified = true;
     otpSection.style.display = 'none';
     emailVerifySuccess.style.display = 'flex';
+    emailVerifySuccess.innerHTML = '<i class="fas fa-check-circle"></i> Email verified successfully';
     document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-check-double"></i> Verified';
     document.getElementById('sendOtpBtn').disabled = true;
     document.getElementById('otp').value = '';
