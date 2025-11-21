@@ -168,17 +168,31 @@ body{
 }
 
 .action-btn{
-  background:var(--danger);
-  color:#fff;
   border:none;
   padding:6px 12px;
   border-radius:6px;
   cursor:pointer;
   font-size:13px;
   font-weight:600;
+  margin-right:8px;
 }
 
-.action-btn:hover{
+.action-btn.edit{
+  background:var(--primary-teal);
+  color:#fff;
+}
+
+.action-btn.edit:hover{
+  background:var(--primary-blue);
+}
+
+.action-btn.delete{
+  background:var(--danger);
+  color:#fff;
+  margin-right:0;
+}
+
+.action-btn.delete:hover{
   background:#c82333;
 }
 
@@ -401,7 +415,7 @@ body{
 
   <div id="toast" class="toast" role="status" aria-hidden="true"></div>
 
-  <!-- Modal -->
+  <!-- Add Modal -->
   <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
     <div class="modal" id="addReceptionistModal" role="document" aria-labelledby="modalTitle">
       <div class="modal-head">
@@ -445,6 +459,51 @@ body{
             <div id="createStatus" class="small" style="margin-right:auto"></div>
             <button id="createBtn" class="btn" disabled>Create Receptionist</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+    <div class="modal" id="editReceptionistModal" role="document" aria-labelledby="editModalTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="editModalTitle">Edit Receptionist</div>
+        <button id="editModalClose" class="btn secondary" aria-label="Close dialog">Close</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="note">Edit details. If you change the email, you must verify it with OTP before saving.</div>
+
+        <div class="form-row">
+          <input id="editRName" class="input" placeholder="Full name (letters only)" aria-label="Full name">
+        </div>
+
+        <div class="form-row">
+          <input id="editRMobile" class="input" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
+          <input id="editREmail" class="input" placeholder="Email address" type="email" aria-label="Email">
+        </div>
+
+        <div id="editOtpSection" class="hidden">
+          <div class="note" style="margin-bottom:10px">Email has changed. Please verify with OTP.</div>
+          <div class="form-row" style="align-items:center;gap:8px">
+            <button id="editSendOtpBtn" class="btn">Send OTP</button>
+            <div id="editSendStatus" class="small" style="min-width:140px"></div>
+          </div>
+
+          <div id="editOtpInputSection" class="hidden">
+            <div class="form-row">
+              <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
+              <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
+              <button id="editResendOtpBtn" class="btn ghost">Resend</button>
+            </div>
+            <div id="editOtpNote" class="note"></div>
+          </div>
+        </div>
+
+        <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:10px">
+          <div id="editUpdateStatus" class="small" style="margin-right:auto"></div>
+          <button id="updateReceptionistBtn" class="btn" disabled>Update Receptionist</button>
         </div>
       </div>
     </div>
@@ -583,11 +642,14 @@ function renderTable(){
        <td data-label="Mobile"><div class="cell-value">${escapeHtml(r.mobile||'')}</div></td>
        <td data-label="Role"><div class="cell-value">${escapeHtml(r.role||'')}</div></td>
        <td data-label="Created"><div class="cell-value">${escapeHtml(r.created_at||'')}</div></td>
-       <td data-label="Actions"><button class="action-btn" data-id="${r.id}">Delete</button></td>`;
+       <td data-label="Actions">
+         <button class="action-btn edit edit-rec" data-id="${r.id}" data-name="${escapeHtml(r.name)}" data-email="${escapeHtml(r.email)}" data-mobile="${escapeHtml(r.mobile||'')}">Edit</button>
+         <button class="action-btn delete" data-id="${r.id}">Delete</button>
+       </td>`;
     tb.appendChild(tr);
   });
 
-  tb.querySelectorAll('.action-btn').forEach(btn=>{
+  tb.querySelectorAll('.delete').forEach(btn=>{
     btn.addEventListener('click', async (e)=>{
       if(!confirm('Delete receptionist?')) return;
       const id = e.target.dataset.id;
@@ -597,6 +659,16 @@ function renderTable(){
         if(jr.success){ showToast('Deleted'); fetchList(); }
         else showToast('Delete failed');
       }catch(err){ console.error(err); showToast('Delete failed'); }
+    });
+  });
+
+  tb.querySelectorAll('.edit-rec').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = e.target.dataset.id;
+      const name = e.target.dataset.name;
+      const email = e.target.dataset.email;
+      const mobile = e.target.dataset.mobile;
+      openEditModal(id, name, email, mobile);
     });
   });
 }
@@ -752,6 +824,224 @@ createBtn.addEventListener('click', async ()=>{
 /* utils */
 function validateEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function validateMobile(m){ return /^\d{10}$/.test(m); }
+
+/* Edit Modal Logic */
+let editingReceptionistId = null;
+let editOriginalEmail = '';
+let editOtpVerified = false;
+let editResendTimer = null;
+
+const editModalOverlay = document.getElementById('editModalOverlay');
+const editModalClose = document.getElementById('editModalClose');
+const editRName = document.getElementById('editRName');
+const editRMobile = document.getElementById('editRMobile');
+const editREmail = document.getElementById('editREmail');
+const editOtpSection = document.getElementById('editOtpSection');
+const editSendOtpBtn = document.getElementById('editSendOtpBtn');
+const editSendStatus = document.getElementById('editSendStatus');
+const editOtpInputSection = document.getElementById('editOtpInputSection');
+const editOtpInput = document.getElementById('editOtpInput');
+const editVerifyOtpBtn = document.getElementById('editVerifyOtpBtn');
+const editResendOtpBtn = document.getElementById('editResendOtpBtn');
+const editOtpNote = document.getElementById('editOtpNote');
+const editUpdateStatus = document.getElementById('editUpdateStatus');
+const updateReceptionistBtn = document.getElementById('updateReceptionistBtn');
+
+function openEditModal(id, name, email, mobile){
+  editingReceptionistId = id;
+  editOriginalEmail = email.toLowerCase();
+  editOtpVerified = false;
+  editModalOverlay.style.display = 'flex';
+  editModalOverlay.setAttribute('aria-hidden','false');
+  editRName.value = name;
+  editREmail.value = email;
+  editRMobile.value = mobile;
+  editOtpSection.classList.add('hidden');
+  editOtpInputSection.classList.add('hidden');
+  editOtpInput.value = '';
+  editSendStatus.textContent = '';
+  editOtpNote.textContent = '';
+  editUpdateStatus.textContent = '';
+  checkEditUpdateValidity();
+  setTimeout(()=>editRName.focus(),80);
+  document.addEventListener('keydown', onEditKeyDown);
+}
+
+function closeEditModal(){
+  editModalOverlay.style.display = 'none';
+  editModalOverlay.setAttribute('aria-hidden','true');
+  editingReceptionistId = null;
+  editOriginalEmail = '';
+  editOtpVerified = false;
+  if(editResendTimer){ clearInterval(editResendTimer); editResendTimer=null; }
+  document.removeEventListener('keydown', onEditKeyDown);
+}
+
+editModalClose.addEventListener('click', closeEditModal);
+editModalOverlay.addEventListener('click', (e)=>{ if(e.target === editModalOverlay) closeEditModal(); });
+function onEditKeyDown(e){ if(e.key === 'Escape') closeEditModal(); }
+
+editRName.addEventListener('input', (e) => {
+  const cleaned = e.target.value.replace(/[^A-Za-z\s]/g, '');
+  if (e.target.value !== cleaned) e.target.value = cleaned;
+  checkEditUpdateValidity();
+});
+
+editRMobile.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length > 10) v = v.slice(0,10);
+  e.target.value = v;
+  checkEditUpdateValidity();
+});
+
+editREmail.addEventListener('input', () => {
+  const newEmail = (editREmail.value||'').trim().toLowerCase();
+  const emailChanged = newEmail !== editOriginalEmail;
+  
+  if(emailChanged && validateEmail(newEmail)){
+    editOtpSection.classList.remove('hidden');
+    editOtpVerified = false;
+    editOtpInputSection.classList.add('hidden');
+    editSendStatus.textContent = '';
+  } else if(!emailChanged){
+    editOtpSection.classList.add('hidden');
+    editOtpVerified = false;
+  } else {
+    editOtpSection.classList.add('hidden');
+  }
+  checkEditUpdateValidity();
+});
+
+editSendOtpBtn.addEventListener('click', async ()=>{
+  const email = (editREmail.value||'').trim().toLowerCase();
+  if(!validateEmail(email)){ showToast('Enter a valid email'); return; }
+  editSendOtpBtn.disabled = true;
+  editSendStatus.textContent = 'Sending OTP...';
+  try{
+    const body = new URLSearchParams({ action:'send_otp', email: email, page: 'register' });
+    const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
+    const j = await res.json();
+    if(j.success){
+      editOtpInputSection.classList.remove('hidden');
+      editSendStatus.textContent = 'OTP sent to email.';
+      startEditResendCountdown();
+    } else {
+      editSendStatus.textContent = j.message || 'Failed to send OTP';
+      editSendOtpBtn.disabled = false;
+    }
+  }catch(err){
+    console.error(err);
+    editSendStatus.textContent = 'Network error';
+    editSendOtpBtn.disabled = false;
+  }
+});
+
+editOtpInput.addEventListener('input', ()=> {
+  editVerifyOtpBtn.disabled = !(editOtpInput.value||'').trim().length > 0;
+});
+
+editVerifyOtpBtn.addEventListener('click', async ()=>{
+  const email = (editREmail.value||'').trim().toLowerCase();
+  const otp = (editOtpInput.value||'').trim();
+  if(!otp){ showToast('Enter OTP'); return; }
+  editVerifyOtpBtn.disabled = true;
+  editOtpNote.textContent = 'Verifying...';
+  try{
+    const body = new URLSearchParams({ action:'verify_otp', email: email, otp: otp });
+    const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
+    const j = await res.json();
+    if(j.success){
+      editOtpVerified = true;
+      editOtpSection.classList.add('hidden');
+      editOtpNote.textContent = 'Email verified!';
+      showToast('Email verified');
+      checkEditUpdateValidity();
+    } else {
+      editOtpNote.textContent = j.message || 'Invalid OTP';
+      editVerifyOtpBtn.disabled = false;
+    }
+  }catch(err){
+    console.error(err);
+    editOtpNote.textContent = 'Network error';
+    editVerifyOtpBtn.disabled = false;
+  }
+});
+
+editResendOtpBtn.addEventListener('click', ()=>{
+  if(editResendTimer){ showToast('Wait before resending'); return; }
+  editSendOtpBtn.click();
+});
+
+function startEditResendCountdown(){
+  let sec = 60;
+  editResendTimer = setInterval(()=>{
+    editOtpNote.textContent = `You can resend in ${sec}s`;
+    sec--;
+    if(sec < 0){
+      clearInterval(editResendTimer);
+      editResendTimer = null;
+      editOtpNote.textContent = 'You can resend OTP now';
+      editSendOtpBtn.disabled = false;
+    }
+  }, 1000);
+}
+
+function checkEditUpdateValidity(){
+  const name = (editRName.value||'').trim();
+  const mobileVal = (editRMobile.value||'').trim();
+  const email = (editREmail.value||'').trim().toLowerCase();
+  const nameValid = /^[A-Za-z\s]+$/.test(name);
+  const emailChanged = email !== editOriginalEmail;
+  
+  const valid = name && nameValid && validateMobile(mobileVal) && validateEmail(email) && (!emailChanged || editOtpVerified);
+  updateReceptionistBtn.disabled = !valid;
+}
+
+updateReceptionistBtn.addEventListener('click', async ()=>{
+  const name = (editRName.value||'').trim();
+  const email = (editREmail.value||'').trim().toLowerCase();
+  const mobileVal = (editRMobile.value||'').trim();
+  const emailChanged = email !== editOriginalEmail;
+
+  if(!name) return showToast('Enter name');
+  if(!/^[A-Za-z\s]+$/.test(name)) return showToast('Name must contain letters only');
+  if(!validateMobile(mobileVal)) return showToast('Enter valid mobile');
+  if(!validateEmail(email)) return showToast('Enter valid email');
+  if(emailChanged && !editOtpVerified) return showToast('Email changed - verify OTP first');
+
+  updateReceptionistBtn.disabled = true;
+  editUpdateStatus.textContent = 'Updating...';
+  try{
+    const body = JSON.stringify({
+      id: editingReceptionistId,
+      name: name,
+      email: email,
+      mobile: mobileVal,
+      emailChanged: emailChanged,
+      otpVerified: editOtpVerified
+    });
+    const res = await fetch(apiList + '?action=update', { 
+      method:'POST', 
+      headers:{'Content-Type':'application/json'},
+      body: body
+    });
+    const j = await res.json();
+    if(j.success){
+      showToast('Receptionist updated');
+      closeEditModal();
+      fetchList();
+    } else {
+      editUpdateStatus.textContent = j.message || 'Update failed';
+      updateReceptionistBtn.disabled = false;
+    }
+  }catch(err){
+    console.error(err);
+    editUpdateStatus.textContent = 'Network error';
+    updateReceptionistBtn.disabled = false;
+  } finally {
+    setTimeout(()=>{ editUpdateStatus.textContent=''; }, 2000);
+  }
+});
 
 fetchList();
 </script>

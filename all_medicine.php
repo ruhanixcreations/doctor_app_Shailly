@@ -23,6 +23,18 @@ if($action === 'add'){
     if(!$stmt->execute()){ echo json_encode(['success'=>false,'message'=>$stmt->error]); exit;}
     echo json_encode(['success'=>true,'id'=>$mysqli->insert_id]); exit;
 }
+if($action === 'update'){
+    $raw = file_get_contents('php://input'); $data = json_decode($raw,true);
+    $id = intval($data['id'] ?? 0); if(!$id){ echo json_encode(['success'=>false,'message'=>'invalid id']); exit; }
+    $name = trim($data['name'] ?? ''); if(!$name){ echo json_encode(['success'=>false,'message'=>'name required']); exit; }
+    $company = trim($data['company'] ?? '');
+    $form = trim($data['form'] ?? '');
+    $strength = trim($data['strength'] ?? '');
+    $stmt = $mysqli->prepare("UPDATE medicines SET name=?, company=?, form=?, strength=? WHERE id=?");
+    $stmt->bind_param('ssssi',$name,$company,$form,$strength,$id);
+    if(!$stmt->execute()){ echo json_encode(['success'=>false,'message'=>$stmt->error]); exit;}
+    echo json_encode(['success'=>true]); exit;
+}
 if($action === 'delete'){
     $id = intval($_GET['id'] ?? 0);
     if(!$id){ echo json_encode(['success'=>false]); exit; }

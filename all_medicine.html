@@ -193,6 +193,17 @@
       font-size:13px;
     }
 
+    .action-btn.edit{
+      color:var(--primary-teal);
+      background:transparent;
+      border:1px solid rgba(0,169,165,0.2);
+      margin-right:8px;
+    }
+
+    .action-btn.edit:hover{
+      background:rgba(0,169,165,0.05);
+    }
+
     .action-btn.delete{
       color:var(--danger);
       background:transparent;
@@ -425,7 +436,7 @@
   </div>
 </main>
 
-<!-- Modal -->
+<!-- Add Modal -->
 <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
   <div class="modal" id="addMedModal" role="document" aria-labelledby="modalTitle">
     <div class="modal-head">
@@ -462,6 +473,47 @@
     <div class="modal-foot">
       <button id="modalCancel" class="btn ghost">Cancel</button>
       <button id="modalSave" class="btn" disabled>Save Medicine</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+  <div class="modal" id="editMedModal" role="document" aria-labelledby="editModalTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="editModalTitle">Edit Medicine</div>
+      <button id="closeEditModal" class="btn ghost" aria-label="Close dialog">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <input id="editModalName" placeholder="Medicine name" aria-label="Medicine name">
+      </div>
+
+      <div class="form-row">
+        <input id="editModalCompany" placeholder="Company" aria-label="Company">
+        <input id="editModalStrength" placeholder="Strength (e.g. 500mg)" aria-label="Strength">
+      </div>
+
+      <div class="form-row">
+        <select id="editModalForm" aria-label="Form (Tablet, Syrup, Injection)">
+          <option value="">Form (choose)</option>
+          <option value="Tablet">Tablet</option>
+          <option value="Syrup">Syrup</option>
+          <option value="Injection">Injection</option>
+          <option value="Capsule">Capsule</option>
+          <option value="Cream">Cream</option>
+          <option value="Drops">Drops</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="note-small">All fields are required to enable <strong>Update Medicine</strong>.</div>
+    </div>
+
+    <div class="modal-foot">
+      <button id="editModalCancel" class="btn ghost">Cancel</button>
+      <button id="editModalUpdate" class="btn" disabled>Update Medicine</button>
     </div>
   </div>
 </div>
@@ -572,7 +624,11 @@
       const compTd = document.createElement('td'); compTd.setAttribute('data-label','Company'); compTd.innerHTML = `<div>${escapeHtml(m.company)}</div>`;
       const formTd = document.createElement('td'); formTd.setAttribute('data-label','Form'); formTd.innerHTML = `<div>${escapeHtml(m.form)}</div>`;
       const strengthTd = document.createElement('td'); strengthTd.setAttribute('data-label','Strength'); strengthTd.innerHTML = `<div>${escapeHtml(m.strength)}</div>`;
-      const actionsTd = document.createElement('td'); actionsTd.setAttribute('data-label','Actions'); actionsTd.innerHTML = `<div style="display:flex;justify-content:flex-end;gap:8px"><button data-id="${m.id}" class="action-btn delete">Delete</button></div>`;
+      const actionsTd = document.createElement('td'); actionsTd.setAttribute('data-label','Actions'); 
+      actionsTd.innerHTML = `<div style="display:flex;justify-content:flex-end;gap:8px">
+        <button data-id="${m.id}" data-name="${escapeHtml(m.name)}" data-company="${escapeHtml(m.company)}" data-form="${escapeHtml(m.form)}" data-strength="${escapeHtml(m.strength)}" class="action-btn edit edit-med">Edit</button>
+        <button data-id="${m.id}" class="action-btn delete">Delete</button>
+      </div>`;
       tr.appendChild(nameTd); tr.appendChild(compTd); tr.appendChild(formTd); tr.appendChild(strengthTd); tr.appendChild(actionsTd);
       tb.appendChild(tr);
     });
@@ -593,6 +649,16 @@
       } catch(err){
         alert('Delete failed');
       }
+    }));
+
+    // edit handlers
+    tb.querySelectorAll('.edit-med').forEach(b=>b.addEventListener('click', (e)=>{
+      const id = e.target.dataset.id;
+      const name = e.target.dataset.name;
+      const company = e.target.dataset.company;
+      const form = e.target.dataset.form;
+      const strength = e.target.dataset.strength;
+      openEditModal(id, name, company, form, strength);
     }));
   }
 
@@ -631,6 +697,93 @@
   });
 
   function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Edit Modal handling
+  let editingMedId = null;
+  const editModalOverlay = document.getElementById('editModalOverlay');
+  const closeEditModal = document.getElementById('closeEditModal');
+  const editModalCancel = document.getElementById('editModalCancel');
+  const editModalUpdate = document.getElementById('editModalUpdate');
+  const editModalName = document.getElementById('editModalName');
+  const editModalCompany = document.getElementById('editModalCompany');
+  const editModalForm = document.getElementById('editModalForm');
+  const editModalStrength = document.getElementById('editModalStrength');
+
+  function openEditModal(id, name, company, form, strength){
+    editingMedId = id;
+    editModalOverlay.style.display = 'flex';
+    editModalOverlay.setAttribute('aria-hidden','false');
+    editModalName.value = name;
+    editModalCompany.value = company;
+    editModalForm.value = form;
+    editModalStrength.value = strength;
+    checkEditModalValidity();
+    setTimeout(()=>editModalName.focus(), 80);
+    document.addEventListener('keydown', handleEditKeyDown);
+  }
+
+  function closeEditModalWindow(){
+    editModalOverlay.style.display = 'none';
+    editModalOverlay.setAttribute('aria-hidden','true');
+    editingMedId = null;
+    document.removeEventListener('keydown', handleEditKeyDown);
+  }
+
+  closeEditModal.addEventListener('click', closeEditModalWindow);
+  editModalCancel.addEventListener('click', closeEditModalWindow);
+  editModalOverlay.addEventListener('click', (e) => {
+    if(e.target === editModalOverlay) closeEditModalWindow();
+  });
+
+  function handleEditKeyDown(e){
+    if(e.key === 'Escape') closeEditModalWindow();
+  }
+
+  function checkEditModalValidity(){
+    const name = editModalName.value.trim();
+    const company = editModalCompany.value.trim();
+    const form = editModalForm.value.trim();
+    const strength = editModalStrength.value.trim();
+    editModalUpdate.disabled = !(name && company && form && strength);
+  }
+  [editModalName, editModalCompany, editModalForm, editModalStrength].forEach(el=>{
+    el.addEventListener('input', checkEditModalValidity);
+    el.addEventListener('change', checkEditModalValidity);
+  });
+
+  editModalUpdate.addEventListener('click', async ()=>{
+    const name = editModalName.value.trim();
+    const company = editModalCompany.value.trim();
+    const form = editModalForm.value.trim();
+    const strength = editModalStrength.value.trim();
+    if(!(name && company && form && strength)) return;
+    if(!editingMedId){ alert('Invalid medicine ID'); return; }
+
+    editModalUpdate.disabled = true;
+    editModalUpdate.textContent = 'Updating...';
+
+    try {
+      const res = await fetch('all_medicine.php?action=update', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ id: editingMedId, name, company, form, strength })
+      });
+      const j = await res.json();
+      if(j.success){
+        setStatus('Updated');
+        closeEditModalWindow();
+        await load();
+      } else {
+        alert('Update failed: ' + (j.message || 'unknown'));
+      }
+    } catch(err){
+      console.error(err);
+      alert('Network error while updating medicine.');
+    } finally {
+      editModalUpdate.textContent = 'Update Medicine';
+      checkEditModalValidity();
+    }
+  });
 
   // initial load
   load();

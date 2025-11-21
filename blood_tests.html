@@ -139,6 +139,20 @@ body{
   color:var(--text-dark);
 }
 
+.btn.edit{
+  background:var(--primary-teal);
+  color:#fff;
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:6px;
+  font-weight:600;
+  margin-right:8px;
+}
+
+.btn.edit:hover{
+  background:var(--primary-blue);
+}
+
 .btn.delete{
   background:var(--danger);
   color:#fff;
@@ -393,7 +407,7 @@ body{
   </div>
 </main>
 
-<!-- Modal -->
+<!-- Add Modal -->
 <div id="modalOverlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
   <div class="modal" role="document" aria-labelledby="modalTitle">
     <div class="modal-head">
@@ -415,6 +429,33 @@ body{
       <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;">
         <div class="helper" style="flex:1;">Name: letters & spaces only. Price: digits only.</div>
         <button id="saveTest" class="btn" disabled>Save Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModalOverlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal" role="document" aria-labelledby="editModalTitle">
+    <div class="modal-head">
+      <div id="editModalTitle" class="modal-title">Edit Blood Test</div>
+      <button id="closeEditModal" class="btn ghost">Close</button>
+    </div>
+
+    <div class="modal-form">
+      <div class="row">
+        <label class="label" for="editNameModal">Test name</label>
+        <input id="editNameModal" class="input" placeholder="Enter test name (letters only)" aria-label="Test name">
+      </div>
+
+      <div class="row">
+        <label class="label" for="editPriceModal">Price</label>
+        <input id="editPriceModal" class="input" placeholder="Price (numbers only)" aria-label="Price">
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;">
+        <div class="helper" style="flex:1;">Name: letters & spaces only. Price: digits only.</div>
+        <button id="updateTest" class="btn" disabled>Update Test</button>
       </div>
     </div>
   </div>
@@ -445,6 +486,7 @@ function renderTable(){
             <div class="name-sub">Price: ${escapeHtml(t.price)}</div>
           </div>
           <div class="cell-actions">
+            <button data-id="${t.id}" data-name="${escapeHtml(t.name)}" data-price="${escapeHtml(t.price)}" class="edit-btn btn edit">Edit</button>
             <button data-id="${t.id}" class="del btn delete">Delete</button>
           </div>
         </div>
@@ -457,6 +499,13 @@ function renderTable(){
     const id = e.target.dataset.id;
     await fetch('blood_tests.php?action=delete&id='+encodeURIComponent(id));
     load();
+  }));
+
+  tb.querySelectorAll('.edit-btn').forEach(b=>b.addEventListener('click', (e)=>{
+    const id = e.target.dataset.id;
+    const name = e.target.dataset.name;
+    const price = e.target.dataset.price;
+    openEditModal(id, name, price);
   }));
 }
 
@@ -535,6 +584,76 @@ saveTest.addEventListener('click', async ()=>{
 });
 
 function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Edit Modal handling */
+let editingTestId = null;
+const editModalOverlay = document.getElementById('editModalOverlay');
+const closeEditModal = document.getElementById('closeEditModal');
+const updateTest = document.getElementById('updateTest');
+const editNameModal = document.getElementById('editNameModal');
+const editPriceModal = document.getElementById('editPriceModal');
+
+function openEditModal(id, name, price){
+  editingTestId = id;
+  editModalOverlay.style.display = 'flex';
+  editModalOverlay.setAttribute('aria-hidden','false');
+  editNameModal.value = name;
+  editPriceModal.value = price;
+  updateEditSaveState();
+  editNameModal.focus();
+  document.addEventListener('keydown', onEditKeydown);
+}
+function closeEditModalFn(){
+  editModalOverlay.style.display = 'none';
+  editModalOverlay.setAttribute('aria-hidden','true');
+  editingTestId = null;
+  document.removeEventListener('keydown', onEditKeydown);
+}
+function onEditKeydown(e){ if(e.key === 'Escape') closeEditModalFn(); }
+
+closeEditModal.addEventListener('click', closeEditModalFn);
+editModalOverlay.addEventListener('click', (e)=>{ if(e.target === editModalOverlay) closeEditModalFn(); });
+
+editNameModal.addEventListener('input', ()=> {
+  const cleaned = editNameModal.value.replace(/[^A-Za-z\s]/g, '');
+  if(editNameModal.value !== cleaned) editNameModal.value = cleaned;
+  updateEditSaveState();
+});
+editPriceModal.addEventListener('input', ()=> {
+  const cleaned = editPriceModal.value.replace(/\D/g, '');
+  if(editPriceModal.value !== cleaned) editPriceModal.value = cleaned;
+  updateEditSaveState();
+});
+
+function updateEditSaveState(){ const ok = isNameValid(editNameModal.value) && isPriceValid(editPriceModal.value); updateTest.disabled = !ok; }
+
+updateTest.addEventListener('click', async ()=>{
+  const name = editNameModal.value.trim();
+  const price = editPriceModal.value.trim();
+  if(!isNameValid(name)){ alert('Name must contain letters and spaces only'); return; }
+  if(!isPriceValid(price)){ alert('Price must contain digits only'); return; }
+  if(!editingTestId){ alert('Invalid test ID'); return; }
+
+  updateTest.disabled = true;
+  try{
+    const res = await fetch('blood_tests.php?action=update', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id: editingTestId, name, price })
+    });
+    const j = await res.json();
+    if(j.success){
+      closeEditModalFn();
+      load();
+    } else {
+      alert('Error: '+(j.message||'Update failed'));
+    }
+  }catch(err){
+    alert('Network error: '+err.message);
+  } finally {
+    updateTest.disabled = false;
+  }
+});
 </script>
 <script src="../header/header.js"></script>
 
