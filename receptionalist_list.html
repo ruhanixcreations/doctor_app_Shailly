@@ -546,7 +546,9 @@ function checkUserStatus(){
   fetch('../check_session.php', {credentials: 'include'})
     .then(res => res.json())
     .then(data => {
+      console.log('Status check response:', data); // Debug log
       if(!data.success || data.disabled){
+        console.log('User is disabled or not logged in, logging out...'); // Debug log
         localStorage.setItem('isLoggedIn', 'false');
         localStorage.removeItem('isLoggedIn');
         alert('Your account has been disabled. You will be logged out.');
