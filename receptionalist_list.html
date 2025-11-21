@@ -510,30 +510,22 @@ body{
   </div>
 
 <script>
-/* Check Authentication */
-async function checkAuth(){
-  try{
-    const res = await fetch('check_session.php', { 
-      method: 'GET',
-      credentials: 'include'
-    });
-    const data = await res.json();
-    if(!data.success){
-      // User not logged in, redirect to signin
-      window.location.href = 'signin.html';
-      return false;
-    }
-    return true;
-  }catch(err){
-    console.error('Auth check failed:', err);
-    window.location.href = 'signin.html';
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
     return false;
   }
+  
+  return true;
 }
 
 // Run auth check immediately
-(async function(){
-  const isAuthorized = await checkAuth();
+(function(){
+  const isAuthorized = checkAuth();
   if(!isAuthorized) return; // Stop execution if not authorized
   
   // Continue with page initialization only if authorized
@@ -542,7 +534,7 @@ async function checkAuth(){
 
 function initializePage(){
 const signupEndpoint = '../signup/signup.php';
-const apiList = 'receptionalist_list.php';
+const apiList = './receptionalist_list.php';
 
 const openAddBtn = document.getElementById('openAddBtn');
 const modalOverlay = document.getElementById('modalOverlay');
