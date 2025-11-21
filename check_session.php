@@ -37,6 +37,31 @@ if (
         $_SESSION['logged_in'] = true;
     }
 
+    // Check if user is disabled in database
+    require_once(__DIR__ . '/connections.php');
+    
+    $userId = $_SESSION['user_id'] ?? null;
+    if ($userId) {
+        $stmt = $conn->prepare("SELECT is_active FROM users WHERE id=?");
+        $stmt->bind_param('i', $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        
+        // If user is disabled (is_active = 0), force logout
+        if ($user && isset($user['is_active']) && $user['is_active'] == 0) {
+            session_unset();
+            session_destroy();
+            echo json_encode([
+                "success" => false,
+                "message" => "Your account has been disabled",
+                "disabled" => true
+            ]);
+            exit;
+        }
+    }
+
     echo json_encode([
         "success" => true,
         "message" => "User logged in",

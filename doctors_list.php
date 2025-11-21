@@ -16,7 +16,10 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at FROM users WHERE role='user' ORDER BY id DESC");
+    // Add is_active column if it doesn't exist
+    $mysqli->query("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'");
+    
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at, COALESCE(is_active, 1) as is_active FROM users WHERE role='user' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'doctors'=>$out]);
@@ -59,6 +62,50 @@ if($action === 'delete'){
     $stmt->bind_param('i', $id);
     $ok = $stmt->execute();
     send_json(['success'=>$ok]);
+}
+
+if($action === 'toggle_status'){
+    $id = intval($_GET['id'] ?? 0);
+    if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
+    
+    // Get current status
+    $stmt = $mysqli->prepare("SELECT is_active FROM users WHERE id=? AND role='user'");
+    $stmt->bind_param('i', $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+    
+    if(!$user) send_json(['success'=>false,'message'=>'user not found']);
+    
+    // Toggle status
+    $newStatus = ($user['is_active'] == 1) ? 0 : 1;
+    $updateStmt = $mysqli->prepare("UPDATE users SET is_active=? WHERE id=? AND role='user'");
+    $updateStmt->bind_param('ii', $newStatus, $id);
+    $ok = $updateStmt->execute();
+    $updateStmt->close();
+    
+    // If user was disabled, delete their active sessions
+    if($newStatus == 0){
+        // Delete session files for this user
+        $sessionDir = __DIR__ . "/sessions";
+        if(is_dir($sessionDir)){
+            $files = scandir($sessionDir);
+            foreach($files as $file){
+                if($file == '.' || $file == '..') continue;
+                $filePath = $sessionDir . '/' . $file;
+                if(is_file($filePath)){
+                    $sessionData = file_get_contents($filePath);
+                    // Check if this session belongs to the disabled user
+                    if(strpos($sessionData, 'user_id";i:' . $id . ';') !== false){
+                        unlink($filePath);
+                    }
+                }
+            }
+        }
+    }
+    
+    send_json(['success'=>$ok, 'new_status'=>$newStatus]);
 }
 
 send_json(['success'=>false,'message'=>'invalid action']);
