@@ -99,8 +99,9 @@ if($action === 'toggle_status'){
                 $filePath = $sessionDir . '/' . $file;
                 if(is_file($filePath)){
                     $sessionData = file_get_contents($filePath);
-                    // Check if this session belongs to the disabled user
-                    if(strpos($sessionData, 'user_id";i:' . $id . ';') !== false){
+                    // Check if this session belongs to the disabled user with exact match
+                    // Match pattern: user_id";i:123; where 123 is exact ID with semicolon after
+                    if(preg_match('/user_id";i:' . preg_quote($id, '/') . ';/', $sessionData)){
                         unlink($filePath);
                     }
                 }
