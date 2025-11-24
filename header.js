@@ -383,4 +383,5 @@ window.updateHeaderProfile = function() {
   setupUserHeader();
 };
 
+
 console.log('=== HEADER.JS FINISHED LOADING ===');
