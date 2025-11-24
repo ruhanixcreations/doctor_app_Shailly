@@ -1148,6 +1148,55 @@ updateReceptionistBtn.addEventListener('click', async ()=>{
 });
 
 fetchList();
+
+// ============= SESSION MONITORING FOR IMMEDIATE LOGOUT =============
+let sessionCheckInterval = null;
+let isLoggingOut = false;
+
+function startPageSessionMonitoring() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) {
+    console.log('Not logged in, skipping session monitoring');
+    return;
+  }
+
+  console.log('🔄 Starting automatic session monitoring (every 3 seconds)');
+  
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+  }
+
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    console.log('⏰ Auto-checking session...');
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        console.log('📊 Session status:', data);
+        if (!data.success) {
+          console.warn('❌ Session invalid:', data.message);
+          if (!isLoggingOut) {
+            isLoggingOut = true;
+            clearInterval(sessionCheckInterval);
+            localStorage.clear();
+            alert(data.message || 'Your session has expired');
+            window.location.href = '../signin/signin.html';
+          }
+        } else {
+          console.log('✅ Session valid');
+        }
+      })
+      .catch(err => {
+        console.error('⚠️ Session check error:', err);
+      });
+  }, 3000);
+}
+
+// Start monitoring immediately
+startPageSessionMonitoring();
+console.log('✅ Page session monitoring initialized');
+
 } // End of initializePage function
 </script>
 <script src="../header/header.js"></script>
