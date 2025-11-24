@@ -73,6 +73,10 @@ if($action === 'detail'){
         error_log("Found report_file in patient_list: " . $patient['report_file']);
         $filePaths = explode(',', $patient['report_file']);
         error_log("Split into " . count($filePaths) . " file paths");
+        
+        // Get created_at date from patient record
+        $createdAt = $patient['created_at'] ?? null;
+        
         foreach($filePaths as $path){
             $path = trim($path);
             if($path){
@@ -85,6 +89,7 @@ if($action === 'detail'){
                     'id' => 'patient_list',
                     'file_name' => $fileName,
                     'file_path' => $correctedPath,
+                    'created_at' => $createdAt,
                     'previous_prescription_file' => null,
                     'previous_blood_test_file' => null
                 ];

@@ -731,12 +731,11 @@ tbody tr:last-child td{
                 <th>Mobile</th>
                 <th>Previous Prescription</th>
                 <th>Blood Report</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody id="reportsTable">
               <tr>
-                <td colspan="7" class="empty-state">No reports uploaded</td>
+                <td colspan="6" class="empty-state">No reports uploaded</td>
               </tr>
             </tbody>
           </table>
@@ -1035,7 +1034,7 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
   const hasPrevBloodTest = previousBloodTest && previousBloodTest !== null;
   
   if(!hasReports && !hasPrevPrescription && !hasPrevBloodTest){
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
     return;
   }
   
@@ -1081,20 +1080,6 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
     `;
   }
   
-  // Actions column - current visit reports
-  let actionsHtml = '<span style="color:var(--text-muted)">-</span>';
-  if(hasReports && reports.length > 0){
-    actionsHtml = '<div class="report-actions">';
-    reports.forEach((r, idx) => {
-      actionsHtml += `
-        <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(r.file_path)}', '${escapeHtml(r.file_name || 'Report ' + (idx+1))}')">
-          <i class="fas fa-eye"></i> Report ${idx + 1}
-        </button>
-      `;
-    });
-    actionsHtml += '</div>';
-  }
-  
   tr.innerHTML = `
     <td>${escapeHtml(uploadDate)}</td>
     <td>${escapeHtml(patientId)}</td>
@@ -1102,7 +1087,6 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
     <td>${escapeHtml(mobile)}</td>
     <td>${prescriptionHtml}</td>
     <td>${bloodTestHtml}</td>
-    <td>${actionsHtml}</td>
   `;
   tbody.appendChild(tr);
 }
