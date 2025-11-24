@@ -1,6 +1,6 @@
 <?php
 // receptionalist_list.php
-// Actions: list, delete
+// Actions: list, delete, toggle_status
 header('Content-Type: application/json; charset=utf-8');
 
 $DB_HOST='localhost'; $DB_USER='ruhanixl_doctorApp'; $DB_PASS='@aashi12345678@'; $DB_NAME='ruhanixl_doctorApp';
@@ -16,7 +16,15 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at FROM users WHERE role='receptionalist' ORDER BY id DESC");
+    // Ensure status column exists only on list action
+    $checkColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+    if($checkColumn && $checkColumn->num_rows === 0){
+        $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
+    }
+    // Set default status for NULL values
+    $mysqli->query("UPDATE users SET status = 'active' WHERE (status IS NULL OR status = '') AND role='receptionalist'");
+    
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, COALESCE(status, 'active') as status, created_at FROM users WHERE role='receptionalist' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'receptionists'=>$out]);
@@ -60,6 +68,88 @@ if($action === 'delete'){
     $stmt->bind_param('i', $id);
     $ok = $stmt->execute();
     send_json(['success'=>$ok]);
+}
+
+if($action === 'toggle_status'){
+    $id = intval($_GET['id'] ?? 0);
+    if(!$id) send_json(['success'=>false,'message'=>'Invalid ID']);
+    
+    // First ensure column exists
+    $checkColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+    if($checkColumn && $checkColumn->num_rows === 0){
+        $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
+    }
+    
+    // Get current status - use actual column value, not COALESCE
+    $stmt = $mysqli->prepare("SELECT id, status FROM users WHERE id=? AND role='receptionalist'");
+    $stmt->bind_param('i', $id);
+    
+    if(!$stmt->execute()){
+        send_json(['success'=>false,'message'=>'Database error: ' . $stmt->error]);
+    }
+    
+    $result = $stmt->get_result();
+    if($result->num_rows === 0){
+        $stmt->close();
+        send_json(['success'=>false,'message'=>'User not found']);
+    }
+    
+    $user = $result->fetch_assoc();
+    $currentStatus = trim($user['status'] ?? 'active');
+    if(empty($currentStatus)) $currentStatus = 'active';
+    $stmt->close();
+    
+    // Toggle status
+    $newStatus = ($currentStatus === 'active') ? 'disabled' : 'active';
+    
+    // Update status in database - use direct query to avoid any binding issues
+    $escapedStatus = $mysqli->real_escape_string($newStatus);
+    $updateQuery = "UPDATE users SET status='$escapedStatus' WHERE id=$id";
+    $updateResult = $mysqli->query($updateQuery);
+    
+    if(!$updateResult){
+        send_json(['success'=>false,'message'=>'Failed to update: ' . $mysqli->error, 'query'=>$updateQuery]);
+    }
+    
+    $affected = $mysqli->affected_rows;
+    
+    // Verify the update actually worked
+    $verifyStmt = $mysqli->prepare("SELECT status FROM users WHERE id=?");
+    $verifyStmt->bind_param('i', $id);
+    $verifyStmt->execute();
+    $verifyResult = $verifyStmt->get_result();
+    $verifiedUser = $verifyResult->fetch_assoc();
+    $actualStatus = $verifiedUser['status'];
+    $verifyStmt->close();
+    
+    if($actualStatus !== $newStatus){
+        send_json(['success'=>false,'message'=>'Update verification failed. Expected: ' . $newStatus . ', Got: ' . $actualStatus]);
+    }
+    
+    // If disabling user, destroy their active sessions
+    if($newStatus === 'disabled'){
+        $sessionDir = __DIR__ . "/../sessions";
+        $sessionsDeleted = 0;
+        
+        if(file_exists($sessionDir)){
+            $files = glob($sessionDir . "/sess_*");
+            if($files){
+                foreach($files as $file){
+                    $sessionData = @file_get_contents($file);
+                    // Look for user_id in session data
+                    if($sessionData && (strpos($sessionData, "user_id\";i:$id;") !== false || strpos($sessionData, "user_id|i:$id;") !== false)){
+                        if(@unlink($file)){
+                            $sessionsDeleted++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        send_json(['success'=>true, 'new_status'=>$newStatus, 'actual_status'=>$actualStatus, 'message'=>'User disabled and ' . $sessionsDeleted . ' session(s) deleted']);
+    } else {
+        send_json(['success'=>true, 'new_status'=>$newStatus, 'actual_status'=>$actualStatus, 'message'=>'User enabled successfully']);
+    }
 }
 
 send_json(['success'=>false,'message'=>'invalid action']);

@@ -915,5 +915,41 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 </script>
 <script src="header/header.js"></script>
+<script>
+// Fix all header links for when we're already on the profile page
+document.addEventListener('DOMContentLoaded', () => {
+  // Wait for header to load, then fix the paths
+  setTimeout(() => {
+    // Fix hamburger menu profile link
+    const menuProfileLink = document.querySelector('.menu-profile-link');
+    if (menuProfileLink) {
+      menuProfileLink.href = 'profile.html';
+    }
+    
+    // Fix profile dropdown menu item
+    const profileMenuItem = document.getElementById('profileMenuItem');
+    if (profileMenuItem) {
+      // Remove existing event listener by cloning the element
+      const newProfileMenuItem = profileMenuItem.cloneNode(true);
+      profileMenuItem.parentNode.replaceChild(newProfileMenuItem, profileMenuItem);
+      
+      // Add new event listener with correct path
+      newProfileMenuItem.addEventListener('click', () => {
+        window.location.href = 'profile.html';
+      });
+    }
+    
+    // Fix all hamburger menu links - remove the leading '../' since we're at root level
+    const menuLinks = document.querySelectorAll('.menu-link');
+    menuLinks.forEach(link => {
+      const currentHref = link.getAttribute('href');
+      if (currentHref && currentHref.startsWith('../')) {
+        // Remove the '../' prefix to get correct path from root
+        link.setAttribute('href', currentHref.substring(3));
+      }
+    });
+  }, 300);
+});
+</script>
 </body>
 </html>
