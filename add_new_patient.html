@@ -657,14 +657,15 @@ if(!checkAuth()){
       const pdfFile = new File([blob], 'report_' + Date.now() + '.pdf', { type: 'application/pdf' });
 
       filesArray = filesArray.filter(f => !f.isPdf);
-      addFile(pdfFile, null);
+      const pdfDataUrl = URL.createObjectURL(blob);
+      filesArray.push({ file: pdfFile, dataUrl: pdfDataUrl, isPdf: true });
+      renderThumbs();
+      updateControls();
       
       // Create a URL for the PDF blob and display a link to view it
-      const pdfUrl = URL.createObjectURL(blob);
       pdfNameEl.style.display = 'block';
-      pdfNameEl.innerHTML = `<i class="fas fa-file-pdf" style="color:#e74c3c;font-size:18px;margin-right:8px;"></i><strong>PDF Created:</strong> ${pdfFile.name} (${images.length} page(s)) - <a href="${pdfUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;"><i class="fas fa-eye"></i> View PDF</a>`;
+      pdfNameEl.innerHTML = `<i class="fas fa-file-pdf" style="color:#e74c3c;font-size:18px;margin-right:8px;"></i><strong>PDF Created:</strong> ${pdfFile.name} (${images.length} page(s)) - <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;"><i class="fas fa-eye"></i> View PDF</a>`;
       statusEl.textContent = 'PDF generated.';
-      updateControls();
     } catch (err) {
       alert('PDF generation failed: ' + (err && err.message ? err.message : err));
       statusEl.textContent = '';
