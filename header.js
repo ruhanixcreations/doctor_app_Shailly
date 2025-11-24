@@ -25,7 +25,7 @@ const headerHTML = `
 
 <nav class="hamburger-menu" id="hamburgerMenu">
   <div class="menu-header">
-    <a href="../profile.html" class="menu-profile-link">
+    <a href="/doctor_app/profile.html" class="menu-profile-link">
       <i class="fa-solid fa-user-circle"></i>
       <span>Profile</span>
     </a>
@@ -36,55 +36,55 @@ const headerHTML = `
 
   <ul class="menu-list">
     <li class="menu-item">
-      <a href="../dashboard/dashboard.html" class="menu-link" data-page="dashboard">
+      <a href="/doctor_app/dashboard.html" class="menu-link" data-page="dashboard">
         <i class="fa-solid fa-house"></i>
         <span>Dashboard</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../dashboard/dashboard.php?role=receptionalist" class="menu-link" data-page="add-reception">
+      <a href="/doctor_app/dashboard.php?role=receptionalist" class="menu-link" data-page="add-reception">
         <i class="fa-solid fa-user-plus"></i>
         <span>Add Receptionalist</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../patient_history/patient_history.html" class="menu-link" data-page="patient-history">
+      <a href="/doctor_app/patient_history.html" class="menu-link" data-page="patient-history">
         <i class="fa-solid fa-users"></i>
         <span>Patient History</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../add_new_patient/add_new_patient.html" class="menu-link" data-page="add-patient">
+      <a href="/doctor_app/add_new_patient.html" class="menu-link" data-page="add-patient">
         <i class="fa-solid fa-user-plus"></i>
         <span>Add New Patient</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../add_prescription/add_prescription.html" class="menu-link" data-page="add-prescription">
+      <a href="/doctor_app/add_prescription.html" class="menu-link" data-page="add-prescription">
         <i class="fa-solid fa-prescription-bottle-medical"></i>
         <span>Add New Prescription</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../all_medicine/all_medicine.html" class="menu-link" data-page="all-medicine">
+      <a href="/doctor_app/all_medicine.html" class="menu-link" data-page="all-medicine">
         <i class="fa-solid fa-pills"></i>
         <span>All Medicine</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../doctors_list/doctors_list.html" class="menu-link" data-page="doctors-list">
+      <a href="/doctor_app/doctors_list.html" class="menu-link" data-page="doctors-list">
         <i class="fa-solid fa-user-doctor"></i>
         <span>Doctors List</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../blood_tests/blood_tests.html" class="menu-link" data-page="blood-tests">
+      <a href="/doctor_app/blood_tests.html" class="menu-link" data-page="blood-tests">
         <i class="fa-solid fa-vials"></i>
         <span>Blood Test List</span>
       </a>
     </li>
     <li class="menu-item">
-      <a href="../receptionalist_list/receptionalist_list.html" class="menu-link" data-page="receptionalist-list">
+      <a href="/doctor_app/receptionalist_list.html" class="menu-link" data-page="receptionalist-list">
         <i class="fa-solid fa-user-tie"></i>
         <span>Receptionalist List</span>
       </a>
@@ -165,7 +165,7 @@ function setupUserHeader() {
   // 🟢 If localStorage isn't sure, verify PHP session live
   if (!isLoggedIn) {
     console.log('Checking session...');
-    fetch("../check_session.php", { credentials: "include" })
+    fetch("/doctor_app/check_session.php", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
         console.log('Session data:', data);
@@ -237,8 +237,8 @@ function setupUserHeader() {
     // ✅ Profile action
     if (profileMenuItem) {
       profileMenuItem.addEventListener("click", () => {
-        // Profile files are in root workspace directory, same as header files
-        window.location.href = '../profile.html';
+        // Use absolute path to work from any page location
+        window.location.href = '/doctor_app/profile.html';
       });
     }
 
@@ -264,8 +264,8 @@ function showAuthButtons() {
 
   navButtons.innerHTML = `
     <div class="auth-buttons">
-      <button class="signin-btn" onclick="window.location.href='../signin/signin.html'">Sign In</button>
-      <button class="signup-btn" onclick="window.location.href='../signup/signup.html'">Sign Up</button>
+      <button class="signin-btn" onclick="window.location.href='/doctor_app/signin.html'">Sign In</button>
+      <button class="signup-btn" onclick="window.location.href='/doctor_app/signup.html'">Sign Up</button>
     </div>
   `;
   console.log('✅ Auth buttons displayed');
@@ -278,7 +278,7 @@ function handleLogout() {
   if (confirm('Are you sure you want to logout?')) {
     console.log('Logging out...');
     
-    fetch('../logout.php', {
+    fetch('/doctor_app/logout.php', {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' }
@@ -303,7 +303,7 @@ function handleLogout() {
         
         // Optional: redirect after a short delay
         setTimeout(() => {
-          window.location.href = '../signin/signin.html';
+          window.location.href = '/doctor_app/signin.html';
         }, 500);
       } else {
         alert('Logout failed: ' + (data.message || 'Unknown error'));

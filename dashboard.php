@@ -20,7 +20,7 @@ if (is_dir($sessionDir) && is_writable($sessionDir)) {
 $cookieParams = [
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '.ruhanixlegal.in',
+    'domain' => '', // Empty domain for consistency with check_session.php
     'secure' => false,
     'httponly' => true,
     'samesite' => 'Lax'
