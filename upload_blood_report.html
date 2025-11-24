@@ -612,5 +612,33 @@ if(!checkAuth()){
 </script>
 <script src="../header/header.js"></script>
 
+<!-- Session Monitoring for Immediate Logout -->
+<script>
+(function() {
+  let sessionCheckInterval = null;
+  let isLoggingOut = false;
+  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success && !isLoggingOut) {
+          isLoggingOut = true;
+          clearInterval(sessionCheckInterval);
+          localStorage.clear();
+          alert(data.message || 'Your session has expired');
+          window.location.href = '../signin/signin.html';
+        }
+      })
+      .catch(err => console.error('Session check error:', err));
+  }, 3000);
+})();
+</script>
+
 </body>
 </html>
