@@ -383,5 +383,74 @@ window.updateHeaderProfile = function() {
   setupUserHeader();
 };
 
+// --- Periodic Session Validation ---
+let sessionCheckInterval = null;
+
+function startSessionMonitoring() {
+  // Only monitor if user is logged in
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) {
+    console.log('User not logged in, skipping session monitoring');
+    return;
+  }
+
+  console.log('Starting session monitoring (checking every 5 seconds)');
+  
+  // Clear any existing interval
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+  }
+
+  // Check session every 5 seconds
+  sessionCheckInterval = setInterval(() => {
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          console.log('Session invalid:', data.message);
+          // Session is invalid, force logout
+          forceLogout(data.message || 'Your session has expired');
+        }
+      })
+      .catch(err => {
+        console.error('Session check error:', err);
+        // On network error, don't force logout - could be temporary connection issue
+      });
+  }, 5000); // Check every 5 seconds
+}
+
+function forceLogout(message) {
+  console.log('Force logout triggered:', message);
+  
+  // Clear the interval
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+    sessionCheckInterval = null;
+  }
+  
+  // Clear local storage
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('user_id');
+  localStorage.removeItem('client_id');
+  localStorage.removeItem('userName');
+  localStorage.removeItem('name');
+  localStorage.removeItem('username');
+  localStorage.removeItem('user');
+  localStorage.removeItem('role');
+  
+  // Show alert
+  alert(message);
+  
+  // Redirect to signin
+  window.location.href = '../signin/signin.html';
+}
+
+// Start monitoring when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    startSessionMonitoring();
+  }, 1000); // Start after 1 second to allow page to initialize
+});
+
 
 console.log('=== HEADER.JS FINISHED LOADING ===');
