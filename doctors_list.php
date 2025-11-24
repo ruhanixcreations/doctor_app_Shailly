@@ -16,7 +16,13 @@ $action = $_GET['action'] ?? 'list';
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at FROM users WHERE role='user' ORDER BY id DESC");
+    // First ensure status column exists
+    $checkColumns = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+    if($checkColumns->num_rows === 0) {
+        $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active'");
+    }
+    
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, created_at, COALESCE(status, 'active') as status FROM users WHERE role='user' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'doctors'=>$out]);
