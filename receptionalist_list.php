@@ -11,6 +11,14 @@ if($mysqli->connect_errno){
     exit;
 }
 
+// Ensure status column exists
+$checkColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+if($checkColumn->num_rows === 0){
+    $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
+}
+// Update NULL/empty status values to 'active'
+$mysqli->query("UPDATE users SET status = 'active' WHERE status IS NULL OR status = ''");
+
 $action = $_GET['action'] ?? 'list';
 
 function send_json($arr){ echo json_encode($arr); exit; }
