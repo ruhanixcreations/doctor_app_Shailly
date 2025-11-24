@@ -1072,25 +1072,15 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
     `;
   }
   
-  // Blood Report column - different for doctor vs receptionist (from patient_reports table)
-  const userRole = localStorage.getItem('role') || 'user';
+  // Previous Blood Test column - just view the uploaded file from add_new_patient
   let bloodTestHtml = '<span style="color:var(--text-muted)">-</span>';
-  
-  if(userRole === 'receptionalist'){
-    // Receptionist: Show Upload button
-    const prescriptionId = ''; // No prescription ID needed for uploaded reports section
-    bloodTestHtml = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${escapeHtml(patientId)}', '${escapeHtml(patientName)}', '')">
-      <i class="fas fa-upload"></i> Upload Report
-    </button>`;
-  } else {
-    // Doctor: Show View button if blood report exists in patient_reports table
-    if(cachedBloodReports && cachedBloodReports.length > 0){
-      bloodTestHtml = `<button type="button" class="btn btn-view" onclick="openBloodReport('${escapeHtml(patientId)}')">
+  if(hasPrevBloodTest){
+    const fileName = previousBloodTest.split('/').pop();
+    bloodTestHtml = `
+      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousBloodTest)}', '${escapeHtml(fileName)}')">
         <i class="fas fa-vial"></i> View
-      </button>`;
-    } else {
-      bloodTestHtml = '<span style="color:var(--text-muted);font-size:12px">No report</span>';
-    }
+      </button>
+    `;
   }
   
   tr.innerHTML = `
