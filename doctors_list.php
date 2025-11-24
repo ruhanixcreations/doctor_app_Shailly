@@ -1,6 +1,8 @@
 <?php
 // doctors_list.php
 // Actions: list, delete
+error_reporting(0);
+ini_set('display_errors', 0);
 header('Content-Type: application/json; charset=utf-8');
 
 $DB_HOST='localhost'; $DB_USER='ruhanixl_doctorApp'; $DB_PASS='@aashi12345678@'; $DB_NAME='ruhanixl_doctorApp';
@@ -11,13 +13,15 @@ if($mysqli->connect_errno){
     exit;
 }
 
-// Ensure status column exists
-$checkColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
-if($checkColumn->num_rows === 0){
-    $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
+// Ensure status column exists (suppress errors)
+$checkColumn = @$mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+if($checkColumn && $checkColumn->num_rows === 0){
+    @$mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
 }
-// Update NULL/empty status values to 'active'
-$mysqli->query("UPDATE users SET status = 'active' WHERE status IS NULL OR status = ''");
+// Update NULL/empty status values to 'active' (only if column exists)
+if($checkColumn && $checkColumn->num_rows > 0){
+    @$mysqli->query("UPDATE users SET status = 'active' WHERE status IS NULL OR status = ''");
+}
 
 $action = $_GET['action'] ?? 'list';
 
