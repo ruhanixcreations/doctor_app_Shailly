@@ -73,8 +73,14 @@ if($action === 'toggle_status'){
     $id = intval($_GET['id'] ?? 0);
     if(!$id) send_json(['success'=>false,'message'=>'Invalid ID']);
     
-    // Get current status using COALESCE to handle NULL
-    $stmt = $mysqli->prepare("SELECT id, COALESCE(status, 'active') as status FROM users WHERE id=? AND role='user'");
+    // First ensure column exists
+    $checkColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+    if($checkColumn && $checkColumn->num_rows === 0){
+        $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
+    }
+    
+    // Get current status - use actual column value, not COALESCE
+    $stmt = $mysqli->prepare("SELECT id, status FROM users WHERE id=? AND role='user'");
     $stmt->bind_param('i', $id);
     
     if(!$stmt->execute()){
@@ -88,14 +94,15 @@ if($action === 'toggle_status'){
     }
     
     $user = $result->fetch_assoc();
-    $currentStatus = trim($user['status']);
+    $currentStatus = trim($user['status'] ?? 'active');
+    if(empty($currentStatus)) $currentStatus = 'active';
     $stmt->close();
     
     // Toggle status
     $newStatus = ($currentStatus === 'active') ? 'disabled' : 'active';
     
-    // Update status in database
-    $updateStmt = $mysqli->prepare("UPDATE users SET status=? WHERE id=? AND role='user'");
+    // Update status in database - remove role condition to ensure update happens
+    $updateStmt = $mysqli->prepare("UPDATE users SET status=? WHERE id=?");
     $updateStmt->bind_param('si', $newStatus, $id);
     
     if(!$updateStmt->execute()){
@@ -106,8 +113,17 @@ if($action === 'toggle_status'){
     $affected = $updateStmt->affected_rows;
     $updateStmt->close();
     
-    if($affected === 0){
-        send_json(['success'=>false,'message'=>'No rows updated. Current status: ' . $currentStatus]);
+    // Verify the update actually worked
+    $verifyStmt = $mysqli->prepare("SELECT status FROM users WHERE id=?");
+    $verifyStmt->bind_param('i', $id);
+    $verifyStmt->execute();
+    $verifyResult = $verifyStmt->get_result();
+    $verifiedUser = $verifyResult->fetch_assoc();
+    $actualStatus = $verifiedUser['status'];
+    $verifyStmt->close();
+    
+    if($actualStatus !== $newStatus){
+        send_json(['success'=>false,'message'=>'Update verification failed. Expected: ' . $newStatus . ', Got: ' . $actualStatus]);
     }
     
     // If disabling user, destroy their active sessions
@@ -130,9 +146,9 @@ if($action === 'toggle_status'){
             }
         }
         
-        send_json(['success'=>true, 'new_status'=>$newStatus, 'message'=>'User disabled and ' . $sessionsDeleted . ' session(s) deleted']);
+        send_json(['success'=>true, 'new_status'=>$newStatus, 'actual_status'=>$actualStatus, 'message'=>'User disabled and ' . $sessionsDeleted . ' session(s) deleted']);
     } else {
-        send_json(['success'=>true, 'new_status'=>$newStatus, 'message'=>'User enabled successfully']);
+        send_json(['success'=>true, 'new_status'=>$newStatus, 'actual_status'=>$actualStatus, 'message'=>'User enabled successfully']);
     }
 }
 
