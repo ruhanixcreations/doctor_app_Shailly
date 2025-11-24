@@ -175,19 +175,51 @@ foreach($files_to_process as $f){
 
 $report_file_value = count($saved_paths) ? implode(',', $saved_paths) : null;
 
+// Handle previous prescription upload
+$previous_prescription_path = null;
+if(isset($_FILES['previous_prescription']) && $_FILES['previous_prescription']['error'] !== UPLOAD_ERR_NO_FILE){
+    $temp_paths = [];
+    handle_file_upload($_FILES['previous_prescription'], $MAX_FILE_SIZE, $allowed_mimes, $allowed_exts, 
+        $UPLOAD_DIR_ORIGINAL, $UPLOAD_DIR_DOCTOR, $BASE_URL_PATH_ORIGINAL, $temp_paths);
+    if(count($temp_paths) > 0) {
+        $previous_prescription_path = $temp_paths[0];
+    }
+}
+
+// Handle previous blood test upload
+$previous_blood_test_path = null;
+if(isset($_FILES['previous_blood_test']) && $_FILES['previous_blood_test']['error'] !== UPLOAD_ERR_NO_FILE){
+    $temp_paths = [];
+    handle_file_upload($_FILES['previous_blood_test'], $MAX_FILE_SIZE, $allowed_mimes, $allowed_exts, 
+        $UPLOAD_DIR_ORIGINAL, $UPLOAD_DIR_DOCTOR, $BASE_URL_PATH_ORIGINAL, $temp_paths);
+    if(count($temp_paths) > 0) {
+        $previous_blood_test_path = $temp_paths[0];
+    }
+}
+
 // --- STEP 3: Database Insert (Binding the new JSON string) ---
 
+// First, ensure the new columns exist
+$mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'previous_prescription_file'");
+if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+    $mysqli->query("ALTER TABLE patient_list ADD COLUMN previous_prescription_file TEXT NULL");
+}
+$mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'previous_blood_test_file'");
+if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+    $mysqli->query("ALTER TABLE patient_list ADD COLUMN previous_blood_test_file TEXT NULL");
+}
+
 // The doctor_id variable is now replaced by the doctor_json string
-$stmt = $mysqli->prepare("INSERT INTO patient_list (client_id, patient_id, patient_name, mobile, age, weight, doctor, report_file)
-  VALUES (?, ?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?)");
+$stmt = $mysqli->prepare("INSERT INTO patient_list (client_id, patient_id, patient_name, mobile, age, weight, doctor, report_file, previous_prescription_file, previous_blood_test_file)
+  VALUES (?, ?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?, ?, ?)");
 
 if(!$stmt) {
     send_json(['success'=>false,'message'=>'DB Prepare Error (Patient Insert): '.$mysqli->error],500);
 }
 
-// IMPORTANT CHANGE: Binding $doctor_json instead of $doctor_id
+// IMPORTANT CHANGE: Binding $doctor_json instead of $doctor_id and adding previous files
 // The 'doctor' column should be large enough (VARCHAR/TEXT/JSON type) to store the JSON string.
-$stmt->bind_param('ssssssss', $client_id_local, $patient_id, $patient_name, $mobile, $age, $weight, $doctor_json, $report_file_value);
+$stmt->bind_param('ssssssssss', $client_id_local, $patient_id, $patient_name, $mobile, $age, $weight, $doctor_json, $report_file_value, $previous_prescription_path, $previous_blood_test_path);
 
 if(!$stmt->execute()){
     // Clean up function (omitted for brevity)

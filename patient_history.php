@@ -84,7 +84,9 @@ if($action === 'detail'){
                 $reportItem = [
                     'id' => 'patient_list',
                     'file_name' => $fileName,
-                    'file_path' => $correctedPath
+                    'file_path' => $correctedPath,
+                    'previous_prescription_file' => null,
+                    'previous_blood_test_file' => null
                 ];
                 $uploaded_reports[] = $reportItem;
                 error_log("Added report to array: " . json_encode($reportItem));
@@ -93,6 +95,10 @@ if($action === 'detail'){
     } else {
         error_log("No report_file found in patient_list or it's empty");
     }
+    
+    // Add previous prescription file if exists
+    $patient['previous_prescription_file'] = $patient['previous_prescription_file'] ?? null;
+    $patient['previous_blood_test_file'] = $patient['previous_blood_test_file'] ?? null;
 
     // prescriptions: fetch grouped by prescription_id (one row per prescription)
     $prescriptions = [];
@@ -118,7 +124,18 @@ if($action === 'detail'){
     }
     $stmt->close();
 
-    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'blood_reports'=>$blood_reports,'uploaded_reports'=>$uploaded_reports,'prescriptions'=>$prescriptions,'other_info'=> '']);
+    // Prepare previous files paths
+    $previous_prescription_path = null;
+    $previous_blood_test_path = null;
+    
+    if(!empty($patient['previous_prescription_file'])){
+        $previous_prescription_path = '../add_new_patient/' . $patient['previous_prescription_file'];
+    }
+    if(!empty($patient['previous_blood_test_file'])){
+        $previous_blood_test_path = '../add_new_patient/' . $patient['previous_blood_test_file'];
+    }
+
+    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'blood_reports'=>$blood_reports,'uploaded_reports'=>$uploaded_reports,'prescriptions'=>$prescriptions,'other_info'=> '','previous_prescription_file'=>$previous_prescription_path,'previous_blood_test_file'=>$previous_blood_test_path]);
     exit;
 }
 
