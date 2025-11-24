@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '.ruhanixlegal.in', // adjust
+    'domain' => '', // Empty domain for consistency with check_session.php
     'secure' => false, // set true with HTTPS in production
     'httponly' => true,
     'samesite' => 'Lax'

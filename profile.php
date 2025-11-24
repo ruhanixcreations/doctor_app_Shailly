@@ -1,8 +1,9 @@
 <?php
+// Session configuration - must match check_session.php
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '.ruhanixlegal.in',
+    'domain' => '',  // Empty domain for consistency with other pages
     'secure' => false,
     'httponly' => true,
     'samesite' => 'Lax'
