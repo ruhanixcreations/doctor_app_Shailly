@@ -481,9 +481,13 @@ if(!checkAuth()){
         statusEl.textContent = `Removed file (${filesArray.length} remaining)`;
       };
       if(item.isPdf){
+        div.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        div.style.justifyContent = 'center';
         const label = document.createElement('div');
-        label.style.cssText = 'padding:10px;text-align:center;font-size:12px;';
-        label.innerHTML = `<strong>PDF</strong><div style="font-size:11px;margin-top:6px;">${item.file.name || 'file.pdf'}</div>`;
+        label.style.cssText = 'padding:10px;text-align:center;font-size:12px;color:white;';
+        label.innerHTML = `<i class="fas fa-file-pdf" style="font-size:48px;margin-bottom:8px;"></i><div style="font-size:11px;margin-top:6px;font-weight:600;">${item.file.name || 'file.pdf'}</div>`;
         div.appendChild(label);
       } else {
         const img = document.createElement('img');
@@ -542,7 +546,7 @@ if(!checkAuth()){
     
     // Create a URL for the PDF blob and display a link to view it
     const pdfUrl = URL.createObjectURL(blob);
-    pdfNameEl.innerHTML = `✓ Created PDF: ${pdfFile.name} (${images.length} page(s)) - <a href="${pdfUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">View PDF</a>`;
+    pdfNameEl.innerHTML = `<i class="fas fa-file-pdf" style="color:#e74c3c;font-size:18px;margin-right:8px;"></i><strong>PDF Created:</strong> ${pdfFile.name} (${images.length} page(s)) - <a href="${pdfUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;"><i class="fas fa-eye"></i> View PDF</a>`;
     pdfNameEl.style.display = 'block';
     statusEl.textContent = 'PDF created successfully';
   });
