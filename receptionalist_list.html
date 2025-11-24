@@ -755,16 +755,23 @@ function renderTable(){
       if(!confirm(`${action} this receptionist?`)) return;
       
       try{
-        const res = await fetch(apiList + '?action=toggle_status&id=' + encodeURIComponent(id));
+        const url = apiList + '?action=toggle_status&id=' + encodeURIComponent(id);
+        console.log('Toggle status request:', url);
+        const res = await fetch(url);
         const jr = await res.json();
+        console.log('Toggle status response:', jr);
+        
         if(jr.success){ 
           showToast(`Receptionist ${jr.new_status === 'disabled' ? 'disabled' : 'enabled'} successfully`); 
-          fetchList(); 
+          // Refresh the list to show updated status
+          await fetchList(); 
+        } else {
+          showToast(jr.message || 'Action failed');
+          console.error('Toggle failed:', jr);
         }
-        else showToast('Action failed');
       }catch(err){ 
-        console.error(err); 
-        showToast('Action failed'); 
+        console.error('Toggle status error:', err); 
+        showToast('Action failed: ' + err.message); 
       }
     });
   });

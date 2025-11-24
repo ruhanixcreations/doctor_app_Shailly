@@ -73,31 +73,44 @@ if($action === 'toggle_status'){
     if($result->num_rows === 0) send_json(['success'=>false,'message'=>'User not found']);
     
     $user = $result->fetch_assoc();
-    $currentStatus = $user['status'] ?? 'active';
-    $newStatus = ($currentStatus === 'active') ? 'disabled' : 'active';
+    $currentStatus = $user['status'];
+    
+    // Handle NULL or empty status - treat as active
+    if(empty($currentStatus) || $currentStatus === null || $currentStatus === 'NULL'){
+        $currentStatus = 'active';
+    }
+    
+    $newStatus = ($currentStatus === 'active' || $currentStatus === 'Active') ? 'disabled' : 'active';
     $stmt->close();
     
-    // Update status
+    // Update status - ensure column exists with ALTER TABLE if needed
     $stmt = $mysqli->prepare("UPDATE users SET status=? WHERE id=? AND role='user'");
     $stmt->bind_param('si', $newStatus, $id);
     $ok = $stmt->execute();
+    $affected = $stmt->affected_rows;
     $stmt->close();
     
+    if(!$ok || $affected === 0){
+        send_json(['success'=>false,'message'=>'Failed to update status']);
+    }
+    
     // If disabling user, destroy their active sessions
-    if($newStatus === 'disabled' && $ok){
+    if($newStatus === 'disabled'){
         $sessionDir = __DIR__ . "/../sessions";
         if(file_exists($sessionDir)){
             $files = glob($sessionDir . "/sess_*");
-            foreach($files as $file){
-                $sessionData = @file_get_contents($file);
-                if($sessionData && strpos($sessionData, "user_id|i:$id;") !== false){
-                    @unlink($file); // Delete session file
+            if($files){
+                foreach($files as $file){
+                    $sessionData = @file_get_contents($file);
+                    if($sessionData && strpos($sessionData, "user_id|i:$id;") !== false){
+                        @unlink($file);
+                    }
                 }
             }
         }
     }
     
-    send_json(['success'=>$ok, 'new_status'=>$newStatus]);
+    send_json(['success'=>true, 'new_status'=>$newStatus, 'message'=>'Status updated successfully']);
 }
 
 send_json(['success'=>false,'message'=>'invalid action']);
