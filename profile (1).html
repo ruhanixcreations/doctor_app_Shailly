@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>My Profile</title>
+
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+  --error-red:#dc3545;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.container{
+  max-width:800px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:24px 30px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.profile-avatar{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  font-weight:700;
+  color:var(--primary-teal);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  flex-shrink:0;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header-title{
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.header-subtitle{
+  font-size:14px;
+  opacity:0.9;
+}
+
+.content{
+  padding:30px;
+}
+
+.section{
+  margin-bottom:30px;
+}
+
+.section:last-child{
+  margin-bottom:0;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:16px;
+  padding-bottom:8px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.section-title i{
+  color:var(--primary-teal);
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+.form-group label{
+  display:block;
+  font-weight:600;
+  margin-bottom:8px;
+  font-size:14px;
+  color:var(--text-dark);
+}
+
+.form-group input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  transition:all 0.2s ease;
+  font-family:inherit;
+  background:var(--bg-white);
+}
+
+.form-group input:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.form-group input:disabled{
+  background:var(--bg-light);
+  color:var(--text-muted);
+  cursor:not-allowed;
+}
+
+.info-text{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-top:4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.info-text i{
+  font-size:12px;
+}
+
+.btn-group{
+  display:flex;
+  gap:12px;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:12px 24px;
+  border-radius:6px;
+  border:none;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,0,0,0.15);
+}
+
+.btn:disabled{
+  background:#d1d5db !important;
+  color:#9ca3af !important;
+  cursor:not-allowed;
+  opacity:1;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:white;
+}
+
+.btn-secondary{
+  background:var(--bg-light);
+  color:var(--text-dark);
+  border:1px solid var(--border-light);
+}
+
+.btn-danger{
+  background:var(--error-red);
+  color:white;
+}
+
+.alert{
+  padding:12px 16px;
+  border-radius:6px;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:14px;
+  animation:slideIn 0.3s ease;
+}
+
+.alert i{
+  font-size:16px;
+}
+
+.alert-success{
+  background:rgba(40,167,69,0.1);
+  border:1px solid rgba(40,167,69,0.3);
+  color:var(--success-green);
+}
+
+.alert-error{
+  background:rgba(220,53,69,0.1);
+  border:1px solid rgba(220,53,69,0.3);
+  color:var(--error-red);
+}
+
+.alert-info{
+  background:rgba(0,169,165,0.1);
+  border:1px solid rgba(0,169,165,0.3);
+  color:var(--primary-teal);
+}
+
+@keyframes slideIn{
+  from{
+    opacity:0;
+    transform:translateY(-10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.loading{
+  text-align:center;
+  padding:40px;
+  color:var(--text-muted);
+}
+
+.loading i{
+  font-size:32px;
+  color:var(--primary-teal);
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+@media (max-width:768px){
+  body{
+    padding:12px;
+  }
+  
+  .container{
+    margin:10px auto;
+  }
+  
+  .header{
+    padding:20px;
+  }
+  
+  .profile-avatar{
+    width:60px;
+    height:60px;
+    font-size:28px;
+  }
+  
+  .header-title{
+    font-size:22px;
+  }
+  
+  .content{
+    padding:20px;
+  }
+  
+  .btn-group{
+    flex-direction:column;
+  }
+  
+  .btn{
+    width:100%;
+    justify-content:center;
+  }
+  
+  /* Email and OTP buttons on mobile */
+  .form-group input{
+    font-size:16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Stack email field and Send OTP button on mobile */
+  .email-btn-row,
+  .otp-btn-row{
+    flex-direction:column !important;
+    gap:10px !important;
+  }
+  
+  .email-btn-row > div,
+  .otp-btn-row > div{
+    flex:1 !important;
+    width:100% !important;
+  }
+  
+  .email-btn-row > button,
+  .otp-btn-row > button,
+  #sendOtpBtn,
+  #verifyOtpBtn{
+    width:100% !important;
+    height:46px !important;
+    padding:12px 18px !important;
+    white-space:normal !important;
+  }
+  
+  /* Popup on mobile */
+  #popupOverlay .popup-box{
+    width:calc(100% - 32px);
+    padding:24px;
+  }
+  
+  #popupOverlay .popup-box h3{
+    font-size:18px;
+  }
+  
+  #popupOverlay .popup-box p{
+    font-size:13px;
+  }
+}
+</style>
+</head>
+<body>
+ <div id="header-placeholder"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="profile-avatar" id="profileAvatar">?</div>
+    <div class="header-text">
+      <div class="header-title" id="profileHeaderName">My Profile</div>
+      <div class="header-subtitle">Manage your account information</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="alertContainer"></div>
+
+    <div id="loadingSection" class="loading" style="display:none;">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading profile...</p>
+    </div>
+
+    <form id="profileForm" style="display:none;">
+      <!-- Personal Information Section -->
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-user"></i>
+          <span>Personal Information</span>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="mobile">Mobile Number *</label>
+          <input type="tel" id="mobile" name="mobile" required maxlength="10" />
+          <div class="info-text" id="mobileError" style="display:none;color:var(--error-red);"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <div class="email-btn-row" style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="flex:1;">
+              <input type="email" id="email" name="email" required />
+              <div id="emailError" class="info-text" style="display:none;color:var(--error-red);margin-top:4px;"></div>
+              <div id="emailVerifySuccess" class="info-text" style="display:none;color:var(--success-green);margin-top:4px;">
+                <i class="fas fa-check-circle"></i> Email verified
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="sendOtpBtn" style="height:44px;padding:10px 18px;white-space:nowrap;" disabled>
+              <i class="fas fa-paper-plane"></i> Send OTP
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group" id="otpSection" style="display:none;">
+          <label for="otp">Enter OTP *</label>
+          <div class="otp-btn-row" style="display:flex;gap:10px;align-items:flex-start;">
+            <div style="flex:1;">
+              <input type="text" id="otp" name="otp" placeholder="Enter 6-digit OTP" maxlength="6" />
+              <div id="otpError" class="info-text" style="display:none;color:var(--error-red);margin-top:4px;"></div>
+            </div>
+            <button type="button" class="btn btn-primary" id="verifyOtpBtn" style="height:44px;padding:10px 18px;white-space:nowrap;">
+              <i class="fas fa-check-circle"></i> Verify
+            </button>
+          </div>
+          <div id="resendContainer" class="info-text" style="display:none;margin-top:8px;">
+            Didn't receive code? <span id="resendText" style="color:var(--primary-teal);font-weight:600;cursor:pointer;">Resend</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="client_id">Client ID</label>
+          <input type="text" id="client_id" name="client_id" disabled />
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Client ID cannot be changed
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Information Section -->
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-shield-alt"></i>
+          <span>Account Information</span>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role</label>
+          <input type="text" id="role" name="role" disabled />
+          <div class="info-text">
+            <i class="fas fa-info-circle"></i>
+            Role is assigned by administrator
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Account Status</label>
+          <input type="text" id="status" name="status" disabled />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary" id="saveBtn" disabled>
+          <i class="fas fa-save"></i> Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="popupOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;justify-content:center;align-items:center;">
+  <div class="popup-box" style="background:var(--bg-white);padding:32px;border-radius:12px;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+    <div style="width:64px;height:64px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));display:flex;align-items:center;justify-content:center;">
+      <i class="fas fa-check" style="font-size:32px;color:white;"></i>
+    </div>
+    <h3 style="font-size:20px;font-weight:700;color:var(--text-dark);margin-bottom:12px;">Success!</h3>
+    <p id="popupMessage" style="font-size:14px;color:var(--text-muted);margin-bottom:24px;"></p>
+    <button onclick="closePopup()" style="width:100%;height:44px;padding:10px 20px;border-radius:6px;border:none;background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));color:#fff;font-weight:600;cursor:pointer;font-size:14px;transition:all 0.2s ease;">
+      <i class="fas fa-check-circle"></i> OK
+    </button>
+  </div>
+</div>
+
+<script>
+/* Check Authentication */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '/doctor_app/signin/signin.html';
+    return false;
+  }
+  return true;
+}
+
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+/* Global State */
+let isOtpVerified = false;
+let originalFormData = {};
+let timerInterval = null;
+
+/* Show Alert */
+function showAlert(message, type = 'info'){
+  const alertContainer = document.getElementById('alertContainer');
+  const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+  
+  alertContainer.innerHTML = `
+    <div class="alert alert-${type}">
+      <i class="fas fa-${icon}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    alertContainer.innerHTML = '';
+  }, 5000);
+}
+
+/* Show Popup */
+function showPopup(message){
+  document.getElementById('popupMessage').textContent = message;
+  document.getElementById('popupOverlay').style.display = 'flex';
+}
+
+/* Close Popup */
+function closePopup(){
+  document.getElementById('popupOverlay').style.display = 'none';
+}
+
+/* Load Profile Data */
+async function loadProfile(){
+  const loadingSection = document.getElementById('loadingSection');
+  const profileForm = document.getElementById('profileForm');
+  
+  loadingSection.style.display = 'block';
+  profileForm.style.display = 'none';
+  
+  try{
+    const res = await fetch('profile.php?action=get');
+    const data = await res.json();
+    
+    if(!data.success){
+      throw new Error(data.message || 'Failed to load profile');
+    }
+    
+    const user = data.user;
+    
+    // Update header avatar
+    const firstLetter = (user.name || user.email || '?').charAt(0).toUpperCase();
+    document.getElementById('profileAvatar').textContent = firstLetter;
+    document.getElementById('profileHeaderName').textContent = user.name || 'My Profile';
+    
+    // Populate form fields
+    document.getElementById('name').value = user.name || '';
+    document.getElementById('mobile').value = user.mobile || '';
+    document.getElementById('email').value = user.email || '';
+    document.getElementById('client_id').value = user.client_id || '';
+    document.getElementById('role').value = user.role || '';
+    document.getElementById('status').value = user.status || '';
+    
+    // Store original values
+    originalFormData = {
+      name: user.name || '',
+      mobile: user.mobile || '',
+      email: user.email || ''
+    };
+    
+    // Email is already verified since it's existing user data
+    isOtpVerified = true;
+    
+    // Set initial button states - show "Send OTP" disabled
+    document.getElementById('sendOtpBtn').disabled = true;
+    document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+    
+    // Setup change listeners
+    setupChangeListeners();
+    
+    loadingSection.style.display = 'none';
+    profileForm.style.display = 'block';
+    
+  }catch(err){
+    console.error('Error loading profile:', err);
+    showAlert(err.message || 'Failed to load profile data', 'error');
+    loadingSection.style.display = 'none';
+  }
+}
+
+/* Save Profile Changes */
+async function saveProfile(e){
+  e.preventDefault();
+  
+  const saveBtn = document.getElementById('saveBtn');
+  const name = document.getElementById('name').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const email = document.getElementById('email').value.trim();
+  
+  // Validations
+  if(!name || !mobile || !email){
+    showAlert('Please fill in all required fields', 'error');
+    return;
+  }
+  
+  // Name validation - only letters and spaces
+  const nameRegex = /^[A-Za-z\s]+$/;
+  if(!nameRegex.test(name)){
+    showAlert('Name should contain only letters', 'error');
+    return;
+  }
+  
+  // Mobile validation - exactly 10 digits
+  const mobileRegex = /^[0-9]{10}$/;
+  if(!mobileRegex.test(mobile)){
+    showAlert('Mobile number should be exactly 10 digits', 'error');
+    return;
+  }
+  
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRegex.test(email)){
+    showAlert('Please enter a valid email address', 'error');
+    return;
+  }
+  
+  // Check if email changed and OTP verified
+  if(email !== originalFormData.email && !isOtpVerified){
+    showAlert('Please verify your new email address with OTP', 'error');
+    return;
+  }
+  
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  
+  try{
+    const res = await fetch('profile.php?action=update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, mobile, email })
+    });
+    
+    const data = await res.json();
+    
+    if(!data.success){
+      throw new Error(data.message || 'Failed to save profile');
+    }
+    
+    // Update localStorage
+    localStorage.setItem('userName', name);
+    localStorage.setItem('Mobile Number', mobile);
+    
+    // Update original form data
+    originalFormData = { name, mobile, email };
+    isOtpVerified = true;
+    
+    // Show success popup
+    showPopup('Profile updated successfully!');
+    
+    // Update header profile
+    if(window.updateHeaderProfile){
+      window.updateHeaderProfile();
+    }
+    
+    // Disable save button until next change
+    saveBtn.disabled = true;
+    
+  }catch(err){
+    console.error('Error saving profile:', err);
+    showAlert(err.message || 'Failed to save profile changes', 'error');
+  }finally{
+    if(saveBtn.disabled === false){
+      saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+    }else{
+      saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+    }
+  }
+}
+
+/* Setup Change Listeners */
+function setupChangeListeners(){
+  const nameInput = document.getElementById('name');
+  const mobileInput = document.getElementById('mobile');
+  const emailInput = document.getElementById('email');
+  const saveBtn = document.getElementById('saveBtn');
+  
+  // Name input - only letters
+  nameInput.addEventListener('input', (e) => {
+    const clean = e.target.value.replace(/[^A-Za-z\s]/g, '');
+    if(e.target.value !== clean){
+      e.target.value = clean;
+    }
+    checkForChanges();
+  });
+  
+  // Mobile input - only numbers, max 10 digits
+  mobileInput.addEventListener('input', (e) => {
+    let clean = e.target.value.replace(/\D/g, '');
+    if(clean.length > 10){
+      clean = clean.slice(0, 10);
+    }
+    e.target.value = clean;
+    
+    const mobileError = document.getElementById('mobileError');
+    if(clean.length > 0 && clean.length < 10){
+      mobileError.textContent = 'Mobile number must be exactly 10 digits';
+      mobileError.style.display = 'flex';
+    }else{
+      mobileError.style.display = 'none';
+    }
+    
+    checkForChanges();
+  });
+  
+  // Email input
+  emailInput.addEventListener('input', () => {
+    const currentEmail = emailInput.value.trim();
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const emailVerifySuccess = document.getElementById('emailVerifySuccess');
+    
+    // If email changes from original, enable OTP button and require verification
+    if(currentEmail !== originalFormData.email && currentEmail.length > 0){
+      isOtpVerified = false;
+      sendOtpBtn.disabled = false;
+      emailVerifySuccess.style.display = 'none';
+      // Reset button text
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+    }else{
+      // Email is same as original or empty, disable OTP button
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+      emailVerifySuccess.style.display = 'none';
+      
+      if(currentEmail === originalFormData.email){
+        // Original email is already verified
+        isOtpVerified = true;
+      }
+    }
+    
+    checkForChanges();
+  });
+}
+
+/* Check for changes to enable/disable save button */
+function checkForChanges(){
+  const name = document.getElementById('name').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const saveBtn = document.getElementById('saveBtn');
+  
+  // Check if any field has changed
+  const hasChanges = (
+    name !== originalFormData.name ||
+    mobile !== originalFormData.mobile ||
+    email !== originalFormData.email
+  );
+  
+  // Enable save button only if there are changes and all validations pass
+  const isValid = (
+    name.length > 0 &&
+    /^[A-Za-z\s]+$/.test(name) &&
+    mobile.length === 10 &&
+    /^[0-9]{10}$/.test(mobile) &&
+    email.length > 0 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+    (email === originalFormData.email || isOtpVerified)
+  );
+  
+  saveBtn.disabled = !(hasChanges && isValid);
+}
+
+/* Send OTP */
+async function sendOtp(){
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const sendOtpBtn = document.getElementById('sendOtpBtn');
+  const emailError = document.getElementById('emailError');
+  const otpSection = document.getElementById('otpSection');
+  
+  emailError.style.display = 'none';
+  
+  if(!email){
+    emailError.textContent = 'Please enter email to receive OTP';
+    emailError.style.display = 'flex';
+    return;
+  }
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!emailRegex.test(email)){
+    emailError.textContent = 'Please enter a valid email address';
+    emailError.style.display = 'flex';
+    return;
+  }
+  
+  sendOtpBtn.disabled = true;
+  sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  
+  try{
+    const res = await fetch('profile.php?action=send_otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await res.json();
+    
+    if(!data.success){
+      throw new Error(data.message || 'Failed to send OTP');
+    }
+    
+    otpSection.style.display = 'block';
+    sendOtpBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
+    showAlert('OTP sent to your email', 'success');
+    startTimer();
+    
+  }catch(err){
+    console.error('Error sending OTP:', err);
+    emailError.textContent = err.message || 'Failed to send OTP';
+    emailError.style.display = 'flex';
+    sendOtpBtn.disabled = false;
+    sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+  }
+}
+
+/* Verify OTP */
+async function verifyOtp(){
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const otp = document.getElementById('otp').value.trim();
+  const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+  const otpError = document.getElementById('otpError');
+  const otpSection = document.getElementById('otpSection');
+  const emailVerifySuccess = document.getElementById('emailVerifySuccess');
+  
+  otpError.style.display = 'none';
+  
+  if(!otp){
+    otpError.textContent = 'Please enter OTP';
+    otpError.style.display = 'flex';
+    return;
+  }
+  
+  verifyOtpBtn.disabled = true;
+  verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+  
+  try{
+    const res = await fetch('profile.php?action=verify_otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, otp })
+    });
+    
+    const data = await res.json();
+    
+    if(!data.success){
+      throw new Error(data.message || 'Invalid OTP');
+    }
+    
+    isOtpVerified = true;
+    otpSection.style.display = 'none';
+    emailVerifySuccess.style.display = 'flex';
+    emailVerifySuccess.innerHTML = '<i class="fas fa-check-circle"></i> Email verified successfully';
+    document.getElementById('sendOtpBtn').innerHTML = '<i class="fas fa-check-double"></i> Verified';
+    document.getElementById('sendOtpBtn').disabled = true;
+    document.getElementById('otp').value = '';
+    showAlert('Email verified successfully!', 'success');
+    checkForChanges();
+    
+    if(timerInterval){
+      clearInterval(timerInterval);
+    }
+    
+  }catch(err){
+    console.error('Error verifying OTP:', err);
+    otpError.textContent = err.message || 'Invalid OTP';
+    otpError.style.display = 'flex';
+    verifyOtpBtn.disabled = false;
+    verifyOtpBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify';
+  }
+}
+
+/* Start Resend Timer */
+function startTimer(){
+  let seconds = 60;
+  const resendContainer = document.getElementById('resendContainer');
+  const resendText = document.getElementById('resendText');
+  const sendOtpBtn = document.getElementById('sendOtpBtn');
+  
+  resendContainer.style.display = 'flex';
+  resendText.style.cursor = 'not-allowed';
+  resendText.style.opacity = '0.5';
+  resendText.textContent = `Resend in ${seconds}s`;
+  resendText.onclick = null;
+  
+  if(timerInterval){
+    clearInterval(timerInterval);
+  }
+  
+  timerInterval = setInterval(() => {
+    seconds--;
+    resendText.textContent = `Resend in ${seconds}s`;
+    
+    if(seconds <= 0){
+      clearInterval(timerInterval);
+      resendText.style.cursor = 'pointer';
+      resendText.style.opacity = '1';
+      resendText.textContent = 'Resend';
+      resendText.onclick = sendOtp;
+      sendOtpBtn.disabled = false;
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+    }
+  }, 1000);
+}
+
+/* Initialize */
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadProfile();
+  
+  document.getElementById('profileForm').addEventListener('submit', saveProfile);
+  document.getElementById('sendOtpBtn').addEventListener('click', sendOtp);
+  document.getElementById('verifyOtpBtn').addEventListener('click', verifyOtp);
+});
+</script>
+<script src="header/header.js"></script>
+</body>
+</html>

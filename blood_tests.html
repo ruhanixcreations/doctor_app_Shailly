@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Blood Tests</title>
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --danger:#dc3545;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.container{
+  max-width:900px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header .title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:24px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  align-items:center;
+}
+
+.input{
+  flex:1;
+  padding:11px 14px;
+  height:44px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  background:var(--bg-white);
+  transition:all 0.2s ease;
+}
+
+.input:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.btn{
+  height:44px;
+  padding:10px 20px;
+  border-radius:6px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,169,165,0.25);
+}
+
+.btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+}
+
+.btn.ghost{
+  background:#fff;
+  border:1px solid var(--border-light);
+  color:var(--text-dark);
+}
+
+.btn.edit{
+  background:var(--primary-teal);
+  color:#fff;
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:6px;
+  font-weight:600;
+  margin-right:8px;
+}
+
+.btn.edit:hover{
+  background:var(--primary-blue);
+}
+
+.btn.delete{
+  background:var(--danger);
+  color:#fff;
+  padding:6px 12px;
+  font-size:13px;
+  border-radius:6px;
+  font-weight:600;
+}
+
+.btn.delete:hover{
+  background:#c82333;
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+
+.table th,.table td{
+  padding:12px;
+  border-bottom:1px solid var(--border-light);
+  text-align:left;
+  font-size:14px;
+  vertical-align:middle;
+}
+
+.table th{
+  font-weight:600;
+  background:rgba(0,169,165,0.03);
+  color:var(--text-dark);
+}
+
+.name-block{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.name-main{
+  font-weight:600;
+  color:var(--text-dark);
+  font-size:15px;
+}
+
+.name-sub{
+  font-size:13px;
+  color:var(--text-muted);
+}
+
+.table td .row-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.table td .cell-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.cell-actions{
+  flex:0 0 auto;
+}
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.5);
+  z-index:1200;
+  padding:16px;
+}
+
+.modal{
+  width:100%;
+  max-width:420px;
+  background:var(--bg-white);
+  border-radius:12px;
+  padding:24px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.modal-title{
+  font-weight:700;
+  color:var(--text-dark);
+  font-size:18px;
+}
+
+.modal-form{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.modal-form .row{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.label{
+  font-size:13px;
+  color:var(--text-dark);
+  font-weight:600;
+  margin-bottom:4px;
+  display:block;
+}
+
+.helper{
+  font-size:12px;
+  color:var(--text-muted);
+}
+
+@media (max-width:760px){
+  body{
+    padding:16px;
+  }
+  
+  .header{
+    padding:14px 18px;
+  }
+  
+  .brand{
+    width:38px;
+    height:38px;
+    font-size:18px;
+  }
+  
+  .header .title{
+    font-size:16px;
+  }
+  
+  .header .subtitle{
+    font-size:11px;
+  }
+  
+  .content{
+    padding:20px;
+  }
+  
+  .controls{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  
+  .modal{
+    max-width:420px;
+    width:94%;
+    padding:20px;
+  }
+  
+  .table thead{
+    display:none;
+  }
+  
+  .table, .table tbody, .table tr{
+    display:block;
+    width:100%;
+  }
+  
+  .table tr{
+    margin-bottom:12px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    overflow:hidden;
+    background:#fff;
+  }
+  
+  .table td{
+    display:block;
+    padding:0;
+  }
+  
+  .table tr .row-inner{
+    display:flex;
+    align-items:center;
+    padding:12px;
+    gap:12px;
+  }
+  
+  .table td .row-inner .cell-content{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  
+  .table td .row-inner .cell-actions{
+    flex:0 0 auto;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+  }
+  
+  .cell-actions .btn{
+    padding:6px 10px;
+    font-size:13px;
+  }
+}
+
+@media(max-width:420px){
+  .header{
+    padding:12px 16px;
+  }
+  
+  .header .title{
+    font-size:15px;
+  }
+  
+  .modal{
+    width:96%;
+    padding:18px;
+  }
+}
+</style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<main class="container">
+  <div class="header">
+    <div class="brand">🩸</div>
+    <div class="header-text">
+      <div class="title">Blood Test List</div>
+      <div class="subtitle">Manage blood test types and prices</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="controls">
+      <input id="filter" placeholder="Filter by name or price" class="input" aria-label="Filter tests">
+      <button id="addB" class="btn">Add Test</button>
+    </div>
+
+    <table class="table" aria-label="Blood test table">
+      <thead><tr><th>Name</th></tr></thead>
+      <tbody id="tbl"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Add Modal -->
+<div id="modalOverlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal" role="document" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div id="modalTitle" class="modal-title">Add Blood Test</div>
+      <button id="closeModal" class="btn ghost">Close</button>
+    </div>
+
+    <div class="modal-form">
+      <div class="row">
+        <label class="label" for="bNameModal">Test name</label>
+        <input id="bNameModal" class="input" placeholder="Enter test name (letters only)" aria-label="Test name">
+      </div>
+
+      <div class="row">
+        <label class="label" for="bPriceModal">Price</label>
+        <input id="bPriceModal" class="input" placeholder="Price (numbers only)" aria-label="Price">
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;">
+        <div class="helper" style="flex:1;">Name: letters & spaces only. Price: digits only.</div>
+        <button id="saveTest" class="btn" disabled>Save Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModalOverlay" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="modal" role="document" aria-labelledby="editModalTitle">
+    <div class="modal-head">
+      <div id="editModalTitle" class="modal-title">Edit Blood Test</div>
+      <button id="closeEditModal" class="btn ghost">Close</button>
+    </div>
+
+    <div class="modal-form">
+      <div class="row">
+        <label class="label" for="editNameModal">Test name</label>
+        <input id="editNameModal" class="input" placeholder="Enter test name (letters only)" aria-label="Test name">
+      </div>
+
+      <div class="row">
+        <label class="label" for="editPriceModal">Price</label>
+        <input id="editPriceModal" class="input" placeholder="Price (numbers only)" aria-label="Price">
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;">
+        <div class="helper" style="flex:1;">Name: letters & spaces only. Price: digits only.</div>
+        <button id="updateTest" class="btn" disabled>Update Test</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
+
+// Run auth check immediately
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+async function load(){
+  const res = await fetch('blood_tests.php?action=list');
+  const j = await res.json();
+  window._blood_tests = j.tests || [];
+  renderTable();
+}
+
+function renderTable(){
+  const tb = document.getElementById('tbl'); tb.innerHTML = '';
+  const q = (document.getElementById('filter').value||'').trim().toLowerCase();
+
+  (window._blood_tests || []).filter(t => {
+    if(!q) return true;
+    return (t.name||'').toString().toLowerCase().includes(q) || (t.price||'').toString().toLowerCase().includes(q);
+  }).forEach(t=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td data-label="Name">
+        <div class="row-inner">
+          <div class="cell-content">
+            <div class="name-main">${escapeHtml(t.name)}</div>
+            <div class="name-sub">Price: ${escapeHtml(t.price)}</div>
+          </div>
+          <div class="cell-actions">
+            <button data-id="${t.id}" data-name="${escapeHtml(t.name)}" data-price="${escapeHtml(t.price)}" class="edit-btn btn edit">Edit</button>
+            <button data-id="${t.id}" class="del btn delete">Delete</button>
+          </div>
+        </div>
+      </td>`;
+    tb.appendChild(tr);
+  });
+
+  tb.querySelectorAll('.del').forEach(b=>b.addEventListener('click', async (e)=>{
+    if(!confirm('Delete this test?')) return;
+    const id = e.target.dataset.id;
+    await fetch('blood_tests.php?action=delete&id='+encodeURIComponent(id));
+    load();
+  }));
+
+  tb.querySelectorAll('.edit-btn').forEach(b=>b.addEventListener('click', (e)=>{
+    const id = e.target.dataset.id;
+    const name = e.target.dataset.name;
+    const price = e.target.dataset.price;
+    openEditModal(id, name, price);
+  }));
+}
+
+load();
+
+document.getElementById('filter').addEventListener('input', renderTable);
+
+/* Modal handling */
+const addB = document.getElementById('addB');
+const modalOverlay = document.getElementById('modalOverlay');
+const closeModal = document.getElementById('closeModal');
+const saveTest = document.getElementById('saveTest');
+const bNameModal = document.getElementById('bNameModal');
+const bPriceModal = document.getElementById('bPriceModal');
+
+function openModal(){
+  modalOverlay.style.display = 'flex';
+  modalOverlay.setAttribute('aria-hidden','false');
+  bNameModal.value = '';
+  bPriceModal.value = '';
+  saveTest.disabled = true;
+  bNameModal.focus();
+  document.addEventListener('keydown', onKeydown);
+}
+function closeModalFn(){
+  modalOverlay.style.display = 'none';
+  modalOverlay.setAttribute('aria-hidden','true');
+  document.removeEventListener('keydown', onKeydown);
+}
+function onKeydown(e){ if(e.key === 'Escape') closeModalFn(); }
+
+addB.addEventListener('click', openModal);
+closeModal.addEventListener('click', closeModalFn);
+modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) closeModalFn(); });
+
+bNameModal.addEventListener('input', ()=> {
+  const cleaned = bNameModal.value.replace(/[^A-Za-z\s]/g, '');
+  if(bNameModal.value !== cleaned) bNameModal.value = cleaned;
+  updateSaveState();
+});
+bPriceModal.addEventListener('input', ()=> {
+  const cleaned = bPriceModal.value.replace(/\D/g, '');
+  if(bPriceModal.value !== cleaned) bPriceModal.value = cleaned;
+  updateSaveState();
+});
+
+function isNameValid(v){ return /^[A-Za-z\s]+$/.test((v||'').trim()); }
+function isPriceValid(v){ return /^\d+$/.test((v||'').trim()); }
+function updateSaveState(){ const ok = isNameValid(bNameModal.value) && isPriceValid(bPriceModal.value); saveTest.disabled = !ok; }
+
+saveTest.addEventListener('click', async ()=>{
+  const name = bNameModal.value.trim();
+  const price = bPriceModal.value.trim();
+  if(!isNameValid(name)){ alert('Name must contain letters and spaces only'); return; }
+  if(!isPriceValid(price)){ alert('Price must contain digits only'); return; }
+
+  saveTest.disabled = true;
+  try{
+    const res = await fetch('blood_tests.php?action=add', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ name, price })
+    });
+    const j = await res.json();
+    if(j.success){
+      closeModalFn();
+      load();
+    } else {
+      alert('Error: '+(j.message||'Add failed'));
+    }
+  }catch(err){
+    alert('Network error: '+err.message);
+  } finally {
+    saveTest.disabled = false;
+  }
+});
+
+function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Edit Modal handling */
+let editingTestId = null;
+const editModalOverlay = document.getElementById('editModalOverlay');
+const closeEditModal = document.getElementById('closeEditModal');
+const updateTest = document.getElementById('updateTest');
+const editNameModal = document.getElementById('editNameModal');
+const editPriceModal = document.getElementById('editPriceModal');
+
+function openEditModal(id, name, price){
+  editingTestId = id;
+  editModalOverlay.style.display = 'flex';
+  editModalOverlay.setAttribute('aria-hidden','false');
+  editNameModal.value = name;
+  editPriceModal.value = price;
+  updateEditSaveState();
+  editNameModal.focus();
+  document.addEventListener('keydown', onEditKeydown);
+}
+function closeEditModalFn(){
+  editModalOverlay.style.display = 'none';
+  editModalOverlay.setAttribute('aria-hidden','true');
+  editingTestId = null;
+  document.removeEventListener('keydown', onEditKeydown);
+}
+function onEditKeydown(e){ if(e.key === 'Escape') closeEditModalFn(); }
+
+closeEditModal.addEventListener('click', closeEditModalFn);
+editModalOverlay.addEventListener('click', (e)=>{ if(e.target === editModalOverlay) closeEditModalFn(); });
+
+editNameModal.addEventListener('input', ()=> {
+  const cleaned = editNameModal.value.replace(/[^A-Za-z\s]/g, '');
+  if(editNameModal.value !== cleaned) editNameModal.value = cleaned;
+  updateEditSaveState();
+});
+editPriceModal.addEventListener('input', ()=> {
+  const cleaned = editPriceModal.value.replace(/\D/g, '');
+  if(editPriceModal.value !== cleaned) editPriceModal.value = cleaned;
+  updateEditSaveState();
+});
+
+function updateEditSaveState(){ const ok = isNameValid(editNameModal.value) && isPriceValid(editPriceModal.value); updateTest.disabled = !ok; }
+
+updateTest.addEventListener('click', async ()=>{
+  const name = editNameModal.value.trim();
+  const price = editPriceModal.value.trim();
+  if(!isNameValid(name)){ alert('Name must contain letters and spaces only'); return; }
+  if(!isPriceValid(price)){ alert('Price must contain digits only'); return; }
+  if(!editingTestId){ alert('Invalid test ID'); return; }
+
+  updateTest.disabled = true;
+  try{
+    const res = await fetch('blood_tests.php?action=update', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ id: editingTestId, name, price })
+    });
+    const j = await res.json();
+    if(j.success){
+      closeEditModalFn();
+      load();
+    } else {
+      alert('Error: '+(j.message||'Update failed'));
+    }
+  }catch(err){
+    alert('Network error: '+err.message);
+  } finally {
+    updateTest.disabled = false;
+  }
+});
+</script>
+<script src="../header/header.js"></script>
+
+</body>
+</html>
