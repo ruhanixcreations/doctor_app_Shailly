@@ -1142,26 +1142,21 @@ let isLoggingOut = false;
 
 function startPageSessionMonitoring() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  if (!isLoggedIn) {
-    console.log('Not logged in, skipping session monitoring');
-    return;
-  }
-
-  console.log('🔄 Starting automatic session monitoring (every 3 seconds)');
+  if (!isLoggedIn) return;
   
   if (sessionCheckInterval) {
     clearInterval(sessionCheckInterval);
   }
 
+  // Silent monitoring - only logs when there's an issue
   sessionCheckInterval = setInterval(() => {
     if (isLoggingOut) return;
     
-    console.log('⏰ Auto-checking session...');
     fetch("./check_session.php", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
-        console.log('📊 Session status:', data);
         if (!data.success) {
+          // Only log when session is invalid
           console.warn('❌ Session invalid:', data.message);
           if (!isLoggingOut) {
             isLoggingOut = true;
@@ -1170,9 +1165,8 @@ function startPageSessionMonitoring() {
             alert(data.message || 'Your session has expired');
             window.location.href = './signin/signin.html';
           }
-        } else {
-          console.log('✅ Session valid');
         }
+        // Silent when session is valid - no console logs
       })
       .catch(err => {
         console.error('⚠️ Session check error:', err);
@@ -1180,9 +1174,8 @@ function startPageSessionMonitoring() {
   }, 3000);
 }
 
-// Start monitoring immediately
+// Start monitoring silently
 startPageSessionMonitoring();
-console.log('✅ Page session monitoring initialized');
 
 </script>
 <script src="../header/header.js"></script>

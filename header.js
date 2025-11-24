@@ -390,41 +390,32 @@ let isLoggingOut = false; // Prevent multiple simultaneous logouts
 function startSessionMonitoring() {
   // Only monitor if user is logged in
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  if (!isLoggedIn) {
-    console.log('User not logged in, skipping session monitoring');
-    return;
-  }
-
-  console.log('🔄 Starting session monitoring (checking every 3 seconds)');
+  if (!isLoggedIn) return;
   
   // Clear any existing interval
   if (sessionCheckInterval) {
     clearInterval(sessionCheckInterval);
   }
 
-  // Check session every 3 seconds for faster response
+  // Silent monitoring - check session every 3 seconds
   sessionCheckInterval = setInterval(() => {
     // Skip if already logging out
     if (isLoggingOut) return;
     
-    console.log('⏰ Checking session status...');
     fetch("../check_session.php", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
-        console.log('📊 Session check response:', data);
         if (!data.success) {
-          console.warn('❌ Session invalid! Reason:', data.message);
-          // Session is invalid, force logout
+          // Only log when there's an issue
+          console.warn('❌ Session invalid:', data.message);
           forceLogout(data.message || 'Your session has expired');
-        } else {
-          console.log('✅ Session valid');
         }
+        // Silent when valid - no console logs
       })
       .catch(err => {
         console.error('⚠️ Session check error:', err);
-        // On network error, don't force logout - could be temporary connection issue
       });
-  }, 3000); // Check every 3 seconds for faster response
+  }, 3000);
 }
 
 function forceLogout(message) {
@@ -456,11 +447,8 @@ function forceLogout(message) {
 // Start monitoring when page loads
 function initSessionMonitoring() {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  console.log('📍 Initializing session monitoring. isLoggedIn:', isLoggedIn);
   if (isLoggedIn) {
     startSessionMonitoring();
-  } else {
-    console.log('User not logged in, skipping session monitoring');
   }
 }
 
@@ -479,7 +467,6 @@ if (document.readyState === 'loading') {
 window.addEventListener('load', () => {
   // Only start if not already started
   if (!sessionCheckInterval) {
-    console.log('🔄 Backup: Starting session monitoring on window load');
     setTimeout(initSessionMonitoring, 500);
   }
 });
