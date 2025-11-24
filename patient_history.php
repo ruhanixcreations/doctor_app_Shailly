@@ -30,6 +30,14 @@ if($action === 'detail'){
     $pid = $_GET['patient_id'] ?? '';
     if(!$pid) { echo json_encode(['success'=>false,'message'=>'patient_id required']); exit; }
 
+    // Ensure created_at column exists
+    $mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'created_at'");
+    if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+        $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        // Update existing records without created_at to have current timestamp
+        $mysqli->query("UPDATE patient_list SET created_at = NOW() WHERE created_at IS NULL");
+    }
+
     // patient info
     $stmt = $mysqli->prepare("SELECT * FROM patient_list WHERE patient_id=? LIMIT 1");
     $stmt->bind_param('s',$pid);

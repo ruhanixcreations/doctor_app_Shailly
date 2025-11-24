@@ -208,10 +208,14 @@ $mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'previous_blood_test_file'")
 if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
     $mysqli->query("ALTER TABLE patient_list ADD COLUMN previous_blood_test_file TEXT NULL");
 }
+$mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'created_at'");
+if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+    $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+}
 
 // The doctor_id variable is now replaced by the doctor_json string
-$stmt = $mysqli->prepare("INSERT INTO patient_list (client_id, patient_id, patient_name, mobile, age, weight, doctor, report_file, previous_prescription_file, previous_blood_test_file)
-  VALUES (?, ?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?, ?, ?)");
+$stmt = $mysqli->prepare("INSERT INTO patient_list (client_id, patient_id, patient_name, mobile, age, weight, doctor, report_file, previous_prescription_file, previous_blood_test_file, created_at)
+  VALUES (?, ?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?, ?, ?, NOW())");
 
 if(!$stmt) {
     send_json(['success'=>false,'message'=>'DB Prepare Error (Patient Insert): '.$mysqli->error],500);

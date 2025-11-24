@@ -1046,11 +1046,14 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
   // Create a single row showing all information
   const tr = document.createElement('tr');
   
-  // Get upload date - try to extract from first report or use current date
+  // Get upload date from patient created_at
   let uploadDate = '-';
-  if(hasReports && reports[0].created_at){
+  
+  if(patientData?.created_at){
+    uploadDate = new Date(patientData.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  } else if(hasReports && reports[0]?.created_at){
     uploadDate = new Date(reports[0].created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-  } else if(hasReports && reports[0].file_name){
+  } else if(hasReports && reports[0]?.file_name){
     const match = reports[0].file_name.match(/(\d{13})/);
     if(match){
       const timestamp = parseInt(match[1]);
