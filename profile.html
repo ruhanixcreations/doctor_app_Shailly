@@ -475,7 +475,7 @@ body{
 function checkAuth(){
   const isLoggedIn = localStorage.getItem('isLoggedIn');
   if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
-    window.location.href = '/doctor_app/signin/signin.html';
+    window.location.href = '/doctor_app/signin.html';
     return false;
   }
   return true;
