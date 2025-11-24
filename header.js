@@ -454,14 +454,34 @@ function forceLogout(message) {
 }
 
 // Start monitoring when page loads
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    console.log('📍 Page loaded. isLoggedIn:', isLoggedIn);
-    if (isLoggedIn) {
-      startSessionMonitoring();
-    }
-  }, 1000); // Start after 1 second to allow page to initialize
+function initSessionMonitoring() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  console.log('📍 Initializing session monitoring. isLoggedIn:', isLoggedIn);
+  if (isLoggedIn) {
+    startSessionMonitoring();
+  } else {
+    console.log('User not logged in, skipping session monitoring');
+  }
+}
+
+// Try multiple ways to ensure monitoring starts
+if (document.readyState === 'loading') {
+  // DOM is still loading
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initSessionMonitoring, 1000);
+  });
+} else {
+  // DOM already loaded
+  setTimeout(initSessionMonitoring, 1000);
+}
+
+// Also try on window load as backup
+window.addEventListener('load', () => {
+  // Only start if not already started
+  if (!sessionCheckInterval) {
+    console.log('🔄 Backup: Starting session monitoring on window load');
+    setTimeout(initSessionMonitoring, 500);
+  }
 });
 
 
