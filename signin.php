@@ -83,6 +83,12 @@ if ($action === 'verify_otp') {
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user=$res->fetch_assoc();
+    // Check if user is disabled
+    if (isset($user['status']) && $user['status'] === 'disabled') { 
+        unset($_SESSION['signin_otp_code'],$_SESSION['signin_otp_email'],$_SESSION['signin_otp_expiry'],$_SESSION['signin_otp_sent_at']);
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']); 
+        exit; 
+    }
     $_SESSION['pre_auth_user_id']=(int)$user['id'];
     $_SESSION['pre_auth_email']=$email;
     $_SESSION['pre_auth_time']=time();
@@ -96,10 +102,15 @@ if ($action === 'complete_otp_login') {
     $email = strtolower(trim($input['email'] ?? $_POST['email'] ?? ''));
     if (!$email) { echo json_encode(['success'=>false,'message'=>'Missing email']); exit; }
     if (!isset($_SESSION['pre_auth_email']) || strtolower($_SESSION['pre_auth_email']) !== strtolower($email)) { echo json_encode(['success'=>false,'message'=>'OTP verification required']); exit; }
-    $stmt = $conn->prepare("SELECT id,name,client_id,mobile,role FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1");
+    $stmt = $conn->prepare("SELECT id,name,client_id,mobile,role,status FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1");
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user=$res->fetch_assoc();
+    // Check if user is disabled
+    if (isset($user['status']) && $user['status'] === 'disabled') { 
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']); 
+        exit; 
+    }
     session_regenerate_id(true);
     $_SESSION['user_id']=(int)$user['id'];
     $_SESSION['user_email']=$email;
@@ -124,6 +135,11 @@ if ($action === 'login_password') {
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user = $res->fetch_assoc();
+    // Check if user is disabled
+    if (isset($user['status']) && $user['status'] === 'disabled') { 
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']); 
+        exit; 
+    }
     $storedHash = $user['password'] ?? '';
     $passwordOk = false;
     if ($storedHash) {
