@@ -732,7 +732,7 @@ function renderTable(){
       
       try{
         btn.disabled = true;
-        const res = await fetch('../toggle_user_status.php', {
+        const res = await fetch(apiList + '?action=toggle_status', {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({user_id: id, status: newStatus})

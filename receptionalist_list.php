@@ -68,5 +68,59 @@ if($action === 'delete'){
     send_json(['success'=>$ok]);
 }
 
+if($action === 'toggle_status'){
+    $raw = file_get_contents('php://input'); 
+    $data = json_decode($raw, true);
+    $userId = intval($data['user_id'] ?? 0);
+    $newStatus = trim($data['status'] ?? '');
+    
+    if(!$userId) send_json(['success'=>false, 'message'=>'Invalid user ID']);
+    if(!in_array($newStatus, ['active', 'inactive'])) send_json(['success'=>false, 'message'=>'Invalid status']);
+    
+    // Ensure columns exist
+    $checkColumns = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+    if($checkColumns->num_rows === 0) {
+        $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active'");
+    }
+    $checkSessionVersion = $mysqli->query("SHOW COLUMNS FROM users LIKE 'session_version'");
+    if($checkSessionVersion->num_rows === 0) {
+        $mysqli->query("ALTER TABLE users ADD COLUMN session_version INT DEFAULT 1");
+    }
+    
+    // Update user status and increment session_version
+    $stmt = $mysqli->prepare("UPDATE users SET status=?, session_version = session_version + 1 WHERE id=? AND role='receptionalist'");
+    $stmt->bind_param('si', $newStatus, $userId);
+    $success = $stmt->execute();
+    $stmt->close();
+    
+    if($success && $newStatus === 'inactive') {
+        // Clean up session files
+        $sessionDir = __DIR__ . "/sessions";
+        if(file_exists($sessionDir) && is_dir($sessionDir)) {
+            $userStmt = $mysqli->prepare("SELECT email FROM users WHERE id=?");
+            $userStmt->bind_param('i', $userId);
+            $userStmt->execute();
+            $result = $userStmt->get_result();
+            if($row = $result->fetch_assoc()) {
+                $userEmail = $row['email'];
+                $files = scandir($sessionDir);
+                foreach($files as $file) {
+                    if($file === '.' || $file === '..') continue;
+                    $filepath = $sessionDir . '/' . $file;
+                    if(is_file($filepath)) {
+                        $sessionData = @file_get_contents($filepath);
+                        if($sessionData && (strpos($sessionData, $userEmail) !== false || strpos($sessionData, "user_id|i:$userId") !== false)) {
+                            @unlink($filepath);
+                        }
+                    }
+                }
+            }
+            $userStmt->close();
+        }
+    }
+    
+    send_json(['success'=>$success, 'message'=>'User status updated successfully']);
+}
+
 send_json(['success'=>false,'message'=>'invalid action']);
 $mysqli->close();
