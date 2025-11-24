@@ -351,29 +351,51 @@ canvas{
       <hr class="divider">
 
       <h2>Previous Records (Optional)</h2>
-      <p class="small" style="margin-bottom:12px;color:var(--text-muted);">Upload patient's previous prescription and/or blood test report if available</p>
+      <p class="small" style="margin-bottom:12px;color:var(--text-muted);">Capture patient's previous prescription and/or blood test report if available</p>
       
       <div class="inline-group">
         <div class="inline-item">
           <label for="previousPrescription">Previous Prescription (Optional)</label>
-          <div class="file-upload-btn-wrapper">
-            <button type="button" id="uploadPrescriptionBtn" class="btn secondary" style="width:100%;margin-top:4px;">
-              <i class="fas fa-prescription"></i> Upload Prescription
+          <div style="margin-top:8px;">
+            <button type="button" id="capturePrescriptionBtn" class="btn" style="width:100%;">
+              <i class="fas fa-camera"></i> Capture Prescription
             </button>
-            <input type="file" id="previousPrescription" name="previous_prescription" accept="image/*,application/pdf" style="display:none;">
+          </div>
+          <div id="prescriptionCameraSection" style="display:none; margin-top:12px;">
+            <video id="prescriptionVideo" autoplay playsinline style="width:100%; max-width:400px; border-radius:8px; border:2px solid var(--border-light);"></video>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button type="button" id="takePrescriptionPhoto" class="btn">
+                <i class="fas fa-camera"></i> Take Photo
+              </button>
+              <button type="button" id="closePrescriptionCamera" class="btn secondary">
+                <i class="fas fa-times"></i> Close
+              </button>
+            </div>
           </div>
           <div id="prescriptionPreview" class="file-preview"></div>
+          <input type="file" id="previousPrescription" name="previous_prescription" accept="image/*,application/pdf" style="display:none;">
         </div>
 
         <div class="inline-item">
           <label for="previousBloodTest">Previous Blood Test (Optional)</label>
-          <div class="file-upload-btn-wrapper">
-            <button type="button" id="uploadBloodTestBtn" class="btn secondary" style="width:100%;margin-top:4px;">
-              <i class="fas fa-vial"></i> Upload Blood Test
+          <div style="margin-top:8px;">
+            <button type="button" id="captureBloodTestBtn" class="btn" style="width:100%;">
+              <i class="fas fa-camera"></i> Capture Blood Test
             </button>
-            <input type="file" id="previousBloodTest" name="previous_blood_test" accept="image/*,application/pdf" style="display:none;">
+          </div>
+          <div id="bloodTestCameraSection" style="display:none; margin-top:12px;">
+            <video id="bloodTestVideo" autoplay playsinline style="width:100%; max-width:400px; border-radius:8px; border:2px solid var(--border-light);"></video>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button type="button" id="takeBloodTestPhoto" class="btn">
+                <i class="fas fa-camera"></i> Take Photo
+              </button>
+              <button type="button" id="closeBloodTestCamera" class="btn secondary">
+                <i class="fas fa-times"></i> Close
+              </button>
+            </div>
           </div>
           <div id="bloodTestPreview" class="file-preview"></div>
+          <input type="file" id="previousBloodTest" name="previous_blood_test" accept="image/*,application/pdf" style="display:none;">
         </div>
       </div>
 
@@ -461,17 +483,29 @@ if(!checkAuth()){
   const statusEl = document.getElementById('status');
   
   // Previous records upload elements
-  const uploadPrescriptionBtn = document.getElementById('uploadPrescriptionBtn');
-  const uploadBloodTestBtn = document.getElementById('uploadBloodTestBtn');
+  const capturePrescriptionBtn = document.getElementById('capturePrescriptionBtn');
+  const captureBloodTestBtn = document.getElementById('captureBloodTestBtn');
   const previousPrescriptionInput = document.getElementById('previousPrescription');
   const previousBloodTestInput = document.getElementById('previousBloodTest');
   const prescriptionPreview = document.getElementById('prescriptionPreview');
   const bloodTestPreview = document.getElementById('bloodTestPreview');
+  
+  const prescriptionCameraSection = document.getElementById('prescriptionCameraSection');
+  const prescriptionVideo = document.getElementById('prescriptionVideo');
+  const takePrescriptionPhoto = document.getElementById('takePrescriptionPhoto');
+  const closePrescriptionCamera = document.getElementById('closePrescriptionCamera');
+  
+  const bloodTestCameraSection = document.getElementById('bloodTestCameraSection');
+  const bloodTestVideo = document.getElementById('bloodTestVideo');
+  const takeBloodTestPhoto = document.getElementById('takeBloodTestPhoto');
+  const closeBloodTestCamera = document.getElementById('closeBloodTestCamera');
 
   let stream = null;
   let filesArray = [];
+  let prescriptionStream = null;
+  let bloodTestStream = null;
   
-  // ======== PREVIOUS RECORDS UPLOAD HANDLERS ========
+  // ======== PREVIOUS RECORDS CAMERA HANDLERS ========
   function formatFileSize(bytes) {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -480,46 +514,145 @@ if(!checkAuth()){
   
   function showFilePreview(previewEl, file, inputEl) {
     const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-    const icon = isPdf ? '<i class="fas fa-file-pdf file-preview-icon"></i>' : '<i class="fas fa-file-image file-preview-icon" style="color:#4caf50;"></i>';
+    const isImage = file.type.startsWith('image/');
     
-    previewEl.innerHTML = `
-      <div class="file-preview-content">
-        ${icon}
-        <div class="file-preview-info">
-          <div class="file-preview-name">${file.name}</div>
-          <div class="file-preview-size">${formatFileSize(file.size)}</div>
+    let previewContent = '';
+    if (isImage) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewEl.innerHTML = `
+          <div class="file-preview-content">
+            <img src="${e.target.result}" style="width:100px;height:100px;object-fit:cover;border-radius:6px;border:2px solid var(--border-light);">
+            <div class="file-preview-info">
+              <div class="file-preview-name">${file.name}</div>
+              <div class="file-preview-size">${formatFileSize(file.size)}</div>
+            </div>
+            <button type="button" class="file-preview-remove">Remove</button>
+          </div>
+        `;
+        previewEl.classList.add('has-file');
+        
+        previewEl.querySelector('.file-preview-remove').addEventListener('click', () => {
+          inputEl.value = '';
+          previewEl.classList.remove('has-file');
+          previewEl.innerHTML = '';
+        });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const icon = '<i class="fas fa-file-pdf file-preview-icon"></i>';
+      previewEl.innerHTML = `
+        <div class="file-preview-content">
+          ${icon}
+          <div class="file-preview-info">
+            <div class="file-preview-name">${file.name}</div>
+            <div class="file-preview-size">${formatFileSize(file.size)}</div>
+          </div>
+          <button type="button" class="file-preview-remove">Remove</button>
         </div>
-        <button type="button" class="file-preview-remove">Remove</button>
-      </div>
-    `;
-    previewEl.classList.add('has-file');
-    
-    // Add remove handler
-    previewEl.querySelector('.file-preview-remove').addEventListener('click', () => {
-      inputEl.value = '';
-      previewEl.classList.remove('has-file');
-      previewEl.innerHTML = '';
-    });
+      `;
+      previewEl.classList.add('has-file');
+      
+      previewEl.querySelector('.file-preview-remove').addEventListener('click', () => {
+        inputEl.value = '';
+        previewEl.classList.remove('has-file');
+        previewEl.innerHTML = '';
+      });
+    }
   }
   
-  uploadPrescriptionBtn.addEventListener('click', () => {
-    previousPrescriptionInput.click();
-  });
-  
-  uploadBloodTestBtn.addEventListener('click', () => {
-    previousBloodTestInput.click();
-  });
-  
-  previousPrescriptionInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-      showFilePreview(prescriptionPreview, e.target.files[0], previousPrescriptionInput);
+  // Prescription Camera Handlers
+  capturePrescriptionBtn.addEventListener('click', async () => {
+    try {
+      prescriptionStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }, 
+        audio: false 
+      });
+      prescriptionVideo.srcObject = prescriptionStream;
+      prescriptionCameraSection.style.display = 'block';
+      capturePrescriptionBtn.style.display = 'none';
+    } catch (err) {
+      alert('Camera access denied or unavailable');
+      console.error(err);
     }
   });
   
-  previousBloodTestInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-      showFilePreview(bloodTestPreview, e.target.files[0], previousBloodTestInput);
+  takePrescriptionPhoto.addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = prescriptionVideo.videoWidth;
+    canvas.height = prescriptionVideo.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(prescriptionVideo, 0, 0);
+    
+    canvas.toBlob((blob) => {
+      const file = new File([blob], 'prescription_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      previousPrescriptionInput.files = dataTransfer.files;
+      showFilePreview(prescriptionPreview, file, previousPrescriptionInput);
+      
+      // Stop camera
+      if (prescriptionStream) {
+        prescriptionStream.getTracks().forEach(track => track.stop());
+      }
+      prescriptionCameraSection.style.display = 'none';
+      capturePrescriptionBtn.style.display = 'block';
+    }, 'image/jpeg', 0.9);
+  });
+  
+  closePrescriptionCamera.addEventListener('click', () => {
+    if (prescriptionStream) {
+      prescriptionStream.getTracks().forEach(track => track.stop());
     }
+    prescriptionCameraSection.style.display = 'none';
+    capturePrescriptionBtn.style.display = 'block';
+  });
+  
+  // Blood Test Camera Handlers
+  captureBloodTestBtn.addEventListener('click', async () => {
+    try {
+      bloodTestStream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }, 
+        audio: false 
+      });
+      bloodTestVideo.srcObject = bloodTestStream;
+      bloodTestCameraSection.style.display = 'block';
+      captureBloodTestBtn.style.display = 'none';
+    } catch (err) {
+      alert('Camera access denied or unavailable');
+      console.error(err);
+    }
+  });
+  
+  takeBloodTestPhoto.addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = bloodTestVideo.videoWidth;
+    canvas.height = bloodTestVideo.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bloodTestVideo, 0, 0);
+    
+    canvas.toBlob((blob) => {
+      const file = new File([blob], 'blood_test_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      previousBloodTestInput.files = dataTransfer.files;
+      showFilePreview(bloodTestPreview, file, previousBloodTestInput);
+      
+      // Stop camera
+      if (bloodTestStream) {
+        bloodTestStream.getTracks().forEach(track => track.stop());
+      }
+      bloodTestCameraSection.style.display = 'none';
+      captureBloodTestBtn.style.display = 'block';
+    }, 'image/jpeg', 0.9);
+  });
+  
+  closeBloodTestCamera.addEventListener('click', () => {
+    if (bloodTestStream) {
+      bloodTestStream.getTracks().forEach(track => track.stop());
+    }
+    bloodTestCameraSection.style.display = 'none';
+    captureBloodTestBtn.style.display = 'block';
   });
 
   // Load client id and fetch doctors
