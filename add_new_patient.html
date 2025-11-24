@@ -377,6 +377,7 @@ canvas{
       </div>
 
       <div id="prescriptionThumbs" class="thumbs"></div>
+      <div id="prescriptionPdfView" style="display:none; margin-top:12px; padding:12px; background:var(--bg-light); border-radius:6px; border:1px solid var(--border-light);"></div>
       <input type="file" id="previousPrescription" name="previous_prescription" accept="image/*,application/pdf" style="display:none;">
 
       <hr class="divider">
@@ -408,6 +409,7 @@ canvas{
       </div>
 
       <div id="bloodTestThumbs" class="thumbs"></div>
+      <div id="bloodTestPdfView" style="display:none; margin-top:12px; padding:12px; background:var(--bg-light); border-radius:6px; border:1px solid var(--border-light);"></div>
       <input type="file" id="previousBloodTest" name="previous_blood_test" accept="image/*,application/pdf" style="display:none;">
 
       <div style="margin-top:20px;" class="controls">
@@ -462,6 +464,7 @@ if(!checkAuth()){
   const stopPrescriptionCameraBtn = document.getElementById('stopPrescriptionCamera');
   const createPrescriptionPdfBtn = document.getElementById('createPrescriptionPdf');
   const prescriptionThumbsEl = document.getElementById('prescriptionThumbs');
+  const prescriptionPdfView = document.getElementById('prescriptionPdfView');
   const previousPrescriptionInput = document.getElementById('previousPrescription');
   
   // Blood test camera elements
@@ -473,6 +476,7 @@ if(!checkAuth()){
   const stopBloodTestCameraBtn = document.getElementById('stopBloodTestCamera');
   const createBloodTestPdfBtn = document.getElementById('createBloodTestPdf');
   const bloodTestThumbsEl = document.getElementById('bloodTestThumbs');
+  const bloodTestPdfView = document.getElementById('bloodTestPdfView');
   const previousBloodTestInput = document.getElementById('previousBloodTest');
 
   let prescriptionStream = null;
@@ -626,6 +630,16 @@ if(!checkAuth()){
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(pdfFile);
     previousPrescriptionInput.files = dataTransfer.files;
+    
+    // Show View PDF link
+    prescriptionPdfView.style.display = 'block';
+    prescriptionPdfView.innerHTML = `
+      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:18px;margin-right:8px;"></i>
+      <strong>PDF Created:</strong> ${pdfFile.name} (${onlyImages.length} page(s)) - 
+      <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+        <i class="fas fa-eye"></i> View PDF
+      </a>
+    `;
   });
 
   // ======== BLOOD TEST CAMERA HANDLERS ========
@@ -746,6 +760,16 @@ if(!checkAuth()){
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(pdfFile);
     previousBloodTestInput.files = dataTransfer.files;
+    
+    // Show View PDF link
+    bloodTestPdfView.style.display = 'block';
+    bloodTestPdfView.innerHTML = `
+      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:18px;margin-right:8px;"></i>
+      <strong>PDF Created:</strong> ${pdfFile.name} (${onlyImages.length} page(s)) - 
+      <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+        <i class="fas fa-eye"></i> View PDF
+      </a>
+    `;
   });
 
   // Load client id and fetch doctors
@@ -875,6 +899,8 @@ if(!checkAuth()){
       bloodTestFilesArray = [];
       renderPrescriptionThumbs();
       renderBloodTestThumbs();
+      prescriptionPdfView.style.display = 'none';
+      bloodTestPdfView.style.display = 'none';
       form.reset();
       doctorSelect.value = ''; 
       
