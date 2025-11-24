@@ -101,17 +101,16 @@ if($action === 'toggle_status'){
     // Toggle status
     $newStatus = ($currentStatus === 'active') ? 'disabled' : 'active';
     
-    // Update status in database - remove role condition to ensure update happens
-    $updateStmt = $mysqli->prepare("UPDATE users SET status=? WHERE id=?");
-    $updateStmt->bind_param('si', $newStatus, $id);
+    // Update status in database - use direct query to avoid any binding issues
+    $escapedStatus = $mysqli->real_escape_string($newStatus);
+    $updateQuery = "UPDATE users SET status='$escapedStatus' WHERE id=$id";
+    $updateResult = $mysqli->query($updateQuery);
     
-    if(!$updateStmt->execute()){
-        $updateStmt->close();
-        send_json(['success'=>false,'message'=>'Failed to update: ' . $updateStmt->error]);
+    if(!$updateResult){
+        send_json(['success'=>false,'message'=>'Failed to update: ' . $mysqli->error, 'query'=>$updateQuery]);
     }
     
-    $affected = $updateStmt->affected_rows;
-    $updateStmt->close();
+    $affected = $mysqli->affected_rows;
     
     // Verify the update actually worked
     $verifyStmt = $mysqli->prepare("SELECT status FROM users WHERE id=?");
