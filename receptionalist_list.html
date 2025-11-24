@@ -665,14 +665,17 @@ filterInput.addEventListener('input', renderTable);
 async function fetchList(){
   try{
     setStatus('Loading...');
-    const res = await fetch(apiList + '?action=list');
+    // Add timestamp to prevent caching
+    const res = await fetch(apiList + '?action=list&t=' + Date.now());
     const j = await res.json();
+    console.log('Fetched list:', j);
     if(!j.success){ setStatus('Failed to load'); receptionistsMemory = []; renderTable(); return; }
     receptionistsMemory = j.receptionists || [];
+    console.log('Receptionists in memory:', receptionistsMemory);
     renderTable();
     setStatus('');
   }catch(err){
-    console.error(err);
+    console.error('Fetch list error:', err);
     setStatus('Network error');
   }
 }
@@ -693,15 +696,19 @@ function renderTable(){
   tb.innerHTML = '';
   const q = (filterInput.value||'').trim().toLowerCase();
   const list = (receptionistsMemory||[]).filter(r => matchesFilter(r, q));
+  console.log('Rendering table with', list.length, 'receptionists');
+  
   if(list.length === 0){
     const tr = document.createElement('tr');
     tr.innerHTML = `<td class="small" colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No receptionists found</td>`;
     tb.appendChild(tr);
     return;
   }
+  
   list.forEach(r=>{
-    const status = r.status || 'active';
-    const statusBadge = `<span class="status-badge ${status}">${status}</span>`;
+    const status = (r.status || 'active').toLowerCase();
+    console.log(`Rendering user ${r.id} with status: ${status}`);
+    const statusBadge = `<span class="status-badge ${status}">${status.toUpperCase()}</span>`;
     const isDisabled = status === 'disabled';
     const toggleBtn = isDisabled 
       ? `<button class="action-btn enable toggle-status" data-id="${r.id}" data-current-status="${status}">Enable</button>`
@@ -748,30 +755,44 @@ function renderTable(){
 
   tb.querySelectorAll('.toggle-status').forEach(btn=>{
     btn.addEventListener('click', async (e)=>{
-      const id = e.target.dataset.id;
-      const currentStatus = e.target.dataset.currentStatus;
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const button = e.currentTarget;
+      const id = button.dataset.id;
+      const currentStatus = button.dataset.currentStatus;
       const action = currentStatus === 'active' ? 'Disable' : 'Enable';
       
       if(!confirm(`${action} this receptionist?`)) return;
       
+      // Disable button to prevent double clicks
+      button.disabled = true;
+      button.textContent = 'Processing...';
+      
       try{
-        const url = apiList + '?action=toggle_status&id=' + encodeURIComponent(id);
+        const url = apiList + '?action=toggle_status&id=' + encodeURIComponent(id) + '&t=' + Date.now();
         console.log('Toggle status request:', url);
         const res = await fetch(url);
         const jr = await res.json();
         console.log('Toggle status response:', jr);
         
         if(jr.success){ 
-          showToast(`Receptionist ${jr.new_status === 'disabled' ? 'disabled' : 'enabled'} successfully`); 
+          showToast(jr.message || `Receptionist ${jr.new_status === 'disabled' ? 'disabled' : 'enabled'} successfully`); 
           // Refresh the list to show updated status
+          console.log('Fetching updated list...');
           await fetchList(); 
+          console.log('List refreshed');
         } else {
           showToast(jr.message || 'Action failed');
           console.error('Toggle failed:', jr);
+          button.disabled = false;
+          button.textContent = action;
         }
       }catch(err){ 
         console.error('Toggle status error:', err); 
         showToast('Action failed: ' + err.message); 
+        button.disabled = false;
+        button.textContent = action;
       }
     });
   });
