@@ -1,8 +1,6 @@
 <?php
 // receptionalist_list.php
-// Actions: list, delete
-error_reporting(0);
-ini_set('display_errors', 0);
+// Actions: list, delete, toggle_status
 header('Content-Type: application/json; charset=utf-8');
 
 $DB_HOST='localhost'; $DB_USER='ruhanixl_doctorApp'; $DB_PASS='@aashi12345678@'; $DB_NAME='ruhanixl_doctorApp';
@@ -13,22 +11,20 @@ if($mysqli->connect_errno){
     exit;
 }
 
-// Ensure status column exists (suppress errors)
-$checkColumn = @$mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
-if($checkColumn && $checkColumn->num_rows === 0){
-    @$mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
-}
-// Update NULL/empty status values to 'active' (only if column exists)
-if($checkColumn && $checkColumn->num_rows > 0){
-    @$mysqli->query("UPDATE users SET status = 'active' WHERE status IS NULL OR status = ''");
-}
-
 $action = $_GET['action'] ?? 'list';
 
 function send_json($arr){ echo json_encode($arr); exit; }
 
 if($action === 'list'){
-    $res = $mysqli->query("SELECT id, name, email, mobile, role, status, created_at FROM users WHERE role='receptionalist' ORDER BY id DESC");
+    // Ensure status column exists only on list action
+    $checkColumn = $mysqli->query("SHOW COLUMNS FROM users LIKE 'status'");
+    if($checkColumn && $checkColumn->num_rows === 0){
+        $mysqli->query("ALTER TABLE users ADD COLUMN status VARCHAR(20) DEFAULT 'active' AFTER role");
+    }
+    // Set default status for NULL values
+    $mysqli->query("UPDATE users SET status = 'active' WHERE (status IS NULL OR status = '') AND role='receptionalist'");
+    
+    $res = $mysqli->query("SELECT id, name, email, mobile, role, COALESCE(status, 'active') as status, created_at FROM users WHERE role='receptionalist' ORDER BY id DESC");
     $out = [];
     while($r = $res->fetch_assoc()) $out[] = $r;
     send_json(['success'=>true,'receptionists'=>$out]);
@@ -76,54 +72,69 @@ if($action === 'delete'){
 
 if($action === 'toggle_status'){
     $id = intval($_GET['id'] ?? 0);
-    if(!$id) send_json(['success'=>false,'message'=>'invalid id']);
+    if(!$id) send_json(['success'=>false,'message'=>'Invalid ID']);
     
-    // Get current status
-    $stmt = $mysqli->prepare("SELECT status FROM users WHERE id=? AND role='receptionalist'");
+    // Get current status using COALESCE to handle NULL
+    $stmt = $mysqli->prepare("SELECT id, COALESCE(status, 'active') as status FROM users WHERE id=? AND role='receptionalist'");
     $stmt->bind_param('i', $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if($result->num_rows === 0) send_json(['success'=>false,'message'=>'User not found']);
     
-    $user = $result->fetch_assoc();
-    $currentStatus = $user['status'];
-    
-    // Handle NULL or empty status - treat as active
-    if(empty($currentStatus) || $currentStatus === null || $currentStatus === 'NULL'){
-        $currentStatus = 'active';
+    if(!$stmt->execute()){
+        send_json(['success'=>false,'message'=>'Database error: ' . $stmt->error]);
     }
     
-    $newStatus = ($currentStatus === 'active' || $currentStatus === 'Active') ? 'disabled' : 'active';
+    $result = $stmt->get_result();
+    if($result->num_rows === 0){
+        $stmt->close();
+        send_json(['success'=>false,'message'=>'User not found']);
+    }
+    
+    $user = $result->fetch_assoc();
+    $currentStatus = trim($user['status']);
     $stmt->close();
     
-    // Update status - ensure column exists with ALTER TABLE if needed
-    $stmt = $mysqli->prepare("UPDATE users SET status=? WHERE id=? AND role='receptionalist'");
-    $stmt->bind_param('si', $newStatus, $id);
-    $ok = $stmt->execute();
-    $affected = $stmt->affected_rows;
-    $stmt->close();
+    // Toggle status
+    $newStatus = ($currentStatus === 'active') ? 'disabled' : 'active';
     
-    if(!$ok || $affected === 0){
-        send_json(['success'=>false,'message'=>'Failed to update status']);
+    // Update status in database
+    $updateStmt = $mysqli->prepare("UPDATE users SET status=? WHERE id=? AND role='receptionalist'");
+    $updateStmt->bind_param('si', $newStatus, $id);
+    
+    if(!$updateStmt->execute()){
+        $updateStmt->close();
+        send_json(['success'=>false,'message'=>'Failed to update: ' . $updateStmt->error]);
+    }
+    
+    $affected = $updateStmt->affected_rows;
+    $updateStmt->close();
+    
+    if($affected === 0){
+        send_json(['success'=>false,'message'=>'No rows updated. Current status: ' . $currentStatus]);
     }
     
     // If disabling user, destroy their active sessions
     if($newStatus === 'disabled'){
         $sessionDir = __DIR__ . "/../sessions";
+        $sessionsDeleted = 0;
+        
         if(file_exists($sessionDir)){
             $files = glob($sessionDir . "/sess_*");
             if($files){
                 foreach($files as $file){
                     $sessionData = @file_get_contents($file);
-                    if($sessionData && strpos($sessionData, "user_id|i:$id;") !== false){
-                        @unlink($file);
+                    // Look for user_id in session data
+                    if($sessionData && (strpos($sessionData, "user_id\";i:$id;") !== false || strpos($sessionData, "user_id|i:$id;") !== false)){
+                        if(@unlink($file)){
+                            $sessionsDeleted++;
+                        }
                     }
                 }
             }
         }
+        
+        send_json(['success'=>true, 'new_status'=>$newStatus, 'message'=>'User disabled and ' . $sessionsDeleted . ' session(s) deleted']);
+    } else {
+        send_json(['success'=>true, 'new_status'=>$newStatus, 'message'=>'User enabled successfully']);
     }
-    
-    send_json(['success'=>true, 'new_status'=>$newStatus, 'message'=>'Status updated successfully']);
 }
 
 send_json(['success'=>false,'message'=>'invalid action']);
