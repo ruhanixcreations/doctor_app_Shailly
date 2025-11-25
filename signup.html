@@ -148,6 +148,11 @@
     flex-direction:column;
     gap:12px;
     margin-bottom:14px;
+    width:100%;
+  }
+  
+  .signup-input-group button{
+    width:100%;
   }
   
   .email-otp-row{
@@ -159,16 +164,17 @@
   
   .email-otp-row .email-col{
     flex:1;
+    min-width:0;
   }
   
   .email-otp-row .btn-col{
-    flex:0 0 auto;
+    flex:0 0 240px;
     display:flex;
     align-items:flex-start;
     padding-top:0;
   }
 
-  #sendOtpBtn, #verifyOtpBtn{
+  #sendOtpBtn{
     height:44px;
     padding:10px 18px;
     width:100%;
@@ -186,13 +192,40 @@
     gap:6px;
   }
   
-  #sendOtpBtn:hover:not(:disabled),
+  #verifyOtpBtn{
+    height:44px;
+    padding:10px 18px;
+    width:240px;
+    border-radius:6px;
+    border:none;
+    font-weight:600;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+    font-size:13px;
+    transition:all 0.2s ease;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  
+  #sendOtpBtn:hover:not(:disabled){
+    transform:translateY(-1px);
+    box-shadow:0 3px 10px rgba(0,169,165,0.25);
+  }
+  
+  #sendOtpBtn:disabled{
+    background:#d1d5db;
+    color:#9ca3af;
+    cursor:not-allowed;
+  }
+  
   #verifyOtpBtn:hover:not(:disabled){
     transform:translateY(-1px);
     box-shadow:0 3px 10px rgba(0,169,165,0.25);
   }
   
-  #sendOtpBtn:disabled,
   #verifyOtpBtn:disabled{
     background:#d1d5db;
     color:#9ca3af;
@@ -690,12 +723,12 @@
       clearErrorBelow(mobileInput);
     }
 
-    if (email && !isValidEmail(email)) {
+    // Only show email error if user has entered something and it's invalid
+    // Don't show error while typing or if field is empty
+    if (email && !isValidEmail(email) && email.length > 5) {
       showErrorBelow(emailInput, "Enter a valid email.");
-    } else if (!email) {
-      clearErrorBelow(emailInput);
     } else {
-      if (!emailError.textContent) clearErrorBelow(emailInput);
+      clearErrorBelow(emailInput);
     }
 
     if (name && mobile && mobile.length === 10 && email && isValidEmail(email) && isOtpVerified && passwordsValid) {
@@ -895,8 +928,21 @@
     document.getElementById("popupOverlay").style.display = "none";
   }
 
-  [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach(el=>{
+  [nameInput, passwordInput, confirmPasswordInput].forEach(el=>{
     el.addEventListener("input", monitorFields);
+  });
+  
+  // Add separate handler for email to avoid showing errors while typing
+  emailInput.addEventListener("blur", () => {
+    const email = emailInput.value.trim();
+    if (email && !isValidEmail(email)) {
+      showErrorBelow(emailInput, "Enter a valid email.");
+    }
+  });
+  
+  emailInput.addEventListener("input", () => {
+    clearErrorBelow(emailInput);
+    monitorFields();
   });
 
   verifyOtpBtn.disabled = true;
