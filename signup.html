@@ -483,6 +483,7 @@
     .email-otp-row{
       flex-direction:column;
       gap:10px;
+      margin-bottom:8px;
     }
     
     .email-otp-row .email-col{
@@ -510,10 +511,15 @@
     
     .signup-input-group{
       align-items:stretch;
+      margin-bottom:10px;
     }
     
     .signup-input-group button{
       width:100%;
+    }
+    
+    #passwordBlock{
+      margin-top:8px;
     }
     
     .register-button{
@@ -756,10 +762,12 @@
 
     if(!email){
       showErrorBelow(emailInput, "Please enter email to receive OTP.");
+      emailInput.focus();
       return;
     }
     if(!isValidEmail(email)){
       showErrorBelow(emailInput, "Enter a valid email address.");
+      emailInput.focus();
       return;
     }
 
@@ -940,21 +948,28 @@
     el.addEventListener("input", monitorFields);
   });
   
-  // Email validation only on blur (when user leaves the field)
+  // Email validation on blur (when user leaves the field)
   emailInput.addEventListener("blur", () => {
     const email = emailInput.value.trim();
-    if (email && !isValidEmail(email)) {
+    if (email && email.length > 0 && !isValidEmail(email)) {
       showErrorBelow(emailInput, "Enter a valid email.");
+    } else if(email && isValidEmail(email)){
+      clearErrorBelow(emailInput);
     }
   });
   
-  // Clear error immediately when typing and revalidate form
+  // Clear error when typing and revalidate form
   emailInput.addEventListener("input", () => {
-    const currentError = emailError.style.display;
-    if (currentError === "block") {
-      clearErrorBelow(emailInput);
-    }
+    clearErrorBelow(emailInput);
     monitorFields();
+    
+    // Enable/disable Send OTP button
+    const email = emailInput.value.trim();
+    if(email && isValidEmail(email)){
+      sendOtpBtn.disabled = false;
+    } else {
+      sendOtpBtn.disabled = true;
+    }
   });
   
   // Clear error when user focuses on email field
@@ -970,6 +985,9 @@
   });
 
   document.addEventListener("DOMContentLoaded", () => {
+    // Disable Send OTP button initially
+    sendOtpBtn.disabled = true;
+    
     const urlParams = new URLSearchParams(window.location.search);
     nextParam = urlParams.get("next");
 
