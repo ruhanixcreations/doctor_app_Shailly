@@ -8,6 +8,8 @@
 <title>Patient History</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Select2 CSS for searchable dropdown -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
 :root{
@@ -148,6 +150,46 @@ select{
 select:focus{
   border-color:var(--primary-teal);
   box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+
+/* Select2 Custom Styling */
+.select2-container--default .select2-selection--single{
+  height:48px;
+  border:1px solid var(--border-light);
+  border-radius:6px;
+  padding:8px 14px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+  line-height:30px;
+  padding-left:0;
+  color:var(--text-dark);
+  font-size:14px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+  height:46px;
+  right:8px;
+}
+.select2-container--default.select2-container--focus .select2-selection--single{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+.select2-dropdown{
+  border:1px solid var(--border-light);
+  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected]{
+  background-color:var(--primary-teal);
+}
+.select2-search--dropdown .select2-search__field{
+  border:1px solid var(--border-light);
+  border-radius:4px;
+  padding:8px 12px;
+  font-size:14px;
+}
+.select2-search--dropdown .select2-search__field:focus{
+  border-color:var(--primary-teal);
+  outline:none;
 }
 
 /* appointment cards grid */
@@ -1207,22 +1249,37 @@ document.addEventListener('keydown', (e)=>{
 /* Initialize */
 document.addEventListener('DOMContentLoaded', ()=>{
   loadPatients();
-  document.getElementById('patientSelect').addEventListener('change',(e)=>loadDetails(e.target.value));
   
   // Check if patient_id is in URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const patientIdFromUrl = urlParams.get('patient_id');
   
-  if(patientIdFromUrl){
-    // Wait for patients to load, then select the patient
-    setTimeout(()=>{
-      const selectEl = document.getElementById('patientSelect');
-      selectEl.value = patientIdFromUrl;
-      loadDetails(patientIdFromUrl);
-    }, 500);
-  }
+  // Wait for patients to load, then initialize Select2
+  setTimeout(()=>{
+    // Initialize Select2 with search
+    $('#patientSelect').select2({
+      placeholder: '-- Select a patient --',
+      allowClear: true,
+      width: '100%',
+      theme: 'default'
+    });
+    
+    // Handle change event
+    $('#patientSelect').on('change', function(e){
+      loadDetails(e.target.value);
+    });
+    
+    // Select patient from URL if provided
+    if(patientIdFromUrl){
+      $('#patientSelect').val(patientIdFromUrl).trigger('change');
+    }
+  }, 500);
 });
 </script>
+<!-- jQuery (required for Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="../header/header.js"></script>
 
 <!-- Session Monitoring for Immediate Logout -->
