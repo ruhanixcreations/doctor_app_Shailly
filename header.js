@@ -383,5 +383,93 @@ window.updateHeaderProfile = function() {
   setupUserHeader();
 };
 
+// --- Periodic Session Validation ---
+let sessionCheckInterval = null;
+let isLoggingOut = false; // Prevent multiple simultaneous logouts
+
+function startSessionMonitoring() {
+  // Only monitor if user is logged in
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  // Clear any existing interval
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+  }
+
+  // Silent monitoring - check session every 3 seconds
+  sessionCheckInterval = setInterval(() => {
+    // Skip if already logging out
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          // Only log when there's an issue
+          console.warn('❌ Session invalid:', data.message);
+          forceLogout(data.message || 'Your session has expired');
+        }
+        // Silent when valid - no console logs
+      })
+      .catch(err => {
+        console.error('⚠️ Session check error:', err);
+      });
+  }, 3000);
+}
+
+function forceLogout(message) {
+  // Prevent multiple simultaneous logouts
+  if (isLoggingOut) {
+    console.log('Already logging out, skipping...');
+    return;
+  }
+  
+  isLoggingOut = true;
+  console.log('🚨 Force logout triggered:', message);
+  
+  // Clear the interval immediately
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+    sessionCheckInterval = null;
+  }
+  
+  // Clear local storage
+  localStorage.clear(); // Clear everything for security
+  
+  // Show alert
+  alert(message);
+  
+  // Redirect to signin
+  window.location.href = '../signin/signin.html';
+}
+
+// Start monitoring when page loads
+function initSessionMonitoring() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (isLoggedIn) {
+    startSessionMonitoring();
+  }
+}
+
+// Try multiple ways to ensure monitoring starts
+if (document.readyState === 'loading') {
+  // DOM is still loading
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initSessionMonitoring, 1000);
+  });
+} else {
+  // DOM already loaded
+  setTimeout(initSessionMonitoring, 1000);
+}
+
+// Also try on window load as backup
+window.addEventListener('load', () => {
+  // Only start if not already started
+  if (!sessionCheckInterval) {
+    setTimeout(initSessionMonitoring, 500);
+  }
+});
+
 
 console.log('=== HEADER.JS FINISHED LOADING ===');

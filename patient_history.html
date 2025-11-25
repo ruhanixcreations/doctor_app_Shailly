@@ -718,7 +718,7 @@ tbody tr:last-child td{
       <div class="section">
         <div class="section-header">
           <i class="fas fa-file-medical"></i>
-          <span>Uploaded Reports</span>
+          <span>Previous Doctor Reports</span>
         </div>
         
         <div class="table-wrapper">
@@ -729,12 +729,13 @@ tbody tr:last-child td{
                 <th>Patient ID</th>
                 <th>Patient Name</th>
                 <th>Mobile</th>
-                <th>Actions</th>
+                <th>View Prescription</th>
+                <th>Blood Report</th>
               </tr>
             </thead>
             <tbody id="reportsTable">
               <tr>
-                <td colspan="5" class="empty-state">No reports uploaded</td>
+                <td colspan="6" class="empty-state">No reports uploaded</td>
               </tr>
             </tbody>
           </table>
@@ -1024,12 +1025,16 @@ function uploadBloodReport(patientId, patientName, prescriptionId){
 
 
 /* Render reports table (only uploaded reports from add_new_patient, not blood reports) */
-function renderReports(reports, patientData){
+function renderReports(reports, patientData, previousPrescription, previousBloodTest){
   const tbody = document.getElementById('reportsTable');
   tbody.innerHTML = '';
   
-  if(!reports || reports.length === 0){
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
+  const hasReports = reports && reports.length > 0;
+  const hasPrevPrescription = previousPrescription && previousPrescription !== null;
+  const hasPrevBloodTest = previousBloodTest && previousBloodTest !== null;
+  
+  if(!hasReports && !hasPrevPrescription && !hasPrevBloodTest){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
     return;
   }
   
@@ -1038,40 +1043,55 @@ function renderReports(reports, patientData){
   const patientName = patientData?.patient_name || '-';
   const mobile = patientData?.mobile || '-';
   
-  reports.forEach((r, idx)=>{
-    const tr = document.createElement('tr');
-    
-    // Get upload date - try to extract from file name or use current date
-    let uploadDate = '-';
-    if(r.created_at){
-      uploadDate = new Date(r.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-    } else if(r.file_name){
-      // Try to extract date from filename (format: report_timestamp.pdf)
-      const match = r.file_name.match(/(\d{13})/);
-      if(match){
-        const timestamp = parseInt(match[1]);
-        uploadDate = new Date(timestamp).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-      }
+  // Create a single row showing all information
+  const tr = document.createElement('tr');
+  
+  // Get upload date from patient created_at
+  let uploadDate = '-';
+  
+  if(patientData?.created_at){
+    uploadDate = new Date(patientData.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  } else if(hasReports && reports[0]?.created_at){
+    uploadDate = new Date(reports[0].created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  } else if(hasReports && reports[0]?.file_name){
+    const match = reports[0].file_name.match(/(\d{13})/);
+    if(match){
+      const timestamp = parseInt(match[1]);
+      uploadDate = new Date(timestamp).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
     }
-    
-    tr.innerHTML = `
-      <td>${escapeHtml(uploadDate)}</td>
-      <td>${escapeHtml(patientId)}</td>
-      <td><strong>${escapeHtml(patientName)}</strong></td>
-      <td>${escapeHtml(mobile)}</td>
-      <td>
-        <div class="report-actions">
-          <a href="${escapeHtml(r.file_path)}" target="_blank" class="btn btn-open">
-            <i class="fas fa-external-link-alt"></i> Open
-          </a>
-          <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(r.file_path)}', '${escapeHtml(r.file_name || '')}')">
-            <i class="fas fa-eye"></i> View
-          </button>
-        </div>
-      </td>
+  }
+  
+  // Previous Prescription column
+  let prescriptionHtml = '<span style="color:var(--text-muted)">-</span>';
+  if(hasPrevPrescription){
+    const fileName = previousPrescription.split('/').pop();
+    prescriptionHtml = `
+      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousPrescription)}', '${escapeHtml(fileName)}')">
+        <i class="fas fa-prescription"></i> View
+      </button>
     `;
-    tbody.appendChild(tr);
-  });
+  }
+  
+  // Previous Blood Test column - just view the uploaded file from add_new_patient
+  let bloodTestHtml = '<span style="color:var(--text-muted)">-</span>';
+  if(hasPrevBloodTest){
+    const fileName = previousBloodTest.split('/').pop();
+    bloodTestHtml = `
+      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousBloodTest)}', '${escapeHtml(fileName)}')">
+        <i class="fas fa-vial"></i> View
+      </button>
+    `;
+  }
+  
+  tr.innerHTML = `
+    <td>${escapeHtml(uploadDate)}</td>
+    <td>${escapeHtml(patientId)}</td>
+    <td><strong>${escapeHtml(patientName)}</strong></td>
+    <td>${escapeHtml(mobile)}</td>
+    <td>${prescriptionHtml}</td>
+    <td>${bloodTestHtml}</td>
+  `;
+  tbody.appendChild(tr);
 }
 
 /* Load patient details */
@@ -1134,11 +1154,15 @@ async function loadDetails(patient_id){
     console.log('Loaded blood reports from backend:', cachedBloodReports);
     console.log('Loaded uploaded reports from backend:', cachedUploadedReports);
     
+    // Store previous files
+    const previousPrescription = j.previous_prescription_file || null;
+    const previousBloodTest = j.previous_blood_test_file || null;
+    
     // Render prescriptions with patient data
     renderPrescriptions(j.prescriptions || [], p);
     
     // Render reports with patient data (only uploaded reports, not blood reports)
-    renderReports(j.uploaded_reports || [], p);
+    renderReports(j.uploaded_reports || [], p, previousPrescription, previousBloodTest);
     
   }catch(e){
     console.error(e);
@@ -1198,6 +1222,34 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 </script>
 <script src="../header/header.js"></script>
+
+<!-- Session Monitoring for Immediate Logout -->
+<script>
+(function() {
+  let sessionCheckInterval = null;
+  let isLoggingOut = false;
+  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success && !isLoggingOut) {
+          isLoggingOut = true;
+          clearInterval(sessionCheckInterval);
+          localStorage.clear();
+          alert(data.message || 'Your session has expired');
+          window.location.href = '../signin/signin.html';
+        }
+      })
+      .catch(err => console.error('Session check error:', err));
+  }, 3000);
+})();
+</script>
 
 </body>
 </html>

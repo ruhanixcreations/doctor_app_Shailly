@@ -163,6 +163,11 @@ body{
   font-size:14px;
 }
 
+.table td[data-label="Actions"]{
+  white-space:nowrap;
+  min-width:280px;
+}
+
 .table th{
   font-weight:600;
   background:rgba(0,169,165,0.03);
@@ -177,6 +182,8 @@ body{
   font-size:13px;
   font-weight:600;
   margin-right:8px;
+  white-space:nowrap;
+  display:inline-block;
 }
 
 .action-btn.edit{
@@ -196,6 +203,43 @@ body{
 
 .action-btn.delete:hover{
   background:#c82333;
+}
+
+.action-btn.disable{
+  background:#ff9800;
+  color:#fff;
+}
+
+.action-btn.disable:hover{
+  background:#f57c00;
+}
+
+.action-btn.enable{
+  background:#4caf50;
+  color:#fff;
+}
+
+.action-btn.enable:hover{
+  background:#45a049;
+}
+
+.status-badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.status-badge.active{
+  background:#d4edda;
+  color:#155724;
+}
+
+.status-badge.inactive{
+  background:#f8d7da;
+  color:#721c24;
 }
 
 .toast{
@@ -411,7 +455,7 @@ body{
       <div id="status" class="small" style="margin-bottom:10px"></div>
 
       <table class="table" id="tbl" role="table" aria-label="Doctors table">
-        <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Created</th><th></th></tr></thead>
+        <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Status</th><th>Created</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -648,23 +692,63 @@ function renderTable(){
   const list = (doctorsMemory||[]).filter(r => matchesFilter(r, q));
   if(list.length === 0){
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="small" colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No doctors found</td>`;
+    tr.innerHTML = `<td class="small" colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No doctors found</td>`;
     tb.appendChild(tr);
     return;
   }
   list.forEach(r=>{
+    const status = r.status || 'active';
+    const isActive = status === 'active';
+    const statusBadge = `<span class="status-badge ${status}">${status}</span>`;
+    const toggleBtnClass = isActive ? 'disable' : 'enable';
+    const toggleBtnText = isActive ? 'Disable' : 'Enable';
+    
     const tr = document.createElement('tr');
     tr.innerHTML =
       `<td data-label="Name"><div class="cell-value">${escapeHtml(r.name)}</div></td>
        <td data-label="Email"><div class="cell-value">${escapeHtml(r.email)}</div></td>
        <td data-label="Mobile"><div class="cell-value">${escapeHtml(r.mobile||'')}</div></td>
        <td data-label="Role"><div class="cell-value">${escapeHtml(r.role||'')}</div></td>
+       <td data-label="Status"><div class="cell-value">${statusBadge}</div></td>
        <td data-label="Created"><div class="cell-value">${escapeHtml(r.created_at||'')}</div></td>
        <td data-label="Actions">
+         <button class="action-btn ${toggleBtnClass} toggle-status" data-id="${r.id}" data-status="${status}">${toggleBtnText}</button>
          <button class="action-btn edit edit-doc" data-id="${r.id}" data-name="${escapeHtml(r.name)}" data-email="${escapeHtml(r.email)}" data-mobile="${escapeHtml(r.mobile||'')}">Edit</button>
          <button class="action-btn delete" data-id="${r.id}">Delete</button>
        </td>`;
     tb.appendChild(tr);
+  });
+
+  tb.querySelectorAll('.toggle-status').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const id = e.target.dataset.id;
+      const currentStatus = e.target.dataset.status || 'active';
+      const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+      const action = newStatus === 'inactive' ? 'disable' : 'enable';
+      
+      if(!confirm(`Are you sure you want to ${action} this doctor?${newStatus === 'inactive' ? ' They will be logged out from all devices immediately.' : ''}`)) return;
+      
+      try{
+        btn.disabled = true;
+        const res = await fetch(apiList + '?action=toggle_status', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({user_id: id, status: newStatus})
+        });
+        const jr = await res.json();
+        if(jr.success){ 
+          showToast(`Doctor ${action}d successfully`); 
+          fetchList(); 
+        } else {
+          showToast(jr.message || 'Failed to update status');
+          btn.disabled = false;
+        }
+      }catch(err){ 
+        console.error(err); 
+        showToast('Failed to update status'); 
+        btn.disabled = false;
+      }
+    });
   });
 
   tb.querySelectorAll('.delete').forEach(btn=>{
@@ -1058,6 +1142,48 @@ updateDoctorBtn.addEventListener('click', async ()=>{
 });
 
 fetchList();
+
+// ============= SESSION MONITORING FOR IMMEDIATE LOGOUT =============
+let sessionCheckInterval = null;
+let isLoggingOut = false;
+
+function startPageSessionMonitoring() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+  }
+
+  // Silent monitoring - only logs when there's an issue
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("./check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          // Only log when session is invalid
+          console.warn('❌ Session invalid:', data.message);
+          if (!isLoggingOut) {
+            isLoggingOut = true;
+            clearInterval(sessionCheckInterval);
+            localStorage.clear();
+            alert(data.message || 'Your session has expired');
+            window.location.href = './signin/signin.html';
+          }
+        }
+        // Silent when session is valid - no console logs
+      })
+      .catch(err => {
+        console.error('⚠️ Session check error:', err);
+      });
+  }, 3000);
+}
+
+// Start monitoring silently
+startPageSessionMonitoring();
+
 </script>
 <script src="../header/header.js"></script>
 

@@ -30,6 +30,14 @@ if($action === 'detail'){
     $pid = $_GET['patient_id'] ?? '';
     if(!$pid) { echo json_encode(['success'=>false,'message'=>'patient_id required']); exit; }
 
+    // Ensure created_at column exists
+    $mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'created_at'");
+    if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+        $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        // Update existing records without created_at to have current timestamp
+        $mysqli->query("UPDATE patient_list SET created_at = NOW() WHERE created_at IS NULL");
+    }
+
     // patient info
     $stmt = $mysqli->prepare("SELECT * FROM patient_list WHERE patient_id=? LIMIT 1");
     $stmt->bind_param('s',$pid);
@@ -73,6 +81,10 @@ if($action === 'detail'){
         error_log("Found report_file in patient_list: " . $patient['report_file']);
         $filePaths = explode(',', $patient['report_file']);
         error_log("Split into " . count($filePaths) . " file paths");
+        
+        // Get created_at date from patient record
+        $createdAt = $patient['created_at'] ?? null;
+        
         foreach($filePaths as $path){
             $path = trim($path);
             if($path){
@@ -84,7 +96,10 @@ if($action === 'detail'){
                 $reportItem = [
                     'id' => 'patient_list',
                     'file_name' => $fileName,
-                    'file_path' => $correctedPath
+                    'file_path' => $correctedPath,
+                    'created_at' => $createdAt,
+                    'previous_prescription_file' => null,
+                    'previous_blood_test_file' => null
                 ];
                 $uploaded_reports[] = $reportItem;
                 error_log("Added report to array: " . json_encode($reportItem));
@@ -93,6 +108,10 @@ if($action === 'detail'){
     } else {
         error_log("No report_file found in patient_list or it's empty");
     }
+    
+    // Add previous prescription file if exists
+    $patient['previous_prescription_file'] = $patient['previous_prescription_file'] ?? null;
+    $patient['previous_blood_test_file'] = $patient['previous_blood_test_file'] ?? null;
 
     // prescriptions: fetch grouped by prescription_id (one row per prescription)
     $prescriptions = [];
@@ -118,7 +137,18 @@ if($action === 'detail'){
     }
     $stmt->close();
 
-    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'blood_reports'=>$blood_reports,'uploaded_reports'=>$uploaded_reports,'prescriptions'=>$prescriptions,'other_info'=> '']);
+    // Prepare previous files paths
+    $previous_prescription_path = null;
+    $previous_blood_test_path = null;
+    
+    if(!empty($patient['previous_prescription_file'])){
+        $previous_prescription_path = '../add_new_patient/' . $patient['previous_prescription_file'];
+    }
+    if(!empty($patient['previous_blood_test_file'])){
+        $previous_blood_test_path = '../add_new_patient/' . $patient['previous_blood_test_file'];
+    }
+
+    echo json_encode(['success'=>true,'patient'=>$patient,'appointments'=>$appt,'blood_reports'=>$blood_reports,'uploaded_reports'=>$uploaded_reports,'prescriptions'=>$prescriptions,'other_info'=> '','previous_prescription_file'=>$previous_prescription_path,'previous_blood_test_file'=>$previous_blood_test_path]);
     exit;
 }
 

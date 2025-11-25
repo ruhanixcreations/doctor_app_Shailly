@@ -79,10 +79,29 @@ if ($action === 'verify_otp') {
     if (strtolower($_SESSION['signin_otp_email']) !== strtolower($email)) { echo json_encode(['success'=>false,'message'=>'Email does not match OTP session']); exit; }
     if (time() > ($_SESSION['signin_otp_expiry'] ?? 0)) { unset($_SESSION['signin_otp_code'],$_SESSION['signin_otp_email'],$_SESSION['signin_otp_expiry'],$_SESSION['signin_otp_sent_at']); echo json_encode(['success'=>false,'message'=>'OTP expired. Please resend OTP.']); exit; }
     if ($_SESSION['signin_otp_code'] != $otp) { echo json_encode(['success'=>false,'message'=>'OTP did not match']); exit; }
-    $stmt = $conn->prepare("SELECT id,name,client_id,mobile,role,status FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1");
+    
+    // Check if status column exists and get session_version
+    $checkStatus = $conn->query("SHOW COLUMNS FROM users LIKE 'status'");
+    $hasStatus = ($checkStatus && $checkStatus->num_rows > 0);
+    $checkSessionVer = $conn->query("SHOW COLUMNS FROM users LIKE 'session_version'");
+    $hasSessionVer = ($checkSessionVer && $checkSessionVer->num_rows > 0);
+    
+    $query = "SELECT id,name,client_id,mobile,role";
+    if ($hasStatus) $query .= ",COALESCE(status,'active') as status";
+    if ($hasSessionVer) $query .= ",COALESCE(session_version,1) as session_version";
+    $query .= " FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1";
+    
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user=$res->fetch_assoc();
+    
+    // Check if user is disabled
+    if ($hasStatus && isset($user['status']) && $user['status'] === 'inactive') {
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']);
+        exit;
+    }
+    
     $_SESSION['pre_auth_user_id']=(int)$user['id'];
     $_SESSION['pre_auth_email']=$email;
     $_SESSION['pre_auth_time']=time();
@@ -96,10 +115,29 @@ if ($action === 'complete_otp_login') {
     $email = strtolower(trim($input['email'] ?? $_POST['email'] ?? ''));
     if (!$email) { echo json_encode(['success'=>false,'message'=>'Missing email']); exit; }
     if (!isset($_SESSION['pre_auth_email']) || strtolower($_SESSION['pre_auth_email']) !== strtolower($email)) { echo json_encode(['success'=>false,'message'=>'OTP verification required']); exit; }
-    $stmt = $conn->prepare("SELECT id,name,client_id,mobile,role FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1");
+    
+    // Check if status and session_version columns exist
+    $checkStatus = $conn->query("SHOW COLUMNS FROM users LIKE 'status'");
+    $hasStatus = ($checkStatus && $checkStatus->num_rows > 0);
+    $checkSessionVer = $conn->query("SHOW COLUMNS FROM users LIKE 'session_version'");
+    $hasSessionVer = ($checkSessionVer && $checkSessionVer->num_rows > 0);
+    
+    $query = "SELECT id,name,client_id,mobile,role";
+    if ($hasStatus) $query .= ",COALESCE(status,'active') as status";
+    if ($hasSessionVer) $query .= ",COALESCE(session_version,1) as session_version";
+    $query .= " FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1";
+    
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user=$res->fetch_assoc();
+    
+    // Check if user is disabled
+    if ($hasStatus && isset($user['status']) && $user['status'] === 'inactive') {
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']);
+        exit;
+    }
+    
     session_regenerate_id(true);
     $_SESSION['user_id']=(int)$user['id'];
     $_SESSION['user_email']=$email;
@@ -108,6 +146,10 @@ if ($action === 'complete_otp_login') {
     $_SESSION['mobile']=$user['mobile'] ?? null;
     $_SESSION['user_name']=$user['name'] ?? null;
     $_SESSION['logged_in']=true; $_SESSION['session_issued_at']=time();
+    // Store session_version for validation
+    if ($hasSessionVer && isset($user['session_version'])) {
+        $_SESSION['session_version'] = intval($user['session_version']);
+    }
     unset($_SESSION['pre_auth_user_id'],$_SESSION['pre_auth_email'],$_SESSION['pre_auth_time']);
     $redirect="/doctor_app/dashboard/dashboard.html";
     echo json_encode(['success'=>true,'message'=>'Signed in via OTP','user_id'=> (int)$user['id'],'client_id'=>$user['client_id'] ?? null,'name'=>$user['name'] ?? null,'role'=>$user['role'] ?? 'user','email'=>$email,'redirect'=>$redirect]);
@@ -119,11 +161,30 @@ if ($action === 'login_password') {
     $email = strtolower(trim($_POST['email'] ?? ''));
     $password = $_POST['password'] ?? '';
     if (!$email || !$password) { echo json_encode(['success'=>false,'message'=>'Missing email or password']); exit; }
+    
+    // Check if status and session_version columns exist
+    $checkStatus = $conn->query("SHOW COLUMNS FROM users LIKE 'status'");
+    $hasStatus = ($checkStatus && $checkStatus->num_rows > 0);
+    $checkSessionVer = $conn->query("SHOW COLUMNS FROM users LIKE 'session_version'");
+    $hasSessionVer = ($checkSessionVer && $checkSessionVer->num_rows > 0);
+    
     // fetch user & password
-    $stmt = $conn->prepare("SELECT id,password,name,client_id,mobile,role,status FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1");
+    $query = "SELECT id,password,name,client_id,mobile,role";
+    if ($hasStatus) $query .= ",COALESCE(status,'active') as status";
+    if ($hasSessionVer) $query .= ",COALESCE(session_version,1) as session_version";
+    $query .= " FROM users WHERE LOWER(email)=LOWER(?) LIMIT 1";
+    
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("s",$email); $stmt->execute(); $res=$stmt->get_result();
     if ($res->num_rows===0){ echo json_encode(['success'=>false,'message'=>'User not found']); exit; }
     $user = $res->fetch_assoc();
+    
+    // Check if user is disabled
+    if ($hasStatus && isset($user['status']) && $user['status'] === 'inactive') {
+        echo json_encode(['success'=>false,'message'=>'Your account has been disabled. Please contact administrator.']);
+        exit;
+    }
+    
     $storedHash = $user['password'] ?? '';
     $passwordOk = false;
     if ($storedHash) {
@@ -145,6 +206,10 @@ if ($action === 'login_password') {
     $_SESSION['mobile']=$user['mobile'] ?? null;
     $_SESSION['user_name']=$user['name'] ?? null;
     $_SESSION['logged_in']=true; $_SESSION['session_issued_at']=time();
+    // Store session_version for validation
+    if ($hasSessionVer && isset($user['session_version'])) {
+        $_SESSION['session_version'] = intval($user['session_version']);
+    }
     unset($_SESSION['pre_auth_user_id'],$_SESSION['pre_auth_email'],$_SESSION['pre_auth_time']);
     $redirect="/doctor_app/dashboard/dashboard.html";
     echo json_encode(['success'=>true,'message'=>'Signed in successfully','user_id'=>(int)$user['id'],'client_id'=>$user['client_id'] ?? null,'name'=>$user['name'] ?? null,'role'=>$user['role'] ?? 'user','email'=>$email,'redirect'=>$redirect]);
