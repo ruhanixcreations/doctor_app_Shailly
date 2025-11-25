@@ -59,7 +59,7 @@ if($action === 'detail'){
 
     // Blood reports: Get from patient_reports table (uploaded via upload_blood_report page)
     $blood_reports = [];
-    $stmt = $mysqli->prepare("SELECT id, file_name, file_path, uploaded_at as created_at FROM patient_reports WHERE patient_id=? ORDER BY uploaded_at DESC");
+    $stmt = $mysqli->prepare("SELECT id, file_name, file_path, prescription_id, uploaded_at as created_at FROM patient_reports WHERE patient_id=? ORDER BY uploaded_at DESC");
     if($stmt){
         $stmt->bind_param('s', $pid);
         $stmt->execute();

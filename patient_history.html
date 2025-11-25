@@ -962,9 +962,10 @@ function renderPrescriptions(prescriptions, patientData){
         <i class="fas fa-upload"></i> Upload Report
       </button>`;
     } else {
-      // Doctor: Show View button if blood report exists
-      if(cachedBloodReports.length > 0){
-        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}')">
+      // Doctor: Show View button if blood report exists for this prescription
+      const reportForPrescription = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
+      if(reportForPrescription){
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}', '${prescriptionId}')">
           <i class="fas fa-vial"></i> View
         </button>`;
       } else {
@@ -996,19 +997,20 @@ function openPrescription(prescriptionId, patientId){
 let cachedBloodReports = [];
 let cachedUploadedReports = [];
 
-function openBloodReport(patientId){
-  // Find the latest blood report for this patient from patient_reports table
+function openBloodReport(patientId, prescriptionId){
+  // Find the blood report for this specific prescription
   if(cachedBloodReports.length === 0){
     alert('No blood reports uploaded for this patient');
     return;
   }
   
-  // Open the most recent blood report
-  const latestReport = cachedBloodReports[0];
-  if(latestReport && latestReport.file_path){
-    openPdfModal(latestReport.file_path, latestReport.file_name || 'Blood Report');
+  // Find report matching the prescription ID
+  const report = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
+  
+  if(report && report.file_path){
+    openPdfModal(report.file_path, report.file_name || 'Blood Report');
   } else {
-    alert('No blood report file found');
+    alert('No blood report found for this prescription');
   }
 }
 
