@@ -104,13 +104,13 @@
   p.lead{
     font-size:13px;
     color:var(--text-muted);
-    margin-bottom:18px;
+    margin-bottom:12px;
   }
   
   .choices-row{
     display:flex;
-    gap:10px;
-    margin-bottom:18px;
+    gap:8px;
+    margin-bottom:12px;
   }
   
   .radio-item{
@@ -238,7 +238,7 @@
   }
 
   .form-panel{
-    margin-top:18px; 
+    margin-top:12px; 
     display:block;
   }
 
@@ -258,7 +258,7 @@
   }
 
   .signup-row{
-    margin-top:18px; 
+    margin-top:12px; 
     text-align:center; 
     font-size:13px; 
     color:var(--text-muted);
@@ -478,7 +478,7 @@
         <!-- form panel -->
         <div id="formPanel" class="form-panel" aria-live="polite">
           <!-- shared email -->
-          <div style="margin-bottom:14px;">
+          <div style="margin-bottom:10px;">
             <label class="visually-hidden" for="email">Email</label>
             <input id="email" type="email" placeholder="Enter email" autocomplete="email" />
             <div id="emailError" class="inline-error" style="display:none"></div>
@@ -486,7 +486,7 @@
 
           <!-- password area -->
           <div id="passwordArea" style="display:none;">
-            <div style="margin-bottom:14px;">
+            <div style="margin-bottom:10px;">
               <label class="visually-hidden" for="password">Password</label>
               <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" />
               <div id="passwordError" class="inline-error" style="display:none"></div>
@@ -500,20 +500,20 @@
 
           <!-- OTP area -->
           <div id="otpArea">
-            <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
               <button id="sendOtpBtn" class="btn">
                 <i class="fas fa-paper-plane"></i> Send OTP To Verify Email
               </button>
             </div>
-            <div id="sendStatus" class="hint" style="display:none; margin-bottom:10px;"></div>
+            <div id="sendStatus" class="hint" style="display:none; margin-bottom:8px;"></div>
 
             <div id="otpBlock" style="display:none;">
-              <div style="margin-bottom:14px;">
+              <div style="margin-bottom:10px;">
                 <label class="visually-hidden" for="otp">OTP</label>
                 <input id="otp" type="text" placeholder="Enter OTP" inputmode="numeric" />
                 <div id="otpError" class="inline-error" style="display:none"></div>
               </div>
-              <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+              <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
                 <button id="verifyOtpBtn" class="btn" disabled>
                   <i class="fas fa-check-circle"></i> Verify OTP
                 </button>
@@ -524,7 +524,7 @@
             </div>
           </div>
 
-          <div id="successMsg" class="hint" style="display:none; color:#28a745; margin-top:12px; font-weight:600;"></div>
+          <div id="successMsg" class="hint" style="display:none; color:#28a745; margin-top:10px; font-weight:600;"></div>
         </div>
 
         <div class="signup-row">

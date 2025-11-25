@@ -122,6 +122,10 @@ function applyRoleVisibility() {
   const elAddReception = document.getElementById('card-add-reception');
   const elNewPrescription = document.getElementById('card-new-prescription');
   const elAddPatient = document.getElementById('card-add-patient');
+  const elAllMedicine = document.getElementById('card-all-medicine');
+  const elDoctorsList = document.getElementById('card-doctors-list');
+  const elBloodTests = document.getElementById('card-blood-tests');
+  const elReceptionList = document.getElementById('card-receptionalist-list');
 
   if (!role) {
     // no role present — show everything
@@ -132,6 +136,11 @@ function applyRoleVisibility() {
     // hide add new prescription + add receptionist
     hideCard(elNewPrescription);
     hideCard(elAddReception);
+    // hide medicine, doctors, blood tests, and receptionist list for receptionists
+    hideCard(elAllMedicine);
+    hideCard(elDoctorsList);
+    hideCard(elBloodTests);
+    hideCard(elReceptionList);
   } else if (role === 'user') {
     // hide add new patient for user role
     hideCard(elAddPatient);
