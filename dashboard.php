@@ -60,7 +60,7 @@ if (!file_exists($absolutePath)) {
 
 // Append role as query param to signup page so frontend will include it explicitly in POST
 $sep = (strpos($signup_path, '?') === false) ? '?' : '&';
-$redirectUrl = $signup_path . $sep . 'role=' . urlencode($role);
+$redirectUrl = $signup_path . $sep . 'role=' . urlencode($role) . '&added_by_admin=true';
 
 // Redirect (ensure no output before header)
 header("Location: $redirectUrl");
