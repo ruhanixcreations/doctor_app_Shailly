@@ -951,33 +951,48 @@
     el.addEventListener("input", monitorFields);
   });
   
-  // Email validation only on blur (when user leaves the field)
+  // Email validation and button state management
+  emailInput.addEventListener("input", () => {
+    const email = emailInput.value.trim();
+    
+    // Only validate and enable button if button is still in "Send OTP" state
+    if (sendOtpBtn.innerHTML.includes('Send OTP') || sendOtpBtn.innerHTML.includes('paper-plane')) {
+      if (email.length === 0) {
+        // Empty field - disable button, no error
+        sendOtpBtn.disabled = true;
+        clearErrorBelow(emailInput);
+      } else if (!isValidEmail(email)) {
+        // Invalid email - disable button and show error
+        sendOtpBtn.disabled = true;
+        showErrorBelow(emailInput, "Enter a valid email");
+      } else {
+        // Valid email - enable button and clear error
+        sendOtpBtn.disabled = false;
+        clearErrorBelow(emailInput);
+      }
+    }
+    
+    monitorFields();
+  });
+  
+  // Validate on blur as well
   emailInput.addEventListener("blur", () => {
     const email = emailInput.value.trim();
     if (email && !isValidEmail(email)) {
-      showErrorBelow(emailInput, "Enter a valid email.");
+      showErrorBelow(emailInput, "Enter a valid email");
+      if (sendOtpBtn.innerHTML.includes('Send OTP') || sendOtpBtn.innerHTML.includes('paper-plane')) {
+        sendOtpBtn.disabled = true;
+      }
     }
-  });
-  
-  // Clear error immediately when typing and revalidate form
-  emailInput.addEventListener("input", () => {
-    const currentError = emailError.style.display;
-    if (currentError === "block") {
-      clearErrorBelow(emailInput);
-    }
-    // Enable/disable send OTP button based on email input
-    const email = emailInput.value.trim();
-    if (email.length > 0 && sendOtpBtn.innerHTML.includes('Send OTP')) {
-      sendOtpBtn.disabled = false;
-    } else if (email.length === 0) {
-      sendOtpBtn.disabled = true;
-    }
-    monitorFields();
   });
   
   // Clear error when user focuses on email field
   emailInput.addEventListener("focus", () => {
-    clearErrorBelow(emailInput);
+    const email = emailInput.value.trim();
+    // Only clear if email is valid or empty
+    if (email.length === 0 || isValidEmail(email)) {
+      clearErrorBelow(emailInput);
+    }
   });
 
   verifyOtpBtn.disabled = true;
