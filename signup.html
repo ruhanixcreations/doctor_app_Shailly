@@ -920,22 +920,13 @@
         // Check if this is receptionist being added by admin
         if (addedByAdmin === "true" && (preselectedRole === "receptionalist" || data.role === "receptionalist")) {
           // Show success popup and don't redirect
-          registerBtn.disabled = false;
-          registerBtn.innerHTML = '<i class="fas fa-user-check"></i> Create account';
-          showPopup("Receptionist Account Created");
+          registerBtn.innerHTML = '<i class="fas fa-check-circle"></i> Created Successfully';
           
-          // Reset form after showing popup
-          setTimeout(() => {
-            nameInput.value = "";
-            mobileInput.value = "";
-            emailInput.value = "";
-            passwordInput.value = "";
-            confirmPasswordInput.value = "";
-            isOtpVerified = false;
-            registerBtn.disabled = true;
-            sendOtpBtn.disabled = true;
-            sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP To Verify Email';
-          }, 500);
+          // Show popup with custom handler
+          showPopupWithCallback("Receptionist Account Created", () => {
+            // Refresh the page to reset the form
+            window.location.reload();
+          });
         } else {
           // Normal signup flow - set localStorage and redirect
           localStorage.setItem("isLoggedIn","true");
@@ -964,6 +955,8 @@
     });
   }
 
+  let popupCallback = null;
+
   function showPopup(msg){
     document.getElementById("popupMessage").textContent = msg;
     document.getElementById("popupOverlay").style.display = "flex";
@@ -971,19 +964,20 @@
     if(ok) ok.focus();
   }
   
+  function showPopupWithCallback(msg, callback){
+    popupCallback = callback;
+    showPopup(msg);
+  }
+  
   function closePopup(){
-    const msg = document.getElementById("popupMessage").textContent;
     document.getElementById("popupMessage").textContent = "";
     document.getElementById("popupOverlay").style.display = "none";
     
-    // If receptionist was created, offer to add another or go back
-    const urlParams = new URLSearchParams(window.location.search);
-    const addedByAdmin = urlParams.get("added_by_admin");
-    if (msg === "Receptionist Account Created" && addedByAdmin === "true") {
-      const createAnother = confirm("Receptionist created successfully!\n\nWould you like to add another receptionist?\n\nClick OK to add another, or Cancel to return to the list.");
-      if (!createAnother) {
-        window.location.href = "/doctor_app/receptionalist_list/receptionalist_list.html";
-      }
+    // Execute callback if it exists
+    if (popupCallback) {
+      const cb = popupCallback;
+      popupCallback = null;
+      cb();
     }
   }
 
