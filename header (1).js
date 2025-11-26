@@ -326,11 +326,20 @@ function applyRoleBasedVisibility() {
   const addReceptionLink = document.querySelector('.menu-link[data-page="add-reception"]');
   const addPrescriptionLink = document.querySelector('.menu-link[data-page="add-prescription"]');
   const addPatientLink = document.querySelector('.menu-link[data-page="add-patient"]');
+  const allMedicineLink = document.querySelector('.menu-link[data-page="all-medicine"]');
+  const doctorsListLink = document.querySelector('.menu-link[data-page="doctors-list"]');
+  const bloodTestsLink = document.querySelector('.menu-link[data-page="blood-tests"]');
+  const receptionalistListLink = document.querySelector('.menu-link[data-page="receptionalist-list"]');
 
   if (role === 'receptionalist') {
-    console.log('Hiding items for receptionalist');
-    hideMenuItem(addPrescriptionLink);
+    console.log('Showing only Dashboard, Patient History, and Add New Patient for receptionalist');
+    // Hide all items except Dashboard, Patient History, and Add New Patient
     hideMenuItem(addReceptionLink);
+    hideMenuItem(addPrescriptionLink);
+    hideMenuItem(allMedicineLink);
+    hideMenuItem(doctorsListLink);
+    hideMenuItem(bloodTestsLink);
+    hideMenuItem(receptionalistListLink);
   } else if (role === 'user') {
     console.log('Hiding items for user');
     hideMenuItem(addPatientLink);
