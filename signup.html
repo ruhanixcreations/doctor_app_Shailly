@@ -899,27 +899,24 @@
     .then(r => r.json())
     .then(data => {
       if(data.success){
-        localStorage.setItem("isLoggedIn","true");
-        localStorage.setItem("client_id", data.client_id || "");
-        localStorage.setItem("user_id", data.user_id || "");
-        localStorage.setItem("role", data.role || (preselectedRole || "user"));
-        localStorage.setItem("userName", data.name || name);
-        localStorage.setItem("signedInUserEmail", email);
-        localStorage.setItem("Mobile Number", data.mobile || mobile);
-        
         // Check if this is a receptionist account creation
         const userRole = data.role || preselectedRole;
         if (userRole === "receptionalist") {
-          // Show success popup for receptionist account
+          // For receptionist account, show success popup and refresh page
           showPopupWithCallback("Receptionist Account Created", () => {
-            if (nextParam === "upload_tree") {
-              window.location.href = "/doctor_app/dashboard/upload_video/upload_video.html";
-            } else {
-              window.location.href = "/doctor_app/dashboard/dashboard.html";
-            }
+            // Refresh the page to allow creating another receptionist
+            window.location.reload();
           });
         } else {
-          // For other roles, redirect immediately
+          // For other roles, save to localStorage and redirect to dashboard
+          localStorage.setItem("isLoggedIn","true");
+          localStorage.setItem("client_id", data.client_id || "");
+          localStorage.setItem("user_id", data.user_id || "");
+          localStorage.setItem("role", data.role || (preselectedRole || "user"));
+          localStorage.setItem("userName", data.name || name);
+          localStorage.setItem("signedInUserEmail", email);
+          localStorage.setItem("Mobile Number", data.mobile || mobile);
+          
           if (nextParam === "upload_tree") {
             window.location.href = "/doctor_app/dashboard/upload_video/upload_video.html";
           } else {
