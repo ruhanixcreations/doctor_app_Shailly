@@ -283,12 +283,25 @@ function handleLogout() {
     let logoutPath = '../logout.php';
     let signinPath = '../signin/signin.html';
     
-    // If we're at root level (profile.html, dashboard.html, etc.)
-    if (currentPath.match(/\/[^\/]+\.html$/)) {
+    // Check if current page is in a subfolder or at root
+    // Subfolders: add_prescription, patient_history, blood_tests, etc.
+    const subfolders = ['add_prescription', 'add_new_patient', 'patient_history', 'blood_tests', 
+                       'all_medicine', 'doctors_list', 'receptionalist_list', 'dashboard', 
+                       'upload_blood_report', 'signin', 'signup'];
+    
+    // Check if path contains any subfolder
+    const isInSubfolder = subfolders.some(folder => currentPath.includes('/' + folder + '/'));
+    
+    if (!isInSubfolder) {
+      // We're at root level (profile.html, test_session.php, etc.)
       logoutPath = 'logout.php';
       signinPath = 'signin/signin.html';
+      console.log('Detected ROOT level page');
+    } else {
+      console.log('Detected SUBFOLDER page');
     }
     
+    console.log('Current path:', currentPath);
     console.log('Using logout path:', logoutPath);
     
     fetch(logoutPath, {
