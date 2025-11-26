@@ -472,7 +472,6 @@
     
     .card-body{
       padding:14px;
-      border:3px solid red;
     }
     
     .card-body #name{
@@ -491,7 +490,7 @@
     }
     
     .card-body #passwordBlock{
-      margin-top:-50px !important;
+      margin-top:0 !important;
       margin-bottom:0 !important;
     }
     
@@ -600,13 +599,12 @@
     
     #passwordBlock,
     #passwordBlock.signup-input-group{
-      margin-top:-50px !important;
+      margin-top:0 !important;
       margin-bottom:0 !important;
       padding-top:0 !important;
-      gap:4px !important;
-      transform:translateY(-400px) !important;
+      gap:6px !important;
+      transform:translateY(-150px) !important;
       position:relative !important;
-      background:yellow !important;
     }
     
     div.email-otp-row{
@@ -644,8 +642,12 @@
     }
     
     #passwordBlock .signup-input-password:first-child{
-      margin-bottom:6px;
+      margin-bottom:0px;
       margin-top:0 !important;
+    }
+    
+    #passwordBlock > input{
+      margin-bottom:0px !important;
     }
     
     #passwordBlock > #password{
@@ -680,6 +682,7 @@
     .pwd-row{
       gap:5px;
       margin-bottom:0;
+      margin-top:6px;
     }
     
     .pwd-row .signup-input-password{
@@ -694,9 +697,11 @@
     
     .register-button{
       height:42px;
-      margin-top:8px;
+      margin-top:0px;
       padding:9px 16px;
       font-size:13px;
+      transform:translateY(-150px);
+      position:relative;
     }
     
     .error-message,
@@ -717,11 +722,15 @@
     .signin-link{
       margin-top:8px;
       font-size:11px;
+      transform:translateY(-150px);
+      position:relative;
     }
     
     .footer-banner{
       margin-top:6px;
       font-size:10px;
+      transform:translateY(-150px);
+      position:relative;
     }
     
     .separator{
