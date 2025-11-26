@@ -555,7 +555,26 @@
       margin-top:2px;
     }
     
+    #passwordBlock,
     #passwordBlock.signup-input-group{
+      margin-top:0 !important;
+      margin-bottom:0 !important;
+      padding-top:0 !important;
+      gap:4px !important;
+    }
+    
+    div.email-otp-row{
+      margin-bottom:0 !important;
+      padding-bottom:0 !important;
+      margin-top:0 !important;
+    }
+    
+    .card-body > .email-otp-row + #otpSection + #resendContainer + #passwordBlock,
+    .email-otp-row ~ #passwordBlock{
+      margin-top:0 !important;
+    }
+    
+    .email-otp-row + * + * + #passwordBlock{
       margin-top:0 !important;
     }
     
@@ -580,10 +599,31 @@
     
     #passwordBlock .signup-input-password:first-child{
       margin-bottom:6px;
+      margin-top:0 !important;
     }
     
-    .email-otp-row{
-      margin-bottom:0 !important;
+    #passwordBlock > #password{
+      margin-top:0 !important;
+    }
+    
+    #password{
+      margin-top:0 !important;
+    }
+    
+    #otpSection[style*="display:none"],
+    #otpSection[style*="display: none"]{
+      margin:0 !important;
+      padding:0 !important;
+      height:0 !important;
+      overflow:hidden !important;
+    }
+    
+    #resendContainer[style*="display:none"],
+    #resendContainer[style*="display: none"]{
+      margin:0 !important;
+      padding:0 !important;
+      height:0 !important;
+      overflow:hidden !important;
     }
     
     #passwordBlock .error-message{
