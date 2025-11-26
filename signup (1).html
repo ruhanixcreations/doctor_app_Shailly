@@ -1056,17 +1056,7 @@
       
       // Different message if being added by admin
       if (addedByAdmin === "true" && preselectedRole === "receptionalist") {
-        banner.innerHTML = `<i class="fas fa-user-plus"></i> Adding New Receptionist Account - No redirect after creation`;
-        
-        // Add back button for admins
-        const backBtn = document.createElement('div');
-        backBtn.style.textAlign = 'center';
-        backBtn.style.marginTop = '16px';
-        backBtn.innerHTML = `<a href="/doctor_app/receptionalist_list/receptionalist_list.html" style="color:var(--primary-teal);font-size:13px;text-decoration:none;font-weight:600;"><i class="fas fa-arrow-left"></i> Back to Receptionist List</a>`;
-        const signupRow = document.querySelector('.signin-link');
-        if (signupRow && signupRow.parentNode) {
-          signupRow.parentNode.insertBefore(backBtn, signupRow);
-        }
+        banner.innerHTML = `<i class="fas fa-user-plus"></i> Adding New Receptionalist Account - No redirect after creation`;
       } else {
         banner.innerHTML = `<i class="fas fa-info-circle"></i> Creating account with role: ${preselectedRole}`;
       }
