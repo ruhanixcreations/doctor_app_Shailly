@@ -600,10 +600,15 @@ function checkAuth(){
 }
 
 // Run auth check immediately
-if(!checkAuth()){
-  throw new Error('Unauthorized access');
-}
+(function(){
+  const isAuthorized = checkAuth();
+  if(!isAuthorized) return; // Stop execution if not authorized
+  
+  // Continue with page initialization only if authorized
+  initializePage();
+})();
 
+function initializePage(){
 const signupEndpoint = '../signup/signup.php';
 const apiList = 'doctors_list.php';
 
@@ -1290,6 +1295,7 @@ function startPageSessionMonitoring() {
 // Start monitoring silently
 startPageSessionMonitoring();
 
+} // End of initializePage function
 </script>
 <script src="../header/header.js"></script>
 
