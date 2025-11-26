@@ -1,0 +1,996 @@
+<!DOCTYPE html>  
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign up</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary-teal:#00A9A5;
+    --primary-blue:#1a75bb;
+    --text-dark:#2c3e50;
+    --text-muted:#6c757d;
+    --border-light:#e0e6ed;
+    --bg-light:#f8f9fa;
+    --bg-white:#ffffff;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:#f5f7fa;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    color:var(--text-dark);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .signup-wrapper{
+    width:100%;
+    max-width:550px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .signup-card{
+    width:100%;
+    max-width:550px;
+    background:var(--bg-white);
+    border-radius:12px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.08);
+    border:1px solid var(--border-light);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .card-header{
+    background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+    padding:16px 24px;
+    color:white;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  
+  .brand{
+    width:42px;
+    height:42px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(10px);
+    flex-shrink:0;
+  }
+  
+  .brand i{
+    font-size:20px;
+    color:white;
+  }
+  
+  .header-text{
+    flex:1;
+  }
+  
+  .card-header .title{
+    font-size:18px; 
+    font-weight:700; 
+    margin-bottom:2px;
+    line-height:1.2;
+  }
+  
+  .card-header .subtitle{
+    font-size:12px; 
+    opacity:0.9;
+    font-weight:400;
+  }
+
+  .card-body{
+    padding:24px;
+    background:var(--bg-white);
+  }
+
+  h1{
+    font-size:20px;
+    margin-bottom:6px;
+    color:var(--text-dark);
+    font-weight:700;
+  }
+  
+  p.lead{
+    font-size:13px;
+    color:var(--text-muted);
+    margin-bottom:18px;
+  }
+
+  .signup-input,
+  .signup-input-email,
+  .signup-input-otp,
+  .signup-input-password{
+    width:100%;
+    padding:11px 14px;
+    font-size:14px;
+    border-radius:6px;
+    border:1px solid var(--border-light);
+    background:var(--bg-white);
+    height:44px;
+    color:var(--text-dark);
+    margin-bottom:12px;
+    transition:all 0.2s ease;
+    font-family:inherit;
+  }
+  
+  .signup-input::placeholder,
+  .signup-input-email::placeholder,
+  .signup-input-otp::placeholder,
+  .signup-input-password::placeholder{
+    color:var(--text-muted);
+  }
+  
+  .signup-input:focus,
+  .signup-input-email:focus,
+  .signup-input-otp:focus,
+  .signup-input-password:focus{
+    outline:none;
+    border-color:var(--primary-teal);
+    box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  }
+
+  .signup-input-group{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-bottom:14px;
+    width:100%;
+    align-items:flex-end;
+  }
+  
+  .signup-input-group input{
+    width:100%;
+  }
+  
+  .signup-input-group button{
+    width:auto;
+  }
+  
+  .email-otp-row{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    margin-bottom:12px;
+  }
+  
+  .email-otp-row .email-col{
+    flex:1;
+    min-width:0;
+  }
+  
+  .email-otp-row .btn-col{
+    flex:0 0 240px;
+    display:flex;
+    align-items:flex-start;
+    padding-top:0;
+  }
+
+  #sendOtpBtn{
+    height:44px;
+    padding:10px 18px;
+    width:100%;
+    border-radius:6px;
+    border:none;
+    font-weight:600;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+    font-size:13px;
+    transition:all 0.2s ease;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  
+  #verifyOtpBtn{
+    height:44px;
+    padding:10px 18px;
+    min-width:240px;
+    border-radius:6px;
+    border:none;
+    font-weight:600;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+    font-size:13px;
+    transition:all 0.2s ease;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+  }
+  
+  #sendOtpBtn:hover:not(:disabled){
+    transform:translateY(-1px);
+    box-shadow:0 3px 10px rgba(0,169,165,0.25);
+  }
+  
+  #sendOtpBtn:disabled{
+    background:#d1d5db;
+    color:#9ca3af;
+    cursor:not-allowed;
+  }
+  
+  #verifyOtpBtn:hover:not(:disabled){
+    transform:translateY(-1px);
+    box-shadow:0 3px 10px rgba(0,169,165,0.25);
+  }
+  
+  #verifyOtpBtn:disabled{
+    background:#d1d5db;
+    color:#9ca3af;
+    cursor:not-allowed;
+  }
+
+  .register-button{
+    width:100%;
+    padding:10px 20px;
+    border-radius:6px;
+    border:none;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    margin-top:10px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+    height:44px;
+    transition:all 0.2s ease;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  
+  .register-button:hover:not(:disabled){
+    transform:translateY(-1px);
+    box-shadow:0 3px 10px rgba(0,169,165,0.25);
+  }
+  
+  .register-button:disabled{
+    background:#d1d5db;
+    color:#9ca3af;
+    cursor:not-allowed;
+  }
+
+  .separator{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:16px 0;
+    color:var(--text-muted);
+    justify-content:center;
+    font-size:12px;
+  }
+  
+  .separator::before,
+  .separator::after{
+    content:"";
+    height:1px;
+    flex:1;
+    background:var(--border-light);
+  }
+
+  .signup-resend{
+    font-size:12px;
+    color:var(--text-muted);
+    text-align:center;
+    margin-bottom:12px;
+  }
+  
+  .signup-resend span{
+    font-weight:600;
+    color:var(--primary-teal);
+    cursor:pointer;
+  }
+  
+  .signup-resend span.disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+  }
+
+  .otpErrorMessage{
+    color:#dc3545;
+    font-size:12px;
+    margin-top:-6px;
+    margin-bottom:12px;
+    padding:8px 12px;
+    background:rgba(220,53,69,0.05);
+    border-left:3px solid #dc3545;
+    border-radius:4px;
+  }
+  
+  .otpErrorInput{
+    border-color:#dc3545 !important;
+  }
+
+  #popupOverlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:999;
+    justify-content:center;
+    align-items:center;
+  }
+  
+  #popupOverlay .popup-box{
+    background:var(--bg-white);
+    padding:24px;
+    border-radius:12px;
+    max-width:400px;
+    width:90%;
+    text-align:center;
+    color:var(--text-dark);
+    box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  }
+  
+  #popupOverlay .popup-box p{
+    font-size:14px;
+    margin-bottom:16px;
+    color:var(--text-dark);
+  }
+  
+  #popupOverlay .popup-box button{
+    height:42px;
+    padding:10px 20px;
+    border-radius:6px;
+    border:none;
+    background:var(--primary-teal);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+  }
+
+  .signin-link{
+    text-align:center;
+    margin-top:14px;
+    font-size:13px;
+    color:var(--text-muted);
+  }
+  
+  .signin-link a{
+    color:var(--primary-teal);
+    font-weight:600;
+    text-decoration:none;
+  }
+  
+  .signin-link a:hover{
+    text-decoration:underline;
+  }
+  
+  .footer-banner{
+    margin-top:12px;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:12px;
+  }
+
+  .pwd-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  
+  .show-toggle{
+    cursor:pointer;
+    font-size:18px;
+    color:var(--text-muted);
+    padding:10px;
+    border:1px solid var(--border-light);
+    border-radius:6px;
+    background:var(--bg-white);
+    transition:all 0.2s ease;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:44px;
+    flex-shrink:0;
+  }
+  
+  .show-toggle:hover{
+    border-color:var(--primary-teal);
+    color:var(--primary-teal);
+  }
+
+  .error-message{
+    color:#dc3545;
+    font-size:12px;
+    margin-top:-6px;
+    margin-bottom:12px;
+    padding:8px 12px;
+    background:rgba(220,53,69,0.05);
+    border-left:3px solid #dc3545;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  
+  .success-message{
+    color:#28a745;
+    font-size:12px;
+    margin-top:-6px;
+    margin-bottom:12px;
+    padding:8px 12px;
+    background:rgba(40,167,69,0.05);
+    border-left:3px solid #28a745;
+    border-radius:4px;
+    font-weight:600;
+  }
+
+  @media(max-width:600px){
+    body{
+      padding:16px;
+    }
+    
+    .signup-wrapper{
+      padding:0;
+    }
+    
+    .signup-card{
+      border-radius:12px;
+    }
+    
+    .card-header{
+      padding:14px 18px;
+    }
+    
+    .brand{
+      width:38px;
+      height:38px;
+    }
+    
+    .brand i{
+      font-size:18px;
+    }
+    
+    .card-header .title{
+      font-size:16px;
+    }
+    
+    .card-header .subtitle{
+      font-size:11px;
+    }
+    
+    .card-body{
+      padding:20px;
+    }
+    
+    h1{
+      font-size:18px;
+    }
+    
+    p.lead{
+      font-size:12px;
+    }
+    
+    .email-otp-row{
+      flex-direction:column;
+      gap:10px;
+    }
+    
+    .email-otp-row .email-col{
+      width:100%;
+    }
+    
+    .email-otp-row .btn-col{
+      width:100%;
+    }
+    
+    #sendOtpBtn,
+    #verifyOtpBtn{
+      width:100%;
+      min-width:0;
+      font-size:13px;
+      height:46px;
+    }
+    
+    .signup-input,
+    .signup-input-email,
+    .signup-input-otp,
+    .signup-input-password{
+      height:46px;
+    }
+    
+    .signup-input-group{
+      align-items:stretch;
+    }
+    
+    .signup-input-group button{
+      width:100%;
+    }
+    
+    .register-button{
+      height:46px;
+    }
+  }
+
+  @media(max-width:420px){
+    .card-header{
+      padding:12px 16px;
+    }
+    
+    .card-header .title{
+      font-size:15px;
+    }
+    
+    h1{
+      font-size:17px;
+    }
+  }
+
+  *{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+  }
+  
+  input,textarea{
+    -webkit-user-select:text;
+    -moz-user-select:text;
+    -ms-user-select:text;
+    user-select:text;
+  }
+</style>
+</head>
+<body>
+  <div class="signup-wrapper">
+    <div class="signup-card" role="main" aria-labelledby="signupHeading">
+      <div class="card-header">
+        <div class="brand">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="header-text">
+          <div class="title">Sign Up</div>
+          <div class="subtitle">Create your account securely with email verification</div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <h1 id="signupHeading">Create Account</h1>
+        <p class="lead">Fill in your details to get started</p>
+
+        <input type="text" id="name" placeholder="Enter your name" class="signup-input" autocomplete="name" />
+        <div id="nameError" class="error-message" style="display:none"></div>
+
+        <input type="tel" id="mobile" placeholder="Enter mobile number" class="signup-input" autocomplete="tel" />
+        <div id="mobileError" class="error-message" style="display:none"></div>
+
+        <div class="email-otp-row">
+          <div class="email-col">
+            <input type="email" id="email" placeholder="Enter Email ID" class="signup-input-email" autocomplete="email" />
+            <div id="emailError" class="error-message" style="display:none"></div>
+            <p id="infoMessage" style="display:none;font-size:12px;color:var(--text-muted);margin-top:-6px;margin-bottom:12px;">(OTP may take up to 30s — check promotions)</p>
+            <div id="sendSuccess" class="success-message" style="display:none"></div>
+          </div>
+
+          <div class="btn-col">
+            <button id="sendOtpBtn" class="signup-button" type="button">
+              <i class="fas fa-paper-plane"></i> Send OTP To Verify Email
+            </button>
+          </div>
+        </div>
+
+        <div id="otpSection" class="signup-input-group" style="display:none">
+          <input type="text" id="otp" placeholder="Enter OTP" class="signup-input-otp" autocomplete="one-time-code" />
+          <div id="otpError" class="otpErrorMessage" style="display:none"></div>
+          <button id="verifyOtpBtn" class="signup-button" type="button">
+            <i class="fas fa-check-circle"></i> Verify OTP
+          </button>
+          <div id="verifySuccess" class="success-message" style="display:none"></div>
+        </div>
+
+        <div id="resendContainer" class="signup-resend" style="display:none;">
+          Didn't receive code? <span id="resendText" class="disabled">Resend in <span id="timer">60</span>s</span>
+        </div>
+
+        <div id="passwordBlock" class="signup-input-group" style="display:block;">
+          <input type="password" id="password" placeholder="Create password (min 6 chars)" class="signup-input-password" autocomplete="new-password" />
+          <div class="pwd-row">
+            <input type="password" id="confirmPassword" placeholder="Confirm password" class="signup-input-password" style="flex:1;margin-bottom:0;" autocomplete="new-password" />
+            <div class="show-toggle" id="toggleShow" title="Show/Hide">
+              <i class="fas fa-eye"></i>
+            </div>
+          </div>
+          <div id="pwdError" class="error-message" style="display:none"></div>
+        </div>
+
+        <button class="register-button" onclick="register()" id="registerBtn" disabled>
+          <i class="fas fa-user-check"></i> Create account
+        </button>
+
+        <div class="signin-link">Already have an account? <a href="../signin/signin.html">Sign in!</a></div>
+        <div class="footer-banner">Secure • Trusted • Professional</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="popupOverlay"><div class="popup-box"><p id="popupMessage"></p><button onclick="closePopup()">OK</button></div></div>
+
+<script>
+  /* ---------- element references ---------- */
+  const nameInput = document.getElementById("name");
+  const nameError = document.getElementById("nameError");
+  const mobileInput = document.getElementById("mobile");
+  const mobileError = document.getElementById("mobileError");
+  const emailInput = document.getElementById("email");
+  const emailError = document.getElementById("emailError");
+  const sendOtpBtn = document.getElementById("sendOtpBtn");
+  const sendSuccess = document.getElementById("sendSuccess");
+  const otpSection = document.getElementById("otpSection");
+  const otpInput = document.getElementById("otp");
+  const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+  const verifySuccess = document.getElementById("verifySuccess");
+  const resendContainer = document.getElementById("resendContainer");
+  const resendText = document.getElementById("resendText");
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput = document.getElementById("confirmPassword");
+  const pwdError = document.getElementById("pwdError");
+  const registerBtn = document.getElementById("registerBtn");
+  const toggleShow = document.getElementById("toggleShow");
+  const otpError = document.getElementById("otpError");
+
+  let timerInterval = null;
+  let isOtpVerified = false;
+  let nextParam = null;
+  let preselectedRole = null;
+
+  nameInput.addEventListener("input", (e) => {
+    const clean = e.target.value.replace(/[^A-Za-z\s]/g, "");
+    if (e.target.value !== clean) e.target.value = clean;
+    monitorFields();
+  });
+
+  mobileInput.addEventListener("input", (e) => {
+    let clean = e.target.value.replace(/\D/g, "");
+    if (clean.length > 10) clean = clean.slice(0, 10);
+    e.target.value = clean;
+
+    if (clean.length > 0 && clean.length < 10) {
+      mobileError.style.display = "block";
+      mobileError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Enter valid mobile';
+    } else {
+      mobileError.style.display = "none";
+      mobileError.textContent = "";
+    }
+    monitorFields();
+  });
+
+  function showErrorBelow(elem, msg){
+    if (elem === emailInput) {
+      emailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
+      emailError.style.display = msg ? "block" : "none";
+    } else if (elem === nameInput) {
+      nameError.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
+      nameError.style.display = msg ? "block" : "none";
+    } else if (elem === mobileInput) {
+      mobileError.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
+      mobileError.style.display = msg ? "block" : "none";
+    }
+  }
+  
+  function clearErrorBelow(elem){
+    if (elem === emailInput) { emailError.textContent = ""; emailError.style.display = "none"; }
+    if (elem === nameInput) { nameError.textContent = ""; nameError.style.display = "none"; }
+    if (elem === mobileInput) { mobileError.textContent = ""; mobileError.style.display = "none"; }
+  }
+  
+  function isValidEmail(email){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validatePasswords(){
+    const p = passwordInput.value.trim();
+    const cp = confirmPasswordInput.value.trim();
+    pwdError.style.display = "none";
+    if(p.length > 0 && p.length < 6){
+      pwdError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Password must be at least 6 characters.';
+      pwdError.style.display = "block";
+      return false;
+    }
+    if(cp.length > 0 && p !== cp){
+      pwdError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match.';
+      pwdError.style.display = "block";
+      return false;
+    }
+    if(p.length === 0 || cp.length === 0) {
+      pwdError.style.display = "none";
+      return false;
+    }
+    pwdError.style.display = "none";
+    return p === cp && p.length >= 6;
+  }
+
+  function monitorFields(){
+    const name = nameInput.value.trim();
+    const mobile = mobileInput.value.trim();
+    const email = emailInput.value.trim();
+    const passwordsValid = validatePasswords();
+
+    if (!name) {
+      showErrorBelow(nameInput, "Name is required and should contain only letters.");
+    } else {
+      clearErrorBelow(nameInput);
+    }
+
+    if (!mobile || mobile.length !== 10) {
+      // mobileError displayed by input handler
+    } else {
+      clearErrorBelow(mobileInput);
+    }
+
+    // Don't validate email in monitorFields - only check for form submission
+    // Email validation happens on blur event only
+
+    if (name && mobile && mobile.length === 10 && email && isValidEmail(email) && isOtpVerified && passwordsValid) {
+      registerBtn.disabled = false;
+    } else {
+      registerBtn.disabled = true;
+    }
+  }
+
+  sendOtpBtn.addEventListener("click", sendOtp);
+  function sendOtp(){
+    const email = emailInput.value.trim().toLowerCase();
+    sendSuccess.style.display = "none";
+    otpError.style.display = "none";
+    verifySuccess.style.display = "none";
+    clearErrorBelow(emailInput);
+
+    if(!email){
+      showErrorBelow(emailInput, "Please enter email to receive OTP.");
+      return;
+    }
+    if(!isValidEmail(email)){
+      showErrorBelow(emailInput, "Enter a valid email address.");
+      return;
+    }
+
+    sendOtpBtn.disabled = true;
+    sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+    fetch("./signup.php", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: new URLSearchParams({ action: "send_otp", email, page: "register" }),
+      credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success){
+        otpSection.style.display = "flex";
+        resendContainer.style.display = "block";
+        sendSuccess.style.display = "block";
+        sendSuccess.innerHTML = '<i class="fas fa-check-circle"></i> OTP sent to your email.';
+        sendOtpBtn.innerHTML = '<i class="fas fa-check"></i> Sent';
+        startTimer();
+      } else {
+        showPopup(data.message || "Failed to send OTP.");
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+      }
+    })
+    .catch(() => {
+      sendOtpBtn.disabled = false;
+      sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+      showPopup("Something went wrong while sending OTP.");
+    });
+  }
+
+  function startTimer(){
+    let seconds = 60;
+    resendText.classList.add("disabled");
+    resendText.innerHTML = `Resend in <span id="timer">${seconds}</span>s`;
+
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      seconds--;
+      const t = document.getElementById("timer");
+      if(t) t.textContent = seconds;
+      if(seconds <= 0){
+        clearInterval(timerInterval);
+        resendText.classList.remove("disabled");
+        resendText.textContent = "Resend";
+        resendText.onclick = () => sendOtp();
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+      }
+    }, 1000);
+  }
+
+  verifyOtpBtn.addEventListener("click", verifyOtp);
+  function verifyOtp(){
+    const email = emailInput.value.trim().toLowerCase();
+    const otp = otpInput.value.trim();
+    otpError.style.display = "none";
+    verifySuccess.style.display = "none";
+
+    if(!otp){ showPopup("Please enter OTP."); return; }
+
+    verifyOtpBtn.disabled = true;
+    verifyOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+
+    fetch("./signup.php", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: new URLSearchParams({ action: "verify_otp", email, otp }),
+      credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success){
+        isOtpVerified = true;
+        // Clear the timer to prevent button reset
+        if(timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        otpSection.style.display = "none";
+        sendOtpBtn.innerHTML = '<i class="fas fa-check-double"></i> Verified';
+        sendOtpBtn.disabled = true;
+        resendContainer.style.display = "none";
+        verifySuccess.style.display = "block";
+        verifySuccess.innerHTML = '<i class="fas fa-check-circle"></i> Email verified';
+        otpInput.value = "";
+        monitorFields();
+      } else {
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify OTP';
+        otpError.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (data.message || "Invalid OTP");
+        otpError.style.display = "block";
+        otpInput.classList.add("otpErrorInput");
+      }
+    })
+    .catch(() => {
+      verifyOtpBtn.disabled = false;
+      verifyOtpBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify OTP';
+      showPopup("Something went wrong while verifying OTP.");
+    });
+  }
+
+  toggleShow.addEventListener("click", () => {
+    const newType = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type = newType;
+    confirmPasswordInput.type = newType;
+    toggleShow.innerHTML = newType === "text" ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+  });
+
+  function register(){
+    const name = nameInput.value.trim();
+    const mobile = mobileInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+
+    if (!name) { showPopup("Name is required."); return; }
+    if (!mobile || mobile.length !== 10) { showPopup("Enter valid mobile number."); return; }
+    if (!isValidEmail(email)) { showPopup("Enter valid email."); return; }
+    if (!isOtpVerified) { showPopup("Please verify your email before registering."); return; }
+    if (!validatePasswords()) { showPopup("Please fix password fields."); return; }
+
+    registerBtn.disabled = true;
+    registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+    const postData = { action: "register", name, mobile, email, password };
+    if (preselectedRole) postData.role = preselectedRole;
+
+    fetch("./signup.php", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: new URLSearchParams(postData),
+      credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success){
+        localStorage.setItem("isLoggedIn","true");
+        localStorage.setItem("client_id", data.client_id || "");
+        localStorage.setItem("user_id", data.user_id || "");
+        localStorage.setItem("role", data.role || (preselectedRole || "user"));
+        localStorage.setItem("userName", data.name || name);
+        localStorage.setItem("signedInUserEmail", email);
+        localStorage.setItem("Mobile Number", data.mobile || mobile);
+        if (nextParam === "upload_tree") {
+          window.location.href = "/doctor_app/dashboard/upload_video/upload_video.html";
+        } else {
+          window.location.href = "/doctor_app/dashboard/dashboard.html";
+        }
+      } else {
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<i class="fas fa-user-check"></i> Create account';
+        showPopup(data.message || "Registration failed.");
+      }
+    })
+    .catch(() => {
+      registerBtn.disabled = false;
+      registerBtn.innerHTML = '<i class="fas fa-user-check"></i> Create account';
+      showPopup("Something went wrong while registering.");
+    });
+  }
+
+  function showPopup(msg){
+    document.getElementById("popupMessage").textContent = msg;
+    document.getElementById("popupOverlay").style.display = "flex";
+    const ok = document.querySelector('#popupOverlay .popup-box button');
+    if(ok) ok.focus();
+  }
+  
+  function closePopup(){
+    document.getElementById("popupMessage").textContent = "";
+    document.getElementById("popupOverlay").style.display = "none";
+  }
+
+  [nameInput, passwordInput, confirmPasswordInput].forEach(el=>{
+    el.addEventListener("input", monitorFields);
+  });
+  
+  // Email validation only on blur (when user leaves the field)
+  emailInput.addEventListener("blur", () => {
+    const email = emailInput.value.trim();
+    if (email && !isValidEmail(email)) {
+      showErrorBelow(emailInput, "Enter a valid email.");
+    }
+  });
+  
+  // Clear error immediately when typing and revalidate form
+  emailInput.addEventListener("input", () => {
+    const currentError = emailError.style.display;
+    if (currentError === "block") {
+      clearErrorBelow(emailInput);
+    }
+    monitorFields();
+  });
+  
+  // Clear error when user focuses on email field
+  emailInput.addEventListener("focus", () => {
+    clearErrorBelow(emailInput);
+  });
+
+  verifyOtpBtn.disabled = true;
+  otpInput.addEventListener("input", () => {
+    otpError.style.display = "none";
+    otpInput.classList.remove("otpErrorInput");
+    verifyOtpBtn.disabled = otpInput.value.trim().length === 0;
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    nextParam = urlParams.get("next");
+
+    preselectedRole = urlParams.get("role");
+    if (preselectedRole) {
+      preselectedRole = preselectedRole.trim().toLowerCase();
+      const banner = document.createElement('div');
+      banner.style.background = 'linear-gradient(90deg,rgba(0,169,165,0.1),rgba(26,117,187,0.1))';
+      banner.style.border = '1px solid var(--border-light)';
+      banner.style.padding = '10px 14px';
+      banner.style.borderRadius = '6px';
+      banner.style.marginBottom = '16px';
+      banner.style.fontSize = '12px';
+      banner.style.color = 'var(--text-dark)';
+      banner.style.fontWeight = '600';
+      banner.innerHTML = `<i class="fas fa-info-circle"></i> Creating account with role: ${preselectedRole}`;
+      const cardBody = document.querySelector('.card-body');
+      if (cardBody) cardBody.insertBefore(banner, cardBody.firstChild);
+    }
+  });
+</script>
+
+</body>
+</html>
