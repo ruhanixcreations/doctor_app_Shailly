@@ -604,6 +604,9 @@
       margin-bottom:0 !important;
       padding-top:0 !important;
       gap:4px !important;
+      transform:translateY(-100px) !important;
+      position:relative !important;
+      background:yellow !important;
     }
     
     div.email-otp-row{
@@ -797,22 +800,16 @@
               <i class="fas fa-paper-plane"></i> Send OTP To Verify Email
             </button>
           </div>
-        </div>
-
-        <div id="otpSection" class="signup-input-group" style="display:none">
+        </div><div id="otpSection" class="signup-input-group" style="display:none">
           <input type="text" id="otp" placeholder="Enter OTP" class="signup-input-otp" autocomplete="one-time-code" />
           <div id="otpError" class="otpErrorMessage" style="display:none"></div>
           <button id="verifyOtpBtn" class="signup-button" type="button">
             <i class="fas fa-check-circle"></i> Verify OTP
           </button>
           <div id="verifySuccess" class="success-message" style="display:none"></div>
-        </div>
-
-        <div id="resendContainer" class="signup-resend" style="display:none;">
+        </div><div id="resendContainer" class="signup-resend" style="display:none;">
           Didn't receive code? <span id="resendText" class="disabled">Resend in <span id="timer">60</span>s</span>
-        </div>
-
-        <div id="passwordBlock" class="signup-input-group" style="display:block;">
+        </div><div id="passwordBlock" class="signup-input-group" style="display:block;">
           <input type="password" id="password" placeholder="Create password (min 6 chars)" class="signup-input-password" autocomplete="new-password" />
           <div class="pwd-row">
             <input type="password" id="confirmPassword" placeholder="Confirm password" class="signup-input-password" style="flex:1;margin-bottom:0;" autocomplete="new-password" />
