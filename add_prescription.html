@@ -310,6 +310,11 @@ textarea{min-height:80px;resize:vertical}
   position:absolute;left:0;right:0;top:calc(100% + 8px);
   z-index:70;border-radius:6px;
 }
+/* custom medicine input styling */
+.customMedInput{
+  border:2px solid var(--primary-teal) !important;
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1) !important;
+}
 
 /* before-after & time group */
 .before-after{margin-top:8px;display:none}
@@ -609,6 +614,13 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
                   <div class="items" style="max-height:200px;overflow:auto"></div>
                 </div>
                 <input type="hidden" class="medInput" value="">
+              </div>
+              <!-- Custom medicine input (hidden by default) -->
+              <div class="customMedInputContainer" style="display:none;margin-top:8px;">
+                <input type="text" class="customMedInput" placeholder="Enter medicine name...">
+                <button type="button" class="btn-back-to-dropdown" style="margin-top:6px;padding:6px 12px;background:var(--bg-light);border:1px solid var(--border-light);border-radius:4px;font-size:12px;cursor:pointer;color:var(--text-muted);">
+                  <i class="fas fa-arrow-left"></i> Back to medicine list
+                </button>
               </div>
             </div>
 
@@ -1153,12 +1165,60 @@ function setupMedicineDropdown(){
   function populateMedList(filter=''){
     itemsEl.innerHTML='';
     const q=(filter||'').trim().toLowerCase();
+    
+    // Add "Other" option at the top (always visible)
+    const otherDiv = document.createElement('div');
+    otherDiv.className = 'item';
+    otherDiv.innerHTML = '<strong><i class="fas fa-edit"></i> Other (Enter custom medicine)</strong>';
+    otherDiv.style.borderBottom = '2px solid var(--border-light)';
+    otherDiv.style.marginBottom = '8px';
+    otherDiv.style.color = 'var(--primary-teal)';
+    otherDiv.addEventListener('click', ()=>{
+      const customInput = singleMedForm.querySelector('.customMedInput');
+      const customInputContainer = singleMedForm.querySelector('.customMedInputContainer');
+      const dropdown = singleMedForm.querySelector('.med-dropdown');
+      
+      // Hide dropdown and show custom input
+      dropdown.style.display = 'none';
+      customInputContainer.style.display = 'block';
+      customInput.focus();
+      
+      hidePanel(panel);
+      
+      // When custom input changes, update hidden field
+      customInput.oninput = () => {
+        hiddenInput.value = customInput.value.trim();
+        if(hiddenInput.value){
+          const typeElem = singleMedForm.querySelector('.typeInput');
+          typeElem.style.display = 'block'; 
+          typeElem.previousElementSibling.style.display='block';
+        }
+        updateFieldsCount();
+        validateAllForms();
+      };
+      
+      // Trigger auto-save on blur
+      customInput.onblur = () => {
+        triggerAutoSave();
+      };
+    });
+    itemsEl.appendChild(otherDiv);
+    
+    // Add regular medicine list
     const list = medicines.filter(m => !q || (m.name && m.name.toLowerCase().includes(q)) || (m.company && m.company.toLowerCase().includes(q))).slice(0,200);
-    if(!list.length){ itemsEl.innerHTML='<div class="no-results">No medicines</div>'; return; }
+    if(!list.length && !q){ itemsEl.innerHTML += '<div class="no-results">No medicines</div>'; return; }
     list.forEach(m=>{
       const div=document.createElement('div'); div.className='item';
       div.textContent = m.name + (m.company?(' — '+m.company):''); div.dataset.name=m.name;
       div.addEventListener('click', ()=>{
+        // Hide custom input if it was showing
+        const customInput = singleMedForm.querySelector('.customMedInput');
+        const customInputContainer = singleMedForm.querySelector('.customMedInputContainer');
+        const dropdown = singleMedForm.querySelector('.med-dropdown');
+        customInputContainer.style.display = 'none';
+        customInput.value = '';
+        dropdown.style.display = 'block';
+        
         hiddenInput.value = m.name; medLabel.textContent = m.name; hidePanel(panel);
         const typeElem = singleMedForm.querySelector('.typeInput');
         typeElem.style.display = 'block'; 
@@ -1177,6 +1237,36 @@ function setupMedicineDropdown(){
     else{ populateMedList(''); showPanelFixed(selectedBtn, panel); }
   });
   searchEl.addEventListener('input',(e)=> populateMedList(e.target.value));
+  
+  // Back to dropdown button handler
+  const backBtn = singleMedForm.querySelector('.btn-back-to-dropdown');
+  if(backBtn){
+    backBtn.addEventListener('click', ()=>{
+      const customInput = singleMedForm.querySelector('.customMedInput');
+      const customInputContainer = singleMedForm.querySelector('.customMedInputContainer');
+      const dropdown = singleMedForm.querySelector('.med-dropdown');
+      
+      // Clear custom input and hide it
+      customInput.value = '';
+      hiddenInput.value = '';
+      customInputContainer.style.display = 'none';
+      
+      // Show dropdown
+      dropdown.style.display = 'block';
+      medLabel.textContent = 'Choose medicine...';
+      
+      // Hide type and duration fields
+      const typeElem = singleMedForm.querySelector('.typeInput');
+      typeElem.style.display = 'none';
+      typeElem.previousElementSibling.style.display = 'none';
+      const durationElem = singleMedForm.querySelector('.durationInput');
+      durationElem.style.display = 'none';
+      durationElem.previousElementSibling.style.display = 'none';
+      
+      updateFieldsCount();
+      validateAllForms();
+    });
+  }
 }
 
 // When type selected -> reveal duration
@@ -1311,12 +1401,21 @@ function clearMedicationForm(){
   // Clear all form fields
   const medLabel = singleMedForm.querySelector('.medLabel');
   const medInput = singleMedForm.querySelector('.medInput');
+  const customMedInput = singleMedForm.querySelector('.customMedInput');
+  const customMedInputContainer = singleMedForm.querySelector('.customMedInputContainer');
+  const medDropdown = singleMedForm.querySelector('.med-dropdown');
   const typeInput = singleMedForm.querySelector('.typeInput');
   const durationInput = singleMedForm.querySelector('.durationInput');
   const notesInput = singleMedForm.querySelector('.notesInput');
   
   medLabel.textContent = 'Choose medicine...';
   medInput.value = '';
+  
+  // Reset custom medicine input
+  customMedInput.value = '';
+  customMedInputContainer.style.display = 'none';
+  medDropdown.style.display = 'block';
+  
   typeInput.value = '';
   typeInput.style.display = 'none';
   typeInput.previousElementSibling.style.display = 'none';
@@ -1369,12 +1468,44 @@ function editMedicationRow(index){
   // Populate form with row data
   const medLabel = singleMedForm.querySelector('.medLabel');
   const medInput = singleMedForm.querySelector('.medInput');
+  const customMedInput = singleMedForm.querySelector('.customMedInput');
+  const medDropdown = singleMedForm.querySelector('.med-dropdown');
   const typeInput = singleMedForm.querySelector('.typeInput');
   const durationInput = singleMedForm.querySelector('.durationInput');
   const notesInput = singleMedForm.querySelector('.notesInput');
   
-  medLabel.textContent = row.medicine_name;
-  medInput.value = row.medicine_name;
+  // Check if this medicine exists in the database
+  const medicineExists = medicines.some(m => m.name === row.medicine_name);
+  const customMedInputContainer = singleMedForm.querySelector('.customMedInputContainer');
+  
+  if(medicineExists){
+    // Show dropdown with selected medicine
+    medLabel.textContent = row.medicine_name;
+    medInput.value = row.medicine_name;
+    customMedInputContainer.style.display = 'none';
+    medDropdown.style.display = 'block';
+  } else {
+    // Show custom input for medicines not in database
+    customMedInput.value = row.medicine_name;
+    medInput.value = row.medicine_name;
+    customMedInputContainer.style.display = 'block';
+    medDropdown.style.display = 'none';
+    
+    // Set up the oninput handler for custom input
+    customMedInput.oninput = () => {
+      medInput.value = customMedInput.value.trim();
+      if(medInput.value){
+        const typeElem = singleMedForm.querySelector('.typeInput');
+        typeElem.style.display = 'block'; 
+        typeElem.previousElementSibling.style.display='block';
+      }
+      updateFieldsCount();
+      validateAllForms();
+    };
+    customMedInput.onblur = () => {
+      triggerAutoSave();
+    };
+  }
   
   typeInput.value = row.type;
   typeInput.style.display = 'block';
