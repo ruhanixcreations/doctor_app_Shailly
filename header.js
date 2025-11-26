@@ -278,7 +278,20 @@ function handleLogout() {
   if (confirm('Are you sure you want to logout?')) {
     console.log('Logging out...');
     
-    fetch('../logout.php', {
+    // Determine correct path to logout.php based on current location
+    const currentPath = window.location.pathname;
+    let logoutPath = '../logout.php';
+    let signinPath = '../signin/signin.html';
+    
+    // If we're at root level (profile.html, dashboard.html, etc.)
+    if (currentPath.match(/\/[^\/]+\.html$/)) {
+      logoutPath = 'logout.php';
+      signinPath = 'signin/signin.html';
+    }
+    
+    console.log('Using logout path:', logoutPath);
+    
+    fetch(logoutPath, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' }
@@ -296,6 +309,7 @@ function handleLogout() {
         localStorage.removeItem('username');
         localStorage.removeItem('user');
         localStorage.removeItem('role');
+        localStorage.removeItem('signedInUserEmail');
 
         console.log('Logout successful, showing auth buttons...');
         // Show auth buttons immediately
@@ -303,7 +317,7 @@ function handleLogout() {
         
         // Optional: redirect after a short delay
         setTimeout(() => {
-          window.location.href = '../signin/signin.html';
+          window.location.href = signinPath;
         }, 500);
       } else {
         alert('Logout failed: ' + (data.message || 'Unknown error'));

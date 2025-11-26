@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prescription View</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-teal: #00A9A5;
+      --primary-blue: #1a75bb;
+      --text-dark: #2c3e50;
+      --text-muted: #6c757d;
+      --border-light: #e0e6ed;
+      --bg-light: #f8f9fa;
+      --bg-white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 0;
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      
+      .no-print {
+        display: none !important;
+      }
+      
+      .prescription-container {
+        box-shadow: none;
+        border: none;
+        padding: 20px;
+      }
+    }
+
+    /* Loading state */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border-light);
+      border-top-color: var(--primary-teal);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 16px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Error state */
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 48px;
+      color: #dc3545;
+      margin-bottom: 16px;
+    }
+
+    .error-message {
+      font-size: 16px;
+      color: var(--text-dark);
+      margin-bottom: 24px;
+    }
+
+    /* Action buttons */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      background: white;
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-teal), var(--primary-blue));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      border: 1px solid var(--border-light);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Prescription container */
+    .prescription-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      min-height: calc(100vh - 60px);
+    }
+
+    /* Header */
+    .prescription-header {
+      background: linear-gradient(135deg, var(--primary-teal), var(--primary-blue));
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .prescription-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .prescription-header .subtitle {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* Content sections */
+    .prescription-content {
+      padding: 24px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-teal);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title i {
+      font-size: 18px;
+    }
+
+    /* Patient info */
+    .patient-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: var(--bg-light);
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    /* Medications table */
+    .medications-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+
+    .medications-table th,
+    .medications-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .medications-table thead {
+      background: var(--bg-light);
+    }
+
+    .medications-table th {
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+    }
+
+    .medications-table td {
+      font-size: 14px;
+    }
+
+    .medications-table tbody tr:hover {
+      background: rgba(0,169,165,0.03);
+    }
+
+    /* Blood tests list */
+    .blood-tests-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .blood-test-badge {
+      background: var(--bg-light);
+      border: 1px solid var(--border-light);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    /* Symptoms box */
+    .symptoms-text {
+      background: var(--bg-light);
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-teal);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    /* Follow-up date */
+    .follow-up-box {
+      background: linear-gradient(135deg, rgba(0,169,165,0.1), rgba(26,117,187,0.1));
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary-teal);
+    }
+
+    .follow-up-date {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-teal);
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .prescription-header {
+        padding: 20px 16px;
+      }
+
+      .prescription-header h1 {
+        font-size: 20px;
+      }
+
+      .prescription-content {
+        padding: 20px 16px;
+      }
+
+      .patient-info {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .medications-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .medications-table thead {
+        display: none;
+      }
+
+      .medications-table,
+      .medications-table tbody,
+      .medications-table tr {
+        display: block;
+        width: 100%;
+      }
+
+      .medications-table tr {
+        margin-bottom: 16px;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 12px;
+        background: white;
+      }
+
+      .medications-table td {
+        display: block;
+        padding: 8px 0;
+        border: none;
+      }
+
+      .medications-table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: var(--text-muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .prescription-header h1 {
+        font-size: 18px;
+      }
+
+      .section-title {
+        font-size: 15px;
+      }
+
+      .prescription-content {
+        padding: 16px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingState" class="loading-container">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading prescription...</div>
+  </div>
+
+  <div id="errorState" class="error-container" style="display: none;">
+    <div class="error-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="error-message" id="errorMessage">Failed to load prescription</div>
+    <button class="btn btn-secondary" onclick="window.close()">
+      <i class="fas fa-times"></i> Close
+    </button>
+  </div>
+
+  <div id="prescriptionView" style="display: none;">
+    <div class="action-buttons no-print">
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="fas fa-print"></i> Print
+      </button>
+      <button class="btn btn-secondary" onclick="window.close()">
+        <i class="fas fa-times"></i> Close
+      </button>
+    </div>
+
+    <div class="prescription-container">
+      <div class="prescription-header">
+        <h1><i class="fas fa-prescription"></i> Prescription</h1>
+        <div class="subtitle">Medical Prescription Document</div>
+      </div>
+
+      <div class="prescription-content">
+        <!-- Patient Information -->
+        <div class="section">
+          <div class="section-title">
+            <i class="fas fa-user"></i>
+            <span>Patient Information</span>
+          </div>
+          <div class="patient-info" id="patientInfo">
+            <!-- Will be populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="section">
+          <div class="section-title">
+            <i class="fas fa-stethoscope"></i>
+            <span>Symptoms</span>
+          </div>
+          <div class="symptoms-text" id="symptomsText">
+            <!-- Will be populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Medications -->
+        <div class="section">
+          <div class="section-title">
+            <i class="fas fa-pills"></i>
+            <span>Medications Prescribed</span>
+          </div>
+          <div class="table-wrapper">
+            <table class="medications-table">
+              <thead>
+                <tr>
+                  <th>Medicine</th>
+                  <th>Type</th>
+                  <th>Duration</th>
+                  <th>Time</th>
+                  <th>Before/After</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="medicationsBody">
+                <!-- Will be populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Blood Tests -->
+        <div class="section" id="bloodTestsSection" style="display: none;">
+          <div class="section-title">
+            <i class="fas fa-vial"></i>
+            <span>Recommended Blood Tests</span>
+          </div>
+          <div class="blood-tests-list" id="bloodTestsList">
+            <!-- Will be populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Follow-up Date -->
+        <div class="section" id="followUpSection" style="display: none;">
+          <div class="section-title">
+            <i class="fas fa-calendar-check"></i>
+            <span>Follow-up Date</span>
+          </div>
+          <div class="follow-up-box">
+            <div class="follow-up-date" id="followUpDate"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const prescriptionId = urlParams.get('prescription_id');
+    const patientId = urlParams.get('patient_id');
+
+    // Function to show error
+    function showError(message) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'flex';
+      document.getElementById('errorMessage').textContent = message;
+    }
+
+    // Function to format date
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', { 
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric' 
+      });
+    }
+
+    // Function to escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Load prescription data
+    async function loadPrescription() {
+      if (!prescriptionId || !patientId) {
+        showError('Invalid prescription or patient ID');
+        return;
+      }
+
+      try {
+        const response = await fetch(`../add_prescription/add_prescription.php?action=get_prescription&prescription_id=${prescriptionId}&patient_id=${patientId}`);
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Failed to load prescription');
+        }
+
+        displayPrescription(data.prescription, data.patient);
+      } catch (error) {
+        console.error('Error loading prescription:', error);
+        showError(error.message || 'Failed to load prescription. Please try again.');
+      }
+    }
+
+    // Display prescription
+    function displayPrescription(prescription, patient) {
+      // Hide loading, show prescription
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('prescriptionView').style.display = 'block';
+
+      // Patient info
+      const patientInfo = document.getElementById('patientInfo');
+      patientInfo.innerHTML = `
+        <div class="info-item">
+          <div class="info-label">Patient Name</div>
+          <div class="info-value">${escapeHtml(patient.patient_name || '-')}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Patient ID</div>
+          <div class="info-value">${escapeHtml(patient.patient_id || '-')}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Mobile</div>
+          <div class="info-value">${escapeHtml(patient.mobile || '-')}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Age</div>
+          <div class="info-value">${escapeHtml(patient.age || '-')} yrs</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Weight</div>
+          <div class="info-value">${escapeHtml(patient.weight || '-')} kg</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Date</div>
+          <div class="info-value">${formatDate(prescription.prescription_date)}</div>
+        </div>
+      `;
+
+      // Symptoms
+      document.getElementById('symptomsText').textContent = prescription.symptoms || 'No symptoms recorded';
+
+      // Medications
+      const medicationsBody = document.getElementById('medicationsBody');
+      if (prescription.items && prescription.items.length > 0) {
+        medicationsBody.innerHTML = prescription.items.map(item => `
+          <tr>
+            <td data-label="Medicine"><strong>${escapeHtml(item.medicine_name || '-')}</strong></td>
+            <td data-label="Type">${escapeHtml(item.type || '-')}</td>
+            <td data-label="Duration">${escapeHtml(item.duration || '-')}</td>
+            <td data-label="Time">${escapeHtml(item.times_of_day || '-')}</td>
+            <td data-label="Before/After">${escapeHtml(item.before_after || '-')}</td>
+            <td data-label="Notes">${escapeHtml(item.notes || '-')}</td>
+          </tr>
+        `).join('');
+      } else {
+        medicationsBody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No medications prescribed</td></tr>';
+      }
+
+      // Blood tests
+      if (prescription.blood_test_names && prescription.blood_test_names.length > 0) {
+        document.getElementById('bloodTestsSection').style.display = 'block';
+        const bloodTestsList = document.getElementById('bloodTestsList');
+        bloodTestsList.innerHTML = prescription.blood_test_names.map(test => 
+          `<div class="blood-test-badge"><i class="fas fa-check-circle"></i> ${escapeHtml(test)}</div>`
+        ).join('');
+      }
+
+      // Follow-up date
+      if (prescription.follow_up_date) {
+        document.getElementById('followUpSection').style.display = 'block';
+        document.getElementById('followUpDate').textContent = formatDate(prescription.follow_up_date);
+      }
+    }
+
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', loadPrescription);
+  </script>
+</body>
+</html>
