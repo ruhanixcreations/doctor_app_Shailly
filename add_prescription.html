@@ -1124,6 +1124,7 @@ function updateSelectedBloodTests(){
   updateFieldsCount();
   validateAllForms();
   triggerAutoSave(); // Auto-save when blood tests are selected/changed
+  savePrescriptionFormData(); // Save blood test selections
 }
 
 // Dropdown open/close
@@ -1200,6 +1201,7 @@ function setupMedicineDropdown(){
       // Trigger auto-save on blur
       customInput.onblur = () => {
         triggerAutoSave();
+        savePrescriptionFormData(); // Save custom medicine data
       };
     });
     itemsEl.appendChild(otherDiv);
@@ -1226,6 +1228,7 @@ function setupMedicineDropdown(){
         updateFieldsCount();
         validateAllForms();
         triggerAutoSave(); // Auto-save when medicine selected
+        savePrescriptionFormData(); // Save selected medicine data
       });
       itemsEl.appendChild(div);
     });
@@ -1325,6 +1328,7 @@ function updateBeforeAfterVisibility(){
   updateFieldsCount();
   validateAllForms();
   triggerAutoSave(); // Auto-save when time of day changes
+  savePrescriptionFormData(); // Save current medicine form data
 }
 timeCheckboxes.forEach(ch => ch.addEventListener('change', updateBeforeAfterVisibility));
 
@@ -1335,6 +1339,7 @@ singleMedForm.addEventListener('change',(e)=>{
     updateFieldsCount();
     validateAllForms();
     triggerAutoSave(); // Auto-save when before/after meal selected
+    savePrescriptionFormData(); // Save current medicine form data
   }
 });
 
@@ -1714,21 +1719,23 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     draftPrescriptionId = null;
     isSaving = false; // Reset flag after successful save
     
-    // Clear saved form data from sessionStorage
-    sessionStorage.removeItem('prescriptionFormData_' + pid);
+    // DO NOT clear form data - keep entries visible after save draft
+    // User wants filled entries to remain until navigating to a different page
+    // sessionStorage.removeItem('prescriptionFormData_' + pid); // REMOVED
     
-    // Clear medication rows
-    medicationRows = [];
-    renderMedicationRows();
-    clearMedicationForm();
+    // DO NOT clear medication rows - keep them visible
+    // medicationRows = [];
+    // renderMedicationForm();
+    // clearMedicationForm();
     
-    // reset follow-up default to 7 days from today
-    document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
-    document.getElementById('topSymptoms').value = '';
-    // Reset blood test selections
-    selectedBloodTests = [];
-    bloodLabel.textContent = 'Choose blood tests...';
-    selectedBloodTestsList.style.display = 'none';
+    // DO NOT reset follow-up or symptoms - keep filled data
+    // document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
+    // document.getElementById('topSymptoms').value = '';
+    // DO NOT reset blood test selections - keep them selected
+    // selectedBloodTests = [];
+    // bloodLabel.textContent = 'Choose blood tests...';
+    // selectedBloodTestsList.style.display = 'none';
+    
     updateFieldsCount();
     validateAllForms();
     await loadPatientPrescriptions(pid);
@@ -1980,6 +1987,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if(notesInput){
     notesInput.addEventListener('blur', () => {
       triggerAutoSave();
+      savePrescriptionFormData(); // Save current medicine form data
     });
   }
   
@@ -1988,6 +1996,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if(typeInput){
     typeInput.addEventListener('blur', () => {
       triggerAutoSave();
+      savePrescriptionFormData(); // Save current medicine form data
     });
   }
   
@@ -1996,6 +2005,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if(durationInput){
     durationInput.addEventListener('blur', () => {
       triggerAutoSave();
+      savePrescriptionFormData(); // Save current medicine form data
     });
   }
 });
