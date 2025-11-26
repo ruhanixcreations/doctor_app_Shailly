@@ -434,9 +434,11 @@
     font-weight:600;
   }
 
-  @media(max-width:600px){
+  @media(max-width:768px){
     body{
-      padding:16px;
+      padding:12px;
+      align-items:flex-start;
+      padding-top:20px;
     }
     
     .signup-wrapper{
@@ -444,20 +446,20 @@
     }
     
     .signup-card{
-      border-radius:12px;
+      border-radius:10px;
     }
     
     .card-header{
-      padding:14px 18px;
+      padding:12px 16px;
     }
     
     .brand{
-      width:38px;
-      height:38px;
+      width:36px;
+      height:36px;
     }
     
     .brand i{
-      font-size:18px;
+      font-size:17px;
     }
     
     .card-header .title{
@@ -469,29 +471,107 @@
     }
     
     .card-body{
-      padding:20px;
+      padding:16px;
+    }
+    
+    .card-body #name{
+      margin-top:0 !important;
+      margin-bottom:6px !important;
+    }
+    
+    .card-body #mobile{
+      margin-top:6px !important;
+      margin-bottom:6px !important;
+    }
+    
+    .card-body .email-otp-row{
+      margin-top:6px !important;
+      margin-bottom:0 !important;
+    }
+    
+    .card-body #passwordBlock{
+      margin-top:0 !important;
+      margin-bottom:0 !important;
+    }
+    
+    .card-body #nameError,
+    .card-body #mobileError{
+      margin-top:2px !important;
+      margin-bottom:4px !important;
     }
     
     h1{
       font-size:18px;
+      margin-bottom:4px !important;
+      margin-top:0 !important;
     }
     
     p.lead{
+      margin-top:0 !important;
       font-size:12px;
+      margin-bottom:10px !important;
+    }
+    
+    .signup-input,
+    .signup-input-email,
+    .signup-input-otp,
+    .signup-input-password{
+      height:44px;
+      margin-bottom:6px;
+      padding:10px 12px;
+      font-size:14px;
     }
     
     .email-otp-row{
-      flex-direction:column;
-      gap:10px;
-      margin-bottom:8px;
+      flex-direction:column !important;
+      gap:0px !important;
+      margin-bottom:0 !important;
+      margin-top:0 !important;
+      padding:0 !important;
+      padding-bottom:0 !important;
     }
     
     .email-otp-row .email-col{
       width:100%;
+      margin-bottom:0 !important;
+      margin-top:0 !important;
+      padding-bottom:0 !important;
+      padding:0 !important;
+    }
+    
+    .email-otp-row .email-col .signup-input-email{
+      margin-bottom:4px !important;
+      margin-top:0 !important;
+    }
+    
+    .email-otp-row .email-col .error-message,
+    .email-otp-row .email-col .success-message{
+      margin-top:2px;
+      margin-bottom:0;
     }
     
     .email-otp-row .btn-col{
       width:100%;
+      margin-top:0 !important;
+      margin-bottom:0 !important;
+      padding:0 !important;
+      padding-bottom:0 !important;
+    }
+    
+    .email-otp-row .btn-col button{
+      margin-bottom:0 !important;
+      margin-top:0 !important;
+      padding-bottom:9px !important;
+    }
+    
+    #otpSection{
+      margin-top:0 !important;
+      margin-bottom:0 !important;
+    }
+    
+    #resendContainer{
+      margin-top:0 !important;
+      margin-bottom:0 !important;
     }
     
     #sendOtpBtn,
@@ -499,31 +579,156 @@
       width:100%;
       min-width:0;
       font-size:13px;
-      height:46px;
-    }
-    
-    .signup-input,
-    .signup-input-email,
-    .signup-input-otp,
-    .signup-input-password{
-      height:46px;
+      height:44px;
+      padding:10px 14px;
+      margin-bottom:0;
+      margin-top:0;
     }
     
     .signup-input-group{
       align-items:stretch;
-      margin-bottom:10px;
+      margin-bottom:0 !important;
+      gap:4px;
+      margin-top:0 !important;
+      padding-top:0 !important;
+    }
+    
+    #otpSection.signup-input-group{
+      margin-top:0 !important;
+    }
+    
+    #passwordBlock,
+    #passwordBlock.signup-input-group{
+      margin-top:-400px !important;
+      margin-bottom:-400px !important;
+      padding-top:410px !important;
+      gap:6px !important;
+    }
+    
+    div.email-otp-row{
+      margin-bottom:0 !important;
+      padding-bottom:0 !important;
+      margin-top:0 !important;
+    }
+    
+    .card-body > .email-otp-row + #otpSection + #resendContainer + #passwordBlock,
+    .email-otp-row ~ #passwordBlock{
+      margin-top:0 !important;
+    }
+    
+    .email-otp-row + * + * + #passwordBlock{
+      margin-top:0 !important;
+    }
+    
+    .signup-input-group input{
+      margin-bottom:0;
+    }
+    
+    .signup-input-group .otpErrorMessage{
+      margin-top:2px;
+      margin-bottom:2px;
     }
     
     .signup-input-group button{
       width:100%;
+      margin-top:0;
     }
     
-    #passwordBlock{
-      margin-top:8px;
+    .signup-input-group .success-message{
+      margin-top:2px;
+      margin-bottom:2px;
+    }
+    
+    #passwordBlock .signup-input-password:first-child{
+      margin-bottom:6px;
+      margin-top:0 !important;
+    }
+    
+    #passwordBlock > #password{
+      margin-top:0 !important;
+    }
+    
+    #password{
+      margin-top:0 !important;
+    }
+    
+    #otpSection[style*="display:none"],
+    #otpSection[style*="display: none"]{
+      margin:0 !important;
+      padding:0 !important;
+      height:0 !important;
+      overflow:hidden !important;
+    }
+    
+    #resendContainer[style*="display:none"],
+    #resendContainer[style*="display: none"]{
+      margin:0 !important;
+      padding:0 !important;
+      height:0 !important;
+      overflow:hidden !important;
+    }
+    
+    #passwordBlock .error-message{
+      margin-top:2px;
+      margin-bottom:0;
+    }
+    
+    .pwd-row{
+      gap:5px;
+      margin-bottom:0;
+      margin-top:0;
+    }
+    
+    .pwd-row .signup-input-password{
+      margin-bottom:0;
+    }
+    
+    .show-toggle{
+      width:44px;
+      height:44px;
+      padding:10px;
     }
     
     .register-button{
-      height:46px;
+      height:44px;
+      margin-top:412px;
+      padding:10px 16px;
+      font-size:14px;
+    }
+    
+    .error-message,
+    .success-message,
+    .otpErrorMessage{
+      margin-top:2px;
+      margin-bottom:4px;
+      padding:6px 10px;
+      font-size:11px;
+    }
+    
+    .signup-resend{
+      margin-bottom:6px;
+      margin-top:4px;
+      font-size:11px;
+    }
+    
+    .signin-link{
+      margin-top:412px;
+      font-size:12px;
+    }
+    
+    .footer-banner{
+      margin-top:412px;
+      font-size:11px;
+    }
+    
+    .separator{
+      margin:10px 0;
+    }
+    
+    .info-message{
+      margin-top:2px !important;
+      margin-bottom:2px !important;
+      font-size:11px !important;
     }
   }
 
@@ -583,7 +788,7 @@
           <div class="email-col">
             <input type="email" id="email" placeholder="Enter Email ID" class="signup-input-email" autocomplete="email" />
             <div id="emailError" class="error-message" style="display:none"></div>
-            <p id="infoMessage" style="display:none;font-size:12px;color:var(--text-muted);margin-top:-6px;margin-bottom:12px;">(OTP may take up to 30s — check promotions)</p>
+            <p id="infoMessage" class="info-message" style="display:none;font-size:12px;color:var(--text-muted);margin-top:2px;margin-bottom:2px;">(OTP may take up to 30s — check promotions)</p>
             <div id="sendSuccess" class="success-message" style="display:none"></div>
           </div>
 
@@ -592,22 +797,16 @@
               <i class="fas fa-paper-plane"></i> Send OTP To Verify Email
             </button>
           </div>
-        </div>
-
-        <div id="otpSection" class="signup-input-group" style="display:none">
+        </div><div id="otpSection" class="signup-input-group" style="display:none">
           <input type="text" id="otp" placeholder="Enter OTP" class="signup-input-otp" autocomplete="one-time-code" />
           <div id="otpError" class="otpErrorMessage" style="display:none"></div>
           <button id="verifyOtpBtn" class="signup-button" type="button">
             <i class="fas fa-check-circle"></i> Verify OTP
           </button>
           <div id="verifySuccess" class="success-message" style="display:none"></div>
-        </div>
-
-        <div id="resendContainer" class="signup-resend" style="display:none;">
+        </div><div id="resendContainer" class="signup-resend" style="display:none;">
           Didn't receive code? <span id="resendText" class="disabled">Resend in <span id="timer">60</span>s</span>
-        </div>
-
-        <div id="passwordBlock" class="signup-input-group" style="display:block;">
+        </div><div id="passwordBlock" class="signup-input-group" style="display:block;">
           <input type="password" id="password" placeholder="Create password (min 6 chars)" class="signup-input-password" autocomplete="new-password" />
           <div class="pwd-row">
             <input type="password" id="confirmPassword" placeholder="Confirm password" class="signup-input-password" style="flex:1;margin-bottom:0;" autocomplete="new-password" />
