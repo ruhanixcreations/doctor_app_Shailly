@@ -170,6 +170,7 @@ switch ($action) {
         $email = strtolower(trim($_POST['email'] ?? ''));
         $mobile = trim($_POST['mobile'] ?? '');
         $password = $_POST['password'] ?? '';
+        $added_by_admin = trim($_POST['added_by_admin'] ?? '');
 
         // Default role
         $role = 'user';
@@ -248,12 +249,16 @@ switch ($action) {
         $stmt->bind_param("ssssss", $name, $email, $mobile_clean, $role, $client_id, $password_hash);
         if ($stmt->execute()) {
             $user_id = $stmt->insert_id;
-            $_SESSION['user_id'] = $user_id;
-            $_SESSION['user_email'] = $email;
-            $_SESSION['user_role'] = $role;
-            $_SESSION['client_id'] = $client_id;
-            $_SESSION['logged_in'] = true;
-            $_SESSION['last_activity'] = time();
+            
+            // Only create session if NOT being added by admin
+            if ($added_by_admin !== 'true') {
+                $_SESSION['user_id'] = $user_id;
+                $_SESSION['user_email'] = $email;
+                $_SESSION['user_role'] = $role;
+                $_SESSION['client_id'] = $client_id;
+                $_SESSION['logged_in'] = true;
+                $_SESSION['last_activity'] = time();
+            }
 
             $next = $_POST['next'] ?? '';
             $redirectUrl = "/doctor_app/dashboard/dashboard.html";
@@ -267,7 +272,8 @@ switch ($action) {
                 "redirect" => $redirectUrl,
                 "role" => $role,
                 "name" => $name,
-                "mobile" => $mobile_clean
+                "mobile" => $mobile_clean,
+                "added_by_admin" => $added_by_admin === 'true'
             ]);
         } else {
             echo json_encode(["success" => false, "message" => "Failed to register user."]);
