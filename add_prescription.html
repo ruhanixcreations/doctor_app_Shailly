@@ -1580,6 +1580,7 @@ addBottomBtn.addEventListener('click',(e)=>{
   updateFieldsCount();
   validateAllForms();
   triggerAutoSave(); // Auto-save when medicine is added
+  savePrescriptionFormData(); // Save form data when medicine added
 });
 
 /* ---------- VALIDATION ---------- */
@@ -1713,6 +1714,9 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     draftPrescriptionId = null;
     isSaving = false; // Reset flag after successful save
     
+    // Clear saved form data from sessionStorage
+    sessionStorage.removeItem('prescriptionFormData_' + pid);
+    
     // Clear medication rows
     medicationRows = [];
     renderMedicationRows();
@@ -1760,6 +1764,118 @@ async function loadPatientPrescriptions(patient_id){
 }
 
 
+/* Save prescription form data to sessionStorage */
+function savePrescriptionFormData(){
+  const pid = document.getElementById('selectedPatientId').value;
+  if(!pid) return; // Only save if patient is selected
+  
+  const formData = {
+    patient_id: pid,
+    symptoms: document.getElementById('topSymptoms').value,
+    follow_up_date: document.getElementById('topFollowUp').value,
+    medication_rows: medicationRows,
+    selected_blood_tests: selectedBloodTests,
+    // Save current form data if being filled
+    current_medicine: {
+      medicine_name: singleMedForm.querySelector('.medInput')?.value || '',
+      type: singleMedForm.querySelector('.typeInput')?.value || '',
+      duration: singleMedForm.querySelector('.durationInput')?.value || '',
+      morning: singleMedForm.querySelector('.tMorning')?.checked || false,
+      afternoon: singleMedForm.querySelector('.tAfternoon')?.checked || false,
+      night: singleMedForm.querySelector('.tNight')?.checked || false,
+      before_after: singleMedForm.querySelector('.beforeAfterInput')?.value || '',
+      notes: singleMedForm.querySelector('.notesInput')?.value || ''
+    },
+    editing_row_index: editingRowIndex,
+    timestamp: Date.now()
+  };
+  sessionStorage.setItem('prescriptionFormData_' + pid, JSON.stringify(formData));
+}
+
+/* Restore prescription form data from sessionStorage */
+function restorePrescriptionFormData(){
+  const pid = document.getElementById('selectedPatientId').value;
+  if(!pid) return;
+  
+  const saved = sessionStorage.getItem('prescriptionFormData_' + pid);
+  if(saved){
+    try{
+      const data = JSON.parse(saved);
+      // Only restore if data is less than 24 hours old
+      if(Date.now() - data.timestamp < 86400000){
+        document.getElementById('topSymptoms').value = data.symptoms || '';
+        document.getElementById('topFollowUp').value = data.follow_up_date || '';
+        
+        // Restore medication rows
+        if(data.medication_rows && data.medication_rows.length > 0){
+          medicationRows = data.medication_rows;
+          renderMedicationRows();
+        }
+        
+        // Restore blood tests
+        if(data.selected_blood_tests && data.selected_blood_tests.length > 0){
+          selectedBloodTests = data.selected_blood_tests;
+          updateSelectedBloodTests();
+        }
+        
+        // Restore current medicine form if it was being filled
+        if(data.current_medicine && data.current_medicine.medicine_name){
+          const cm = data.current_medicine;
+          singleMedForm.querySelector('.medInput').value = cm.medicine_name;
+          singleMedForm.querySelector('.medLabel').textContent = cm.medicine_name;
+          
+          if(cm.type){
+            const typeInput = singleMedForm.querySelector('.typeInput');
+            typeInput.value = cm.type;
+            typeInput.style.display = 'block';
+            typeInput.previousElementSibling.style.display = 'block';
+          }
+          
+          if(cm.duration){
+            const durationInput = singleMedForm.querySelector('.durationInput');
+            durationInput.value = cm.duration;
+            durationInput.style.display = 'block';
+            durationInput.previousElementSibling.style.display = 'block';
+            
+            // Show time group
+            const timeGroup = singleMedForm.querySelector('.timeGroup');
+            timeGroup.style.display = 'flex';
+            timeGroup.previousElementSibling && (timeGroup.previousElementSibling.style.display = 'block');
+          }
+          
+          // Restore time checkboxes
+          singleMedForm.querySelector('.tMorning').checked = cm.morning;
+          singleMedForm.querySelector('.tAfternoon').checked = cm.afternoon;
+          singleMedForm.querySelector('.tNight').checked = cm.night;
+          
+          // Restore before/after
+          if(cm.before_after){
+            beforeAfterBlock.style.display = 'block';
+            beforeAfterInput.value = cm.before_after;
+            if(cm.before_after === 'Before'){
+              singleMedForm.querySelector('.beforeRadio').checked = true;
+            } else if(cm.before_after === 'After'){
+              singleMedForm.querySelector('.afterRadio').checked = true;
+            }
+          }
+          
+          // Restore notes
+          singleMedForm.querySelector('.notesInput').value = cm.notes || '';
+          
+          // Restore editing index
+          editingRowIndex = data.editing_row_index;
+          if(editingRowIndex !== null){
+            addBottomBtn.innerHTML = '<i class="fas fa-check-circle"></i> Update Medicine';
+          }
+        }
+        
+        updateFieldsCount();
+        validateAllForms();
+      }
+    }catch(e){ console.error('Failed to restore prescription form data:', e); }
+  }
+}
+
 /* print button: opens print.html */
 function setPrintForId(presId){
   const pBtn = document.getElementById('printPrescriptionTop');
@@ -1767,6 +1883,8 @@ function setPrintForId(presId){
     pBtn.disabled=false;
     const pid = document.getElementById('selectedPatientId').value || '';
     pBtn.onclick = ()=> {
+      // Save form data before opening print window
+      savePrescriptionFormData();
       const url = `print.html?prescription_id=${encodeURIComponent(presId)}&patient_id=${encodeURIComponent(pid)}`;
       window.open(url,'_blank');
     };
@@ -1811,6 +1929,9 @@ async function onPatientSelected(patient_id, patientObj){
   document.getElementById('viewHistoryButtonContainer').style.display = 'block';
 
   await loadPatientPrescriptions(patient_id);
+  
+  // Restore saved form data for this patient (after loading prescriptions)
+  setTimeout(() => restorePrescriptionFormData(), 500);
 }
 
 /* ---------- INITIALIZATION ---------- */
@@ -1833,17 +1954,25 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   document.getElementById('topSymptoms').addEventListener('input', () => {
     updateFieldsCount();
     validateAllForms();
+    savePrescriptionFormData(); // Save form data
   });
   
   // ===== AUTO-SAVE EVENT LISTENERS =====
   // Auto-save symptoms when user moves to next field
   document.getElementById('topSymptoms').addEventListener('blur', () => {
     triggerAutoSave();
+    savePrescriptionFormData(); // Save form data
   });
   
   // Auto-save follow-up date when changed
   document.getElementById('topFollowUp').addEventListener('blur', () => {
     triggerAutoSave();
+    savePrescriptionFormData(); // Save form data
+  });
+  
+  // Save form data when follow-up date changes
+  document.getElementById('topFollowUp').addEventListener('change', () => {
+    savePrescriptionFormData();
   });
   
   // Auto-save notes field in medicine form

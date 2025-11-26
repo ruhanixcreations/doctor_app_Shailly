@@ -1038,6 +1038,11 @@ function renderPrescriptions(prescriptions, patientData){
 /* Open prescription in print page */
 function openPrescription(prescriptionId, patientId){
   if(!prescriptionId || !patientId) return;
+  // Save current patient selection before opening print
+  const currentPatientId = document.getElementById('patientSelect').value;
+  if(currentPatientId){
+    sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
+  }
   // print.html is in add_prescription folder (go up one level then into add_prescription)
   const url = `../add_prescription/print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
   window.open(url, '_blank');
@@ -1069,6 +1074,11 @@ function uploadBloodReport(patientId, patientName, prescriptionId){
   if(!patientId){
     alert('Invalid patient ID');
     return;
+  }
+  // Save current patient selection before navigating
+  const currentPatientId = document.getElementById('patientSelect').value;
+  if(currentPatientId){
+    sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
   }
   // Redirect to upload page with patient details
   const url = `../patient_history/upload_blood_report.html?patient_id=${encodeURIComponent(patientId)}&patient_name=${encodeURIComponent(patientName)}&prescription_id=${encodeURIComponent(prescriptionId)}`;
@@ -1232,6 +1242,11 @@ const closeModalBtn = document.getElementById('closeModal');
 
 function openPdfModal(url, name) {
   if(!url) return;
+  // Save current patient selection before opening modal
+  const currentPatientId = document.getElementById('patientSelect').value;
+  if(currentPatientId){
+    sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
+  }
   modalTitle.textContent = name || 'Report Preview';
   pdfFrame.src = url;
   pdfDownload.href = url;
@@ -1262,6 +1277,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const urlParams = new URLSearchParams(window.location.search);
   const patientIdFromUrl = urlParams.get('patient_id');
   
+  // Check if patient was saved in sessionStorage (from previous session)
+  const savedPatientId = sessionStorage.getItem('patientHistorySelectedPatient');
+  
   // Wait for patients to load, then initialize Select2
   setTimeout(()=>{
     // Initialize Select2 with search
@@ -1274,12 +1292,20 @@ document.addEventListener('DOMContentLoaded', ()=>{
     
     // Handle change event
     $('#patientSelect').on('change', function(e){
-      loadDetails(e.target.value);
+      const selectedId = e.target.value;
+      // Save selection to sessionStorage whenever it changes
+      if(selectedId){
+        sessionStorage.setItem('patientHistorySelectedPatient', selectedId);
+      } else {
+        sessionStorage.removeItem('patientHistorySelectedPatient');
+      }
+      loadDetails(selectedId);
     });
     
-    // Select patient from URL if provided
-    if(patientIdFromUrl){
-      $('#patientSelect').val(patientIdFromUrl).trigger('change');
+    // Priority: URL parameter > Saved selection
+    const patientToSelect = patientIdFromUrl || savedPatientId;
+    if(patientToSelect){
+      $('#patientSelect').val(patientToSelect).trigger('change');
     }
   }, 500);
 });
