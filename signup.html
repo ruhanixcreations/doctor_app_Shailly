@@ -152,6 +152,11 @@
     align-items:flex-end;
   }
   
+  #passwordBlock{
+    display:flex !important;
+    margin-top:0;
+  }
+  
   .signup-input-group input{
     width:100%;
   }
@@ -805,7 +810,7 @@
           Didn't receive code? <span id="resendText" class="disabled">Resend in <span id="timer">60</span>s</span>
         </div>
 
-        <div id="passwordBlock" class="signup-input-group" style="display:block;">
+        <div id="passwordBlock" class="signup-input-group">
           <input type="password" id="password" placeholder="Create password (min 6 chars)" class="signup-input-password" autocomplete="new-password" />
           <div class="pwd-row">
             <input type="password" id="confirmPassword" placeholder="Confirm password" class="signup-input-password" style="flex:1;margin-bottom:0;" autocomplete="new-password" />
