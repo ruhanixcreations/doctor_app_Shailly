@@ -152,11 +152,6 @@
     align-items:flex-end;
   }
   
-  #passwordBlock{
-    display:flex !important;
-    margin-top:0;
-  }
-  
   .signup-input-group input{
     width:100%;
   }
@@ -495,7 +490,7 @@
     }
     
     .card-body #passwordBlock{
-      margin-top:0 !important;
+      margin-top:-20px !important;
       margin-bottom:0 !important;
     }
     
@@ -533,6 +528,7 @@
       margin-bottom:0 !important;
       margin-top:0 !important;
       padding:0 !important;
+      padding-bottom:0 !important;
     }
     
     .email-otp-row .email-col{
@@ -540,6 +536,7 @@
       margin-bottom:0 !important;
       margin-top:0 !important;
       padding-bottom:0 !important;
+      padding:0 !important;
     }
     
     .email-otp-row .email-col .signup-input-email{
@@ -550,7 +547,7 @@
     .email-otp-row .email-col .error-message,
     .email-otp-row .email-col .success-message{
       margin-top:2px;
-      margin-bottom:2px;
+      margin-bottom:0;
     }
     
     .email-otp-row .btn-col{
@@ -558,19 +555,23 @@
       margin-top:0 !important;
       margin-bottom:0 !important;
       padding:0 !important;
+      padding-bottom:0 !important;
     }
     
     .email-otp-row .btn-col button{
       margin-bottom:0 !important;
       margin-top:0 !important;
+      padding-bottom:9px !important;
     }
     
     #otpSection{
-      margin-top:2px;
+      margin-top:0 !important;
+      margin-bottom:0 !important;
     }
     
     #resendContainer{
-      margin-top:2px;
+      margin-top:0 !important;
+      margin-bottom:0 !important;
     }
     
     #sendOtpBtn,
@@ -598,7 +599,7 @@
     
     #passwordBlock,
     #passwordBlock.signup-input-group{
-      margin-top:0 !important;
+      margin-top:-20px !important;
       margin-bottom:0 !important;
       padding-top:0 !important;
       gap:4px !important;
@@ -810,7 +811,7 @@
           Didn't receive code? <span id="resendText" class="disabled">Resend in <span id="timer">60</span>s</span>
         </div>
 
-        <div id="passwordBlock" class="signup-input-group">
+        <div id="passwordBlock" class="signup-input-group" style="display:block;">
           <input type="password" id="password" placeholder="Create password (min 6 chars)" class="signup-input-password" autocomplete="new-password" />
           <div class="pwd-row">
             <input type="password" id="confirmPassword" placeholder="Confirm password" class="signup-input-password" style="flex:1;margin-bottom:0;" autocomplete="new-password" />
