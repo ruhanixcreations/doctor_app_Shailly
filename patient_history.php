@@ -49,8 +49,20 @@ if($action === 'detail'){
     if(!$patient) { echo json_encode(['success'=>false,'message'=>'patient not found']); exit; }
 
     // appointments table assumed: appointments (id, patient_id, doctor, date, time, notes)
+    // Also check if appointment has a prescription (prescription created on same date or within 1 day = appointment completed)
     $appt = [];
-    $stmt = $mysqli->prepare("SELECT id,doctor,date,time,notes FROM appointments WHERE patient_id=? ORDER BY date DESC, id DESC");
+    $stmt = $mysqli->prepare("SELECT 
+        a.id,
+        a.doctor,
+        a.date,
+        a.time,
+        a.notes,
+        (SELECT COUNT(*) FROM prescriptions p 
+         WHERE p.patient_id = a.patient_id 
+         AND ABS(DATEDIFF(DATE(p.created_at), a.date)) <= 1) as has_prescription
+        FROM appointments a 
+        WHERE a.patient_id=? 
+        ORDER BY a.date DESC, a.id DESC");
     $stmt->bind_param('s',$pid);
     $stmt->execute();
     $r = $stmt->get_result();

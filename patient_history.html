@@ -934,7 +934,15 @@ function renderAppointments(list, patientName){
   list.forEach(appt=>{
     const dateStr = (appt.date || '').toString().slice(0,10);
     let bucket = upcoming;
-    if(dateStr){
+    
+    // Priority 1: Check if appointment has an associated prescription
+    // If a prescription was created around the appointment date, consider it completed
+    // This includes first visits where prescription was added
+    if(appt.has_prescription && appt.has_prescription > 0){
+      bucket = past;
+    }
+    // Priority 2: Check date/time to determine if appointment is in the past
+    else if(dateStr){
       if(dateStr < todayStr){
         bucket = past;
       } else if(dateStr === todayStr){
