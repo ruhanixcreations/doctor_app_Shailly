@@ -33,11 +33,17 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Container layout */
 .container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 30px 24px;
+  flex: 1;
 }
 
 /* Page title with modern design */
