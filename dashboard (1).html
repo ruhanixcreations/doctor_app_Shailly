@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../header/header.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
+
+  <main class="container">
+    <h2 class="page-title">Quick Actions</h2>
+    <div class="cards">
+      <!-- Add Receptionalist -->
+      <a id="card-add-reception" class="card" href="dashboard.php?role=receptionalist" title="Add Receptionalist">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <div class="card-content">
+          <div class="card-title">Add Receptionalist</div>
+          <div class="card-sub">Create receptionist account</div>
+        </div>
+      </a>
+
+      <!-- Patient History -->
+      <a id="card-view-patient" class="card" href="../patient_history/patient_history.html" title="Patient History">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="card-content">
+          <div class="card-title">Patient History</div>
+          <div class="card-sub">View and manage patients</div>
+        </div>
+      </a>
+
+      <!-- Add New Patient -->
+      <a id="card-add-patient" class="card" href="../add_new_patient/add_new_patient.html" title="Add New Patient">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <div class="card-content">
+          <div class="card-title">Add New Patient</div>
+          <div class="card-sub">Register a new patient</div>
+        </div>
+      </a>
+
+      <!-- Add New Prescription -->
+      <a id="card-new-prescription" class="card" href="../add_prescription/add_prescription.html" title="Add New Prescription">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+        <div class="card-content">
+          <div class="card-title">Add New Prescription</div>
+          <div class="card-sub">Write or upload prescription</div>
+        </div>
+      </a>
+
+      <!-- All Medicine -->
+      <a id="card-all-medicine" class="card" href="../all_medicine/all_medicine.html" title="All Medicine">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-pills"></i></div>
+        <div class="card-content">
+          <div class="card-title">All Medicine</div>
+          <div class="card-sub">Browse all medicines</div>
+        </div>
+      </a>
+
+      <!-- Doctors List -->
+      <a id="card-doctors-list" class="card" href="../doctors_list/doctors_list.html" title="Doctors List">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-user-doctor"></i></div>
+        <div class="card-content">
+          <div class="card-title">Doctors List</div>
+          <div class="card-sub">View doctors and schedules</div>
+        </div>
+      </a>
+
+      <!-- Blood Test List -->
+      <a id="card-blood-tests" class="card" href="../blood_tests/blood_tests.html" title="Blood Test List">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-vials"></i></div>
+        <div class="card-content">
+          <div class="card-title">Blood Test List</div>
+          <div class="card-sub">Available lab tests</div>
+        </div>
+      </a>
+
+      <!-- Receptionalist List -->
+      <a id="card-receptionalist-list" class="card" href="../receptionalist_list/receptionalist_list.html" title="Receptionalist List">
+        <div class="card-gradient"></div>
+        <div class="card-icon"><i class="fa-solid fa-user-tie"></i></div>
+        <div class="card-content">
+          <div class="card-title">Receptionalist List</div>
+          <div class="card-sub">Manage receptionist accounts</div>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div>© 2025 Healthcare System</div>
+  </footer>
+
+  <!-- Load Header JS - it will insert the header -->
+  <script src="../header/header.js"></script>
+  <!-- Load Dashboard JS -->
+  <script src="dashboard.js"></script>
+  
+  <!-- Session Monitoring for Immediate Logout -->
+  <script>
+  (function() {
+    let sessionCheckInterval = null;
+    let isLoggingOut = false;
+    
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) return;
+    
+    sessionCheckInterval = setInterval(() => {
+      if (isLoggingOut) return;
+      
+      fetch("../check_session.php", { credentials: "include" })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.success && !isLoggingOut) {
+            isLoggingOut = true;
+            clearInterval(sessionCheckInterval);
+            localStorage.clear();
+            alert(data.message || 'Your session has expired');
+            window.location.href = '../signin/signin.html';
+          }
+        })
+        .catch(err => console.error('Session check error:', err));
+    }, 3000);
+  })();
+  </script>
+</body>
+</html>
