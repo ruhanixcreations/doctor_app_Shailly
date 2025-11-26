@@ -496,12 +496,13 @@
     
     .email-otp-row{
       flex-direction:column;
-      gap:6px;
+      gap:4px;
       margin-bottom:0;
     }
     
     .email-otp-row .email-col{
       width:100%;
+      margin-bottom:0;
     }
     
     .email-otp-row .email-col .signup-input-email{
@@ -511,12 +512,25 @@
     .email-otp-row .email-col .error-message,
     .email-otp-row .email-col .success-message{
       margin-top:2px;
-      margin-bottom:2px;
+      margin-bottom:0;
     }
     
     .email-otp-row .btn-col{
       width:100%;
       margin-top:0;
+      margin-bottom:0;
+    }
+    
+    .email-otp-row .btn-col button{
+      margin-bottom:0;
+    }
+    
+    #otpSection{
+      margin-top:2px;
+    }
+    
+    #resendContainer{
+      margin-top:2px;
     }
     
     #sendOtpBtn,
@@ -526,13 +540,23 @@
       font-size:12px;
       height:42px;
       padding:9px 14px;
+      margin-bottom:0;
+      margin-top:0;
     }
     
     .signup-input-group{
       align-items:stretch;
       margin-bottom:0;
-      gap:6px;
-      margin-top:6px;
+      gap:4px;
+      margin-top:2px;
+    }
+    
+    #otpSection.signup-input-group{
+      margin-top:2px;
+    }
+    
+    #passwordBlock.signup-input-group{
+      margin-top:0 !important;
     }
     
     .signup-input-group input{
@@ -554,12 +578,12 @@
       margin-bottom:2px;
     }
     
-    #passwordBlock{
-      margin-top:6px;
-    }
-    
     #passwordBlock .signup-input-password:first-child{
       margin-bottom:6px;
+    }
+    
+    .email-otp-row{
+      margin-bottom:0 !important;
     }
     
     #passwordBlock .error-message{
@@ -681,7 +705,7 @@
           <div class="email-col">
             <input type="email" id="email" placeholder="Enter Email ID" class="signup-input-email" autocomplete="email" />
             <div id="emailError" class="error-message" style="display:none"></div>
-            <p id="infoMessage" class="info-message" style="display:none;font-size:12px;color:var(--text-muted);margin-top:-6px;margin-bottom:8px;">(OTP may take up to 30s — check promotions)</p>
+            <p id="infoMessage" class="info-message" style="display:none;font-size:12px;color:var(--text-muted);margin-top:2px;margin-bottom:2px;">(OTP may take up to 30s — check promotions)</p>
             <div id="sendSuccess" class="success-message" style="display:none"></div>
           </div>
 
