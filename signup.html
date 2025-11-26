@@ -483,6 +483,7 @@
     .email-otp-row{
       flex-direction:column;
       gap:10px;
+      margin-bottom:12px;
     }
     
     .email-otp-row .email-col{
@@ -491,6 +492,7 @@
     
     .email-otp-row .btn-col{
       width:100%;
+      flex:0 0 auto;
     }
     
     #sendOtpBtn,
@@ -510,10 +512,16 @@
     
     .signup-input-group{
       align-items:stretch;
+      gap:10px;
+      margin-bottom:12px;
     }
     
     .signup-input-group button{
       width:100%;
+    }
+    
+    .signup-resend{
+      margin-bottom:12px;
     }
     
     .register-button{
@@ -746,6 +754,9 @@
     }
   }
 
+  // Disable send OTP button initially
+  sendOtpBtn.disabled = true;
+
   sendOtpBtn.addEventListener("click", sendOtp);
   function sendOtp(){
     const email = emailInput.value.trim().toLowerCase();
@@ -889,6 +900,22 @@
 
     const postData = { action: "register", name, mobile, email, password };
     if (preselectedRole) postData.role = preselectedRole;
+    
+    // Check if this is being called from admin adding receptionist
+    const urlParams = new URLSearchParams(window.location.search);
+    const addedByAdmin = urlParams.get("added_by_admin");
+    const isReceptionistByAdmin = (addedByAdmin === "true");
+    
+    if (isReceptionistByAdmin) {
+      postData.added_by_admin = "true";
+    }
+    
+    console.log("Registration data:", {
+      addedByAdmin,
+      isReceptionistByAdmin,
+      preselectedRole,
+      postData
+    });
 
     fetch("./signup.php", {
       method: "POST",
@@ -898,7 +925,26 @@
     })
     .then(r => r.json())
     .then(data => {
+      console.log("Registration response:", data);
+      
       if(data.success){
+        // Check if this is receptionist being added by admin
+        if (isReceptionistByAdmin) {
+          console.log("Receptionist added by admin - showing popup and refreshing");
+          // Show success popup and don't redirect
+          registerBtn.innerHTML = '<i class="fas fa-check-circle"></i> Created Successfully';
+          
+          // Show popup with custom handler
+          showPopupWithCallback("Receptionist Account Created", () => {
+            // Refresh the page to reset the form
+            console.log("Refreshing page...");
+            window.location.reload();
+          });
+          return; // Important: prevent further execution
+        }
+        
+        // Normal signup flow - set localStorage and redirect
+        console.log("Normal signup - redirecting to dashboard");
         localStorage.setItem("isLoggedIn","true");
         localStorage.setItem("client_id", data.client_id || "");
         localStorage.setItem("user_id", data.user_id || "");
@@ -917,12 +963,15 @@
         showPopup(data.message || "Registration failed.");
       }
     })
-    .catch(() => {
+    .catch((error) => {
+      console.error("Registration error:", error);
       registerBtn.disabled = false;
       registerBtn.innerHTML = '<i class="fas fa-user-check"></i> Create account';
       showPopup("Something went wrong while registering.");
     });
   }
+
+  let popupCallback = null;
 
   function showPopup(msg){
     document.getElementById("popupMessage").textContent = msg;
@@ -931,35 +980,69 @@
     if(ok) ok.focus();
   }
   
+  function showPopupWithCallback(msg, callback){
+    popupCallback = callback;
+    showPopup(msg);
+  }
+  
   function closePopup(){
     document.getElementById("popupMessage").textContent = "";
     document.getElementById("popupOverlay").style.display = "none";
+    
+    // Execute callback if it exists
+    if (popupCallback) {
+      const cb = popupCallback;
+      popupCallback = null;
+      cb();
+    }
   }
 
   [nameInput, passwordInput, confirmPasswordInput].forEach(el=>{
     el.addEventListener("input", monitorFields);
   });
   
-  // Email validation only on blur (when user leaves the field)
+  // Email validation and button state management
+  emailInput.addEventListener("input", () => {
+    const email = emailInput.value.trim();
+    
+    // Only validate and enable button if button is still in "Send OTP" state
+    if (sendOtpBtn.innerHTML.includes('Send OTP') || sendOtpBtn.innerHTML.includes('paper-plane')) {
+      if (email.length === 0) {
+        // Empty field - disable button, no error
+        sendOtpBtn.disabled = true;
+        clearErrorBelow(emailInput);
+      } else if (!isValidEmail(email)) {
+        // Invalid email - disable button and show error
+        sendOtpBtn.disabled = true;
+        showErrorBelow(emailInput, "Enter a valid email");
+      } else {
+        // Valid email - enable button and clear error
+        sendOtpBtn.disabled = false;
+        clearErrorBelow(emailInput);
+      }
+    }
+    
+    monitorFields();
+  });
+  
+  // Validate on blur as well
   emailInput.addEventListener("blur", () => {
     const email = emailInput.value.trim();
     if (email && !isValidEmail(email)) {
-      showErrorBelow(emailInput, "Enter a valid email.");
+      showErrorBelow(emailInput, "Enter a valid email");
+      if (sendOtpBtn.innerHTML.includes('Send OTP') || sendOtpBtn.innerHTML.includes('paper-plane')) {
+        sendOtpBtn.disabled = true;
+      }
     }
-  });
-  
-  // Clear error immediately when typing and revalidate form
-  emailInput.addEventListener("input", () => {
-    const currentError = emailError.style.display;
-    if (currentError === "block") {
-      clearErrorBelow(emailInput);
-    }
-    monitorFields();
   });
   
   // Clear error when user focuses on email field
   emailInput.addEventListener("focus", () => {
-    clearErrorBelow(emailInput);
+    const email = emailInput.value.trim();
+    // Only clear if email is valid or empty
+    if (email.length === 0 || isValidEmail(email)) {
+      clearErrorBelow(emailInput);
+    }
   });
 
   verifyOtpBtn.disabled = true;
@@ -972,6 +1055,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     nextParam = urlParams.get("next");
+    const addedByAdmin = urlParams.get("added_by_admin");
 
     preselectedRole = urlParams.get("role");
     if (preselectedRole) {
@@ -985,7 +1069,24 @@
       banner.style.fontSize = '12px';
       banner.style.color = 'var(--text-dark)';
       banner.style.fontWeight = '600';
-      banner.innerHTML = `<i class="fas fa-info-circle"></i> Creating account with role: ${preselectedRole}`;
+      
+      // Different message if being added by admin
+      if (addedByAdmin === "true" && preselectedRole === "receptionalist") {
+        banner.innerHTML = `<i class="fas fa-user-plus"></i> Adding New Receptionist Account - No redirect after creation`;
+        
+        // Add back button for admins
+        const backBtn = document.createElement('div');
+        backBtn.style.textAlign = 'center';
+        backBtn.style.marginTop = '16px';
+        backBtn.innerHTML = `<a href="/doctor_app/receptionalist_list/receptionalist_list.html" style="color:var(--primary-teal);font-size:13px;text-decoration:none;font-weight:600;"><i class="fas fa-arrow-left"></i> Back to Receptionist List</a>`;
+        const signupRow = document.querySelector('.signin-link');
+        if (signupRow && signupRow.parentNode) {
+          signupRow.parentNode.insertBefore(backBtn, signupRow);
+        }
+      } else {
+        banner.innerHTML = `<i class="fas fa-info-circle"></i> Creating account with role: ${preselectedRole}`;
+      }
+      
       const cardBody = document.querySelector('.card-body');
       if (cardBody) cardBody.insertBefore(banner, cardBody.firstChild);
     }
