@@ -436,7 +436,7 @@ function startSessionMonitoring() {
     clearInterval(sessionCheckInterval);
   }
 
-  // Silent monitoring - check session every 3 seconds
+  // Silent monitoring - check session every 30 seconds
   sessionCheckInterval = setInterval(() => {
     // Skip if already logging out
     if (isLoggingOut) return;
@@ -454,7 +454,7 @@ function startSessionMonitoring() {
       .catch(err => {
         console.error('⚠️ Session check error:', err);
       });
-  }, 3000);
+  }, 30000);
 }
 
 function forceLogout(message) {
