@@ -440,48 +440,61 @@ if($action === 'save'){
             }
         }
 
-        // ===== Added: insert an appointment row (if follow-up date is provided) =====
-        // Mapping:
-        //  - use top-level follow_up_date as appointment.date
-        //  - use symptoms as appointment.notes
-        //  - find doctor name from users table by client_id and store it in appointments.doctor
-        //  - leave time NULL / empty
-        if(!empty($follow_up_date_top)){
-            ensure_appointments_client_id_column_supports_text($mysqli);
-            // attempt to fetch doctor's name from users table using client_id
-            $doctorName = '';
-            if(!empty($client_id)){
-                $u_stmt = $mysqli->prepare("SELECT name FROM users WHERE client_id = ? LIMIT 1");
-                if($u_stmt){
-                    $u_stmt->bind_param('s', $client_id);
-                    if($u_stmt->execute()){
-                        $u_res = $u_stmt->get_result();
-                        if($u_res){
-                            $u_row = $u_res->fetch_assoc();
-                            if($u_row && isset($u_row['name'])) $doctorName = $u_row['name'];
-                        }
-                    } else {
-                        error_log("users lookup execute failed: (" . $u_stmt->errno . ") " . $u_stmt->error);
+        // ===== Added: insert appointment rows =====
+        ensure_appointments_client_id_column_supports_text($mysqli);
+        
+        // Fetch doctor's name from users table using client_id
+        $doctorName = '';
+        if(!empty($client_id)){
+            $u_stmt = $mysqli->prepare("SELECT name FROM users WHERE client_id = ? LIMIT 1");
+            if($u_stmt){
+                $u_stmt->bind_param('s', $client_id);
+                if($u_stmt->execute()){
+                    $u_res = $u_stmt->get_result();
+                    if($u_res){
+                        $u_row = $u_res->fetch_assoc();
+                        if($u_row && isset($u_row['name'])) $doctorName = $u_row['name'];
                     }
-                    $u_stmt->close();
                 } else {
-                    error_log("users prepare failed: " . $mysqli->error);
+                    error_log("users lookup execute failed: (" . $u_stmt->errno . ") " . $u_stmt->error);
                 }
+                $u_stmt->close();
+            } else {
+                error_log("users prepare failed: " . $mysqli->error);
             }
+        }
 
+        // 1. Create appointment for CURRENT prescription date (completed visit)
+        // This represents the visit that just happened where the prescription was created
+        $current_date = date('Y-m-d'); // Today's date
+        $appt_stmt = $mysqli->prepare("INSERT INTO appointments (client_id, patient_id, doctor, date, time, notes, created_at) VALUES (?,?,?,?,?,?,NOW())");
+        if($appt_stmt){
+            $appt_time = date('H:i:s'); // Current time
+            $notes_current = $symptoms . ' (Prescription created)';
+            $appt_stmt->bind_param('ssssss', $client_id, $patient_id, $doctorName, $current_date, $appt_time, $notes_current);
+            $appt_stmt->execute();
+            if($appt_stmt->errno){
+                error_log("Current appointment insert failed: (" . $appt_stmt->errno . ") " . $appt_stmt->error);
+            }
+            $appt_stmt->close();
+        } else {
+            error_log("Current appointment prepare failed: " . $mysqli->error);
+        }
+
+        // 2. Create appointment for FOLLOW-UP date (if provided) - future appointment
+        if(!empty($follow_up_date_top)){
             $appt_stmt = $mysqli->prepare("INSERT INTO appointments (client_id, patient_id, doctor, date, time, notes, created_at) VALUES (?,?,?,?,?,?,NOW())");
             if($appt_stmt){
-                $appt_time = null;          // no time provided (will be inserted as empty/null)
-                $notes_appt = $symptoms;
-                // bind as strings; null/empty time is acceptable
-                $appt_stmt->bind_param('ssssss', $client_id, $patient_id, $doctorName, $follow_up_date_top, $appt_time, $notes_appt);
+                $appt_time = null; // no time provided for follow-up
+                $notes_followup = $symptoms . ' (Follow-up appointment)';
+                $appt_stmt->bind_param('ssssss', $client_id, $patient_id, $doctorName, $follow_up_date_top, $appt_time, $notes_followup);
                 $appt_stmt->execute();
                 if($appt_stmt->errno){
-                    error_log("appointments insert failed: (" . $appt_stmt->errno . ") " . $appt_stmt->error);
+                    error_log("Follow-up appointment insert failed: (" . $appt_stmt->errno . ") " . $appt_stmt->error);
                 }
                 $appt_stmt->close();
             } else {
-                error_log("appointments prepare failed: " . $mysqli->error);
+                error_log("Follow-up appointment prepare failed: " . $mysqli->error);
             }
         }
         // ===== end appointment insert =====

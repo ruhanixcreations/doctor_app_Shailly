@@ -622,7 +622,7 @@
     </div>
   </div>
 
-  <div id="popupOverlay"><div class="popup-box"><p id="popupMessage"></p><button onclick="closePopup()">OK</button></div></div>
+  <div id="popupOverlay"><div class="popup-box"><p id="popupMessage"></p><button id="popupOkButton" onclick="closePopup()">OK</button></div></div>
 
 <script>
   /* ---------- element references ---------- */
@@ -899,17 +899,29 @@
     .then(r => r.json())
     .then(data => {
       if(data.success){
-        localStorage.setItem("isLoggedIn","true");
-        localStorage.setItem("client_id", data.client_id || "");
-        localStorage.setItem("user_id", data.user_id || "");
-        localStorage.setItem("role", data.role || (preselectedRole || "user"));
-        localStorage.setItem("userName", data.name || name);
-        localStorage.setItem("signedInUserEmail", email);
-        localStorage.setItem("Mobile Number", data.mobile || mobile);
-        if (nextParam === "upload_tree") {
-          window.location.href = "/doctor_app/dashboard/upload_video/upload_video.html";
+        // Check if this is a receptionist account creation
+        const userRole = data.role || preselectedRole;
+        if (userRole === "receptionalist") {
+          // For receptionist account, show success popup and refresh page
+          showPopupWithCallback("Receptionist Account Created", () => {
+            // Refresh the page to allow creating another receptionist
+            window.location.reload();
+          });
         } else {
-          window.location.href = "/doctor_app/dashboard/dashboard.html";
+          // For other roles, save to localStorage and redirect to dashboard
+          localStorage.setItem("isLoggedIn","true");
+          localStorage.setItem("client_id", data.client_id || "");
+          localStorage.setItem("user_id", data.user_id || "");
+          localStorage.setItem("role", data.role || (preselectedRole || "user"));
+          localStorage.setItem("userName", data.name || name);
+          localStorage.setItem("signedInUserEmail", email);
+          localStorage.setItem("Mobile Number", data.mobile || mobile);
+          
+          if (nextParam === "upload_tree") {
+            window.location.href = "/doctor_app/dashboard/upload_video/upload_video.html";
+          } else {
+            window.location.href = "/doctor_app/dashboard/dashboard.html";
+          }
         }
       } else {
         registerBtn.disabled = false;
@@ -934,6 +946,24 @@
   function closePopup(){
     document.getElementById("popupMessage").textContent = "";
     document.getElementById("popupOverlay").style.display = "none";
+  }
+
+  function showPopupWithCallback(msg, callback){
+    document.getElementById("popupMessage").textContent = msg;
+    document.getElementById("popupOverlay").style.display = "flex";
+    const ok = document.getElementById('popupOkButton');
+    if(ok) {
+      ok.focus();
+      // Remove any existing onclick handler and set new one
+      ok.onclick = function() {
+        closePopup();
+        // Reset the onclick handler back to default closePopup for future popups
+        ok.onclick = closePopup;
+        if (callback && typeof callback === 'function') {
+          callback();
+        }
+      };
+    }
   }
 
   [nameInput, passwordInput, confirmPasswordInput].forEach(el=>{

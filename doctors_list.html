@@ -319,6 +319,20 @@ body{
   border-radius:4px;
 }
 
+.error-message{
+  color:#dc3545;
+  font-size:12px;
+  margin-top:-6px;
+  margin-bottom:12px;
+  padding:8px 12px;
+  background:rgba(220,53,69,0.05);
+  border-left:3px solid #dc3545;
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
 .cell-value{
   display:block;
   overflow:hidden;
@@ -477,11 +491,17 @@ body{
         <div class="form-row">
           <input id="dName" class="input" placeholder="Full name (letters only)" aria-label="Full name">
         </div>
+        <div id="dNameError" class="error-message" style="display:none"></div>
 
         <div class="form-row">
           <input id="dMobile" class="input" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
+        </div>
+        <div id="dMobileError" class="error-message" style="display:none"></div>
+
+        <div class="form-row">
           <input id="dEmail" class="input" placeholder="Email address" type="email" aria-label="Email">
         </div>
+        <div id="dEmailError" class="error-message" style="display:none"></div>
 
         <div class="form-row" style="align-items:center;gap:8px">
           <button id="sendOtpBtn" class="btn" disabled>Send OTP</button>
@@ -500,10 +520,15 @@ body{
         <div id="createSection" class="hidden">
           <div class="form-row">
             <input id="password" class="input" placeholder="Password (min 6 char)" type="password" aria-label="Password">
+          </div>
+          <div id="passwordError" class="error-message" style="display:none"></div>
+
+          <div class="form-row" style="margin-top:14px">
             <input id="confirmPassword" class="input" placeholder="Confirm password" type="password" aria-label="Confirm password">
           </div>
+          <div id="confirmPasswordError" class="error-message" style="display:none"></div>
 
-          <div class="form-row" style="justify-content:flex-end;align-items:center">
+          <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:16px">
             <div id="createStatus" class="small" style="margin-right:auto"></div>
             <button id="createBtn" class="btn" disabled>Create Doctor</button>
           </div>
@@ -529,6 +554,9 @@ body{
 
         <div class="form-row">
           <input id="editDMobile" class="input" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
+        </div>
+
+        <div class="form-row">
           <input id="editDEmail" class="input" placeholder="Email address" type="email" aria-label="Email">
         </div>
 
@@ -572,10 +600,15 @@ function checkAuth(){
 }
 
 // Run auth check immediately
-if(!checkAuth()){
-  throw new Error('Unauthorized access');
-}
+(function(){
+  const isAuthorized = checkAuth();
+  if(!isAuthorized) return; // Stop execution if not authorized
+  
+  // Continue with page initialization only if authorized
+  initializePage();
+})();
 
+function initializePage(){
 const signupEndpoint = '../signup/signup.php';
 const apiList = 'doctors_list.php';
 
@@ -642,12 +675,30 @@ function resetModalForm(){
   createSection.classList.add('hidden'); password.value=''; confirmPassword.value='';
   sendStatus.textContent=''; createStatus.textContent=''; otpVerified=false; createBtn.disabled=true;
   sendOtpBtn.disabled = true; verifyOtpBtn.disabled = true;
+  
+  // Clear all error messages
+  document.getElementById('dNameError').style.display = 'none';
+  document.getElementById('dMobileError').style.display = 'none';
+  document.getElementById('dEmailError').style.display = 'none';
+  document.getElementById('passwordError').style.display = 'none';
+  document.getElementById('confirmPasswordError').style.display = 'none';
+  
   if(resendTimer){ clearInterval(resendTimer); resendTimer=null; }
 }
 
 dName.addEventListener('input', (e) => {
   const cleaned = e.target.value.replace(/[^A-Za-z\s]/g, '');
   if (e.target.value !== cleaned) e.target.value = cleaned;
+  
+  const dNameError = document.getElementById('dNameError');
+  const name = e.target.value.trim();
+  if(name.length > 0 && name.length < 2){
+    dNameError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Name must be at least 2 characters';
+    dNameError.style.display = 'flex';
+  } else {
+    dNameError.style.display = 'none';
+  }
+  
   checkCreateValidity();
 });
 
@@ -655,6 +706,15 @@ dMobile.addEventListener('input', (e) => {
   let v = e.target.value.replace(/\D/g, '');
   if (v.length > 10) v = v.slice(0,10);
   e.target.value = v;
+  
+  const dMobileError = document.getElementById('dMobileError');
+  if(v.length > 0 && v.length < 10){
+    dMobileError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Mobile number must be 10 digits';
+    dMobileError.style.display = 'flex';
+  } else {
+    dMobileError.style.display = 'none';
+  }
+  
   checkCreateValidity();
 });
 
@@ -777,6 +837,8 @@ function renderTable(){
 
 dEmail.addEventListener('input', () => {
   const email = (dEmail.value||'').trim().toLowerCase();
+  const dEmailError = document.getElementById('dEmailError');
+  
   sendStatus.textContent = '';
   otpSection.classList.add('hidden');
   otpInput.value = '';
@@ -785,8 +847,27 @@ dEmail.addEventListener('input', () => {
   otpVerified = false;
   createBtn.disabled = true;
 
+  if(email.length > 0 && !validateEmail(email)){
+    dEmailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Enter a valid email address';
+    dEmailError.style.display = 'flex';
+    sendOtpBtn.disabled = true;
+    return;
+  } else {
+    dEmailError.style.display = 'none';
+  }
+  
   if(!validateEmail(email)){ sendOtpBtn.disabled = true; return; }
   sendOtpBtn.disabled = false;
+});
+
+dEmail.addEventListener('blur', () => {
+  const email = (dEmail.value||'').trim().toLowerCase();
+  const dEmailError = document.getElementById('dEmailError');
+  
+  if(email.length > 0 && !validateEmail(email)){
+    dEmailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Enter a valid email address';
+    dEmailError.style.display = 'flex';
+  }
 });
 
 otpInput.addEventListener('input', ()=> {
@@ -874,7 +955,37 @@ function checkCreateValidity(){
   const valid = otpVerified && name && nameValid && validateMobile(mobileVal) && pass.length >= 6 && pass === cp;
   createBtn.disabled = !valid;
 }
-[dName, dMobile, password, confirmPassword].forEach(el=> el.addEventListener('input', checkCreateValidity));
+
+password.addEventListener('input', () => {
+  const pass = password.value;
+  const passwordError = document.getElementById('passwordError');
+  
+  if(pass.length > 0 && pass.length < 6){
+    passwordError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Password must be at least 6 characters';
+    passwordError.style.display = 'flex';
+  } else {
+    passwordError.style.display = 'none';
+  }
+  
+  checkCreateValidity();
+});
+
+confirmPassword.addEventListener('input', () => {
+  const pass = password.value;
+  const cp = confirmPassword.value;
+  const confirmPasswordError = document.getElementById('confirmPasswordError');
+  
+  if(cp.length > 0 && pass !== cp){
+    confirmPasswordError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
+    confirmPasswordError.style.display = 'flex';
+  } else {
+    confirmPasswordError.style.display = 'none';
+  }
+  
+  checkCreateValidity();
+});
+
+[dName, dMobile].forEach(el=> el.addEventListener('input', checkCreateValidity));
 
 createBtn.addEventListener('click', async ()=>{
   if(!otpVerified){ showToast('Please verify email first'); return; }
@@ -1184,6 +1295,7 @@ function startPageSessionMonitoring() {
 // Start monitoring silently
 startPageSessionMonitoring();
 
+} // End of initializePage function
 </script>
 <script src="../header/header.js"></script>
 
