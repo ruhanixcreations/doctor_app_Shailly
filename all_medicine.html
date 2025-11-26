@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>All Medicines</title>
+  <style>
+    :root{
+      --primary-teal:#00A9A5;
+      --primary-blue:#1a75bb;
+      --text-dark:#2c3e50;
+      --text-muted:#6c757d;
+      --border-light:#e0e6ed;
+      --bg-light:#f8f9fa;
+      --bg-white:#ffffff;
+      --danger:#dc3545;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:#f5f7fa;
+      color:var(--text-dark);
+      padding:20px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .container{
+      max-width:980px;
+      margin:20px auto;
+      background:var(--bg-white);
+      border-radius:12px;
+      box-shadow:0 2px 12px rgba(0,0,0,0.08);
+      border:1px solid var(--border-light);
+      overflow:hidden;
+    }
+
+    .header{
+      background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+      padding:16px 24px;
+      color:white;
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .brand{
+      width:42px;
+      height:42px;
+      border-radius:8px;
+      background:rgba(255,255,255,0.2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:blur(10px);
+      flex-shrink:0;
+      font-size:20px;
+    }
+
+    .header-text{
+      flex:1;
+    }
+
+    .header .title{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:2px;
+      line-height:1.2;
+    }
+
+    .header .subtitle{
+      font-size:12px;
+      opacity:0.9;
+      font-weight:400;
+    }
+
+    .content{
+      padding:24px;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      margin-bottom:16px;
+      align-items:center;
+    }
+
+    .input{
+      flex:1;
+      padding:11px 14px;
+      height:44px;
+      border-radius:6px;
+      border:1px solid var(--border-light);
+      font-size:14px;
+      background:var(--bg-white);
+      transition:all 0.2s ease;
+    }
+
+    .input::placeholder{
+      color:var(--text-muted);
+    }
+
+    .input:focus{
+      border-color:var(--primary-teal);
+      box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+      outline:none;
+    }
+
+    .btn{
+      height:44px;
+      padding:10px 20px;
+      border-radius:6px;
+      border:none;
+      background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      font-size:14px;
+      transition:all 0.2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .btn:hover:not(:disabled){
+      transform:translateY(-1px);
+      box-shadow:0 3px 10px rgba(0,169,165,0.25);
+    }
+
+    .btn:disabled{
+      background:#d1d5db;
+      color:#9ca3af;
+      cursor:not-allowed;
+    }
+
+    .btn.ghost{
+      background:#fff;
+      border:1px solid var(--border-light);
+      color:var(--text-dark);
+    }
+
+    #status{
+      font-size:13px;
+      color:var(--text-muted);
+      text-align:right;
+      min-height:18px;
+    }
+
+    .table-wrapper{
+      width:100%;
+      overflow:hidden;
+      border-radius:8px;
+      margin-top:8px;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:collapse;
+      background:transparent;
+    }
+
+    .table thead tr{
+      background:rgba(0,169,165,0.03);
+      color:var(--text-dark);
+      font-weight:600;
+      font-size:13px;
+    }
+
+    .table th, .table td{
+      padding:12px;
+      border-bottom:1px solid var(--border-light);
+      text-align:left;
+      font-size:14px;
+    }
+
+    .table tbody tr{
+      background:#fff;
+    }
+
+    .table tbody tr:hover{
+      background:rgba(0,169,165,0.02);
+    }
+
+    .action-btn{
+      height:auto;
+      padding:6px 12px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+
+    .action-btn.edit{
+      color:var(--primary-teal);
+      background:transparent;
+      border:1px solid rgba(0,169,165,0.2);
+      margin-right:8px;
+    }
+
+    .action-btn.edit:hover{
+      background:rgba(0,169,165,0.05);
+    }
+
+    .action-btn.delete{
+      color:var(--danger);
+      background:transparent;
+      border:1px solid rgba(220,53,69,0.2);
+    }
+
+    .action-btn.delete:hover{
+      background:rgba(220,53,69,0.05);
+    }
+
+    .empty{
+      padding:22px 12px;
+      color:var(--text-muted);
+      text-align:center;
+      font-size:14px;
+    }
+
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,0.5);
+      z-index:1200;
+      padding:18px;
+    }
+
+    .modal{
+      width:100%;
+      max-width:520px;
+      background:#fff;
+      border-radius:12px;
+      padding:24px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:16px;
+    }
+
+    .modal-title{
+      font-weight:700;
+      color:var(--text-dark);
+      font-size:18px;
+    }
+
+    .modal-body{
+      display:flex;
+      gap:12px;
+      flex-direction:column;
+    }
+
+    .form-row{
+      display:flex;
+      gap:10px;
+    }
+
+    .form-row input, .form-row select{
+      flex:1;
+      height:44px;
+      padding:11px 14px;
+      border-radius:6px;
+      border:1px solid var(--border-light);
+      background:#fff;
+      font-size:14px;
+      transition:all 0.2s ease;
+    }
+
+    .form-row input:focus, .form-row select:focus{
+      border-color:var(--primary-teal);
+      box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+      outline:none;
+    }
+
+    .modal-foot{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:16px;
+    }
+
+    .note-small{
+      font-size:13px;
+      color:var(--text-muted);
+      margin-top:6px;
+    }
+
+    @media(max-width:760px){
+      body{
+        padding:16px;
+      }
+      
+      .header{
+        padding:14px 18px;
+      }
+      
+      .brand{
+        width:38px;
+        height:38px;
+        font-size:18px;
+      }
+      
+      .header .title{
+        font-size:16px;
+      }
+      
+      .header .subtitle{
+        font-size:11px;
+      }
+      
+      .content{
+        padding:20px;
+      }
+      
+      .controls{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      
+      .modal{
+        max-width:520px;
+        width:94%;
+        padding:20px;
+      }
+      
+      .modal-title{
+        font-size:16px;
+      }
+      
+      .form-row{
+        flex-direction:column;
+      }
+      
+      .form-row input, .form-row select{
+        width:100%;
+      }
+      
+      .table thead{
+        display:none;
+      }
+      
+      .table, .table tbody, .table tr, .table td{
+        display:block;
+        width:100%;
+      }
+      
+      .table tr{
+        margin-bottom:12px;
+        border-radius:8px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
+        overflow:hidden;
+      }
+      
+      .table td{
+        display:flex;
+        justify-content:space-between;
+        padding:10px 12px;
+        border-bottom:1px solid rgba(0,0,0,0.04);
+        white-space:normal;
+      }
+      
+      .table td::before{
+        content:attr(data-label);
+        font-weight:600;
+        color:var(--text-muted);
+        margin-right:8px;
+        flex:0 0 42%;
+      }
+      
+      .table td > div{
+        flex:1 1 auto;
+        text-align:right;
+      }
+    }
+
+    @media(max-width:420px){
+      .header{
+        padding:12px 16px;
+      }
+      
+      .header .title{
+        font-size:15px;
+      }
+      
+      .modal{
+        width:96%;
+        padding:18px;
+      }
+    }
+
+    .visually-hidden{
+      position:absolute !important;
+      height:1px;
+      width:1px;
+      overflow:hidden;
+      clip:rect(1px, 1px, 1px, 1px);
+      white-space:nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+<main class="container" role="main">
+  <div class="header">
+    <div class="brand">💊</div>
+    <div class="header-text">
+      <div class="title">All Medicines</div>
+      <div class="subtitle">Manage medicine inventory</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="controls">
+      <input id="filter" placeholder="Filter by name, company, form or strength" aria-label="Filter medicines" class="input">
+      <button id="showModalBtn" class="btn" aria-haspopup="dialog" aria-controls="addMedModal">Add Medicine</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div class="table-wrapper">
+      <table class="table" id="medTable" role="table" aria-label="Medicines table">
+        <thead><tr><th style="width:30%;">Name</th><th style="width:25%;">Company</th><th style="width:18%;">Form</th><th style="width:17%;">Strength</th><th style="width:110px"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Add Modal -->
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+  <div class="modal" id="addMedModal" role="document" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Add Medicine</div>
+      <button id="closeModal" class="btn ghost" aria-label="Close dialog">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <input id="modalName" placeholder="Medicine name" aria-label="Medicine name">
+      </div>
+
+      <div class="form-row">
+        <input id="modalCompany" placeholder="Company" aria-label="Company">
+        <input id="modalStrength" placeholder="Strength (e.g. 500mg)" aria-label="Strength">
+      </div>
+
+      <div class="form-row">
+        <select id="modalForm" aria-label="Form (Tablet, Syrup, Injection)">
+          <option value="">Form (choose)</option>
+          <option value="Tablet">Tablet</option>
+          <option value="Syrup">Syrup</option>
+          <option value="Injection">Injection</option>
+          <option value="Capsule">Capsule</option>
+          <option value="Cream">Cream</option>
+          <option value="Drops">Drops</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="note-small">All fields are required to enable <strong>Save Medicine</strong>.</div>
+    </div>
+
+    <div class="modal-foot">
+      <button id="modalCancel" class="btn ghost">Cancel</button>
+      <button id="modalSave" class="btn" disabled>Save Medicine</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+  <div class="modal" id="editMedModal" role="document" aria-labelledby="editModalTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="editModalTitle">Edit Medicine</div>
+      <button id="closeEditModal" class="btn ghost" aria-label="Close dialog">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-row">
+        <input id="editModalName" placeholder="Medicine name" aria-label="Medicine name">
+      </div>
+
+      <div class="form-row">
+        <input id="editModalCompany" placeholder="Company" aria-label="Company">
+        <input id="editModalStrength" placeholder="Strength (e.g. 500mg)" aria-label="Strength">
+      </div>
+
+      <div class="form-row">
+        <select id="editModalForm" aria-label="Form (Tablet, Syrup, Injection)">
+          <option value="">Form (choose)</option>
+          <option value="Tablet">Tablet</option>
+          <option value="Syrup">Syrup</option>
+          <option value="Injection">Injection</option>
+          <option value="Capsule">Capsule</option>
+          <option value="Cream">Cream</option>
+          <option value="Drops">Drops</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="note-small">All fields are required to enable <strong>Update Medicine</strong>.</div>
+    </div>
+
+    <div class="modal-foot">
+      <button id="editModalCancel" class="btn ghost">Cancel</button>
+      <button id="editModalUpdate" class="btn" disabled>Update Medicine</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* Check Authentication from localStorage */
+  function checkAuth(){
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    
+    // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+    if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+      window.location.href = '../signin/signin.html';
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Run auth check immediately
+  if(!checkAuth()){
+    throw new Error('Unauthorized access');
+  }
+
+  // Elements
+  const showModalBtn = document.getElementById('showModalBtn');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const closeModalBtn = document.getElementById('closeModal');
+  const modalCancel = document.getElementById('modalCancel');
+  const modalSave = document.getElementById('modalSave');
+  const modalName = document.getElementById('modalName');
+  const modalCompany = document.getElementById('modalCompany');
+  const modalForm = document.getElementById('modalForm');
+  const modalStrength = document.getElementById('modalStrength');
+  const statusEl = document.getElementById('status');
+
+  function setStatus(text){
+    if(statusEl) statusEl.textContent = text;
+  }
+
+  // Open modal
+  function openModal(){
+    modalOverlay.style.display = 'flex';
+    modalOverlay.setAttribute('aria-hidden','false');
+    modalName.value = '';
+    modalCompany.value = '';
+    modalForm.value = '';
+    modalStrength.value = '';
+    modalSave.disabled = true;
+    setTimeout(()=>modalName.focus(), 80);
+    document.addEventListener('keydown', handleKeyDown);
+  }
+
+  // Close modal
+  function closeModalWindow(){
+    modalOverlay.style.display = 'none';
+    modalOverlay.setAttribute('aria-hidden','true');
+    showModalBtn.focus();
+    document.removeEventListener('keydown', handleKeyDown);
+  }
+
+  showModalBtn.addEventListener('click', openModal);
+  closeModalBtn.addEventListener('click', closeModalWindow);
+  modalCancel.addEventListener('click', closeModalWindow);
+
+  modalOverlay.addEventListener('click', (e) => {
+    if(e.target === modalOverlay) closeModalWindow();
+  });
+
+  function handleKeyDown(e){
+    if(e.key === 'Escape') closeModalWindow();
+  }
+
+  // Validate modal inputs
+  function checkModalValidity(){
+    const name = modalName.value.trim();
+    const company = modalCompany.value.trim();
+    const form = modalForm.value.trim();
+    const strength = modalStrength.value.trim();
+    modalSave.disabled = !(name && company && form && strength);
+  }
+  [modalName, modalCompany, modalForm, modalStrength].forEach(el=>{
+    el.addEventListener('input', checkModalValidity);
+    el.addEventListener('change', checkModalValidity);
+  });
+
+  // Filter
+  document.getElementById('filter').addEventListener('input', renderTableFromMemory);
+
+  // Data loader & renderer
+  async function load(){
+    try {
+      const res = await fetch('all_medicine.php?action=list');
+      const j = await res.json();
+      if(!j.success){ window.medicines = []; renderTableFromMemory(); return; }
+      window.medicines = j.medicines || [];
+      renderTableFromMemory();
+    } catch (err) {
+      console.error(err);
+      window.medicines = window.medicines || [];
+      renderTableFromMemory();
+    }
+  }
+
+  function matchesFilter(item, q){
+    if(!q) return true;
+    q = q.toLowerCase();
+    return ((item.name||'').toLowerCase().includes(q)
+      || (item.company||'').toLowerCase().includes(q)
+      || (item.form||'').toLowerCase().includes(q)
+      || (item.strength||'').toLowerCase().includes(q));
+  }
+
+  function renderTableFromMemory(){
+    const tb = document.querySelector('#medTable tbody'); tb.innerHTML = '';
+    const q = document.getElementById('filter').value.trim().toLowerCase();
+    const list = (window.medicines || []).filter(m => matchesFilter(m, q));
+    if(list.length === 0){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="empty" colspan="5">No medicines found</td>`;
+      tb.appendChild(tr);
+      return;
+    }
+    list.forEach(m=>{
+      const tr = document.createElement('tr');
+      const nameTd = document.createElement('td'); nameTd.setAttribute('data-label','Name'); nameTd.innerHTML = `<div>${escapeHtml(m.name)}</div>`;
+      const compTd = document.createElement('td'); compTd.setAttribute('data-label','Company'); compTd.innerHTML = `<div>${escapeHtml(m.company)}</div>`;
+      const formTd = document.createElement('td'); formTd.setAttribute('data-label','Form'); formTd.innerHTML = `<div>${escapeHtml(m.form)}</div>`;
+      const strengthTd = document.createElement('td'); strengthTd.setAttribute('data-label','Strength'); strengthTd.innerHTML = `<div>${escapeHtml(m.strength)}</div>`;
+      const actionsTd = document.createElement('td'); actionsTd.setAttribute('data-label','Actions'); 
+      actionsTd.innerHTML = `<div style="display:flex;justify-content:flex-end;gap:8px">
+        <button data-id="${m.id}" data-name="${escapeHtml(m.name)}" data-company="${escapeHtml(m.company)}" data-form="${escapeHtml(m.form)}" data-strength="${escapeHtml(m.strength)}" class="action-btn edit edit-med">Edit</button>
+        <button data-id="${m.id}" class="action-btn delete">Delete</button>
+      </div>`;
+      tr.appendChild(nameTd); tr.appendChild(compTd); tr.appendChild(formTd); tr.appendChild(strengthTd); tr.appendChild(actionsTd);
+      tb.appendChild(tr);
+    });
+
+    // delete handlers
+    tb.querySelectorAll('.delete').forEach(b=>b.addEventListener('click', async (e)=>{
+      if(!confirm('Delete medicine?')) return;
+      const id = e.target.dataset.id;
+      try {
+        const res = await fetch('all_medicine.php?action=delete&id='+encodeURIComponent(id));
+        const j = await res.json();
+        if(j.success){
+          setStatus('Deleted');
+          await load();
+        } else {
+          alert('Delete failed: ' + (j.message || 'unknown'));
+        }
+      } catch(err){
+        alert('Delete failed');
+      }
+    }));
+
+    // edit handlers
+    tb.querySelectorAll('.edit-med').forEach(b=>b.addEventListener('click', (e)=>{
+      const id = e.target.dataset.id;
+      const name = e.target.dataset.name;
+      const company = e.target.dataset.company;
+      const form = e.target.dataset.form;
+      const strength = e.target.dataset.strength;
+      openEditModal(id, name, company, form, strength);
+    }));
+  }
+
+  // Save from modal
+  modalSave.addEventListener('click', async ()=>{
+    const name = modalName.value.trim();
+    const company = modalCompany.value.trim();
+    const form = modalForm.value.trim();
+    const strength = modalStrength.value.trim();
+    if(!(name && company && form && strength)) return;
+
+    modalSave.disabled = true;
+    modalSave.textContent = 'Saving...';
+
+    try {
+      const res = await fetch('all_medicine.php?action=add', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ name, company, form, strength })
+      });
+      const j = await res.json();
+      if(j.success){
+        setStatus('Added');
+        closeModalWindow();
+        await load();
+      } else {
+        alert('Add failed: ' + (j.message || 'unknown'));
+      }
+    } catch(err){
+      console.error(err);
+      alert('Network error while adding medicine.');
+    } finally {
+      modalSave.textContent = 'Save Medicine';
+      checkModalValidity();
+    }
+  });
+
+  function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Edit Modal handling
+  let editingMedId = null;
+  const editModalOverlay = document.getElementById('editModalOverlay');
+  const closeEditModal = document.getElementById('closeEditModal');
+  const editModalCancel = document.getElementById('editModalCancel');
+  const editModalUpdate = document.getElementById('editModalUpdate');
+  const editModalName = document.getElementById('editModalName');
+  const editModalCompany = document.getElementById('editModalCompany');
+  const editModalForm = document.getElementById('editModalForm');
+  const editModalStrength = document.getElementById('editModalStrength');
+
+  function openEditModal(id, name, company, form, strength){
+    editingMedId = id;
+    editModalOverlay.style.display = 'flex';
+    editModalOverlay.setAttribute('aria-hidden','false');
+    editModalName.value = name;
+    editModalCompany.value = company;
+    editModalForm.value = form;
+    editModalStrength.value = strength;
+    checkEditModalValidity();
+    setTimeout(()=>editModalName.focus(), 80);
+    document.addEventListener('keydown', handleEditKeyDown);
+  }
+
+  function closeEditModalWindow(){
+    editModalOverlay.style.display = 'none';
+    editModalOverlay.setAttribute('aria-hidden','true');
+    editingMedId = null;
+    document.removeEventListener('keydown', handleEditKeyDown);
+  }
+
+  closeEditModal.addEventListener('click', closeEditModalWindow);
+  editModalCancel.addEventListener('click', closeEditModalWindow);
+  editModalOverlay.addEventListener('click', (e) => {
+    if(e.target === editModalOverlay) closeEditModalWindow();
+  });
+
+  function handleEditKeyDown(e){
+    if(e.key === 'Escape') closeEditModalWindow();
+  }
+
+  function checkEditModalValidity(){
+    const name = editModalName.value.trim();
+    const company = editModalCompany.value.trim();
+    const form = editModalForm.value.trim();
+    const strength = editModalStrength.value.trim();
+    editModalUpdate.disabled = !(name && company && form && strength);
+  }
+  [editModalName, editModalCompany, editModalForm, editModalStrength].forEach(el=>{
+    el.addEventListener('input', checkEditModalValidity);
+    el.addEventListener('change', checkEditModalValidity);
+  });
+
+  editModalUpdate.addEventListener('click', async ()=>{
+    const name = editModalName.value.trim();
+    const company = editModalCompany.value.trim();
+    const form = editModalForm.value.trim();
+    const strength = editModalStrength.value.trim();
+    if(!(name && company && form && strength)) return;
+    if(!editingMedId){ alert('Invalid medicine ID'); return; }
+
+    editModalUpdate.disabled = true;
+    editModalUpdate.textContent = 'Updating...';
+
+    try {
+      const res = await fetch('all_medicine.php?action=update', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ id: editingMedId, name, company, form, strength })
+      });
+      const j = await res.json();
+      if(j.success){
+        setStatus('Updated');
+        closeEditModalWindow();
+        await load();
+      } else {
+        alert('Update failed: ' + (j.message || 'unknown'));
+      }
+    } catch(err){
+      console.error(err);
+      alert('Network error while updating medicine.');
+    } finally {
+      editModalUpdate.textContent = 'Update Medicine';
+      checkEditModalValidity();
+    }
+  });
+
+  // initial load
+  load();
+</script>
+<script src="../header/header.js"></script>
+
+<!-- Session Monitoring for Immediate Logout -->
+<script>
+(function() {
+  let sessionCheckInterval = null;
+  let isLoggingOut = false;
+  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success && !isLoggingOut) {
+          isLoggingOut = true;
+          clearInterval(sessionCheckInterval);
+          localStorage.clear();
+          alert(data.message || 'Your session has expired');
+          window.location.href = '../signin/signin.html';
+        }
+      })
+      .catch(err => console.error('Session check error:', err));
+  }, 3000);
+})();
+</script>
+
+</body>
+</html>
