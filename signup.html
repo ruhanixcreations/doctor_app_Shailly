@@ -754,6 +754,9 @@
     }
   }
 
+  // Disable send OTP button initially
+  sendOtpBtn.disabled = true;
+
   sendOtpBtn.addEventListener("click", sendOtp);
   function sendOtp(){
     const email = emailInput.value.trim().toLowerCase();
@@ -961,6 +964,13 @@
     const currentError = emailError.style.display;
     if (currentError === "block") {
       clearErrorBelow(emailInput);
+    }
+    // Enable/disable send OTP button based on email input
+    const email = emailInput.value.trim();
+    if (email.length > 0 && sendOtpBtn.innerHTML.includes('Send OTP')) {
+      sendOtpBtn.disabled = false;
+    } else if (email.length === 0) {
+      sendOtpBtn.disabled = true;
     }
     monitorFields();
   });
