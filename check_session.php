@@ -130,7 +130,7 @@ if (
         "email" => $_SESSION['user_email'] ?? null,
         "role" => $_SESSION['user_role'] ?? null,
         "client_id" => $_SESSION['client_id'] ?? null,
-        "name" => $_SESSION['name'] ?? null
+        "name" => $_SESSION['user_name'] ?? null
     ]);
 } else {
     echo json_encode([
