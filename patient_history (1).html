@@ -1116,10 +1116,27 @@ function renderPrescriptions(prescriptions, patientData){
     let viewBloodReportBtn = '';
     
     if(userRole === 'receptionalist'){
-      // Receptionist: Show Upload button
-      viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
-        <i class="fas fa-upload"></i> Upload Report
-      </button>`;
+      // Receptionist: Check if blood report exists for this prescription
+      const reportForPrescription = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
+      
+      if(reportForPrescription){
+        // Report exists - show View and Delete buttons, disable Upload
+        viewBloodReportBtn = `
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}', '${prescriptionId}')" style="background:#28a745;">
+              <i class="fas fa-eye"></i> View Report
+            </button>
+            <button type="button" class="btn btn-view" onclick="deleteBloodReport('${patientId}', '${prescriptionId}', ${reportForPrescription.id})" style="background:#dc3545;">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        `;
+      } else {
+        // No report - show Upload button (enabled)
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
+          <i class="fas fa-upload"></i> Upload Report
+        </button>`;
+      }
     } else {
       // Doctor: Show View button if blood report exists for this prescription
       const reportForPrescription = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
@@ -1192,6 +1209,50 @@ function uploadBloodReport(patientId, patientName, prescriptionId){
   // Redirect to upload page with patient details
   const url = `../patient_history/upload_blood_report.html?patient_id=${encodeURIComponent(patientId)}&patient_name=${encodeURIComponent(patientName)}&prescription_id=${encodeURIComponent(prescriptionId)}`;
   window.location.href = url;
+}
+
+/* Delete blood report (for receptionists) */
+async function deleteBloodReport(patientId, prescriptionId, reportId){
+  if(!reportId){
+    alert('Invalid report ID');
+    return;
+  }
+  
+  // Confirm deletion
+  const confirmDelete = confirm('Are you sure you want to delete this blood report? This action cannot be undone.');
+  if(!confirmDelete){
+    return;
+  }
+  
+  try{
+    const res = await fetch('upload_blood_report.php', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        report_id: reportId,
+        patient_id: patientId,
+        prescription_id: prescriptionId
+      })
+    });
+    
+    const json = await res.json();
+    
+    if(json.success){
+      alert('Blood report deleted successfully!');
+      // Reload patient details to refresh the table
+      const currentPatientId = document.getElementById('patientSelect').value;
+      if(currentPatientId){
+        await loadDetails(currentPatientId);
+      }
+    } else {
+      alert('Failed to delete report: ' + (json.message || 'Unknown error'));
+    }
+  }catch(err){
+    console.error('Delete error:', err);
+    alert('Error deleting report: ' + err.message);
+  }
 }
 
 

@@ -44,6 +44,75 @@ function send_json($arr, $code=200){
     exit;
 }
 
+// === HANDLE DELETE REQUEST ===
+if($_SERVER['REQUEST_METHOD'] === 'DELETE'){
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+    
+    if(!$data){
+        send_json(['success'=>false,'message'=>'Invalid JSON data'],400);
+    }
+    
+    $report_id = $data['report_id'] ?? '';
+    $patient_id = $data['patient_id'] ?? '';
+    $prescription_id = $data['prescription_id'] ?? '';
+    
+    if(!$report_id){
+        send_json(['success'=>false,'message'=>'Report ID is required'],400);
+    }
+    
+    // Get the file path from database before deleting
+    $stmt = $mysqli->prepare("SELECT file_path, patient_id FROM patient_reports WHERE id = ?");
+    if(!$stmt){
+        send_json(['success'=>false,'message'=>'Database error: '.$mysqli->error],500);
+    }
+    
+    $stmt->bind_param('i', $report_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $report = $result->fetch_assoc();
+    $stmt->close();
+    
+    if(!$report){
+        send_json(['success'=>false,'message'=>'Report not found'],404);
+    }
+    
+    // Verify patient_id matches (security check)
+    if($patient_id && $report['patient_id'] !== $patient_id){
+        send_json(['success'=>false,'message'=>'Unauthorized: Patient ID mismatch'],403);
+    }
+    
+    // Delete the physical file
+    $file_path = __DIR__ . '/' . $report['file_path'];
+    $file_deleted = false;
+    if(file_exists($file_path)){
+        $file_deleted = @unlink($file_path);
+        if(!$file_deleted){
+            error_log("Failed to delete file: " . $file_path);
+        }
+    }
+    
+    // Delete from database
+    $stmt = $mysqli->prepare("DELETE FROM patient_reports WHERE id = ?");
+    if(!$stmt){
+        send_json(['success'=>false,'message'=>'Database error: '.$mysqli->error],500);
+    }
+    
+    $stmt->bind_param('i', $report_id);
+    if($stmt->execute()){
+        $stmt->close();
+        send_json([
+            'success'=>true,
+            'message'=>'Blood report deleted successfully',
+            'file_deleted'=>$file_deleted
+        ]);
+    } else {
+        $error = $stmt->error;
+        $stmt->close();
+        send_json(['success'=>false,'message'=>'Failed to delete report: '.$error],500);
+    }
+}
+
 // === POST BLOOD REPORT UPLOAD ===
 if($_SERVER['REQUEST_METHOD'] !== 'POST'){
     send_json(['success'=>false,'message'=>'Invalid request method'],405);
