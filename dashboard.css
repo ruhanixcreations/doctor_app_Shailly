@@ -246,8 +246,48 @@ body {
   }
   
   .cards {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  
+  .card-icon {
+    height: 110px;
+  }
+  
+  .card-icon i {
+    font-size: 44px;
+  }
+  
+  .card-content {
+    padding: 18px 22px 22px;
+  }
+  
+  .card-title {
+    font-size: 17px;
+  }
+  
+  .card-sub {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 16px 12px;
+  }
+  
+  .page-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+  
+  .cards {
+    grid-template-columns: 1fr;
     gap: 16px;
+  }
+  
+  .card {
+    min-height: 150px;
   }
   
   .card-icon {
@@ -264,46 +304,11 @@ body {
   
   .card-title {
     font-size: 16px;
+    font-weight: 700;
   }
   
   .card-sub {
     font-size: 13px;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 16px 12px;
-  }
-  
-  .page-title {
-    font-size: 20px;
-    margin-bottom: 24px;
-  }
-  
-  .cards {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-  
-  .card-icon {
-    height: 90px;
-  }
-  
-  .card-icon i {
-    font-size: 36px;
-  }
-  
-  .card-content {
-    padding: 14px 18px 18px;
-  }
-  
-  .card-title {
-    font-size: 15px;
-  }
-  
-  .card-sub {
-    font-size: 12px;
   }
   
   .footer {

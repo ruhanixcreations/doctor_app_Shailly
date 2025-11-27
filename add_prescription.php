@@ -693,5 +693,99 @@ if($action === 'print_prescription'){
     exit;
 }
 
+/*
+| Get single prescription data for viewing/printing (JSON API)
+*/
+if($action === 'get_prescription'){
+    $pres_id = isset($_GET['prescription_id']) ? intval($_GET['prescription_id']) : 0;
+    $patient_id = $_GET['patient_id'] ?? '';
+    
+    if(!$pres_id || !$patient_id){ 
+        echo json_encode(['success'=>false,'message'=>'prescription_id and patient_id required']); 
+        exit; 
+    }
+
+    // Get prescription basic info
+    $presStmt = $mysqli->prepare("SELECT id, patient_id, created_at, follow_up_date FROM prescriptions WHERE id = ?");
+    if(!$presStmt){ echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit; }
+    $presStmt->bind_param('i', $pres_id);
+    $presStmt->execute();
+    $presRes = $presStmt->get_result();
+    $prescription = $presRes->fetch_assoc();
+    $presStmt->close();
+    
+    if(!$prescription){ 
+        echo json_encode(['success'=>false,'message'=>'Prescription not found']); 
+        exit; 
+    }
+
+    // Get patient details
+    $patStmt = $mysqli->prepare("SELECT patient_name, mobile, age, weight, patient_id FROM patient_list WHERE patient_id = ? LIMIT 1");
+    if(!$patStmt){ echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit; }
+    $patStmt->bind_param('s', $patient_id);
+    $patStmt->execute();
+    $patRes = $patStmt->get_result();
+    $patient = $patRes->fetch_assoc();
+    $patStmt->close();
+    
+    if(!$patient){ 
+        echo json_encode(['success'=>false,'message'=>'Patient not found']); 
+        exit; 
+    }
+
+    // Get prescription items (medications)
+    $itemsStmt = $mysqli->prepare("SELECT medicine_name, type, duration, times_of_day, before_after, notes, symptoms 
+                                    FROM prescription_items 
+                                    WHERE prescription_id = ? 
+                                    ORDER BY id");
+    if(!$itemsStmt){ echo json_encode(['success'=>false,'message'=>'Prepare failed']); exit; }
+    $itemsStmt->bind_param('i', $pres_id);
+    $itemsStmt->execute();
+    $itemsRes = $itemsStmt->get_result();
+    $items = [];
+    $symptoms = '';
+    while($row = $itemsRes->fetch_assoc()){
+        if(!$symptoms && $row['symptoms']) $symptoms = $row['symptoms'];
+        $items[] = [
+            'medicine_name' => $row['medicine_name'],
+            'type' => $row['type'],
+            'duration' => $row['duration'],
+            'times_of_day' => $row['times_of_day'],
+            'before_after' => $row['before_after'],
+            'notes' => $row['notes']
+        ];
+    }
+    $itemsStmt->close();
+
+    // Get blood test names
+    $bloodTests = [];
+    $bloodStmt = $mysqli->prepare("SELECT bt.name 
+                                    FROM prescription_blood_tests pbt
+                                    JOIN blood_tests bt ON bt.id = pbt.blood_test_id
+                                    WHERE pbt.prescription_id = ?
+                                    ORDER BY bt.name");
+    if($bloodStmt){
+        $bloodStmt->bind_param('i', $pres_id);
+        $bloodStmt->execute();
+        $bloodRes = $bloodStmt->get_result();
+        while($row = $bloodRes->fetch_assoc()){
+            $bloodTests[] = $row['name'];
+        }
+        $bloodStmt->close();
+    }
+
+    $prescription['items'] = $items;
+    $prescription['symptoms'] = $symptoms;
+    $prescription['blood_test_names'] = $bloodTests;
+    $prescription['prescription_date'] = $prescription['created_at'];
+
+    echo json_encode([
+        'success' => true,
+        'prescription' => $prescription,
+        'patient' => $patient
+    ]);
+    exit;
+}
+
 echo json_encode(['success'=>false,'message'=>'invalid action']);
 $mysqli->close();

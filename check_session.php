@@ -2,11 +2,11 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Session configuration
+// Session configuration - MUST MATCH signin.php and signup.php
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '',
+    'domain' => '.ruhanixlegal.in',
     'secure' => false,
     'httponly' => true,
     'samesite' => 'Lax'
@@ -130,7 +130,7 @@ if (
         "email" => $_SESSION['user_email'] ?? null,
         "role" => $_SESSION['user_role'] ?? null,
         "client_id" => $_SESSION['client_id'] ?? null,
-        "name" => $_SESSION['name'] ?? null
+        "name" => $_SESSION['user_name'] ?? null
     ]);
 } else {
     echo json_encode([

@@ -641,6 +641,7 @@ signinBtn.addEventListener('click', async ()=>{
     });
     const data = await resp.json();
     if(data.success){
+      localStorage.setItem('isLoggedIn', 'true');
       if(data.client_id) localStorage.setItem('client_id', data.client_id);
       if(data.user_id) localStorage.setItem('user_id', data.user_id);
       if(data.role) localStorage.setItem('role', data.role);
@@ -773,6 +774,7 @@ verifyOtpBtn.addEventListener('click', async ()=>{
       });
       const d2 = await resp2.json();
       if(d2.success){
+        localStorage.setItem('isLoggedIn', 'true');
         if(d2.client_id) localStorage.setItem('client_id', d2.client_id);
         if(d2.user_id) localStorage.setItem('user_id', d2.user_id);
         if(d2.role) localStorage.setItem('role', d2.role);

@@ -278,7 +278,33 @@ function handleLogout() {
   if (confirm('Are you sure you want to logout?')) {
     console.log('Logging out...');
     
-    fetch('../logout.php', {
+    // Determine correct path to logout.php based on current location
+    const currentPath = window.location.pathname;
+    let logoutPath = '../logout.php';
+    let signinPath = '../signin/signin.html';
+    
+    // Check if current page is in a subfolder or at root
+    // Subfolders: add_prescription, patient_history, blood_tests, etc.
+    const subfolders = ['add_prescription', 'add_new_patient', 'patient_history', 'blood_tests', 
+                       'all_medicine', 'doctors_list', 'receptionalist_list', 'dashboard', 
+                       'upload_blood_report', 'signin', 'signup'];
+    
+    // Check if path contains any subfolder
+    const isInSubfolder = subfolders.some(folder => currentPath.includes('/' + folder + '/'));
+    
+    if (!isInSubfolder) {
+      // We're at root level (profile.html, test_session.php, etc.)
+      logoutPath = 'logout.php';
+      signinPath = 'signin/signin.html';
+      console.log('Detected ROOT level page');
+    } else {
+      console.log('Detected SUBFOLDER page');
+    }
+    
+    console.log('Current path:', currentPath);
+    console.log('Using logout path:', logoutPath);
+    
+    fetch(logoutPath, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' }
@@ -296,6 +322,7 @@ function handleLogout() {
         localStorage.removeItem('username');
         localStorage.removeItem('user');
         localStorage.removeItem('role');
+        localStorage.removeItem('signedInUserEmail');
 
         console.log('Logout successful, showing auth buttons...');
         // Show auth buttons immediately
@@ -303,7 +330,7 @@ function handleLogout() {
         
         // Optional: redirect after a short delay
         setTimeout(() => {
-          window.location.href = '../signin/signin.html';
+          window.location.href = signinPath;
         }, 500);
       } else {
         alert('Logout failed: ' + (data.message || 'Unknown error'));
@@ -436,7 +463,7 @@ function startSessionMonitoring() {
     clearInterval(sessionCheckInterval);
   }
 
-  // Silent monitoring - check session every 3 seconds
+  // Silent monitoring - check session every 30 seconds
   sessionCheckInterval = setInterval(() => {
     // Skip if already logging out
     if (isLoggingOut) return;
@@ -454,7 +481,7 @@ function startSessionMonitoring() {
       .catch(err => {
         console.error('⚠️ Session check error:', err);
       });
-  }, 3000);
+  }, 30000);
 }
 
 function forceLogout(message) {

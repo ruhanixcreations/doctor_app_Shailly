@@ -14,11 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Session configuration
+// Session configuration - MUST MATCH signin.php and signup.php
 session_set_cookie_params([
     'lifetime' => 0,
     'path' => '/',
-    'domain' => '',
+    'domain' => '.ruhanixlegal.in',
     'secure' => false,
     'httponly' => true,
     'samesite' => 'Lax'

@@ -580,6 +580,14 @@ saveTest.addEventListener('click', async ()=>{
   if(!isNameValid(name)){ alert('Name must contain letters and spaces only'); return; }
   if(!isPriceValid(price)){ alert('Price must contain digits only'); return; }
 
+  // Check for duplicate name (case-insensitive)
+  const nameLower = name.toLowerCase();
+  const duplicate = (window._blood_tests || []).find(t => t.name.toLowerCase() === nameLower);
+  if(duplicate){
+    alert('A blood test with this name already exists. Please use a different name.');
+    return;
+  }
+
   saveTest.disabled = true;
   try{
     const res = await fetch('blood_tests.php?action=add', {
@@ -651,6 +659,16 @@ updateTest.addEventListener('click', async ()=>{
   if(!isNameValid(name)){ alert('Name must contain letters and spaces only'); return; }
   if(!isPriceValid(price)){ alert('Price must contain digits only'); return; }
   if(!editingTestId){ alert('Invalid test ID'); return; }
+
+  // Check for duplicate name (case-insensitive), excluding current test
+  const nameLower = name.toLowerCase();
+  const duplicate = (window._blood_tests || []).find(t => 
+    t.name.toLowerCase() === nameLower && t.id != editingTestId
+  );
+  if(duplicate){
+    alert('Another blood test with this name already exists. Please use a different name.');
+    return;
+  }
 
   updateTest.disabled = true;
   try{

@@ -885,10 +885,51 @@ if(!checkAuth()){
     `;
   });
 
+  // Save form data to sessionStorage
+  function saveFormData(){
+    const formData = {
+      patient_name: nameInput.value,
+      mobile: mobileInput.value,
+      age: ageInput.value,
+      weight: weightInput.value,
+      doctor: doctorSelect.value,
+      timestamp: Date.now()
+    };
+    sessionStorage.setItem('addPatientFormData', JSON.stringify(formData));
+  }
+
+  // Restore form data from sessionStorage
+  function restoreFormData(){
+    const saved = sessionStorage.getItem('addPatientFormData');
+    if(saved){
+      try{
+        const data = JSON.parse(saved);
+        // Only restore if data is less than 1 hour old
+        if(Date.now() - data.timestamp < 3600000){
+          nameInput.value = data.patient_name || '';
+          mobileInput.value = data.mobile || '';
+          ageInput.value = data.age || '';
+          weightInput.value = data.weight || '';
+          if(data.doctor) doctorSelect.value = data.doctor;
+          updateControls();
+        }
+      }catch(e){ console.error('Failed to restore form data:', e); }
+    }
+  }
+
+  // Auto-save form data on input changes
+  [nameInput, mobileInput, ageInput, weightInput].forEach(el =>{
+    el.addEventListener('input', saveFormData);
+  });
+  doctorSelect.addEventListener('change', saveFormData);
+
   // Load client id and fetch doctors
   document.addEventListener('DOMContentLoaded', ()=> {
     clientInput.value = localStorage.getItem('client_id') || '';
-    fetchDoctors(); 
+    fetchDoctors().then(()=> {
+      // Restore form data after doctors are loaded
+      restoreFormData();
+    }); 
     updateControls();
     updatePrescriptionControls();
     updateBloodTestControls();
@@ -1006,6 +1047,9 @@ if(!checkAuth()){
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || 'Server error');
       statusEl.textContent = 'Saved: ' + (json.message || 'OK') + (json.patient_id ? (' (ID: '+json.patient_id+')') : '');
+      
+      // Clear saved form data from sessionStorage
+      sessionStorage.removeItem('addPatientFormData');
       
       // Reset form and camera states
       prescriptionFilesArray = [];
