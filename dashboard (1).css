@@ -40,10 +40,11 @@ body {
 
 /* Container layout */
 .container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 30px 24px;
+  padding: 30px 20px;
   flex: 1;
+  width: 100%;
 }
 
 /* Page title with modern design */
@@ -70,7 +71,7 @@ body {
 /* Modern card grid layout */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-top: 40px;
 }
@@ -226,19 +227,19 @@ body {
 /* Tablet adjustments */
 @media (max-width: 1024px) {
   .cards {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
   
   .container {
-    padding: 24px 20px;
+    padding: 24px 16px;
   }
 }
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .container {
-    padding: 20px 16px;
+    padding: 20px 12px;
   }
   
   .page-title {
@@ -246,8 +247,8 @@ body {
   }
   
   .cards {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
   
   .card-icon {
@@ -273,7 +274,7 @@ body {
 
 @media (max-width: 480px) {
   .container {
-    padding: 16px 12px;
+    padding: 16px 8px;
   }
   
   .page-title {
@@ -283,7 +284,7 @@ body {
   
   .cards {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
   }
   
   .card-icon {
