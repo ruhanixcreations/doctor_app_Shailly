@@ -2194,12 +2194,13 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     
     updateFieldsCount();
     validateAllForms();
-    await loadPatientPrescriptions(pid);
+    // Pass true to keep print button enabled after save
+    await loadPatientPrescriptions(pid, true);
   }catch(e){ console.error(e); alert('Save failed'); }
 });
 
 /* ---------- LOAD & SHOW SAVED ITEMS ---------- */
-async function loadPatientPrescriptions(patient_id){
+async function loadPatientPrescriptions(patient_id, keepPrintButtonEnabled = false){
   if(!patient_id){ setPrintForId(null, false); return; }
   try{
     const r = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patient_id)}`);
@@ -2208,15 +2209,20 @@ async function loadPatientPrescriptions(patient_id){
     
     const items = j.items || [];
 
-    // find latest prescription id but DON'T enable print button
+    // find latest prescription id
     let latestPrescription = null;
     if(items.length){
       const maxPrescriptionId = Math.max(...items.map(it => it.prescription_id).filter(x=>x!=null));
       latestPrescription = items.find(it => it.prescription_id === maxPrescriptionId) || null;
     }
-    // Store the prescription ID but don't enable print button - only enable after manual save
+    // Store the prescription ID
     currentPrescId = latestPrescription ? latestPrescription.prescription_id : null;
-    setPrintForId(null, false); // Keep print button disabled
+    
+    // Only disable print button if keepPrintButtonEnabled is false
+    if(!keepPrintButtonEnabled){
+      setPrintForId(null, false); // Keep print button disabled
+    }
+    // If keepPrintButtonEnabled is true, don't touch the print button state
 
     // update follow-up date (from latestPrescription)
     if(latestPrescription && latestPrescription.follow_up_date){
