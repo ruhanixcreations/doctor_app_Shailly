@@ -2012,6 +2012,8 @@ function deleteMedicationRow(index){
     renderMedicationRows();
     updateFieldsCount();
     validateAllForms();
+    triggerAutoSave(); // Auto-save after deletion
+    savePrescriptionFormData(); // Save form data after deletion
   }
 }
 
@@ -2165,7 +2167,8 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     
     alert('Prescription saved');
     currentPrescId = j.prescription_id || null;
-    setPrintForId(currentPrescId);
+    // Enable print button ONLY after manual save
+    setPrintForId(currentPrescId, true);
     
     // IMPORTANT: Reset draft prescription ID immediately to prevent auto-save from creating new one
     const savedPrescriptionId = draftPrescriptionId;
@@ -2197,21 +2200,23 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
 
 /* ---------- LOAD & SHOW SAVED ITEMS ---------- */
 async function loadPatientPrescriptions(patient_id){
-  if(!patient_id){ setPrintForId(null); return; }
+  if(!patient_id){ setPrintForId(null, false); return; }
   try{
     const r = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patient_id)}`);
     const j = await r.json();
-    if(!j.success){ setPrintForId(null); return; }
+    if(!j.success){ setPrintForId(null, false); return; }
     
     const items = j.items || [];
 
-    // find latest prescription id
+    // find latest prescription id but DON'T enable print button
     let latestPrescription = null;
     if(items.length){
       const maxPrescriptionId = Math.max(...items.map(it => it.prescription_id).filter(x=>x!=null));
       latestPrescription = items.find(it => it.prescription_id === maxPrescriptionId) || null;
     }
-    setPrintForId(latestPrescription ? latestPrescription.prescription_id : null);
+    // Store the prescription ID but don't enable print button - only enable after manual save
+    currentPrescId = latestPrescription ? latestPrescription.prescription_id : null;
+    setPrintForId(null, false); // Keep print button disabled
 
     // update follow-up date (from latestPrescription)
     if(latestPrescription && latestPrescription.follow_up_date){
@@ -2220,7 +2225,7 @@ async function loadPatientPrescriptions(patient_id){
       if(!document.getElementById('topFollowUp').value) document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
     }
 
-  }catch(e){ console.error(e); setPrintForId(null); }
+  }catch(e){ console.error(e); setPrintForId(null, false); }
 }
 
 
@@ -2337,10 +2342,12 @@ function restorePrescriptionFormData(){
 }
 
 /* print button: opens print.html */
-function setPrintForId(presId){
+function setPrintForId(presId, enableButton = false){
   const pBtn = document.getElementById('printPrescriptionTop');
-  if(presId){
+  if(presId && enableButton){
     pBtn.disabled=false;
+    pBtn.style.background='linear-gradient(135deg,var(--primary-teal),var(--primary-blue))';
+    pBtn.style.cursor='pointer';
     const pid = document.getElementById('selectedPatientId').value || '';
     pBtn.onclick = ()=> {
       // Save form data before opening print window
@@ -2348,7 +2355,13 @@ function setPrintForId(presId){
       const url = `print.html?prescription_id=${encodeURIComponent(presId)}&patient_id=${encodeURIComponent(pid)}`;
       window.open(url,'_blank');
     };
-  } else { pBtn.disabled=true; pBtn.onclick=null; }
+  } else { 
+    pBtn.disabled=true; 
+    pBtn.style.background='#d1d5db';
+    pBtn.style.color='#9ca3af';
+    pBtn.style.cursor='not-allowed';
+    pBtn.onclick=null; 
+  }
 }
 
 /* ---------- VIEW PRESCRIPTION HISTORY ---------- */
@@ -2382,6 +2395,9 @@ async function onPatientSelected(patient_id, patientObj){
   // Reset draft prescription ID for new patient
   draftPrescriptionId = null;
   
+  // Disable print button for new patient - will enable only after Save Draft
+  setPrintForId(null, false);
+  
   // Show the single form
   singleMedForm.style.display = 'block';
 
@@ -2402,6 +2418,9 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   populateBloodTestCheckboxes();
   setupMedicineDropdown();
   
+  // Initialize print button as disabled and grey
+  setPrintForId(null, false);
+  
   // set top follow-up default
   document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
 
@@ -2415,6 +2434,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     updateFieldsCount();
     validateAllForms();
     savePrescriptionFormData(); // Save form data
+    triggerAutoSave(); // Auto-save on every input change
   });
   
   // ===== AUTO-SAVE EVENT LISTENERS =====
@@ -2433,29 +2453,42 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   // Save form data when follow-up date changes
   document.getElementById('topFollowUp').addEventListener('change', () => {
     savePrescriptionFormData();
+    triggerAutoSave(); // Auto-save on change
   });
   
   // Auto-save notes field in medicine form
   const notesInput = singleMedForm.querySelector('.notesInput');
   if(notesInput){
+    notesInput.addEventListener('input', () => {
+      triggerAutoSave();
+      savePrescriptionFormData(); // Save current medicine form data
+    });
     notesInput.addEventListener('blur', () => {
       triggerAutoSave();
       savePrescriptionFormData(); // Save current medicine form data
     });
   }
   
-  // Auto-save when type dropdown changes (blur)
+  // Auto-save when type dropdown changes
   const typeInput = singleMedForm.querySelector('.typeInput');
   if(typeInput){
+    typeInput.addEventListener('change', () => {
+      triggerAutoSave();
+      savePrescriptionFormData(); // Save current medicine form data
+    });
     typeInput.addEventListener('blur', () => {
       triggerAutoSave();
       savePrescriptionFormData(); // Save current medicine form data
     });
   }
   
-  // Auto-save when duration dropdown changes (blur)
+  // Auto-save when duration dropdown changes
   const durationInput = singleMedForm.querySelector('.durationInput');
   if(durationInput){
+    durationInput.addEventListener('change', () => {
+      triggerAutoSave();
+      savePrescriptionFormData(); // Save current medicine form data
+    });
     durationInput.addEventListener('blur', () => {
       triggerAutoSave();
       savePrescriptionFormData(); // Save current medicine form data
