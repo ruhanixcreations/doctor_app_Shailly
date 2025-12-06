@@ -47,7 +47,7 @@ if ($action) {
     require_once('../connections.php');
     
     if ($action === 'upload_logo') {
-        // Handle logo upload
+        // Handle logo upload - add new logo (not replacing)
         $client_id = $_POST['client_id'] ?? null;
         
         if (!$client_id) {
@@ -81,33 +81,19 @@ if ($action) {
         
         // Generate unique filename
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = 'logo_' . $client_id . '_' . time() . '.' . $extension;
+        $filename = 'logo_' . $client_id . '_' . time() . '_' . uniqid() . '.' . $extension;
         $filepath = $upload_dir . $filename;
-        
-        // Delete old logo if exists
-        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ?");
-        $stmt->bind_param("s", $client_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
-            $old_path = __DIR__ . '/../' . $row['logo_path'];
-            if (file_exists($old_path)) {
-                unlink($old_path);
-            }
-        }
-        $stmt->close();
         
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             $logo_url = '/doctor_app/uploads/logos/' . $filename;
             
-            // Save to database
-            $stmt = $conn->prepare("INSERT INTO clinic_logos (client_id, logo_path, uploaded_at) VALUES (?, ?, NOW()) 
-                                     ON DUPLICATE KEY UPDATE logo_path = ?, uploaded_at = NOW()");
-            $stmt->bind_param("sss", $client_id, $logo_url, $logo_url);
+            // Insert new logo (not active by default)
+            $stmt = $conn->prepare("INSERT INTO clinic_logos (client_id, logo_path, is_active, uploaded_at) VALUES (?, ?, 0, NOW())");
+            $stmt->bind_param("ss", $client_id, $logo_url);
             
             if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'logo_url' => $logo_url]);
+                echo json_encode(['success' => true, 'logo_url' => $logo_url, 'logo_id' => $conn->insert_id]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Failed to save logo to database']);
             }
@@ -120,8 +106,8 @@ if ($action) {
         exit;
     }
     
-    if ($action === 'get_logo') {
-        // Get current logo
+    if ($action === 'list_logos') {
+        // List all logos for a client
         $client_id = $_GET['client_id'] ?? null;
         
         if (!$client_id) {
@@ -129,7 +115,77 @@ if ($action) {
             exit;
         }
         
-        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ?");
+        $stmt = $conn->prepare("SELECT id, logo_path, is_active, uploaded_at FROM clinic_logos WHERE client_id = ? ORDER BY uploaded_at DESC");
+        $stmt->bind_param("s", $client_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $logos = [];
+        while ($row = $result->fetch_assoc()) {
+            $logos[] = $row;
+        }
+        
+        echo json_encode(['success' => true, 'logos' => $logos]);
+        
+        $stmt->close();
+        $conn->close();
+        exit;
+    }
+    
+    if ($action === 'apply_logo') {
+        // Set a logo as active (and deactivate others)
+        $data = json_decode(file_get_contents('php://input'), true);
+        $client_id = $data['client_id'] ?? null;
+        $logo_id = $data['logo_id'] ?? null;
+        
+        if (!$client_id || !$logo_id) {
+            echo json_encode(['success' => false, 'message' => 'Client ID and Logo ID are required']);
+            exit;
+        }
+        
+        // Start transaction
+        $conn->begin_transaction();
+        
+        try {
+            // Deactivate all logos for this client
+            $stmt1 = $conn->prepare("UPDATE clinic_logos SET is_active = 0 WHERE client_id = ?");
+            $stmt1->bind_param("s", $client_id);
+            $stmt1->execute();
+            $stmt1->close();
+            
+            // Activate the selected logo
+            $stmt2 = $conn->prepare("UPDATE clinic_logos SET is_active = 1 WHERE id = ? AND client_id = ?");
+            $stmt2->bind_param("is", $logo_id, $client_id);
+            $stmt2->execute();
+            
+            if ($stmt2->affected_rows > 0) {
+                $conn->commit();
+                echo json_encode(['success' => true]);
+            } else {
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => 'Logo not found or does not belong to this client']);
+            }
+            
+            $stmt2->close();
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo json_encode(['success' => false, 'message' => 'Failed to apply logo: ' . $e->getMessage()]);
+        }
+        
+        $conn->close();
+        exit;
+    }
+    
+    if ($action === 'get_logo') {
+        // Get active logo for a client
+        $client_id = $_GET['client_id'] ?? null;
+        
+        if (!$client_id) {
+            echo json_encode(['success' => false, 'message' => 'Client ID is required']);
+            exit;
+        }
+        
+        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ? AND is_active = 1");
         $stmt->bind_param("s", $client_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -137,7 +193,7 @@ if ($action) {
         if ($row = $result->fetch_assoc()) {
             echo json_encode(['success' => true, 'logo_url' => $row['logo_path']]);
         } else {
-            echo json_encode(['success' => false, 'message' => 'No logo found']);
+            echo json_encode(['success' => false, 'message' => 'No active logo found']);
         }
         
         $stmt->close();
@@ -146,18 +202,19 @@ if ($action) {
     }
     
     if ($action === 'delete_logo') {
-        // Delete logo
+        // Delete specific logo by ID
         $data = json_decode(file_get_contents('php://input'), true);
         $client_id = $data['client_id'] ?? null;
+        $logo_id = $data['logo_id'] ?? null;
         
-        if (!$client_id) {
-            echo json_encode(['success' => false, 'message' => 'Client ID is required']);
+        if (!$client_id || !$logo_id) {
+            echo json_encode(['success' => false, 'message' => 'Client ID and Logo ID are required']);
             exit;
         }
         
         // Get logo path and delete file
-        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ?");
-        $stmt->bind_param("s", $client_id);
+        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE id = ? AND client_id = ?");
+        $stmt->bind_param("is", $logo_id, $client_id);
         $stmt->execute();
         $result = $stmt->get_result();
         
@@ -168,8 +225,8 @@ if ($action) {
             }
             
             // Delete from database
-            $stmt2 = $conn->prepare("DELETE FROM clinic_logos WHERE client_id = ?");
-            $stmt2->bind_param("s", $client_id);
+            $stmt2 = $conn->prepare("DELETE FROM clinic_logos WHERE id = ? AND client_id = ?");
+            $stmt2->bind_param("is", $logo_id, $client_id);
             
             if ($stmt2->execute()) {
                 echo json_encode(['success' => true]);
@@ -178,7 +235,7 @@ if ($action) {
             }
             $stmt2->close();
         } else {
-            echo json_encode(['success' => false, 'message' => 'No logo found']);
+            echo json_encode(['success' => false, 'message' => 'Logo not found or does not belong to this client']);
         }
         
         $stmt->close();

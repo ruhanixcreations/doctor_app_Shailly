@@ -244,28 +244,122 @@ body{
   border:1px solid #bee5eb;
 }
 
-.logo-info{
-  background:var(--bg-light);
-  padding:16px;
-  border-radius:6px;
-  margin-top:20px;
-  font-size:13px;
-  color:var(--text-muted);
+.table-wrapper{
+  overflow-x:auto;
+  margin-top:16px;
 }
 
-.logo-info h4{
+.logos-table{
+  width:100%;
+  border-collapse:collapse;
   font-size:14px;
+}
+
+.logos-table thead{
+  background:var(--bg-light);
+}
+
+.logos-table th{
+  padding:12px;
+  text-align:left;
   font-weight:600;
   color:var(--text-dark);
-  margin-bottom:8px;
+  border-bottom:2px solid var(--border-light);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
 }
 
-.logo-info ul{
-  margin-left:20px;
+.logos-table td{
+  padding:12px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:middle;
 }
 
-.logo-info li{
-  margin-bottom:4px;
+.logos-table tbody tr:hover{
+  background:var(--bg-light);
+}
+
+.logo-thumbnail{
+  width:80px;
+  height:60px;
+  object-fit:contain;
+  border-radius:4px;
+  border:1px solid var(--border-light);
+  background:var(--bg-white);
+}
+
+.status-badge{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.status-badge.active{
+  background:#d4edda;
+  color:#155724;
+}
+
+.status-badge.inactive{
+  background:#e8e8e8;
+  color:#666;
+}
+
+.action-btns{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.action-btn{
+  padding:6px 12px;
+  border-radius:4px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+  font-size:12px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+
+.action-btn.apply{
+  background:var(--success);
+  color:white;
+}
+
+.action-btn.apply:hover{
+  background:#218838;
+  transform:translateY(-1px);
+}
+
+.action-btn.delete{
+  background:var(--danger);
+  color:white;
+}
+
+.action-btn.delete:hover{
+  background:#c82333;
+  transform:translateY(-1px);
+}
+
+.action-btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.no-data{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--text-muted);
+  font-style:italic;
+  font-size:14px;
 }
 
 @media (max-width:768px){
@@ -311,6 +405,36 @@ body{
   .btn{
     width:100%;
   }
+  
+  /* Table responsive */
+  .table-wrapper{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  
+  .logos-table{
+    min-width:600px;
+  }
+  
+  .logos-table th,
+  .logos-table td{
+    padding:8px;
+    font-size:12px;
+  }
+  
+  .logo-thumbnail{
+    width:60px;
+    height:45px;
+  }
+  
+  .action-btns{
+    flex-direction:column;
+  }
+  
+  .action-btn{
+    width:100%;
+    justify-content:center;
+  }
 }
 
 @media(max-width:420px){
@@ -337,6 +461,35 @@ body{
   .section{
     padding:14px;
   }
+  
+  .section-header{
+    font-size:13px;
+  }
+  
+  .logos-table{
+    min-width:550px;
+  }
+  
+  .logos-table th,
+  .logos-table td{
+    padding:6px;
+    font-size:11px;
+  }
+  
+  .logo-thumbnail{
+    width:50px;
+    height:38px;
+  }
+  
+  .action-btn{
+    padding:5px 8px;
+    font-size:11px;
+  }
+  
+  .status-badge{
+    font-size:10px;
+    padding:3px 8px;
+  }
 }
 </style>
 </head>
@@ -357,52 +510,48 @@ body{
   <div class="content">
     <div id="alertBox" class="alert"></div>
     
-    <!-- Current Logo Section -->
+    <!-- Upload New Logo Section -->
     <div class="section">
       <div class="section-header">
-        <i class="fas fa-image"></i>
-        <span>Current Logo</span>
-      </div>
-      
-      <div class="logo-preview-container" id="logoPreviewContainer">
-        <div class="no-logo-message" id="noLogoMessage">
-          <div>
-            <i class="fas fa-image"></i>
-          </div>
-          <p>No logo uploaded yet</p>
-          <p style="font-size:12px;margin-top:8px;">Upload a logo to display on prescriptions</p>
-        </div>
-        <img id="logoPreview" class="logo-preview" style="display:none;" src="" alt="Current Logo">
+        <i class="fas fa-upload"></i>
+        <span>Upload New Logo</span>
       </div>
       
       <div class="btn-group">
         <div class="file-input-wrapper">
           <button class="btn" onclick="document.getElementById('logoFileInput').click()">
-            <i class="fas fa-upload"></i> Upload New Logo
+            <i class="fas fa-upload"></i> Upload Logo
           </button>
           <input type="file" id="logoFileInput" accept="image/png,image/jpeg,image/jpg,image/gif" onchange="handleFileSelect(event)">
         </div>
-        
-        <button class="btn success" id="applyLogoBtn" style="display:none;" onclick="applyLogo()">
-          <i class="fas fa-check"></i> Apply Logo
-        </button>
-        
-        <button class="btn danger" id="deleteLogoBtn" style="display:none;" onclick="deleteLogo()">
-          <i class="fas fa-trash"></i> Delete Logo
-        </button>
       </div>
     </div>
     
-    <!-- Logo Guidelines -->
-    <div class="logo-info">
-      <h4><i class="fas fa-info-circle"></i> Logo Guidelines</h4>
-      <ul>
-        <li>Recommended size: 300x150 pixels or similar aspect ratio</li>
-        <li>Supported formats: PNG, JPG, JPEG, GIF</li>
-        <li>Maximum file size: 2MB</li>
-        <li>For best results, use a transparent PNG with your logo/clinic name</li>
-        <li>The logo will appear in the top-right corner of prescriptions</li>
-      </ul>
+    <!-- All Logos Table -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-images"></i>
+        <span>All Logos</span>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="logos-table" id="logosTable">
+          <thead>
+            <tr>
+              <th style="width:80px;">#</th>
+              <th>Logo Preview</th>
+              <th>Uploaded Date</th>
+              <th>Status</th>
+              <th style="width:200px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="logosTableBody">
+            <tr>
+              <td colspan="5" class="no-data">Loading logos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -422,9 +571,6 @@ if(!checkAuth()){
   throw new Error('Unauthorized access');
 }
 
-let currentLogoFile = null;
-let hasExistingLogo = false;
-
 function showAlert(message, type = 'info'){
   const alertBox = document.getElementById('alertBox');
   alertBox.textContent = message;
@@ -436,35 +582,101 @@ function showAlert(message, type = 'info'){
   }, 5000);
 }
 
-async function loadCurrentLogo(){
+function escapeHtml(text){
+  if(!text) return '-';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function formatDate(dateStr){
+  if(!dateStr) return '-';
+  const date = new Date(dateStr);
+  if(isNaN(date)) return dateStr;
+  return date.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+}
+
+async function loadAllLogos(){
   try{
     const client_id = localStorage.getItem('client_id');
     if(!client_id){
       console.warn('No client_id found');
+      const tbody = document.getElementById('logosTableBody');
+      tbody.innerHTML = '<tr><td colspan="5" class="no-data">No client ID found. Please log in again.</td></tr>';
       return;
     }
     
-    const res = await fetch(`dashboard.php?action=get_logo&client_id=${encodeURIComponent(client_id)}`);
+    const res = await fetch(`dashboard.php?action=list_logos&client_id=${encodeURIComponent(client_id)}`);
     const data = await res.json();
     
-    if(data.success && data.logo_url){
-      hasExistingLogo = true;
-      const logoPreview = document.getElementById('logoPreview');
-      const noLogoMessage = document.getElementById('noLogoMessage');
-      const logoPreviewContainer = document.getElementById('logoPreviewContainer');
-      const deleteLogoBtn = document.getElementById('deleteLogoBtn');
-      
-      logoPreview.src = data.logo_url;
-      logoPreview.style.display = 'block';
-      noLogoMessage.style.display = 'none';
-      logoPreviewContainer.classList.add('has-logo');
-      deleteLogoBtn.style.display = 'inline-flex';
+    const tbody = document.getElementById('logosTableBody');
+    tbody.innerHTML = '';
+    
+    if(data.success && data.logos && data.logos.length > 0){
+      data.logos.forEach((logo, index) => {
+        const tr = document.createElement('tr');
+        
+        // Number
+        const tdNum = document.createElement('td');
+        tdNum.textContent = index + 1;
+        
+        // Logo Preview
+        const tdPreview = document.createElement('td');
+        const img = document.createElement('img');
+        img.src = logo.logo_path;
+        img.alt = 'Logo';
+        img.className = 'logo-thumbnail';
+        tdPreview.appendChild(img);
+        
+        // Uploaded Date
+        const tdDate = document.createElement('td');
+        tdDate.textContent = formatDate(logo.uploaded_at);
+        
+        // Status
+        const tdStatus = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.className = 'status-badge ' + (logo.is_active == '1' ? 'active' : 'inactive');
+        statusBadge.textContent = logo.is_active == '1' ? 'Active' : 'Inactive';
+        tdStatus.appendChild(statusBadge);
+        
+        // Actions
+        const tdActions = document.createElement('td');
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'action-btns';
+        
+        // Apply button
+        const applyBtn = document.createElement('button');
+        applyBtn.className = 'action-btn apply';
+        applyBtn.innerHTML = '<i class="fas fa-check"></i> Apply';
+        applyBtn.disabled = logo.is_active == '1';
+        applyBtn.onclick = () => applyLogo(logo.id);
+        
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'action-btn delete';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+        deleteBtn.onclick = () => deleteLogo(logo.id);
+        
+        actionsDiv.appendChild(applyBtn);
+        actionsDiv.appendChild(deleteBtn);
+        tdActions.appendChild(actionsDiv);
+        
+        tr.appendChild(tdNum);
+        tr.appendChild(tdPreview);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdActions);
+        
+        tbody.appendChild(tr);
+      });
     } else {
-      hasExistingLogo = false;
+      tbody.innerHTML = '<tr><td colspan="5" class="no-data"><i class="fas fa-image" style="font-size:48px;margin-bottom:16px;color:#ccc;display:block;"></i>No logos uploaded yet. Upload a logo to get started.</td></tr>';
     }
   }catch(e){
-    console.error('Failed to load logo:', e);
-    showAlert('Failed to load current logo', 'error');
+    console.error('Failed to load logos:', e);
+    showAlert('Failed to load logos', 'error');
+    const tbody = document.getElementById('logosTableBody');
+    tbody.innerHTML = '<tr><td colspan="5" class="no-data">Error loading logos. Please refresh the page.</td></tr>';
   }
 }
 
@@ -476,56 +688,35 @@ function handleFileSelect(event){
   const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
   if(!validTypes.includes(file.type)){
     showAlert('Please select a valid image file (PNG, JPG, or GIF)', 'error');
+    event.target.value = '';
     return;
   }
   
   // Validate file size (2MB)
   if(file.size > 2 * 1024 * 1024){
     showAlert('File size must be less than 2MB', 'error');
+    event.target.value = '';
     return;
   }
   
-  currentLogoFile = file;
-  
-  // Preview the image
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const logoPreview = document.getElementById('logoPreview');
-    const noLogoMessage = document.getElementById('noLogoMessage');
-    const logoPreviewContainer = document.getElementById('logoPreviewContainer');
-    const applyLogoBtn = document.getElementById('applyLogoBtn');
-    
-    logoPreview.src = e.target.result;
-    logoPreview.style.display = 'block';
-    noLogoMessage.style.display = 'none';
-    logoPreviewContainer.classList.add('has-logo');
-    applyLogoBtn.style.display = 'inline-flex';
-    
-    showAlert('Logo selected. Click "Apply Logo" to save it.', 'info');
-  };
-  reader.readAsDataURL(file);
+  // Upload immediately
+  uploadLogo(file);
+  event.target.value = '';
 }
 
-async function applyLogo(){
-  if(!currentLogoFile){
-    showAlert('Please select a logo file first', 'error');
-    return;
-  }
-  
+async function uploadLogo(file){
   const client_id = localStorage.getItem('client_id');
   if(!client_id){
     showAlert('Client ID not found. Please log in again.', 'error');
     return;
   }
   
-  const applyLogoBtn = document.getElementById('applyLogoBtn');
-  applyLogoBtn.disabled = true;
-  applyLogoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Applying...';
+  showAlert('Uploading logo...', 'info');
   
   try{
     const formData = new FormData();
     formData.append('client_id', client_id);
-    formData.append('logo', currentLogoFile);
+    formData.append('logo', file);
     formData.append('action', 'upload_logo');
     
     const res = await fetch('dashboard.php', {
@@ -536,31 +727,20 @@ async function applyLogo(){
     const data = await res.json();
     
     if(data.success){
-      showAlert('Logo applied successfully!', 'success');
-      currentLogoFile = null;
-      applyLogoBtn.style.display = 'none';
-      document.getElementById('deleteLogoBtn').style.display = 'inline-flex';
-      hasExistingLogo = true;
-      
-      // Reload to show the saved logo
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      showAlert('Logo uploaded successfully!', 'success');
+      // Reload logos table
+      await loadAllLogos();
     } else {
-      showAlert(data.message || 'Failed to apply logo', 'error');
-      applyLogoBtn.disabled = false;
-      applyLogoBtn.innerHTML = '<i class="fas fa-check"></i> Apply Logo';
+      showAlert(data.message || 'Failed to upload logo', 'error');
     }
   }catch(e){
-    console.error('Failed to apply logo:', e);
-    showAlert('Failed to apply logo. Please try again.', 'error');
-    applyLogoBtn.disabled = false;
-    applyLogoBtn.innerHTML = '<i class="fas fa-check"></i> Apply Logo';
+    console.error('Failed to upload logo:', e);
+    showAlert('Failed to upload logo. Please try again.', 'error');
   }
 }
 
-async function deleteLogo(){
-  if(!confirm('Are you sure you want to delete the logo? It will be removed from all prescriptions.')){
+async function applyLogo(logoId){
+  if(!confirm('Set this logo as active? It will appear on all prescriptions.')){
     return;
   }
   
@@ -570,50 +750,64 @@ async function deleteLogo(){
     return;
   }
   
-  const deleteLogoBtn = document.getElementById('deleteLogoBtn');
-  deleteLogoBtn.disabled = true;
-  deleteLogoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+  try{
+    const res = await fetch('dashboard.php?action=apply_logo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ client_id, logo_id: logoId })
+    });
+    
+    const data = await res.json();
+    
+    if(data.success){
+      showAlert('Logo applied successfully!', 'success');
+      // Reload logos table
+      await loadAllLogos();
+    } else {
+      showAlert(data.message || 'Failed to apply logo', 'error');
+    }
+  }catch(e){
+    console.error('Failed to apply logo:', e);
+    showAlert('Failed to apply logo. Please try again.', 'error');
+  }
+}
+
+async function deleteLogo(logoId){
+  if(!confirm('Are you sure you want to delete this logo? This action cannot be undone.')){
+    return;
+  }
+  
+  const client_id = localStorage.getItem('client_id');
+  if(!client_id){
+    showAlert('Client ID not found. Please log in again.', 'error');
+    return;
+  }
   
   try{
     const res = await fetch('dashboard.php?action=delete_logo', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ client_id })
+      body: JSON.stringify({ client_id, logo_id: logoId })
     });
     
     const data = await res.json();
     
     if(data.success){
       showAlert('Logo deleted successfully!', 'success');
-      
-      // Reset UI
-      const logoPreview = document.getElementById('logoPreview');
-      const noLogoMessage = document.getElementById('noLogoMessage');
-      const logoPreviewContainer = document.getElementById('logoPreviewContainer');
-      
-      logoPreview.style.display = 'none';
-      logoPreview.src = '';
-      noLogoMessage.style.display = 'block';
-      logoPreviewContainer.classList.remove('has-logo');
-      deleteLogoBtn.style.display = 'none';
-      hasExistingLogo = false;
-      currentLogoFile = null;
+      // Reload logos table
+      await loadAllLogos();
     } else {
       showAlert(data.message || 'Failed to delete logo', 'error');
-      deleteLogoBtn.disabled = false;
-      deleteLogoBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Logo';
     }
   }catch(e){
     console.error('Failed to delete logo:', e);
     showAlert('Failed to delete logo. Please try again.', 'error');
-    deleteLogoBtn.disabled = false;
-    deleteLogoBtn.innerHTML = '<i class="fas fa-trash"></i> Delete Logo';
   }
 }
 
-// Load current logo on page load
+// Load logos on page load
 document.addEventListener('DOMContentLoaded', () => {
-  loadCurrentLogo();
+  loadAllLogos();
 });
 </script>
 <script src="../header/header.js"></script>
