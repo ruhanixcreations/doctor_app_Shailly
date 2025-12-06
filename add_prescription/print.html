@@ -64,6 +64,14 @@ body{
   border-bottom:3px solid #00A9A5;
   padding:25px 35px 20px;
   background:#fafafa;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+}
+
+.doctor-info{
+  flex:1;
 }
 
 .doctor-name{
@@ -72,7 +80,6 @@ body{
   color:#1a1a1a;
   margin-bottom:4px;
 }
-
 
 .doctor-contact{
   display:flex;
@@ -84,6 +91,24 @@ body{
 
 .doctor-contact span{
   display:inline-block;
+}
+
+.clinic-logo{
+  flex-shrink:0;
+  max-width:150px;
+  max-height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.clinic-logo img{
+  max-width:100%;
+  max-height:100px;
+  height:auto;
+  width:auto;
+  object-fit:contain;
+  border-radius:8px;
 }
 
 /* Patient Info Bar */
@@ -298,6 +323,17 @@ body{
     background:white;
     -webkit-print-color-adjust:exact;
     print-color-adjust:exact;
+    display:flex;
+    justify-content:space-between;
+  }
+  
+  .clinic-logo{
+    max-width:120px;
+    max-height:80px;
+  }
+  
+  .clinic-logo img{
+    max-height:80px;
   }
   
   .patient-bar{
@@ -365,6 +401,18 @@ body{
   
   .doctor-header{
     padding:20px 20px 16px;
+    flex-direction:column;
+    gap:16px;
+  }
+  
+  .clinic-logo{
+    max-width:120px;
+    max-height:80px;
+    align-self:flex-end;
+  }
+  
+  .clinic-logo img{
+    max-height:80px;
   }
   
   .doctor-name{
@@ -445,6 +493,15 @@ body{
     padding:16px 16px 12px;
   }
   
+  .clinic-logo{
+    max-width:100px;
+    max-height:60px;
+  }
+  
+  .clinic-logo img{
+    max-height:60px;
+  }
+  
   .patient-bar{
     padding:12px 16px;
   }
@@ -487,11 +544,16 @@ body{
 <div id="prescription" class="prescription-page">
   <!-- DOCTOR HEADER -->
   <div class="doctor-header">
-    <div class="doctor-name" id="doctorName">Loading...</div>
-    <div class="doctor-contact">
-      <span id="doctorMobile">Phone: <span id="docMobile">-</span></span>
-      <span>|</span>
-      <span id="doctorEmail">Email: <span id="docEmail">-</span></span>
+    <div class="doctor-info">
+      <div class="doctor-name" id="doctorName">Loading...</div>
+      <div class="doctor-contact">
+        <span id="doctorMobile">Phone: <span id="docMobile">-</span></span>
+        <span>|</span>
+        <span id="doctorEmail">Email: <span id="docEmail">-</span></span>
+      </div>
+    </div>
+    <div class="clinic-logo" id="clinicLogo" style="display:none;">
+      <img id="clinicLogoImg" src="" alt="Clinic Logo">
     </div>
   </div>
 
@@ -608,11 +670,33 @@ function formatDate(dateStr){
   return date.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
 }
 
+async function loadClinicLogo(){
+  try{
+    const currentClientId = localStorage.getItem('client_id');
+    if(!currentClientId) return;
+    
+    const res = await fetch(`../dashboard/dashboard.php?action=get_logo&client_id=${encodeURIComponent(currentClientId)}`);
+    const data = await res.json();
+    
+    if(data.success && data.logo_url){
+      const clinicLogoDiv = document.getElementById('clinicLogo');
+      const clinicLogoImg = document.getElementById('clinicLogoImg');
+      clinicLogoImg.src = data.logo_url;
+      clinicLogoDiv.style.display = 'flex';
+    }
+  }catch(e){
+    console.error('Failed to load clinic logo:', e);
+  }
+}
+
 async function loadPrescription(){
   if(!patientId){
     alert('Patient ID is required');
     return;
   }
+  
+  // Load clinic logo
+  await loadClinicLogo();
 
   // Step 1: Get client_id from localStorage (set in add_prescription page)
   const currentClientId = localStorage.getItem('client_id');
