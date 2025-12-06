@@ -1,0 +1,1518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Patient History</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Select2 CSS for searchable dropdown -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+  --section-header:#183159;
+  --container-max:1200px;
+  --compact-gap:16px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;min-height:100vh}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* main container */
+.container{
+  width:100%;
+  max-width:var(--container-max);
+  margin:0 auto;
+  padding:0;
+  background:var(--bg-white);
+  min-height:100vh;
+}
+
+/* header section */
+.header{
+  background:linear-gradient(135deg,#00A9A5 0%,#1a75bb 100%);
+  padding:20px 30px;
+  color:white;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.header h1{
+  font-size:24px;
+  font-weight:600;
+  margin:0;
+  letter-spacing:0.3px;
+}
+.header .subtitle{
+  font-size:13px;
+  opacity:0.9;
+  margin-top:4px;
+}
+
+/* content area */
+.content{
+  padding:24px 30px;
+}
+
+/* section styling */
+.section{
+  background:var(--bg-white);
+  border:1px solid var(--border-light);
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.section-header{
+  font-size:16px;
+  font-weight:700;
+  color:var(--section-header);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.section-header i{
+  color:var(--primary-teal);
+  font-size:18px;
+}
+
+/* patient info card */
+.patient-info-card{
+  background:linear-gradient(to right,#f8f9fa,#ffffff);
+  border-left:4px solid var(--primary-teal);
+  padding:16px;
+  border-radius:6px;
+  margin-bottom:20px;
+}
+.patient-name{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:8px;
+  border-bottom:2px solid #dc3545;
+  padding-bottom:4px;
+  display:inline-block;
+}
+.patient-details{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+  margin-top:12px;
+  font-size:14px;
+}
+.patient-detail-item{
+  display:flex;
+  flex-direction:column;
+}
+.patient-detail-label{
+  font-size:11px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  font-weight:600;
+  letter-spacing:0.5px;
+  margin-bottom:2px;
+}
+.patient-detail-value{
+  font-weight:600;
+  color:var(--text-dark);
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+  word-break:break-word;
+}
+
+/* select dropdown */
+.small{font-size:13px;color:var(--text-muted);display:block;font-weight:600;margin-bottom:6px}
+select{
+  width:100%;padding:12px 14px;border-radius:6px;border:1px solid var(--border-light);
+  background:var(--bg-white);font-size:14px;outline:none;
+  transition:all 0.2s ease;
+}
+select:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+
+/* Select2 Custom Styling */
+.select2-container--default .select2-selection--single{
+  height:48px;
+  border:1px solid var(--border-light);
+  border-radius:6px;
+  padding:8px 14px;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+  line-height:30px;
+  padding-left:0;
+  color:var(--text-dark);
+  font-size:14px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+  height:46px;
+  right:8px;
+}
+.select2-container--default.select2-container--focus .select2-selection--single{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+}
+.select2-dropdown{
+  border:1px solid var(--border-light);
+  border-radius:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected]{
+  background-color:var(--primary-teal);
+}
+.select2-search--dropdown .select2-search__field{
+  border:1px solid var(--border-light);
+  border-radius:4px;
+  padding:8px 12px;
+  font-size:14px;
+}
+.select2-search--dropdown .select2-search__field:focus{
+  border-color:var(--primary-teal);
+  outline:none;
+}
+
+/* appointment cards grid */
+.appointments-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  margin-top:12px;
+}
+
+.appointment-card{
+  background:var(--bg-light);
+  border-radius:8px;
+  padding:16px;
+  border:1px solid var(--border-light);
+}
+
+.appointment-card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.appointment-card-title{
+  font-weight:700;
+  font-size:15px;
+  color:var(--text-dark);
+}
+
+.count-badge{
+  background:var(--primary-teal);
+  color:white;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:700;
+}
+
+/* timeline */
+.timeline-list{
+  list-style:none;
+  margin:0;
+  padding-left:16px;
+  border-left:2px solid var(--border-light);
+}
+
+.timeline-item{
+  margin-bottom:16px;
+  position:relative;
+  padding-left:16px;
+}
+
+.timeline-item:last-child{
+  margin-bottom:0;
+}
+
+.timeline-item::before{
+  content:'';
+  position:absolute;
+  left:-22px;
+  top:6px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--primary-teal);
+  box-shadow:0 0 0 4px rgba(0,169,165,0.15);
+}
+
+.timeline-meta{
+  font-weight:600;
+  color:var(--text-dark);
+  font-size:14px;
+  margin-bottom:6px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+}
+
+.timeline-meta span + span::before{
+  content:'|';
+  color:var(--text-muted);
+  margin:0 6px;
+  font-weight:400;
+}
+
+.timeline-notes{
+  margin:4px 0 0;
+  color:var(--text-muted);
+  line-height:1.5;
+  font-size:13px;
+}
+
+.empty-state{
+  padding:16px;
+  border:1px dashed var(--border-light);
+  border-radius:6px;
+  background:var(--bg-light);
+  color:var(--text-muted);
+  text-align:center;
+  font-size:14px;
+}
+
+/* reports table */
+.table-wrapper{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  margin-top:12px;
+}
+
+table{
+  width:100%;
+  min-width:600px;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+thead{
+  background:var(--bg-light);
+}
+
+th{
+  padding:12px 10px;
+  text-align:left;
+  font-weight:700;
+  color:var(--text-dark);
+  border-bottom:2px solid var(--border-light);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+td{
+  padding:12px 10px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:middle;
+  color:var(--text-dark);
+}
+
+tbody tr:hover{
+  background:rgba(0,169,165,0.03);
+}
+
+tbody tr:last-child td{
+  border-bottom:none;
+}
+
+/* buttons */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:8px 16px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  font-size:13px;
+  transition:all 0.2s ease;
+  text-decoration:none;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-view{
+  background:var(--primary-teal);
+  color:white;
+  box-shadow:0 2px 4px rgba(0,169,165,0.2);
+  padding:6px 12px;
+  font-size:12px;
+}
+
+.btn-view:hover{
+  box-shadow:0 4px 8px rgba(0,169,165,0.3);
+}
+
+.btn-view i{
+  font-size:11px;
+}
+
+.btn-open{
+  background:transparent;
+  color:var(--primary-blue);
+  border:1px solid var(--primary-blue);
+  padding:6px 12px;
+  font-size:12px;
+}
+
+.btn-open:hover{
+  background:rgba(26,117,187,0.05);
+}
+
+.btn-close{
+  background:var(--bg-light);
+  color:var(--text-dark);
+  border:1px solid var(--border-light);
+  padding:6px 12px;
+  font-size:12px;
+}
+
+.btn-close:hover{
+  background:#e0e0e0;
+}
+
+.btn-download{
+  background:transparent;
+  color:var(--primary-teal);
+  border:1px solid var(--primary-teal);
+  padding:6px 12px;
+  font-size:12px;
+}
+
+.btn-download:hover{
+  background:rgba(0,169,165,0.05);
+}
+
+/* report actions */
+.report-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.report-actions .btn{
+  padding:10px 18px;
+  font-size:14px;
+  border-radius:8px;
+  font-weight:600;
+  transition:all 0.2s ease;
+}
+
+.report-actions .btn-download{
+  background:white;
+  color:var(--primary-teal);
+  border:2px solid white;
+}
+
+.report-actions .btn-download:hover{
+  background:rgba(255,255,255,0.9);
+  transform:translateY(-1px);
+}
+
+.report-actions .btn-close{
+  background:rgba(255,255,255,0.15);
+  color:white;
+  border:2px solid rgba(255,255,255,0.3);
+}
+
+.report-actions .btn-close:hover{
+  background:rgba(255,255,255,0.25);
+  border-color:rgba(255,255,255,0.5);
+  transform:translateY(-1px);
+}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s ease;
+  backdrop-filter:blur(4px);
+}
+
+.modal-overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal{
+  width:100%;
+  max-width:650px;
+  height:70vh;
+  max-height:550px;
+  background:var(--bg-white);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  transform:scale(0.95);
+  transition:transform 0.3s ease;
+}
+
+.modal-overlay.open .modal{
+  transform:scale(1);
+}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px;
+  border-bottom:1px solid var(--border-light);
+  background:linear-gradient(135deg, var(--primary-teal), var(--primary-blue));
+  color:white;
+}
+
+.modal-title{
+  font-weight:700;
+  font-size:16px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.modal-title i{
+  font-size:18px;
+}
+
+.modal-body{
+  flex:1 1 auto;
+  overflow:hidden;
+  background:#f5f5f5;
+  position:relative;
+}
+
+.modal-body iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  background:white;
+}
+
+/* quick info placeholder */
+#quickInfo{
+  padding:12px 16px;
+  background:var(--bg-light);
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  color:var(--text-muted);
+  font-size:14px;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .patient-details{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .patient-details{
+    grid-template-columns:repeat(2,1fr);
+  }
+  
+  .appointments-grid{
+    grid-template-columns:1fr;
+  }
+  
+  .modal{
+    max-width:600px;
+    height:70vh;
+    max-height:500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header{
+    padding:16px 20px;
+  }
+  
+  .header h1{
+    font-size:20px;
+  }
+  
+  .content{
+    padding:16px;
+  }
+  
+  .section{
+    padding:16px;
+  }
+  
+  .patient-details{
+    grid-template-columns:1fr;
+  }
+  
+  .report-actions{
+    flex-direction:row;
+    width:100%;
+  }
+  
+  .report-actions .btn{
+    flex:1;
+  }
+  
+  .table-wrapper{
+    margin-left:-16px;
+    margin-right:-16px;
+    padding-left:16px;
+    padding-right:16px;
+    border:none;
+    border-top:1px solid var(--border-light);
+    border-bottom:1px solid var(--border-light);
+  }
+  
+  table{
+    font-size:12px;
+    min-width:700px;
+  }
+  
+  th,td{
+    padding:8px 6px;
+    font-size:11px;
+  }
+  
+  .btn{
+    padding:6px 12px;
+    font-size:12px;
+  }
+  
+  .modal{
+    max-width:100%;
+    height:75vh;
+    max-height:600px;
+    border-radius:12px;
+  }
+  
+  .modal-header{
+    padding:14px 16px;
+  }
+  
+  .modal-title{
+    font-size:15px;
+  }
+  
+  .modal-title i{
+    font-size:16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header{
+    padding:12px 16px;
+  }
+  
+  .header h1{
+    font-size:18px;
+  }
+  
+  .content{
+    padding:12px;
+  }
+  
+  .section{
+    padding:12px;
+  }
+  
+  .table-wrapper{
+    margin-left:-12px;
+    margin-right:-12px;
+    padding-left:12px;
+    padding-right:12px;
+  }
+  
+  table{
+    min-width:750px;
+    font-size:11px;
+  }
+  
+  th,td{
+    padding:6px 4px;
+    font-size:10px;
+  }
+  
+  .btn{
+    padding:5px 10px;
+    font-size:11px;
+    gap:4px;
+  }
+  
+  .btn i{
+    font-size:10px;
+  }
+  
+  .modal{
+    height:80vh;
+    max-height:500px;
+    border-radius:8px;
+  }
+  
+  .modal-header{
+    padding:12px 14px;
+    flex-wrap:wrap;
+  }
+  
+  .modal-title{
+    font-size:14px;
+    width:100%;
+    margin-bottom:8px;
+  }
+  
+  .modal-title i{
+    font-size:14px;
+  }
+  
+  .report-actions{
+    width:100%;
+    flex-direction:column;
+    gap:8px;
+  }
+  
+  .report-actions .btn{
+    width:100%;
+    justify-content:center;
+  }
+}
+
+/* Loading state */
+.loading{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--text-muted);
+}
+
+.loading i{
+  font-size:32px;
+  color:var(--primary-teal);
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+</style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+<main class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1><i class="fas fa-history"></i> Patient History</h1>
+    <div class="subtitle">View and manage patient records and appointments</div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+    <!-- PATIENT SELECTION SECTION -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-user-circle"></i>
+        <span>Select Patient</span>
+      </div>
+      
+      <div style="margin-bottom:16px;">
+        <label class="small">Choose a patient to view their history</label>
+        <select id="patientSelect">
+          <option value="">Loading patients...</option>
+        </select>
+      </div>
+
+      <!-- Quick Info -->
+      <div id="quickInfo">Select a patient to view details</div>
+    </div>
+
+    <!-- PATIENT DETAILS AREA -->
+    <div id="detailsArea" style="display:none;">
+      <!-- PATIENT INFO CARD -->
+      <div id="patientInfoCard" style="display:none;">
+        <div class="patient-info-card">
+          <div class="patient-name">
+            <i class="fas fa-user"></i> Patient Name - <span id="pdName">-</span>
+          </div>
+          <div class="patient-details">
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Patient ID</span>
+              <span class="patient-detail-value" id="pdId">-</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Mobile Number</span>
+              <span class="patient-detail-value" id="pdMobile">-</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Age</span>
+              <span class="patient-detail-value"><span id="pdAge">-</span> yrs</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Weight</span>
+              <span class="patient-detail-value"><span id="pdWeight">-</span> kg</span>
+            </div>
+            <div class="patient-detail-item">
+              <span class="patient-detail-label">Doctor</span>
+              <span class="patient-detail-value" id="pdDoctor">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPOINTMENTS SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Appointments History</span>
+          <span id="appointmentsCount" class="count-badge" style="margin-left:auto">0</span>
+        </div>
+        
+        <div class="appointments-grid">
+          <!-- Upcoming Appointments -->
+          <div class="appointment-card">
+            <div class="appointment-card-header">
+              <span class="appointment-card-title">
+                <i class="fas fa-clock"></i> Upcoming
+              </span>
+              <span id="appointmentsUpcomingCount" class="count-badge">0</span>
+            </div>
+            <div id="appointmentsUpcomingEmpty" class="empty-state">No upcoming appointments</div>
+            <ul id="appointmentsUpcomingTimeline" class="timeline-list"></ul>
+          </div>
+
+          <!-- Past Appointments -->
+          <div class="appointment-card">
+            <div class="appointment-card-header">
+              <span class="appointment-card-title">
+                <i class="fas fa-check-circle"></i> Completed
+              </span>
+              <span id="appointmentsPastCount" class="count-badge">0</span>
+            </div>
+            <div id="appointmentsPastEmpty" class="empty-state">No completed appointments</div>
+            <ul id="appointmentsPastTimeline" class="timeline-list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRESCRIPTION HISTORY SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <span>Prescription History</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Prescription Date</th>
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Mobile</th>
+                <th>View Prescription</th>
+                <th>Blood Report</th>
+              </tr>
+            </thead>
+            <tbody id="prescriptionTable">
+              <tr>
+                <td colspan="6" class="empty-state">No prescriptions found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- REPORTS SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <i class="fas fa-file-medical"></i>
+          <span>Previous Doctor Reports</span>
+        </div>
+        
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Patient ID</th>
+                <th>Patient Name</th>
+                <th>Mobile</th>
+                <th>View Prescription</th>
+                <th>Blood Report</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTable">
+              <tr>
+                <td colspan="6" class="empty-state">No reports uploaded</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- PDF Viewer Modal -->
+<div id="pdfModal" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">
+        <i class="fas fa-file-pdf"></i>
+        <span>Report Preview</span>
+      </div>
+      <div class="report-actions">
+        <a id="pdfDownload" class="btn btn-download" href="#" target="_blank" download>
+          <i class="fas fa-download"></i> Download
+        </a>
+        <button id="closeModal" class="btn btn-close">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <iframe id="pdfFrame" src="" title="PDF preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
+
+// Run auth check immediately
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+/* Helper function */
+function escapeHtml(s){ 
+  if(!s) return ''; 
+  return s.toString().replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
+}
+
+/* Load patients list */
+async function loadPatients(){
+  const sel = document.getElementById('patientSelect');
+  sel.innerHTML = '<option value="">Loading patients...</option>';
+  try{
+    const res = await fetch('patient_history.php?action=list');
+    const j = await res.json();
+    if(!j.success) throw new Error(j.message||'Failed');
+    sel.innerHTML = '<option value="">-- Select a patient --</option>';
+    j.patients.forEach(p=>{
+      const opt = document.createElement('option');
+      opt.value = p.patient_id;
+      opt.textContent = `${p.patient_name} — ${p.patient_id}`;
+      sel.appendChild(opt);
+    });
+  }catch(e){
+    sel.innerHTML = '<option value="">Failed to load patients</option>';
+    console.error(e);
+  }
+}
+
+/* Parse time to minutes for comparison */
+function parseTimeToMinutes(raw){
+  if(!raw) return null;
+  const str = raw.trim();
+  if(!str) return null;
+  const ampm = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s?(AM|PM)$/i);
+  if(ampm){
+    let hours = parseInt(ampm[1],10);
+    const minutes = parseInt(ampm[2],10);
+    const meridian = ampm[4].toUpperCase();
+    if(hours === 12) hours = 0;
+    if(meridian === 'PM') hours += 12;
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  const twentyFour = str.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+  if(twentyFour){
+    const hours = parseInt(twentyFour[1],10);
+    const minutes = parseInt(twentyFour[2],10);
+    if(isNaN(hours) || isNaN(minutes)) return null;
+    return hours*60 + minutes;
+  }
+  return null;
+}
+
+/* Create timeline item */
+function createTimelineItem(appt){
+  const li = document.createElement('li');
+  li.className = 'timeline-item';
+  const dateLabel = escapeHtml(appt.date || '—');
+  const timeLabel = appt.time ? escapeHtml(appt.time) : '';
+  const doctorLabel = escapeHtml(appt.doctor || 'Doctor');
+  const metaParts = [`<span>${dateLabel}</span>`];
+  if(timeLabel) metaParts.push(`<span>${timeLabel}</span>`);
+  metaParts.push(`<span>${doctorLabel}</span>`);
+  const notesText = escapeHtml(appt.notes || 'No notes recorded.');
+  li.innerHTML = `
+    <div class="timeline-meta">${metaParts.join('')}</div>
+    <p class="timeline-notes">${notesText}</p>
+  `;
+  return li;
+}
+
+/* Render appointments */
+function renderAppointments(list, patientName){
+  const countEl = document.getElementById('appointmentsCount');
+  const upcomingCountEl = document.getElementById('appointmentsUpcomingCount');
+  const pastCountEl = document.getElementById('appointmentsPastCount');
+  const upcomingEmpty = document.getElementById('appointmentsUpcomingEmpty');
+  const pastEmpty = document.getElementById('appointmentsPastEmpty');
+  const upcomingTimeline = document.getElementById('appointmentsUpcomingTimeline');
+  const pastTimeline = document.getElementById('appointmentsPastTimeline');
+
+  upcomingTimeline.innerHTML = '';
+  pastTimeline.innerHTML = '';
+
+  const total = Array.isArray(list) ? list.length : 0;
+
+  if(!patientName){
+    countEl.textContent = '0';
+    upcomingCountEl.textContent = '0';
+    pastCountEl.textContent = '0';
+    upcomingEmpty.style.display = 'block';
+    pastEmpty.style.display = 'block';
+    upcomingEmpty.textContent = 'Select a patient to see their upcoming appointments';
+    pastEmpty.textContent = 'Select a patient to see completed appointments';
+    return;
+  }
+
+  countEl.textContent = total.toString();
+
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  const currentMinutes = today.getHours() * 60 + today.getMinutes();
+
+  const upcoming = [];
+  const past = [];
+
+  list.forEach(appt=>{
+    const dateStr = (appt.date || '').toString().slice(0,10);
+    let bucket = upcoming;
+    
+    // Priority 1: Check if appointment has an associated prescription
+    // If a prescription was created around the appointment date, consider it completed
+    // This includes first visits where prescription was added
+    if(appt.has_prescription && appt.has_prescription > 0){
+      bucket = past;
+    }
+    // Priority 2: Check date/time to determine if appointment is in the past
+    else if(dateStr){
+      if(dateStr < todayStr){
+        bucket = past;
+      } else if(dateStr === todayStr){
+        const apptMinutes = parseTimeToMinutes(appt.time);
+        if(apptMinutes !== null && apptMinutes < currentMinutes){
+          bucket = past;
+        }
+      }
+    }
+    bucket.push(appt);
+  });
+
+  upcomingCountEl.textContent = upcoming.length.toString();
+  pastCountEl.textContent = past.length.toString();
+
+  if(!upcoming.length){
+    upcomingEmpty.style.display = 'block';
+    upcomingEmpty.textContent = `No upcoming appointments for ${patientName}`;
+  } else {
+    upcomingEmpty.style.display = 'none';
+    upcoming.forEach(appt=> upcomingTimeline.appendChild(createTimelineItem(appt)));
+  }
+
+  if(!past.length){
+    pastEmpty.style.display = 'block';
+    pastEmpty.textContent = `No completed appointments for ${patientName}`;
+  } else {
+    pastEmpty.style.display = 'none';
+    past.forEach(appt=> pastTimeline.appendChild(createTimelineItem(appt)));
+  }
+}
+
+/* Render prescriptions table */
+function renderPrescriptions(prescriptions, patientData){
+  const tbody = document.getElementById('prescriptionTable');
+  tbody.innerHTML = '';
+  
+  if(!prescriptions || prescriptions.length === 0){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No prescriptions found</td></tr>';
+    return;
+  }
+  
+  prescriptions.forEach(pres=>{
+    const tr = document.createElement('tr');
+    
+    // Format date
+    const presDate = pres.prescription_date ? new Date(pres.prescription_date).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '-';
+    
+    // Patient info
+    const patientId = patientData.patient_id || '-';
+    const patientName = patientData.patient_name || '-';
+    const mobile = patientData.mobile || '-';
+    
+    // Prescription button
+    const prescriptionId = pres.prescription_id;
+    const viewPrescriptionBtn = `<button type="button" class="btn btn-view" onclick="openPrescription('${prescriptionId}', '${patientId}')">
+      <i class="fas fa-file-medical"></i> View
+    </button>`;
+    
+    // Blood report button - different for doctor vs receptionist
+    const userRole = localStorage.getItem('role') || 'user';
+    let viewBloodReportBtn = '';
+    
+    if(userRole === 'receptionalist'){
+      // Receptionist: Check if blood report exists for this prescription
+      const reportForPrescription = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
+      
+      if(reportForPrescription){
+        // Report exists - show View and Delete buttons, disable Upload
+        viewBloodReportBtn = `
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}', '${prescriptionId}')" style="background:#28a745;">
+              <i class="fas fa-eye"></i> View Report
+            </button>
+            <button type="button" class="btn btn-view" onclick="deleteBloodReport('${patientId}', '${prescriptionId}', ${reportForPrescription.id})" style="background:#dc3545;">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        `;
+      } else {
+        // No report - show Upload button (enabled)
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
+          <i class="fas fa-upload"></i> Upload Report
+        </button>`;
+      }
+    } else {
+      // Doctor: Show View button if blood report exists for this prescription
+      const reportForPrescription = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
+      if(reportForPrescription){
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}', '${prescriptionId}')">
+          <i class="fas fa-vial"></i> View
+        </button>`;
+      } else {
+        viewBloodReportBtn = '<span style="color:var(--text-muted);font-size:12px">No report</span>';
+      }
+    }
+    
+    tr.innerHTML = `
+      <td>${escapeHtml(presDate)}</td>
+      <td>${escapeHtml(patientId)}</td>
+      <td><strong>${escapeHtml(patientName)}</strong></td>
+      <td>${escapeHtml(mobile)}</td>
+      <td>${viewPrescriptionBtn}</td>
+      <td>${viewBloodReportBtn}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Open prescription in print page */
+function openPrescription(prescriptionId, patientId){
+  if(!prescriptionId || !patientId) return;
+  // Save current patient selection before opening print
+  const currentPatientId = document.getElementById('patientSelect').value;
+  if(currentPatientId){
+    sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
+  }
+  // print.html is in add_prescription folder (go up one level then into add_prescription)
+  const url = `../add_prescription/print.html?prescription_id=${encodeURIComponent(prescriptionId)}&patient_id=${encodeURIComponent(patientId)}`;
+  window.open(url, '_blank');
+}
+
+/* Open blood report */
+let cachedBloodReports = [];
+let cachedUploadedReports = [];
+
+function openBloodReport(patientId, prescriptionId){
+  // Find the blood report for this specific prescription
+  if(cachedBloodReports.length === 0){
+    alert('No blood reports uploaded for this patient');
+    return;
+  }
+  
+  // Find report matching the prescription ID
+  const report = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
+  
+  if(report && report.file_path){
+    openPdfModal(report.file_path, report.file_name || 'Blood Report');
+  } else {
+    alert('No blood report found for this prescription');
+  }
+}
+
+/* Upload blood report (for receptionists) */
+function uploadBloodReport(patientId, patientName, prescriptionId){
+  if(!patientId){
+    alert('Invalid patient ID');
+    return;
+  }
+  // Save current patient selection before navigating
+  const currentPatientId = document.getElementById('patientSelect').value;
+  if(currentPatientId){
+    sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
+  }
+  // Redirect to upload page with patient details
+  const url = `../patient_history/upload_blood_report.html?patient_id=${encodeURIComponent(patientId)}&patient_name=${encodeURIComponent(patientName)}&prescription_id=${encodeURIComponent(prescriptionId)}`;
+  window.location.href = url;
+}
+
+/* Delete blood report (for receptionists) */
+async function deleteBloodReport(patientId, prescriptionId, reportId){
+  if(!reportId){
+    alert('Invalid report ID');
+    return;
+  }
+  
+  // Confirm deletion
+  const confirmDelete = confirm('Are you sure you want to delete this blood report? This action cannot be undone.');
+  if(!confirmDelete){
+    return;
+  }
+  
+  try{
+    const res = await fetch('upload_blood_report.php', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        report_id: reportId,
+        patient_id: patientId,
+        prescription_id: prescriptionId
+      })
+    });
+    
+    const json = await res.json();
+    
+    if(json.success){
+      alert('Blood report deleted successfully!');
+      // Reload patient details to refresh the table
+      const currentPatientId = document.getElementById('patientSelect').value;
+      if(currentPatientId){
+        await loadDetails(currentPatientId);
+      }
+    } else {
+      alert('Failed to delete report: ' + (json.message || 'Unknown error'));
+    }
+  }catch(err){
+    console.error('Delete error:', err);
+    alert('Error deleting report: ' + err.message);
+  }
+}
+
+
+/* Render reports table (only uploaded reports from add_new_patient, not blood reports) */
+function renderReports(reports, patientData, previousPrescription, previousBloodTest){
+  const tbody = document.getElementById('reportsTable');
+  tbody.innerHTML = '';
+  
+  const hasReports = reports && reports.length > 0;
+  const hasPrevPrescription = previousPrescription && previousPrescription !== null;
+  const hasPrevBloodTest = previousBloodTest && previousBloodTest !== null;
+  
+  if(!hasReports && !hasPrevPrescription && !hasPrevBloodTest){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted)">No reports uploaded</td></tr>';
+    return;
+  }
+  
+  // Patient info
+  const patientId = patientData?.patient_id || '-';
+  const patientName = patientData?.patient_name || '-';
+  const mobile = patientData?.mobile || '-';
+  
+  // Create a single row showing all information
+  const tr = document.createElement('tr');
+  
+  // Get upload date from patient created_at
+  let uploadDate = '-';
+  
+  if(patientData?.created_at){
+    uploadDate = new Date(patientData.created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  } else if(hasReports && reports[0]?.created_at){
+    uploadDate = new Date(reports[0].created_at).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  } else if(hasReports && reports[0]?.file_name){
+    const match = reports[0].file_name.match(/(\d{13})/);
+    if(match){
+      const timestamp = parseInt(match[1]);
+      uploadDate = new Date(timestamp).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+    }
+  }
+  
+  // Previous Prescription column
+  let prescriptionHtml = '<span style="color:var(--text-muted)">-</span>';
+  if(hasPrevPrescription){
+    const fileName = previousPrescription.split('/').pop();
+    prescriptionHtml = `
+      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousPrescription)}', '${escapeHtml(fileName)}')">
+        <i class="fas fa-prescription"></i> View
+      </button>
+    `;
+  }
+  
+  // Previous Blood Test column - just view the uploaded file from add_new_patient
+  let bloodTestHtml = '<span style="color:var(--text-muted)">-</span>';
+  if(hasPrevBloodTest){
+    const fileName = previousBloodTest.split('/').pop();
+    bloodTestHtml = `
+      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousBloodTest)}', '${escapeHtml(fileName)}')">
+        <i class="fas fa-vial"></i> View
+      </button>
+    `;
+  }
+  
+  tr.innerHTML = `
+    <td>${escapeHtml(uploadDate)}</td>
+    <td>${escapeHtml(patientId)}</td>
+    <td><strong>${escapeHtml(patientName)}</strong></td>
+    <td>${escapeHtml(mobile)}</td>
+    <td>${prescriptionHtml}</td>
+    <td>${bloodTestHtml}</td>
+  `;
+  tbody.appendChild(tr);
+}
+
+/* Load patient details */
+async function loadDetails(patient_id){
+  const detailsArea = document.getElementById('detailsArea');
+  const patientInfoCard = document.getElementById('patientInfoCard');
+  const quickInfo = document.getElementById('quickInfo');
+  
+  if(!patient_id) {
+    detailsArea.style.display = 'none';
+    patientInfoCard.style.display = 'none';
+    quickInfo.textContent = 'Select a patient to view details';
+    renderAppointments([], null);
+    renderPrescriptions([], {});
+    renderReports([], {});
+    return;
+  }
+  
+  quickInfo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading patient details...';
+  
+  try{
+    const res = await fetch(`patient_history.php?action=detail&patient_id=${encodeURIComponent(patient_id)}`);
+    const j = await res.json();
+    if(!j.success) throw new Error(j.message||'No data');
+    
+    const p = j.patient;
+    
+    // Show details area
+    detailsArea.style.display = 'block';
+    patientInfoCard.style.display = 'block';
+    
+    // Populate patient info card
+    document.getElementById('pdName').textContent = p.patient_name || '-';
+    document.getElementById('pdId').textContent = p.patient_id || '-';
+    document.getElementById('pdMobile').textContent = p.mobile || '-';
+    document.getElementById('pdAge').textContent = p.age || '-';
+    document.getElementById('pdWeight').textContent = p.weight || '-';
+    
+    // Parse doctor field if it's JSON
+    let doctorName = '-';
+    if(p.doctor){
+      try{
+        const doctorObj = JSON.parse(p.doctor);
+        doctorName = doctorObj.name || '-';
+      }catch(e){
+        doctorName = p.doctor; // If not JSON, use as is
+      }
+    }
+    document.getElementById('pdDoctor').textContent = doctorName;
+    
+    // Update quick info
+    quickInfo.innerHTML = `<i class="fas fa-check-circle" style="color:var(--success-green)"></i> ${p.patient_name} — ${p.patient_id}`;
+    
+    // Render appointments
+    renderAppointments(j.appointments || [], p.patient_name || p.patient_id || 'selected patient');
+    
+    // Cache blood reports and uploaded reports separately
+    cachedBloodReports = j.blood_reports || [];
+    cachedUploadedReports = j.uploaded_reports || [];
+    console.log('Loaded blood reports from backend:', cachedBloodReports);
+    console.log('Loaded uploaded reports from backend:', cachedUploadedReports);
+    
+    // Store previous files
+    const previousPrescription = j.previous_prescription_file || null;
+    const previousBloodTest = j.previous_blood_test_file || null;
+    
+    // Render prescriptions with patient data
+    renderPrescriptions(j.prescriptions || [], p);
+    
+    // Render reports with patient data (only uploaded reports, not blood reports)
+    renderReports(j.uploaded_reports || [], p, previousPrescription, previousBloodTest);
+    
+  }catch(e){
+    console.error(e);
+    quickInfo.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#dc3545"></i> Error loading details';
+    detailsArea.style.display = 'none';
+  }
+}
+
+/* PDF Modal */
+const pdfModal = document.getElementById('pdfModal');
+const pdfFrame = document.getElementById('pdfFrame');
+const modalTitle = document.getElementById('modalTitle');
+const pdfDownload = document.getElementById('pdfDownload');
+const closeModalBtn = document.getElementById('closeModal');
+
+function openPdfModal(url, name) {
+  if(!url) return;
+  // Save current patient selection before opening modal
+  const currentPatientId = document.getElementById('patientSelect').value;
+  if(currentPatientId){
+    sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
+  }
+  modalTitle.textContent = name || 'Report Preview';
+  pdfFrame.src = url;
+  pdfDownload.href = url;
+  pdfDownload.setAttribute('download', name || '');
+  pdfModal.classList.add('open');
+  pdfModal.setAttribute('aria-hidden', 'false');
+}
+
+function closePdfModal() {
+  pdfModal.classList.remove('open');
+  pdfModal.setAttribute('aria-hidden', 'true');
+  pdfFrame.src = '';
+}
+
+closeModalBtn.addEventListener('click', closePdfModal);
+pdfModal.addEventListener('click', (ev)=>{
+  if(ev.target === pdfModal) closePdfModal();
+});
+document.addEventListener('keydown', (e)=>{ 
+  if(e.key === 'Escape') closePdfModal(); 
+});
+
+/* Initialize */
+document.addEventListener('DOMContentLoaded', ()=>{
+  loadPatients();
+  
+  // Check if patient_id is in URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const patientIdFromUrl = urlParams.get('patient_id');
+  
+  // Check if patient was saved in sessionStorage (from previous session)
+  const savedPatientId = sessionStorage.getItem('patientHistorySelectedPatient');
+  
+  // Wait for patients to load, then initialize Select2
+  setTimeout(()=>{
+    // Initialize Select2 with search
+    $('#patientSelect').select2({
+      placeholder: '-- Select a patient --',
+      allowClear: true,
+      width: '100%',
+      theme: 'default'
+    });
+    
+    // Handle change event
+    $('#patientSelect').on('change', function(e){
+      const selectedId = e.target.value;
+      // Save selection to sessionStorage whenever it changes
+      if(selectedId){
+        sessionStorage.setItem('patientHistorySelectedPatient', selectedId);
+      } else {
+        sessionStorage.removeItem('patientHistorySelectedPatient');
+      }
+      loadDetails(selectedId);
+    });
+    
+    // Priority: URL parameter > Saved selection
+    const patientToSelect = patientIdFromUrl || savedPatientId;
+    if(patientToSelect){
+      $('#patientSelect').val(patientToSelect).trigger('change');
+    }
+  }, 500);
+});
+</script>
+<!-- jQuery (required for Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="../header/header.js"></script>
+
+<!-- Session Monitoring for Immediate Logout -->
+<script>
+(function() {
+  let sessionCheckInterval = null;
+  let isLoggingOut = false;
+  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success && !isLoggingOut) {
+          isLoggingOut = true;
+          clearInterval(sessionCheckInterval);
+          localStorage.clear();
+          alert(data.message || 'Your session has expired');
+          window.location.href = '../signin/signin.html';
+        }
+      })
+      .catch(err => console.error('Session check error:', err));
+  }, 3000);
+})();
+</script>
+
+</body>
+</html>
