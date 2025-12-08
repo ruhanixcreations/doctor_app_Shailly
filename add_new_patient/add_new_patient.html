@@ -642,6 +642,9 @@ if(!checkAuth()){
   let modalPrescriptionFilesArray = [];
   let modalBloodTestStream = null;
   let modalBloodTestFilesArray = [];
+  let autoSaveTimeout = null;
+  
+  const DRAFT_KEY = 'add_patient_draft';
   
   // Utility functions
   function dataURLtoBlob(dataurl){
@@ -662,18 +665,117 @@ if(!checkAuth()){
     });
   }
   
+  // Form data persistence
+  function saveFormData(){
+    const formData = {
+      patient_name: modalNameInput.value,
+      mobile: modalMobileInput.value,
+      age: modalAgeInput.value,
+      weight: modalWeightInput.value,
+      doctor: modalDoctorSelect.value,
+      prescriptionPhotos: modalPrescriptionFilesArray.map(item => ({
+        dataUrl: item.dataUrl,
+        isPdf: item.isPdf
+      })),
+      bloodTestPhotos: modalBloodTestFilesArray.map(item => ({
+        dataUrl: item.dataUrl,
+        isPdf: item.isPdf
+      })),
+      timestamp: Date.now()
+    };
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+    console.log('Form data auto-saved');
+  }
+  
+  function loadSavedFormData(){
+    try {
+      const saved = sessionStorage.getItem(DRAFT_KEY);
+      if (!saved) return false;
+      
+      const formData = JSON.parse(saved);
+      
+      // Check if data is not too old (24 hours)
+      if (Date.now() - formData.timestamp > 24 * 60 * 60 * 1000) {
+        sessionStorage.removeItem(DRAFT_KEY);
+        return false;
+      }
+      
+      // Restore form fields
+      if (formData.patient_name) modalNameInput.value = formData.patient_name;
+      if (formData.mobile) modalMobileInput.value = formData.mobile;
+      if (formData.age) modalAgeInput.value = formData.age;
+      if (formData.weight) modalWeightInput.value = formData.weight;
+      if (formData.doctor) modalDoctorSelect.value = formData.doctor;
+      
+      // Restore prescription photos
+      if (formData.prescriptionPhotos && formData.prescriptionPhotos.length > 0) {
+        modalPrescriptionFilesArray = formData.prescriptionPhotos.map(item => {
+          const blob = dataURLtoBlob(item.dataUrl);
+          const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'), 
+                                 { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
+          return { file, dataUrl: item.dataUrl, isPdf: item.isPdf };
+        });
+        renderModalPrescriptionThumbs();
+        updateModalPrescriptionControls();
+      }
+      
+      // Restore blood test photos
+      if (formData.bloodTestPhotos && formData.bloodTestPhotos.length > 0) {
+        modalBloodTestFilesArray = formData.bloodTestPhotos.map(item => {
+          const blob = dataURLtoBlob(item.dataUrl);
+          const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'), 
+                                 { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
+          return { file, dataUrl: item.dataUrl, isPdf: item.isPdf };
+        });
+        renderModalBloodTestThumbs();
+        updateModalBloodTestControls();
+      }
+      
+      updateModalControls();
+      console.log('Form data restored from auto-save');
+      return true;
+    } catch(err) {
+      console.error('Failed to load saved form data:', err);
+      sessionStorage.removeItem(DRAFT_KEY);
+      return false;
+    }
+  }
+  
+  function clearSavedFormData(){
+    sessionStorage.removeItem(DRAFT_KEY);
+    console.log('Saved form data cleared');
+  }
+  
+  function triggerAutoSave(){
+    if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = setTimeout(() => {
+      saveFormData();
+    }, 500); // Debounce 500ms
+  }
+  
   // Modal open/close
   function openAddPatientModal(){
     modalOverlay.style.display = 'flex';
     modalClientInput.value = localStorage.getItem('client_id') || '';
-    loadModalDoctors();
+    loadModalDoctors().then(() => {
+      // Load saved data after doctors are loaded
+      const hasData = loadSavedFormData();
+      if (hasData) {
+        // Show a subtle notification that data was restored
+        modalStatusEl.textContent = '✓ Previous form data restored';
+        modalStatusEl.style.color = 'var(--success-green)';
+        setTimeout(() => {
+          modalStatusEl.textContent = '';
+        }, 3000);
+      }
+    });
     document.body.style.overflow = 'hidden';
   }
   
   function closeAddPatientModal(){
     modalOverlay.style.display = 'none';
     document.body.style.overflow = '';
-    resetModalForm();
+    // Don't clear saved data on close - keep it for restoration
     stopAllCameras();
   }
   
@@ -750,6 +852,7 @@ if(!checkAuth()){
         modalPrescriptionFilesArray.splice(idx,1);
         renderModalPrescriptionThumbs();
         updateModalPrescriptionControls();
+        triggerAutoSave();
       });
       wrap.appendChild(btn);
       modalPrescriptionThumbsEl.appendChild(wrap);
@@ -790,6 +893,7 @@ if(!checkAuth()){
     modalPrescriptionFilesArray.push({ file, dataUrl, isPdf: false });
     renderModalPrescriptionThumbs();
     updateModalPrescriptionControls();
+    triggerAutoSave();
   });
   
   modalStopPrescriptionCameraBtn.addEventListener('click', () => {
@@ -845,6 +949,7 @@ if(!checkAuth()){
         <i class="fas fa-eye"></i> View PDF
       </a>
     `;
+    triggerAutoSave();
   });
   
   // Blood test camera handlers
@@ -870,6 +975,7 @@ if(!checkAuth()){
         modalBloodTestFilesArray.splice(idx,1);
         renderModalBloodTestThumbs();
         updateModalBloodTestControls();
+        triggerAutoSave();
       });
       wrap.appendChild(btn);
       modalBloodTestThumbsEl.appendChild(wrap);
@@ -910,6 +1016,7 @@ if(!checkAuth()){
     modalBloodTestFilesArray.push({ file, dataUrl, isPdf: false });
     renderModalBloodTestThumbs();
     updateModalBloodTestControls();
+    triggerAutoSave();
   });
   
   modalStopBloodTestCameraBtn.addEventListener('click', () => {
@@ -965,6 +1072,7 @@ if(!checkAuth()){
         <i class="fas fa-eye"></i> View PDF
       </a>
     `;
+    triggerAutoSave();
   });
   
   // Input validation
@@ -976,6 +1084,7 @@ if(!checkAuth()){
     const cleaned = modalNameInput.value.replace(/[^a-zA-Z\s]/g, '');
     if (modalNameInput.value !== cleaned) modalNameInput.value = cleaned;
     updateModalControls();
+    triggerAutoSave();
   });
   
   modalMobileInput.addEventListener('keypress', (e) => {
@@ -986,10 +1095,17 @@ if(!checkAuth()){
     const cleaned = modalMobileInput.value.replace(/\D/g, '').slice(0,10);
     if (modalMobileInput.value !== cleaned) modalMobileInput.value = cleaned;
     updateModalControls();
+    triggerAutoSave();
   });
   
-  [modalAgeInput, modalWeightInput].forEach(el => el.addEventListener('input', updateModalControls));
-  modalDoctorSelect.addEventListener('change', updateModalControls);
+  [modalAgeInput, modalWeightInput].forEach(el => el.addEventListener('input', () => {
+    updateModalControls();
+    triggerAutoSave();
+  }));
+  modalDoctorSelect.addEventListener('change', () => {
+    updateModalControls();
+    triggerAutoSave();
+  });
   
   // Validation functions
   function isModalNameValid(){ return /^[A-Za-z\s]+$/.test(modalNameInput.value.trim()) && modalNameInput.value.trim().length >= 2; }
@@ -1055,8 +1171,12 @@ if(!checkAuth()){
       modalStatusEl.textContent = 'Patient saved successfully!';
       modalStatusEl.style.color = 'var(--success-green)';
       
+      // Clear saved form data after successful submission
+      clearSavedFormData();
+      
       // Close modal after short delay
       setTimeout(() => {
+        resetModalForm();
         closeAddPatientModal();
         modalStatusEl.style.color = '';
         alert('Patient added successfully!');
