@@ -58,25 +58,15 @@ body{
   text-decoration: underline;
 }
 
-/* Make OTP input full width and button below it for Edit Modal */
-#editOtpInputSection {
-  display: flex;
-  flex-direction: column; /* stack children vertically */
-  gap: 8px; /* spacing between input and buttons */
-}
-
-#editOtpInput {
-  width: 100%; /* full width of the container */
-  box-sizing: border-box; /* include padding/border in width */
-}
-
-#editVerifyOtpBtn {
-  width: 100%; /* optional: make button full width as well */
-}
-
-/* Optional: Resend button below with small gap */
+/* Make resend OTP appear as inline text with countdown for edit modal */
 #editResendOtpBtn {
-  width: 100%;
+  background: none;
+  border: none;
+  color: blue; /* or your theme color */
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+  text-decoration: underline;
 }
 
 .container{
@@ -657,15 +647,13 @@ body{
       <div id="editOtpSection" class="hidden">
         <div class="note" style="margin-bottom:10px">Email has changed. Please verify with OTP.</div>
 
-        <div id="editOtpInputSection" class="hidden">
-          <div class="form-row">
-            <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
-            <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
-          </div>
-          <div class="otp-note-wrapper">
-            <div id="editOtpNote" class="note">You can resend in 30s</div>
-            <button id="editResendOtpBtn" class="btn ghost">Resend</button>
-          </div>
+        <div class="form-row">
+          <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
+          <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
+        </div>
+        <div class="otp-note-wrapper">
+          <div id="editOtpNote" class="note">You can resend in 30s</div>
+          <button id="editResendOtpBtn">Resend</button>
         </div>
       </div>
 
@@ -1141,7 +1129,6 @@ const editDEmail = document.getElementById('editDEmail');
 const editSendOtpBtn = document.getElementById('editSendOtpBtn');
 const editSendStatus = document.getElementById('editSendStatus');
 const editOtpSection = document.getElementById('editOtpSection');
-const editOtpInputSection = document.getElementById('editOtpInputSection');
 const editOtpInput = document.getElementById('editOtpInput');
 const editVerifyOtpBtn = document.getElementById('editVerifyOtpBtn');
 const editResendOtpBtn = document.getElementById('editResendOtpBtn');
@@ -1159,7 +1146,6 @@ function openEditModal(id, name, email, mobile){
   editDEmail.value = email;
   
   editOtpSection.classList.add('hidden');
-  editOtpInputSection.classList.add('hidden');
   editOtpInput.value = '';
   editSendStatus.textContent = '';
   editOtpNote.textContent = '';
@@ -1230,7 +1216,6 @@ async function editSendOtpToEmail(){
     const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
     const j = await res.json();
     if(j.success){
-      editOtpInputSection.classList.remove('hidden');
       editSendStatus.textContent = 'OTP sent to email.';
       startEditResendCountdown();
     } else {
