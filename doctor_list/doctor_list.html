@@ -645,8 +645,6 @@ body{
       <div id="editSendStatus" class="small" style="margin-top:4px;"></div>
 
       <div id="editOtpSection" class="hidden">
-        <div class="note" style="margin-bottom:10px">Email has changed. Please verify with OTP.</div>
-
         <div class="form-row">
           <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
           <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
@@ -1195,12 +1193,14 @@ editDEmail.addEventListener('input', () => {
   
   if(emailChanged && validateEmail(newEmail)){
     editSendOtpBtn.disabled = false;
-    editOtpSection.classList.remove('hidden');
-    editOtpSection.setAttribute('aria-hidden','false');
     editOtpVerified = false;
+    editSendStatus.textContent = '';
+    // Hide OTP section until Send OTP is clicked
+    editOtpSection.classList.add('hidden');
   } else {
     editSendOtpBtn.disabled = true;
     editOtpSection.classList.add('hidden');
+    editOtpVerified = false;
   }
   checkEditUpdateValidity();
 });
@@ -1217,6 +1217,9 @@ async function editSendOtpToEmail(){
     const j = await res.json();
     if(j.success){
       editSendStatus.textContent = 'OTP sent to email.';
+      // Show OTP section after successful send
+      editOtpSection.classList.remove('hidden');
+      editOtpSection.setAttribute('aria-hidden','false');
       startEditResendCountdown();
     } else {
       editSendStatus.textContent = j.message || 'Failed to send OTP';
