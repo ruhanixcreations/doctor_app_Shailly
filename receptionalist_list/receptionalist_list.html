@@ -1191,6 +1191,10 @@ function openEditModal(id, name, email, mobile){
   editSendStatus.textContent = '';
   editOtpNote.textContent = '';
   editUpdateStatus.textContent = '';
+  
+  // Disable Send OTP button initially since email hasn't changed
+  editSendOtpBtn.disabled = true;
+  
   checkEditUpdateValidity();
   setTimeout(()=>editRName.focus(),80);
   document.addEventListener('keydown', onEditKeyDown);
@@ -1228,15 +1232,16 @@ editREmail.addEventListener('input', () => {
   const emailChanged = newEmail !== editOriginalEmail;
   
   if(emailChanged && validateEmail(newEmail)){
+    editSendOtpBtn.disabled = false;
     editOtpSection.classList.remove('hidden');
+    editOtpSection.setAttribute('aria-hidden','false');
     editOtpVerified = false;
     editOtpInputSection.classList.add('hidden');
     editSendStatus.textContent = '';
-  } else if(!emailChanged){
+  } else {
+    editSendOtpBtn.disabled = true;
     editOtpSection.classList.add('hidden');
     editOtpVerified = false;
-  } else {
-    editOtpSection.classList.add('hidden');
   }
   checkEditUpdateValidity();
 });

@@ -1164,6 +1164,10 @@ function openEditModal(id, name, email, mobile){
   editSendStatus.textContent = '';
   editOtpNote.textContent = '';
   editUpdateStatus.textContent = '';
+  
+  // Disable Send OTP button initially since email hasn't changed
+  editSendOtpBtn.disabled = true;
+  
   checkEditUpdateValidity();
   setTimeout(()=>editDName.focus(),80);
   
