@@ -620,6 +620,18 @@ tbody tr:last-child td{
     font-size:12px;
   }
   
+  /* Make buttons more compact in tables on mobile */
+  .btn-view{
+    padding:6px 8px;
+    font-size:11px;
+    white-space:nowrap;
+  }
+  
+  .btn-view i{
+    font-size:11px;
+    margin-right:2px;
+  }
+  
   .modal{
     max-width:100%;
     height:75vh;
@@ -675,13 +687,40 @@ tbody tr:last-child td{
   }
   
   .btn{
-    padding:5px 10px;
-    font-size:11px;
-    gap:4px;
+    padding:5px 8px;
+    font-size:10px;
+    gap:3px;
   }
   
   .btn i{
     font-size:10px;
+  }
+  
+  /* Icon-only buttons for very small screens */
+  .btn-view{
+    padding:6px 8px;
+    font-size:0;
+    min-width:32px;
+    justify-content:center;
+  }
+  
+  .btn-view i{
+    font-size:13px;
+    margin:0;
+  }
+  
+  /* Ensure icon is visible when text is hidden */
+  .btn-view i::before{
+    font-size:13px;
+  }
+  
+  /* Compact button groups in table cells */
+  td div[style*="display:flex"]{
+    gap:4px !important;
+  }
+  
+  td .btn-view{
+    flex:0 0 auto;
   }
   
   .modal{
@@ -1107,7 +1146,7 @@ function renderPrescriptions(prescriptions, patientData){
     
     // Prescription button
     const prescriptionId = pres.prescription_id;
-    const viewPrescriptionBtn = `<button type="button" class="btn btn-view" onclick="openPrescription('${prescriptionId}', '${patientId}')">
+    const viewPrescriptionBtn = `<button type="button" class="btn btn-view" title="View Prescription" onclick="openPrescription('${prescriptionId}', '${patientId}')">
       <i class="fas fa-file-medical"></i> View
     </button>`;
     
@@ -1123,17 +1162,17 @@ function renderPrescriptions(prescriptions, patientData){
         // Report exists - show View and Delete buttons, disable Upload
         viewBloodReportBtn = `
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}', '${prescriptionId}')" style="background:#28a745;">
+            <button type="button" class="btn btn-view" title="View Blood Report" onclick="openBloodReport('${patientId}', '${prescriptionId}')" style="background:#28a745;">
               <i class="fas fa-eye"></i> View Report
             </button>
-            <button type="button" class="btn btn-view" onclick="deleteBloodReport('${patientId}', '${prescriptionId}', ${reportForPrescription.id})" style="background:#dc3545;">
+            <button type="button" class="btn btn-view" title="Delete Blood Report" onclick="deleteBloodReport('${patientId}', '${prescriptionId}', ${reportForPrescription.id})" style="background:#dc3545;">
               <i class="fas fa-trash"></i> Delete
             </button>
           </div>
         `;
       } else {
         // No report - show Upload button (enabled)
-        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" title="Upload Blood Report" onclick="uploadBloodReport('${patientId}', '${escapeHtml(patientName)}', '${prescriptionId}')">
           <i class="fas fa-upload"></i> Upload Report
         </button>`;
       }
@@ -1141,7 +1180,7 @@ function renderPrescriptions(prescriptions, patientData){
       // Doctor: Show View button if blood report exists for this prescription
       const reportForPrescription = cachedBloodReports.find(r => r.prescription_id == prescriptionId);
       if(reportForPrescription){
-        viewBloodReportBtn = `<button type="button" class="btn btn-view" onclick="openBloodReport('${patientId}', '${prescriptionId}')">
+        viewBloodReportBtn = `<button type="button" class="btn btn-view" title="View Blood Report" onclick="openBloodReport('${patientId}', '${prescriptionId}')">
           <i class="fas fa-vial"></i> View
         </button>`;
       } else {
@@ -1298,7 +1337,7 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
   if(hasPrevPrescription){
     const fileName = previousPrescription.split('/').pop();
     prescriptionHtml = `
-      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousPrescription)}', '${escapeHtml(fileName)}')">
+      <button type="button" class="btn btn-view" title="View Previous Prescription" onclick="openPdfModal('${escapeHtml(previousPrescription)}', '${escapeHtml(fileName)}')">
         <i class="fas fa-prescription"></i> View
       </button>
     `;
@@ -1309,7 +1348,7 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
   if(hasPrevBloodTest){
     const fileName = previousBloodTest.split('/').pop();
     bloodTestHtml = `
-      <button type="button" class="btn btn-view" onclick="openPdfModal('${escapeHtml(previousBloodTest)}', '${escapeHtml(fileName)}')">
+      <button type="button" class="btn btn-view" title="View Previous Blood Test" onclick="openPdfModal('${escapeHtml(previousBloodTest)}', '${escapeHtml(fileName)}')">
         <i class="fas fa-vial"></i> View
       </button>
     `;
