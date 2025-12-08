@@ -655,6 +655,17 @@ body{
         </div>
       </div>
 
+      <!-- Password Change Section (Optional) -->
+      <div class="note" style="margin-top:16px;margin-bottom:8px">Change Password (Optional - leave blank to keep current password)</div>
+      
+      <div class="form-row">
+        <input id="editPassword" class="input" placeholder="New Password (min 6 char)" type="password" aria-label="New Password">
+      </div>
+
+      <div class="form-row">
+        <input id="editConfirmPassword" class="input" placeholder="Confirm New Password" type="password" aria-label="Confirm New Password">
+      </div>
+
       <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:10px">
         <div id="editUpdateStatus" class="small" style="margin-right:auto"></div>
         <button id="updateDoctorBtn" class="btn" disabled>Update Doctor</button>
@@ -1131,6 +1142,8 @@ const editOtpInput = document.getElementById('editOtpInput');
 const editVerifyOtpBtn = document.getElementById('editVerifyOtpBtn');
 const editResendOtpBtn = document.getElementById('editResendOtpBtn');
 const editOtpNote = document.getElementById('editOtpNote');
+const editPassword = document.getElementById('editPassword');
+const editConfirmPassword = document.getElementById('editConfirmPassword');
 const editUpdateStatus = document.getElementById('editUpdateStatus');
 const updateDoctorBtn = document.getElementById('updateDoctorBtn');
 
@@ -1148,6 +1161,10 @@ function openEditModal(id, name, email, mobile){
   editSendStatus.textContent = '';
   editOtpNote.textContent = '';
   editUpdateStatus.textContent = '';
+  
+  // Clear password fields
+  editPassword.value = '';
+  editConfirmPassword.value = '';
   
   // Disable Send OTP button initially since email hasn't changed
   editSendOtpBtn.disabled = true;
@@ -1291,13 +1308,21 @@ function checkEditUpdateValidity(){
   const name = (editDName.value||'').trim();
   const mobileVal = (editDMobile.value||'').trim();
   const email = (editDEmail.value||'').trim().toLowerCase();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
   const emailChanged = email !== editOriginalEmail;
   
   const nameOk = name && /^[A-Za-z\s]+$/.test(name);
   const mobileOk = validateMobile(mobileVal);
   const emailOk = validateEmail(email);
   
-  let canUpdate = nameOk && mobileOk && emailOk;
+  // If password is provided, validate it
+  let passwordValid = true;
+  if(password || confirmPassword){
+    passwordValid = password.length >= 6 && password === confirmPassword;
+  }
+  
+  let canUpdate = nameOk && mobileOk && emailOk && passwordValid;
   if(emailChanged && !editOtpVerified){
     canUpdate = false;
   }
@@ -1305,11 +1330,17 @@ function checkEditUpdateValidity(){
   updateDoctorBtn.disabled = !canUpdate;
 }
 
+// Add password field listeners
+editPassword.addEventListener('input', checkEditUpdateValidity);
+editConfirmPassword.addEventListener('input', checkEditUpdateValidity);
+
 updateDoctorBtn.addEventListener('click', async ()=>{
   if(!editingDoctorId) return;
   const name = (editDName.value||'').trim();
   const email = (editDEmail.value||'').trim().toLowerCase();
   const mobileVal = (editDMobile.value||'').trim();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
   
   if(!name || !validateMobile(mobileVal) || !validateEmail(email)){
     showToast('Please fill all fields correctly');
@@ -1322,16 +1353,29 @@ updateDoctorBtn.addEventListener('click', async ()=>{
     return;
   }
   
+  // Validate password if provided
+  if(password || confirmPassword){
+    if(password.length < 6) return showToast('Password must be at least 6 characters');
+    if(password !== confirmPassword) return showToast('Passwords do not match');
+  }
+  
   updateDoctorBtn.disabled = true;
   editUpdateStatus.textContent = 'Updating...';
   try{
-    const body = new URLSearchParams({
+    const params = {
       action: 'update',
       id: editingDoctorId,
       name: name,
       mobile: mobileVal,
       email: email
-    });
+    };
+    
+    // Include password only if provided
+    if(password){
+      params.password = password;
+    }
+    
+    const body = new URLSearchParams(params);
     const res = await fetch(apiList, { method:'POST', body, credentials:'include' });
     const j = await res.json();
     if(j.success){

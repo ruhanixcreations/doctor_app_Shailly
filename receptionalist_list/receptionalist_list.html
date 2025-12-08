@@ -667,6 +667,17 @@ body{
         </div>
       </div>
 
+      <!-- Password Change Section (Optional) -->
+      <div class="note" style="margin-top:16px;margin-bottom:8px">Change Password (Optional - leave blank to keep current password)</div>
+      
+      <div class="form-row">
+        <input id="editPassword" class="input" placeholder="New Password (min 6 char)" type="password" aria-label="New Password">
+      </div>
+
+      <div class="form-row">
+        <input id="editConfirmPassword" class="input" placeholder="Confirm New Password" type="password" aria-label="Confirm New Password">
+      </div>
+
       <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:10px">
         <div id="editUpdateStatus" class="small" style="margin-right:auto"></div>
         <button id="updateReceptionistBtn" class="btn" disabled>Update Receptionist</button>
@@ -1158,6 +1169,8 @@ const editOtpInput = document.getElementById('editOtpInput');
 const editVerifyOtpBtn = document.getElementById('editVerifyOtpBtn');
 const editResendOtpBtn = document.getElementById('editResendOtpBtn');
 const editOtpNote = document.getElementById('editOtpNote');
+const editPassword = document.getElementById('editPassword');
+const editConfirmPassword = document.getElementById('editConfirmPassword');
 const editUpdateStatus = document.getElementById('editUpdateStatus');
 const updateReceptionistBtn = document.getElementById('updateReceptionistBtn');
 
@@ -1175,6 +1188,10 @@ function openEditModal(id, name, email, mobile){
   editSendStatus.textContent = '';
   editOtpNote.textContent = '';
   editUpdateStatus.textContent = '';
+  
+  // Clear password fields
+  editPassword.value = '';
+  editConfirmPassword.value = '';
   
   // Disable Send OTP button initially since email hasn't changed
   editSendOtpBtn.disabled = true;
@@ -1316,17 +1333,32 @@ function checkEditUpdateValidity(){
   const name = (editRName.value||'').trim();
   const mobileVal = (editRMobile.value||'').trim();
   const email = (editREmail.value||'').trim().toLowerCase();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
+  
   const nameValid = /^[A-Za-z\s]+$/.test(name);
   const emailChanged = email !== editOriginalEmail;
   
-  const valid = name && nameValid && validateMobile(mobileVal) && validateEmail(email) && (!emailChanged || editOtpVerified);
+  // If password is provided, validate it
+  let passwordValid = true;
+  if(password || confirmPassword){
+    passwordValid = password.length >= 6 && password === confirmPassword;
+  }
+  
+  const valid = name && nameValid && validateMobile(mobileVal) && validateEmail(email) && (!emailChanged || editOtpVerified) && passwordValid;
   updateReceptionistBtn.disabled = !valid;
 }
+
+// Add password field listeners
+editPassword.addEventListener('input', checkEditUpdateValidity);
+editConfirmPassword.addEventListener('input', checkEditUpdateValidity);
 
 updateReceptionistBtn.addEventListener('click', async ()=>{
   const name = (editRName.value||'').trim();
   const email = (editREmail.value||'').trim().toLowerCase();
   const mobileVal = (editRMobile.value||'').trim();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
   const emailChanged = email !== editOriginalEmail;
 
   if(!name) return showToast('Enter name');
@@ -1334,18 +1366,31 @@ updateReceptionistBtn.addEventListener('click', async ()=>{
   if(!validateMobile(mobileVal)) return showToast('Enter valid mobile');
   if(!validateEmail(email)) return showToast('Enter valid email');
   if(emailChanged && !editOtpVerified) return showToast('Email changed - verify OTP first');
+  
+  // Validate password if provided
+  if(password || confirmPassword){
+    if(password.length < 6) return showToast('Password must be at least 6 characters');
+    if(password !== confirmPassword) return showToast('Passwords do not match');
+  }
 
   updateReceptionistBtn.disabled = true;
   editUpdateStatus.textContent = 'Updating...';
   try{
-    const body = JSON.stringify({
+    const payload = {
       id: editingReceptionistId,
       name: name,
       email: email,
       mobile: mobileVal,
       emailChanged: emailChanged,
       otpVerified: editOtpVerified
-    });
+    };
+    
+    // Include password only if provided
+    if(password){
+      payload.password = password;
+    }
+    
+    const body = JSON.stringify(payload);
     const res = await fetch(apiList + '?action=update', { 
       method:'POST', 
       headers:{'Content-Type':'application/json'},

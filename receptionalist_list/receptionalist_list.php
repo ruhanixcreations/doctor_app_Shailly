@@ -34,6 +34,7 @@ if($action === 'update'){
     $name = trim($d['name'] ?? ''); if(!$name) send_json(['success'=>false,'message'=>'name required']);
     $email = strtolower(trim($d['email'] ?? '')); if(!$email) send_json(['success'=>false,'message'=>'email required']);
     $mobile = trim($d['mobile'] ?? '');
+    $password = trim($d['password'] ?? '');
     $emailChanged = boolval($d['emailChanged'] ?? false);
     $otpVerified = boolval($d['otpVerified'] ?? false);
     
@@ -52,8 +53,19 @@ if($action === 'update'){
     }
     $checkStmt->close();
     
-    $stmt = $mysqli->prepare("UPDATE users SET name=?, email=?, mobile=? WHERE id=? AND role='receptionalist'");
-    $stmt->bind_param('sssi',$name,$email,$mobile,$id);
+    // Update with or without password
+    if($password){
+        // Validate password length
+        if(strlen($password) < 6){
+            send_json(['success'=>false,'message'=>'Password must be at least 6 characters']);
+        }
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $mysqli->prepare("UPDATE users SET name=?, email=?, mobile=?, password=? WHERE id=? AND role='receptionalist'");
+        $stmt->bind_param('ssssi',$name,$email,$mobile,$hashedPassword,$id);
+    } else {
+        $stmt = $mysqli->prepare("UPDATE users SET name=?, email=?, mobile=? WHERE id=? AND role='receptionalist'");
+        $stmt->bind_param('sssi',$name,$email,$mobile,$id);
+    }
     $ok = $stmt->execute();
     send_json(['success'=>$ok]);
 }
