@@ -3,112 +3,707 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <title>Doctors — Ruhanix</title>
 
 <style>
 :root{
-  --bg:#f5f8ff; --card:#fff; --accent:#2878f0; --muted:#6b7280; --radius:12px; --shadow:0 12px 32px rgba(9,30,66,0.06);
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --danger:#dc3545;
 }
-*{box-sizing:border-box} body{font-family:Inter,system-ui,Arial,sans-serif;margin:0;background:var(--bg);color:#0b2340;padding:20px;}
-.container{max-width:980px;margin:18px auto;background:var(--card);padding:18px;border-radius:var(--radius);box-shadow:var(--shadow)}
-.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
-h2{margin:0;font-size:20px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.controls input{padding:10px;border-radius:10px;border:1px solid #e7eefc;min-width:0}
-.btn{background:var(--accent);color:#fff;border:none;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:700}
-.btn.ghost{background:#fff;border:1px solid #e7eefc;color:var(--accent)}
-.small{font-size:13px;color:var(--muted)}
-.table{width:100%;border-collapse:collapse;margin-top:14px}
-.table th,.table td{padding:10px;border-bottom:1px solid #f0f4fb;text-align:left}
-.table th{font-weight:700;background:#fbfeff}
-.action-btn{background:#ff5a5f;color:#fff;border:none;padding:6px 8px;border-radius:6px;cursor:pointer}
-.toast{position:fixed;right:18px;bottom:18px;background:#111;color:#fff;padding:10px 14px;border-radius:8px;display:none}
-.otp-panel{margin-top:12px;padding:12px;border-radius:10px;background:#f7fbff;border:1px solid #e6f0ff}
-.hidden{display:none}
-.input{padding:10px;border-radius:10px;border:1px solid #e7eefc}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.col{flex:1 1 220px;min-width:160px}
-.note{font-size:13px;color:#6b7280;margin-top:8px}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+#sendOtpBtn {
+  margin-left: auto;
+}
+
+#sendOtpBtnContainer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Make resend OTP appear as inline text with countdown */
+#otpNote {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* space between timer and Resend text */
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+#resendOtpBtn {
+  background: none;
+  border: none;
+  color: blue; /* or your theme color */
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+/* Make resend OTP appear as inline text with countdown for edit modal */
+#editResendOtpBtn {
+  background: none;
+  border: none;
+  color: blue; /* or your theme color */
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.container{
+  max-width:980px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header .title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:24px;
+}
+
+.controls{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  align-items:center;
+}
+
+.input{
+  flex:1;
+  padding:11px 14px;
+  height:44px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  background:var(--bg-white);
+  transition:all 0.2s ease;
+}
+
+.input:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.btn{
+  height:44px;
+  padding:10px 20px;
+  border-radius:6px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,169,165,0.25);
+}
+
+.btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+}
+
+.btn.ghost{
+  background:#fff;
+  border:1px solid var(--border-light);
+  color:var(--text-dark);
+}
+
+.btn.secondary{
+  background:transparent;
+  border:1px solid var(--border-light);
+  color:var(--text-muted);
+}
+
+.small{
+  font-size:13px;
+  color:var(--text-muted);
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:8px;
+}
+
+.table th,.table td{
+  padding:12px;
+  border-bottom:1px solid var(--border-light);
+  text-align:left;
+  font-size:14px;
+}
+
+.table td:last-child{
+  white-space:nowrap;
+}
+
+.table th{
+  font-weight:600;
+  background:rgba(0,169,165,0.03);
+  color:var(--text-dark);
+}
+
+.action-btn{
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  margin-right:8px;
+  display:inline-block;
+  vertical-align:middle;
+}
+
+.action-btn.edit{
+  background:var(--primary-teal);
+  color:#fff;
+}
+
+.action-btn.edit:hover{
+  background:var(--primary-blue);
+}
+
+.action-btn.delete{
+  background:var(--danger);
+  color:#fff;
+  margin-right:0;
+}
+
+.action-btn.delete:hover{
+  background:#c82333;
+}
+
+.action-btn.disable{
+  background:#ff9800;
+  color:#fff;
+}
+
+.action-btn.disable:hover{
+  background:#f57c00;
+}
+
+.action-btn.enable{
+  background:#4caf50;
+  color:#fff;
+}
+
+.action-btn.enable:hover{
+  background:#45a049;
+}
+
+.status-badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.status-badge.active{
+  background:#d4edda;
+  color:#155724;
+}
+
+.status-badge.inactive{
+  background:#f8d7da;
+  color:#721c24;
+}
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  background:#1a202c;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:8px;
+  display:none;
+  z-index:2000;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.hidden{
+  display:none;
+}
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.5);
+  z-index:1200;
+  padding:16px;
+}
+
+.modal{
+  width:100%;
+  max-width:560px;
+  background:var(--bg-white);
+  border-radius:12px;
+  padding:24px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.modal-title{
+  font-weight:700;
+  color:var(--text-dark);
+  font-size:18px;
+}
+
+.modal-body{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.form-row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.form-row .input{
+  flex:1;
+  min-width:120px;
+}
+
+.note{
+  font-size:13px;
+  color:var(--text-muted);
+  padding:10px;
+  background:rgba(0,169,165,0.05);
+  border-left:3px solid var(--primary-teal);
+  border-radius:4px;
+}
+
+.error-message{
+  color:#dc3545;
+  font-size:12px;
+  margin-top:-6px;
+  margin-bottom:12px;
+  padding:8px 12px;
+  background:rgba(220,53,69,0.05);
+  border-left:3px solid #dc3545;
+  border-radius:4px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.cell-value{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.email-otp-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between input and button */
+}
+.email-otp-wrapper input {
+  flex: 1; /* input takes available width */
+}
+
+.otp-note-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between text and resend button */
+  margin-top: 4px;
+}
+.otp-note-wrapper .note {
+  flex: 1; /* text takes available width */
+}
+.otp-note-wrapper .btn {
+  flex-shrink: 0; /* button keeps its size */
+}
+
+@media (max-width:760px){
+  body{
+    padding:16px;
+  }
+  
+  .header{
+    padding:14px 18px;
+  }
+  
+  .brand{
+    width:38px;
+    height:38px;
+    font-size:18px;
+  }
+  
+  .header .title{
+    font-size:16px;
+  }
+  
+  .header .subtitle{
+    font-size:11px;
+  }
+  
+  .content{
+    padding:20px;
+  }
+  
+  .controls{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  
+  .modal{
+    max-width:480px;
+    padding:20px;
+  }
+  
+  .table thead{
+    display:none;
+  }
+  
+  .table, .table tbody, .table tr, .table td{
+    display:block;
+    width:100%;
+  }
+  
+  .table tr{
+    margin-bottom:12px;
+    border-radius:8px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    overflow:hidden;
+    background:#fff;
+  }
+  
+  .table td{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 12px;
+    border-bottom:1px solid rgba(0,0,0,0.04);
+    white-space:normal;
+    gap:8px;
+    align-items:center;
+  }
+  
+  .table td::before{
+    content:attr(data-label);
+    font-weight:600;
+    color:var(--text-muted);
+    flex:0 0 35%;
+    max-width:35%;
+  }
+  
+  .cell-value{
+    flex:1;
+    text-align:right;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  
+  .table td[data-label="Actions"]{
+    justify-content:flex-end;
+  }
+  
+  .table td[data-label="Actions"]::before{
+    display:none;
+  }
+
+  #openAddBtn{
+    width: 50%;
+    margin-left: auto;
+  }
+}
+
+@media(max-width:420px){
+  .header{
+    padding:12px 16px;
+  }
+  
+  .header .title{
+    font-size:15px;
+  }
+
+  #openAddBtn{
+    width: 50%;
+    margin-left: auto;
+  }
+}
+
+.visually-hidden{
+  position:absolute !important;
+  height:1px;
+  width:1px;
+  overflow:hidden;
+  clip:rect(1px,1px,1px,1px);
+  white-space:nowrap;
+}
 </style>
 </head>
 <body>
-  <main class="container" aria-live="polite">
-    <div class="header">
-      <h2>Doctors List</h2>
-      <div>
-        <button id="openAddBtn" class="btn">+ Add Doctor</button>
-      </div>
+<div id="header-placeholder"></div>
+
+<main class="container" aria-live="polite">
+  <div class="header">
+    <div class="brand">👨‍⚕️</div>
+    <div class="header-text">
+      <div class="title">Doctors List</div>
+      <div class="subtitle">Manage doctor accounts</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="controls">
+      <input id="filter" class="input" placeholder="Filter by name, email, mobile, role or date" aria-label="Filter doctors">
+      <button id="openAddBtn" class="btn" aria-haspopup="dialog" aria-controls="addDoctorModal">+Add&nbspDoctor</button>
     </div>
 
-    <!-- Add block -->
-    <div id="addBlock" class="otp-panel hidden" aria-hidden="true">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong>Add Doctor (Email verification required)</strong>
-        <button id="closeAdd" class="btn ghost">Close</button>
-      </div>
-
-      <div style="margin-top:10px" class="note">Enter email and click <strong>Send OTP</strong>. Verify OTP, then complete details and click <strong>Create Doctor</strong>.</div>
-
-      <div style="margin-top:10px" class="row">
-        <input id="dName" class="input col" placeholder="Full name (letters only)">
-        <input id="dMobile" class="input col" placeholder="Mobile (10 digits)" inputmode="tel">
-        <input id="dEmail" class="input col" placeholder="Email address" type="email">
-      </div>
-
-      <div style="margin-top:8px" class="row">
-        <button id="sendOtpBtn" class="btn">Send OTP</button>
-        <div id="sendStatus" class="small" style="margin-left:6px"></div>
-      </div>
-
-      <div id="otpSection" class="hidden" style="margin-top:10px">
-        <div class="row">
-          <input id="otpInput" class="input col" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6">
-          <button id="verifyOtpBtn" class="btn">Verify OTP</button>
-          <button id="resendOtpBtn" class="btn ghost">Resend</button>
-        </div>
-        <div id="otpNote" class="note"></div>
-      </div>
-
-      <div id="createSection" class="hidden" style="margin-top:12px">
-        <div class="row">
-          <input id="password" class="input col" placeholder="Password (min 6 char)" type="password">
-          <input id="confirmPassword" class="input col" placeholder="Confirm password" type="password">
-        </div>
-        <div style="margin-top:8px" class="row">
-          <button id="createBtn" class="btn">Create Doctor</button>
-          <div id="createStatus" class="small" style="margin-left:6px"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="status" class="small" style="margin-top:10px"></div>
+    <div id="status" class="small" style="margin-bottom:10px"></div>
 
     <table class="table" id="tbl" role="table" aria-label="Doctors table">
-      <thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Role</th><th>Created</th><th></th></tr></thead>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Mobile</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+      </thead>
       <tbody></tbody>
     </table>
-  </main>
+  </div>
+</main>
 
-  <div id="toast" class="toast" role="status" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-hidden="true"></div>
+
+<!-- Add Modal -->
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+  <div class="modal" id="addDoctorModal" role="document" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">Add Doctor</div>
+      <button id="modalClose" class="btn secondary" aria-label="Close dialog">Close</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-row">
+        <input id="dName" class="input" placeholder="Full name (letters only)" aria-label="Full name">
+      </div>
+      <div id="dNameError" class="error-message" style="display:none"></div>
+
+      <div class="form-row">
+        <input id="dMobile" class="input" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
+      </div>
+      <div id="dMobileError" class="error-message" style="display:none"></div>
+
+      <!-- Email + Send OTP button in same row -->
+      <div class="form-row email-otp-wrapper">
+        <input id="dEmail" class="input" placeholder="Email address" type="email" aria-label="Email">
+        <button id="sendOtpBtn" class="btn" disabled>Send OTP</button>
+      </div>
+      <div id="dEmailError" class="error-message" style="display:none"></div>
+      <div id="sendStatus" class="small" style="margin-top:4px;"></div>
+
+      <div id="otpSection" class="hidden">
+        <div class="form-row">
+          <input id="otpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
+          <button id="verifyOtpBtn" class="btn" disabled>Verify OTP</button>
+        </div>
+        <div class="otp-note-wrapper">
+          <div id="otpNote" class="note">You can resend in 30s</div>
+          <button id="resendOtpBtn" class="btn ghost">Resend</button>
+        </div>
+      </div>
+
+      <div id="createSection" class="hidden">
+        <div class="form-row">
+          <input id="password" class="input" placeholder="Password (min 6 char)" type="password" aria-label="Password">
+        </div>
+        <div id="passwordError" class="error-message" style="display:none"></div>
+
+        <div class="form-row" style="margin-top:14px">
+          <input id="confirmPassword" class="input" placeholder="Confirm password" type="password" aria-label="Confirm password">
+        </div>
+        <div id="confirmPasswordError" class="error-message" style="display:none"></div>
+
+        <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:16px">
+          <div id="createStatus" class="small" style="margin-right:auto"></div>
+          <button id="createBtn" class="btn" disabled>Create Doctor</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;">
+  <div class="modal" id="editDoctorModal" role="document" aria-labelledby="editModalTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="editModalTitle">Edit Doctor</div>
+      <button id="editModalClose" class="btn secondary" aria-label="Close dialog">Close</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="note">Edit details. If you change the email, you must verify it with OTP before saving.</div>
+
+      <div class="form-row">
+        <input id="editDName" class="input" placeholder="Full name (letters only)" aria-label="Full name">
+      </div>
+
+      <div class="form-row">
+        <input id="editDMobile" class="input" placeholder="Mobile (10 digits)" inputmode="tel" aria-label="Mobile">
+      </div>
+
+      <!-- Email + Send OTP button in same row -->
+      <div class="form-row email-otp-wrapper">
+        <input id="editDEmail" class="input" placeholder="Email address" type="email" aria-label="Email">
+        <button id="editSendOtpBtn" class="btn">Send OTP</button>
+      </div>
+      <div id="editSendStatus" class="small" style="margin-top:4px;"></div>
+
+      <div id="editOtpSection" class="hidden">
+        <div class="form-row">
+          <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
+          <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
+        </div>
+        <div class="otp-note-wrapper">
+          <div id="editOtpNote" class="note">You can resend in 30s</div>
+          <button id="editResendOtpBtn">Resend</button>
+        </div>
+      </div>
+
+      <!-- Password Change Section (Optional) -->
+      <div class="note" style="margin-top:16px;margin-bottom:8px">Change Password (Optional - leave blank to keep current password)</div>
+      
+      <div class="form-row">
+        <input id="editPassword" class="input" placeholder="New Password (min 6 char)" type="password" aria-label="New Password">
+      </div>
+
+      <div class="form-row">
+        <input id="editConfirmPassword" class="input" placeholder="Confirm New Password" type="password" aria-label="Confirm New Password">
+      </div>
+
+      <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:10px">
+        <div id="editUpdateStatus" class="small" style="margin-right:auto"></div>
+        <button id="updateDoctorBtn" class="btn" disabled>Update Doctor</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-/*
- Flow:
- - send_otp -> ../signup/signup.php (action=send_otp)
- - verify_otp -> ../signup/signup.php (action=verify_otp)
- - register -> ../signup/signup.php (action=register) with role = 'user' (doctor)
- - list/delete -> doctors_list.php?action=list / action=delete
-*/
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  // If isLoggedIn is null, undefined, false, or 'false', redirect to signin
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
 
+// Run auth check immediately
+(function(){
+  const isAuthorized = checkAuth();
+  if(!isAuthorized) return; // Stop execution if not authorized
+  
+  // Continue with page initialization only if authorized
+  initializePage();
+})();
+
+function initializePage(){
 const signupEndpoint = '../signup/signup.php';
-const apiList = 'doctors_list.php';
+const apiList = './doctors_list.php';
 
 const openAddBtn = document.getElementById('openAddBtn');
-const addBlock = document.getElementById('addBlock');
-const closeAdd = document.getElementById('closeAdd');
-const dName = document.getElementById('dName');
-const dMobile = document.getElementById('dMobile');
-const dEmail = document.getElementById('dEmail');
+const modalOverlay = document.getElementById('modalOverlay');
+const modalCloseBtn = document.getElementById('modalClose');
 const sendOtpBtn = document.getElementById('sendOtpBtn');
 const sendStatus = document.getElementById('sendStatus');
 const otpSection = document.getElementById('otpSection');
@@ -117,83 +712,283 @@ const verifyOtpBtn = document.getElementById('verifyOtpBtn');
 const resendOtpBtn = document.getElementById('resendOtpBtn');
 const otpNote = document.getElementById('otpNote');
 const createSection = document.getElementById('createSection');
-const password = document.getElementById('password');
-const confirmPassword = document.getElementById('confirmPassword');
 const createBtn = document.getElementById('createBtn');
 const createStatus = document.getElementById('createStatus');
+const filterInput = document.getElementById('filter');
 const tblBody = document.querySelector('#tbl tbody');
 const toast = document.getElementById('toast');
+const statusEl = document.getElementById('status');
+
+const dName = document.getElementById('dName');
+const dMobile = document.getElementById('dMobile');
+const dEmail = document.getElementById('dEmail');
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('confirmPassword');
 
 let otpVerified = false;
 let resendTimer = null;
+let doctorsMemory = [];
 
-function showToast(msg){ toast.textContent = msg; toast.style.display='block'; toast.setAttribute('aria-hidden','false'); setTimeout(()=>{ toast.style.display='none'; toast.setAttribute('aria-hidden','true'); }, 3200); }
-function setStatus(msg){ document.getElementById('status').textContent = msg; }
+/* helpers */
+function showToast(msg){
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  toast.setAttribute('aria-hidden','false');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>{ toast.style.display='none'; toast.setAttribute('aria-hidden','true'); }, 3200);
+}
+function setStatus(msg){ if(statusEl) statusEl.textContent = msg; }
+function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-openAddBtn.addEventListener('click', ()=> { addBlock.classList.remove('hidden'); addBlock.setAttribute('aria-hidden','false'); dName.focus(); });
-closeAdd.addEventListener('click', ()=> { resetAddForm(); addBlock.classList.add('hidden'); addBlock.setAttribute('aria-hidden','true'); });
+/* modal open/close */
+function openModal(){
+  modalOverlay.style.display = 'flex';
+  modalOverlay.setAttribute('aria-hidden','false');
+  openAddBtn.disabled = true;
+  resetModalForm();
+  setTimeout(()=>dName.focus(),80);
+  document.addEventListener('keydown', onKeyDown);
+}
+function closeModal(){
+  modalOverlay.style.display = 'none';
+  modalOverlay.setAttribute('aria-hidden','true');
+  openAddBtn.disabled = false;
+  document.removeEventListener('keydown', onKeyDown);
+}
+openAddBtn.addEventListener('click', openModal);
+modalCloseBtn.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e)=>{ if(e.target === modalOverlay) closeModal(); });
+function onKeyDown(e){ if(e.key === 'Escape') closeModal(); }
 
-function resetAddForm(){
+/* reset */
+function resetModalForm(){
   dName.value=''; dMobile.value=''; dEmail.value='';
   otpSection.classList.add('hidden'); otpInput.value=''; otpNote.textContent='';
   createSection.classList.add('hidden'); password.value=''; confirmPassword.value='';
-  sendStatus.textContent=''; createStatus.textContent=''; otpVerified=false;
+  sendStatus.textContent=''; createStatus.textContent=''; otpVerified=false; createBtn.disabled=true;
+  sendOtpBtn.disabled = true; verifyOtpBtn.disabled = true;
+  
+  // Clear all error messages
+  document.getElementById('dNameError').style.display = 'none';
+  document.getElementById('dMobileError').style.display = 'none';
+  document.getElementById('dEmailError').style.display = 'none';
+  document.getElementById('passwordError').style.display = 'none';
+  document.getElementById('confirmPasswordError').style.display = 'none';
+
+  sendOtpBtn.textContent = 'Send OTP';
   if(resendTimer){ clearInterval(resendTimer); resendTimer=null; }
 }
 
+/* validation */
+dName.addEventListener('input', (e) => {
+  const cleaned = e.target.value.replace(/[^A-Za-z\s]/g, '');
+  if (e.target.value !== cleaned) e.target.value = cleaned;
+  
+  const dNameError = document.getElementById('dNameError');
+  const name = e.target.value.trim();
+  if(name.length > 0 && name.length < 2){
+    dNameError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Name must be at least 2 characters';
+    dNameError.style.display = 'flex';
+  } else {
+    dNameError.style.display = 'none';
+  }
+  
+  checkCreateValidity();
+});
+
+dMobile.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length > 10) v = v.slice(0,10);
+  e.target.value = v;
+  
+  const dMobileError = document.getElementById('dMobileError');
+  if(v.length > 0 && v.length < 10){
+    dMobileError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Mobile number must be 10 digits';
+    dMobileError.style.display = 'flex';
+  } else {
+    dMobileError.style.display = 'none';
+  }
+  
+  checkCreateValidity();
+});
+
+filterInput.addEventListener('input', renderTable);
+
 async function fetchList(){
   try{
+    setStatus('Loading...');
     const res = await fetch(apiList + '?action=list');
     const j = await res.json();
-    if(!j.success){ setStatus('Failed to load'); return; }
-    tblBody.innerHTML = '';
-    (j.doctors||[]).forEach(r => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${escapeHtml(r.name)}</td><td>${escapeHtml(r.email)}</td><td>${escapeHtml(r.mobile||'')}</td><td>${escapeHtml(r.role||'')}</td><td>${escapeHtml(r.created_at||'')}</td>
-        <td><button class="action-btn" data-id="${r.id}">Delete</button></td>`;
-      tblBody.appendChild(tr);
-    });
-    tblBody.querySelectorAll('.action-btn').forEach(b => b.addEventListener('click', async (e) => {
-      if(!confirm('Delete doctor?')) return;
-      const id = e.target.dataset.id;
-      const res = await fetch(apiList + '?action=delete&id=' + encodeURIComponent(id));
-      const jr = await res.json();
-      if(jr.success){ showToast('Deleted'); fetchList(); } else showToast('Delete failed');
-    }));
+    if(!j.success){ setStatus('Failed to load'); doctorsMemory = []; renderTable(); return; }
+    doctorsMemory = j.doctors || [];
+    renderTable();
+    setStatus('');
   }catch(err){
-    console.error(err); setStatus('Network error');
+    console.error(err);
+    setStatus('Network error');
   }
 }
 
-function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function matchesFilter(item, q){
+  if(!q) return true;
+  q = q.toLowerCase();
+  return ((item.name||'').toLowerCase().includes(q)
+    || (item.email||'').toLowerCase().includes(q)
+    || (item.mobile||'').toLowerCase().includes(q)
+    || (item.role||'').toLowerCase().includes(q)
+    || (item.created_at||'').toLowerCase().includes(q));
+}
 
-// ---------- OTP flow ----------
-sendOtpBtn.addEventListener('click', async ()=>{
+function renderTable(){
+  const tb = tblBody;
+  tb.innerHTML = '';
+  const q = (filterInput.value||'').trim().toLowerCase();
+  const list = (doctorsMemory||[]).filter(r => matchesFilter(r, q));
+  if(list.length === 0){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="small" colspan="7" style="text-align:center;padding:20px;color:var(--text-muted)">No doctors found</td>`;
+    tb.appendChild(tr);
+    return;
+  }
+  list.forEach(r=>{
+    const status = (r.status || 'active').toLowerCase();
+    const isActive = status === 'active';
+    const statusBadge = `<span class="status-badge ${status}">${status}</span>`;
+    const toggleBtnClass = isActive ? 'disable' : 'enable';
+    const toggleBtnText = isActive ? 'Disable' : 'Enable';
+    
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td data-label="Name"><div class="cell-value">${escapeHtml(r.name)}</div></td>
+       <td data-label="Email"><div class="cell-value">${escapeHtml(r.email)}</div></td>
+       <td data-label="Mobile"><div class="cell-value">${escapeHtml(r.mobile||'')}</div></td>
+       <td data-label="Role"><div class="cell-value">${escapeHtml(r.role||'')}</div></td>
+       <td data-label="Status"><div class="cell-value">${statusBadge}</div></td>
+       <td data-label="Created"><div class="cell-value">${escapeHtml(r.created_at||'')}</div></td>
+       <td data-label="Actions">
+         <button class="action-btn ${toggleBtnClass} toggle-status" data-id="${r.id}" data-status="${status}">${toggleBtnText}</button>
+         <button class="action-btn edit edit-doc" data-id="${r.id}" data-name="${escapeHtml(r.name)}" data-email="${escapeHtml(r.email)}" data-mobile="${escapeHtml(r.mobile||'')}">Edit</button>
+         <button class="action-btn delete" data-id="${r.id}">Delete</button>
+       </td>`;
+    tb.appendChild(tr);
+  });
+
+  tb.querySelectorAll('.toggle-status').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const id = e.target.dataset.id;
+      const currentStatus = e.target.dataset.status;
+      const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+      const action = newStatus === 'inactive' ? 'Disable' : 'Enable';
+      if(!confirm(`${action} this doctor?`)) return;
+      try{
+        const res = await fetch(apiList + '?action=toggle_status&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(newStatus));
+        const jr = await res.json();
+        if(jr.success){ showToast(`Doctor ${newStatus}`); fetchList(); }
+        else showToast('Status update failed');
+      }catch(err){ console.error(err); showToast('Status update failed'); }
+    });
+  });
+
+  tb.querySelectorAll('.edit-doc').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = e.target.dataset.id;
+      const name = e.target.dataset.name;
+      const email = e.target.dataset.email;
+      const mobile = e.target.dataset.mobile;
+      openEditModal(id, name, email, mobile);
+    });
+  });
+
+  tb.querySelectorAll('.delete').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      if(!confirm('Delete doctor?')) return;
+      const id = e.target.dataset.id;
+      try{
+        const res = await fetch(apiList + '?action=delete&id=' + encodeURIComponent(id));
+        const jr = await res.json();
+        if(jr.success){ showToast('Deleted'); fetchList(); }
+        else showToast('Delete failed');
+      }catch(err){ console.error(err); showToast('Delete failed'); }
+    });
+  });
+}
+
+/* OTP flow */
+dEmail.addEventListener('input', () => {
+  const email = (dEmail.value||'').trim().toLowerCase();
+  const dEmailError = document.getElementById('dEmailError');
+  
+  sendStatus.textContent = '';
+  otpSection.classList.add('hidden');
+  otpInput.value = '';
+  verifyOtpBtn.disabled = true;
+  createSection.classList.add('hidden');
+  otpVerified = false;
+  createBtn.disabled = true;
+
+  if(email.length > 0 && !validateEmail(email)){
+    dEmailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Enter a valid email address';
+    dEmailError.style.display = 'flex';
+    sendOtpBtn.disabled = true;
+    return;
+  } else {
+    dEmailError.style.display = 'none';
+  }
+  
+  if(!validateEmail(email)){ sendOtpBtn.disabled = true; return; }
+  sendOtpBtn.disabled = false;
+});
+
+dEmail.addEventListener('blur', () => {
+  const email = (dEmail.value||'').trim().toLowerCase();
+  const dEmailError = document.getElementById('dEmailError');
+  
+  if(email.length > 0 && !validateEmail(email)){
+    dEmailError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Enter a valid email address';
+    dEmailError.style.display = 'flex';
+  }
+});
+
+otpInput.addEventListener('input', ()=> {
+  verifyOtpBtn.disabled = !(otpInput.value||'').trim().length > 0;
+});
+
+async function sendOtpToEmail(){
   const email = (dEmail.value||'').trim().toLowerCase();
   if(!validateEmail(email)){ showToast('Enter a valid email'); return; }
-  sendOtpBtn.disabled = true; sendStatus.textContent = 'Sending OTP...';
+  sendOtpBtn.disabled = true;
+  resendOtpBtn.disabled = true;
+  sendStatus.textContent = '';
   try{
     const body = new URLSearchParams({ action:'send_otp', email: email, page: 'register' });
     const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
     const j = await res.json();
     if(j.success){
-      otpSection.classList.remove('hidden'); otpSection.setAttribute('aria-hidden','false');
-      sendStatus.textContent = 'OTP sent to email.';
+      otpSection.classList.remove('hidden');
+      otpSection.setAttribute('aria-hidden','false');
+      sendOtpBtn.textContent = 'OTP sent to your email';
       startResendCountdown();
     } else {
       sendStatus.textContent = j.message || 'Failed to send OTP';
       sendOtpBtn.disabled = false;
+      resendOtpBtn.disabled = false;
     }
   }catch(err){
-    console.error(err); sendStatus.textContent = 'Network error'; sendOtpBtn.disabled = false;
+    console.error(err);
+    sendStatus.textContent = 'Network error';
+    sendOtpBtn.disabled = false;
+    resendOtpBtn.disabled = false;
   }
-});
+}
+
+sendOtpBtn.addEventListener('click', sendOtpToEmail);
 
 verifyOtpBtn.addEventListener('click', async ()=>{
   const email = (dEmail.value||'').trim().toLowerCase();
   const otp = (otpInput.value||'').trim();
   if(!otp){ showToast('Enter OTP'); return; }
-  verifyOtpBtn.disabled = true; otpNote.textContent = 'Verifying...';
+  verifyOtpBtn.disabled = true;
+  otpNote.textContent = 'Verifying...';
   try{
     const body = new URLSearchParams({ action:'verify_otp', email: email, otp: otp });
     const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
@@ -205,21 +1000,81 @@ verifyOtpBtn.addEventListener('click', async ()=>{
       createSection.setAttribute('aria-hidden','false');
       otpNote.textContent = 'Email verified — complete details below.';
       showToast('Email verified');
+      sendOtpBtn.style.display = 'none';
+      checkCreateValidity();
     } else {
       otpNote.textContent = j.message || 'Invalid OTP';
       verifyOtpBtn.disabled = false;
     }
   }catch(err){
-    console.error(err); otpNote.textContent = 'Network error'; verifyOtpBtn.disabled = false;
+    console.error(err);
+    otpNote.textContent = 'Network error';
+    verifyOtpBtn.disabled = false;
   }
 });
 
-resendOtpBtn.addEventListener('click', async ()=>{
+resendOtpBtn.addEventListener('click', ()=>{
   if(resendTimer){ showToast('Wait before resending'); return; }
-  sendOtpBtn.click();
+  sendOtpToEmail();
 });
 
-// ---------- Create doctor (reuse signup.php register) ----------
+function startResendCountdown(){
+  let sec = 60;
+  resendOtpBtn.disabled = true;
+  resendTimer = setInterval(()=>{
+    otpNote.textContent = `You can resend in ${sec}s`;
+    sec--;
+    if(sec < 0){
+      clearInterval(resendTimer);
+      resendTimer = null;
+      otpNote.textContent = 'You can resend OTP now';
+      resendOtpBtn.disabled = false;
+    }
+  }, 1000);
+}
+
+/* Create doctor */
+function checkCreateValidity(){
+  const name = (dName.value||'').trim();
+  const mobileVal = (dMobile.value||'').trim();
+  const pass = (password.value||'');
+  const cp = (confirmPassword.value||'');
+  const nameValid = /^[A-Za-z\s]+$/.test(name);
+  const valid = otpVerified && name && nameValid && validateMobile(mobileVal) && pass.length >= 6 && pass === cp;
+  createBtn.disabled = !valid;
+}
+
+password.addEventListener('input', () => {
+  const pass = password.value;
+  const passwordError = document.getElementById('passwordError');
+  
+  if(pass.length > 0 && pass.length < 6){
+    passwordError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Password must be at least 6 characters';
+    passwordError.style.display = 'flex';
+  } else {
+    passwordError.style.display = 'none';
+  }
+  
+  checkCreateValidity();
+});
+
+confirmPassword.addEventListener('input', () => {
+  const pass = password.value;
+  const cp = confirmPassword.value;
+  const confirmPasswordError = document.getElementById('confirmPasswordError');
+  
+  if(cp.length > 0 && pass !== cp){
+    confirmPasswordError.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
+    confirmPasswordError.style.display = 'flex';
+  } else {
+    confirmPasswordError.style.display = 'none';
+  }
+  
+  checkCreateValidity();
+});
+
+[dName, dMobile].forEach(el=> el.addEventListener('input', checkCreateValidity));
+
 createBtn.addEventListener('click', async ()=>{
   if(!otpVerified){ showToast('Please verify email first'); return; }
   const name = (dName.value||'').trim();
@@ -227,12 +1082,15 @@ createBtn.addEventListener('click', async ()=>{
   const mobileVal = (dMobile.value||'').trim();
   const pass = password.value || '';
   const cp = confirmPassword.value || '';
+
   if(!name) return showToast('Enter name');
+  if(!/^[A-Za-z\s]+$/.test(name)) return showToast('Name must contain letters only');
   if(!validateMobile(mobileVal)) return showToast('Enter valid mobile');
   if(pass.length < 6) return showToast('Password min 6 chars');
   if(pass !== cp) return showToast('Passwords do not match');
 
-  createBtn.disabled = true; createStatus.textContent = 'Creating...';
+  createBtn.disabled = true;
+  createStatus.textContent = 'Creating...';
   try{
     const body = new URLSearchParams({
       action: 'register',
@@ -246,35 +1104,341 @@ createBtn.addEventListener('click', async ()=>{
     const j = await res.json();
     if(j.success){
       showToast('Doctor created');
-      resetAddForm();
-      addBlock.classList.add('hidden');
+      resetModalForm();
+      closeModal();
       fetchList();
     } else {
       createStatus.textContent = j.message || 'Create failed';
       createBtn.disabled = false;
     }
   }catch(err){
-    console.error(err); createStatus.textContent = 'Network error'; createBtn.disabled = false;
+    console.error(err);
+    createStatus.textContent = 'Network error';
+    createBtn.disabled = false;
+  } finally {
+    setTimeout(()=>{ createStatus.textContent=''; }, 2000);
   }
 });
 
-// ---------- Helpers ----------
+/* utils */
 function validateEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
 function validateMobile(m){ return /^\d{10}$/.test(m); }
 
-function startResendCountdown(){
+/* Edit Modal Logic */
+let editingDoctorId = null;
+let editOriginalEmail = '';
+let editOtpVerified = false;
+let editResendTimer = null;
+
+const editModalOverlay = document.getElementById('editModalOverlay');
+const editModalClose = document.getElementById('editModalClose');
+const editDName = document.getElementById('editDName');
+const editDMobile = document.getElementById('editDMobile');
+const editDEmail = document.getElementById('editDEmail');
+const editSendOtpBtn = document.getElementById('editSendOtpBtn');
+const editSendStatus = document.getElementById('editSendStatus');
+const editOtpSection = document.getElementById('editOtpSection');
+const editOtpInput = document.getElementById('editOtpInput');
+const editVerifyOtpBtn = document.getElementById('editVerifyOtpBtn');
+const editResendOtpBtn = document.getElementById('editResendOtpBtn');
+const editOtpNote = document.getElementById('editOtpNote');
+const editPassword = document.getElementById('editPassword');
+const editConfirmPassword = document.getElementById('editConfirmPassword');
+const editUpdateStatus = document.getElementById('editUpdateStatus');
+const updateDoctorBtn = document.getElementById('updateDoctorBtn');
+
+function openEditModal(id, name, email, mobile){
+  editingDoctorId = id;
+  editOriginalEmail = email.toLowerCase();
+  editOtpVerified = false;
+  
+  editDName.value = name;
+  editDMobile.value = mobile;
+  editDEmail.value = email;
+  
+  editOtpSection.classList.add('hidden');
+  editOtpInput.value = '';
+  editSendStatus.textContent = '';
+  editOtpNote.textContent = '';
+  editUpdateStatus.textContent = '';
+  
+  // Clear password fields
+  editPassword.value = '';
+  editConfirmPassword.value = '';
+  
+  // Disable Send OTP button initially since email hasn't changed
+  editSendOtpBtn.disabled = true;
+  
+  checkEditUpdateValidity();
+  setTimeout(()=>editDName.focus(),80);
+  
+  editModalOverlay.style.display = 'flex';
+  editModalOverlay.setAttribute('aria-hidden','false');
+  document.addEventListener('keydown', onEditKeyDown);
+}
+
+function closeEditModal(){
+  editModalOverlay.style.display = 'none';
+  editModalOverlay.setAttribute('aria-hidden','true');
+  editingDoctorId = null;
+  editOriginalEmail = '';
+  editOtpVerified = false;
+  if(editResendTimer){ clearInterval(editResendTimer); editResendTimer=null; }
+  document.removeEventListener('keydown', onEditKeyDown);
+}
+
+editModalClose.addEventListener('click', closeEditModal);
+editModalOverlay.addEventListener('click', (e)=>{ if(e.target === editModalOverlay) closeEditModal(); });
+function onEditKeyDown(e){ if(e.key === 'Escape') closeEditModal(); }
+
+editDName.addEventListener('input', (e) => {
+  const cleaned = e.target.value.replace(/[^A-Za-z\s]/g, '');
+  if (e.target.value !== cleaned) e.target.value = cleaned;
+  checkEditUpdateValidity();
+});
+
+editDMobile.addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length > 10) v = v.slice(0,10);
+  e.target.value = v;
+  checkEditUpdateValidity();
+});
+
+editDEmail.addEventListener('input', () => {
+  const newEmail = (editDEmail.value||'').trim().toLowerCase();
+  const emailChanged = newEmail !== editOriginalEmail;
+  
+  if(emailChanged && validateEmail(newEmail)){
+    editSendOtpBtn.disabled = false;
+    editOtpVerified = false;
+    editSendStatus.textContent = '';
+    // Hide OTP section until Send OTP is clicked
+    editOtpSection.classList.add('hidden');
+  } else {
+    editSendOtpBtn.disabled = true;
+    editOtpSection.classList.add('hidden');
+    editOtpVerified = false;
+  }
+  checkEditUpdateValidity();
+});
+
+async function editSendOtpToEmail(){
+  const email = (editDEmail.value||'').trim().toLowerCase();
+  if(!validateEmail(email)){ showToast('Enter a valid email'); return; }
+  editSendOtpBtn.disabled = true;
+  editResendOtpBtn.disabled = true;
+  editSendStatus.textContent = '';
+  try{
+    const body = new URLSearchParams({ action:'send_otp', email: email, page: 'register' });
+    const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
+    const j = await res.json();
+    if(j.success){
+      editSendStatus.textContent = 'OTP sent to email.';
+      // Show OTP section after successful send
+      editOtpSection.classList.remove('hidden');
+      editOtpSection.setAttribute('aria-hidden','false');
+      startEditResendCountdown();
+    } else {
+      editSendStatus.textContent = j.message || 'Failed to send OTP';
+      editSendOtpBtn.disabled = false;
+      editResendOtpBtn.disabled = false;
+    }
+  }catch(err){
+    console.error(err);
+    editSendStatus.textContent = 'Network error';
+    editSendOtpBtn.disabled = false;
+    editResendOtpBtn.disabled = false;
+  }
+}
+
+editSendOtpBtn.addEventListener('click', editSendOtpToEmail);
+
+editOtpInput.addEventListener('input', ()=>{
+  editVerifyOtpBtn.disabled = (editOtpInput.value||'').trim().length < 6;
+});
+
+editVerifyOtpBtn.addEventListener('click', async ()=>{
+  const otpVal = (editOtpInput.value||'').trim();
+  const email = (editDEmail.value||'').trim().toLowerCase();
+  if(!otpVal || !email) return;
+  editVerifyOtpBtn.disabled = true;
+  editOtpNote.textContent = 'Verifying...';
+  try{
+    const body = new URLSearchParams({ action:'verify_otp', email, otp: otpVal });
+    const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
+    const j = await res.json();
+    if(j.success){
+      editOtpVerified = true;
+      editOtpSection.classList.add('hidden');
+      editOtpNote.textContent = 'Email verified!';
+      showToast('Email verified');
+      checkEditUpdateValidity();
+    } else {
+      editOtpNote.textContent = j.message || 'Invalid OTP';
+      editVerifyOtpBtn.disabled = false;
+    }
+  }catch(err){
+    console.error(err);
+    editOtpNote.textContent = 'Network error';
+    editVerifyOtpBtn.disabled = false;
+  }
+});
+
+editResendOtpBtn.addEventListener('click', ()=>{
+  if(editResendTimer){ showToast('Wait before resending'); return; }
+  editSendOtpToEmail();
+});
+
+function startEditResendCountdown(){
   let sec = 60;
-  resendTimer = setInterval(()=>{
-    otpNote.textContent = `You can resend in ${sec}s`;
+  editResendOtpBtn.disabled = true;
+  editResendTimer = setInterval(()=>{
+    editOtpNote.textContent = `You can resend in ${sec}s`;
     sec--;
     if(sec < 0){
-      clearInterval(resendTimer); resendTimer = null; otpNote.textContent = 'You can resend OTP now';
+      clearInterval(editResendTimer);
+      editResendTimer = null;
+      editOtpNote.textContent = 'You can resend OTP now';
+      editResendOtpBtn.disabled = false;
     }
   }, 1000);
 }
 
-// initial load
+function checkEditUpdateValidity(){
+  const name = (editDName.value||'').trim();
+  const mobileVal = (editDMobile.value||'').trim();
+  const email = (editDEmail.value||'').trim().toLowerCase();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
+  const emailChanged = email !== editOriginalEmail;
+  
+  const nameOk = name && /^[A-Za-z\s]+$/.test(name);
+  const mobileOk = validateMobile(mobileVal);
+  const emailOk = validateEmail(email);
+  
+  // If password is provided, validate it
+  let passwordValid = true;
+  if(password || confirmPassword){
+    passwordValid = password.length >= 6 && password === confirmPassword;
+  }
+  
+  let canUpdate = nameOk && mobileOk && emailOk && passwordValid;
+  if(emailChanged && !editOtpVerified){
+    canUpdate = false;
+  }
+  
+  updateDoctorBtn.disabled = !canUpdate;
+}
+
+// Add password field listeners
+editPassword.addEventListener('input', checkEditUpdateValidity);
+editConfirmPassword.addEventListener('input', checkEditUpdateValidity);
+
+updateDoctorBtn.addEventListener('click', async ()=>{
+  if(!editingDoctorId) return;
+  const name = (editDName.value||'').trim();
+  const email = (editDEmail.value||'').trim().toLowerCase();
+  const mobileVal = (editDMobile.value||'').trim();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
+  
+  if(!name || !validateMobile(mobileVal) || !validateEmail(email)){
+    showToast('Please fill all fields correctly');
+    return;
+  }
+  
+  const emailChanged = email !== editOriginalEmail;
+  if(emailChanged && !editOtpVerified){
+    showToast('Please verify email with OTP');
+    return;
+  }
+  
+  // Validate password if provided
+  if(password || confirmPassword){
+    if(password.length < 6) return showToast('Password must be at least 6 characters');
+    if(password !== confirmPassword) return showToast('Passwords do not match');
+  }
+  
+  updateDoctorBtn.disabled = true;
+  editUpdateStatus.textContent = 'Updating...';
+  try{
+    const params = {
+      action: 'update',
+      id: editingDoctorId,
+      name: name,
+      mobile: mobileVal,
+      email: email
+    };
+    
+    // Include password only if provided
+    if(password){
+      params.password = password;
+    }
+    
+    const body = new URLSearchParams(params);
+    const res = await fetch(apiList, { method:'POST', body, credentials:'include' });
+    const j = await res.json();
+    if(j.success){
+      showToast('Doctor updated');
+      closeEditModal();
+      fetchList();
+    } else {
+      editUpdateStatus.textContent = j.message || 'Update failed';
+      updateDoctorBtn.disabled = false;
+    }
+  }catch(err){
+    console.error(err);
+    editUpdateStatus.textContent = 'Network error';
+    updateDoctorBtn.disabled = false;
+  }
+});
+
 fetchList();
+
+// ============= SESSION MONITORING FOR IMMEDIATE LOGOUT =============
+let sessionCheckInterval = null;
+let isLoggingOut = false;
+
+function startPageSessionMonitoring() {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  if (sessionCheckInterval) {
+    clearInterval(sessionCheckInterval);
+  }
+
+  // Silent monitoring - only logs when there's an issue
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success) {
+          // Only log when session is invalid
+          console.warn('❌ Session invalid:', data.message);
+          if (!isLoggingOut) {
+            isLoggingOut = true;
+            clearInterval(sessionCheckInterval);
+            localStorage.clear();
+            alert(data.message || 'Your session has expired');
+            window.location.href = '../signin/signin.html';
+          }
+        }
+        // Silent when session is valid - no console logs
+      })
+      .catch(err => {
+        console.error('⚠️ Session check error:', err);
+      });
+  }, 3000);
+}
+
+// Start monitoring silently
+startPageSessionMonitoring();
+
+} // End of initializePage function
 </script>
+<script src="../header/header.js"></script>
+
 </body>
 </html>

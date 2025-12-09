@@ -89,6 +89,12 @@ const headerHTML = `
         <span>Receptionalist List</span>
       </a>
     </li>
+    <li class="menu-item">
+      <a href="../dashboard/manage_logo.html" class="menu-link" data-page="manage-logo">
+        <i class="fa-solid fa-image"></i>
+        <span>Add Hospital Logo</span>
+      </a>
+    </li>
   </ul>
 </nav>
 `;
@@ -366,6 +372,7 @@ function applyRoleBasedVisibility() {
     const doctorsListLink = document.querySelector('.menu-link[data-page="doctors-list"]');
     const bloodTestsLink = document.querySelector('.menu-link[data-page="blood-tests"]');
     const receptionalistListLink = document.querySelector('.menu-link[data-page="receptionalist-list"]');
+    const manageLogoLink = document.querySelector('.menu-link[data-page="manage-logo"]');
 
     console.log('🔍 Menu items found:', {
       addReception: !!addReceptionLink,
@@ -374,7 +381,8 @@ function applyRoleBasedVisibility() {
       allMedicine: !!allMedicineLink,
       doctorsList: !!doctorsListLink,
       bloodTests: !!bloodTestsLink,
-      receptionalistList: !!receptionalistListLink
+      receptionalistList: !!receptionalistListLink,
+      manageLogo: !!manageLogoLink
     });
 
     if (role === 'receptionalist') {
@@ -386,7 +394,8 @@ function applyRoleBasedVisibility() {
       hideMenuItem(doctorsListLink);
       hideMenuItem(bloodTestsLink);
       hideMenuItem(receptionalistListLink);
-      console.log('✅ Hidden 6 menu items for receptionalist');
+      hideMenuItem(manageLogoLink);
+      console.log('✅ Hidden 7 menu items for receptionalist');
     } else if (role === 'user') {
       console.log('✅ USER ROLE - Hiding Add Patient for doctors');
       hideMenuItem(addPatientLink);

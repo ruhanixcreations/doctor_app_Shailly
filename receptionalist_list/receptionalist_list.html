@@ -39,25 +39,15 @@ body{
   gap: 8px;
 }
 
-/* Make OTP input full width and button below it */
-#editOtpInputSection {
-  display: flex;
-  flex-direction: column; /* stack children vertically */
-  gap: 8px; /* spacing between input and buttons */
-}
-
-#editOtpInput {
-  width: 100%; /* full width of the container */
-  box-sizing: border-box; /* include padding/border in width */
-}
-
-#editVerifyOtpBtn {
-  width: 100%; /* optional: make button full width as well */
-}
-
-/* Optional: Resend button below with small gap */
+/* Make resend OTP appear as inline text with countdown for edit modal */
 #editResendOtpBtn {
-  width: 100%;
+  background: none;
+  border: none;
+  color: blue; /* or your theme color */
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+  text-decoration: underline;
 }
 
 /* Make resend OTP appear as inline text with countdown */
@@ -665,20 +655,28 @@ body{
         <input id="editREmail" class="input" placeholder="Email address" type="email" aria-label="Email">
         <button id="editSendOtpBtn" class="btn">Send OTP</button>
       </div>
+      <div id="editSendStatus" class="small" style="margin-top:4px;"></div>
 
       <div id="editOtpSection" class="hidden">
-        <div class="note" style="margin-bottom:10px">Email has changed. Please verify with OTP.</div>
-
-        <div id="editOtpInputSection" class="hidden">
-          <div class="form-row">
-            <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
-            <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
-          </div>
-          <div class="otp-note-wrapper">
-            <div id="editOtpNote" class="note">You can resend in 30s</div>
-            <button id="editResendOtpBtn" class="btn ghost">Resend</button>
-          </div>
+        <div class="form-row">
+          <input id="editOtpInput" class="input" placeholder="Enter OTP (6 digits)" inputmode="numeric" maxlength="6" aria-label="OTP">
+          <button id="editVerifyOtpBtn" class="btn" disabled>Verify OTP</button>
         </div>
+        <div class="otp-note-wrapper">
+          <div id="editOtpNote" class="note">You can resend in 30s</div>
+          <button id="editResendOtpBtn">Resend</button>
+        </div>
+      </div>
+
+      <!-- Password Change Section (Optional) -->
+      <div class="note" style="margin-top:16px;margin-bottom:8px">Change Password (Optional - leave blank to keep current password)</div>
+      
+      <div class="form-row">
+        <input id="editPassword" class="input" placeholder="New Password (min 6 char)" type="password" aria-label="New Password">
+      </div>
+
+      <div class="form-row">
+        <input id="editConfirmPassword" class="input" placeholder="Confirm New Password" type="password" aria-label="Confirm New Password">
       </div>
 
       <div class="form-row" style="justify-content:flex-end;align-items:center;margin-top:10px">
@@ -983,10 +981,11 @@ otpInput.addEventListener('input', ()=> {
   verifyOtpBtn.disabled = !(otpInput.value||'').trim().length > 0;
 });
 
-sendOtpBtn.addEventListener('click', async ()=>{
+async function sendOtpToEmail(){
   const email = (rEmail.value||'').trim().toLowerCase();
   if(!validateEmail(email)){ showToast('Enter a valid email'); return; }
   sendOtpBtn.disabled = true;
+  resendOtpBtn.disabled = true;
   sendStatus.textContent = '';
   try{
     const body = new URLSearchParams({ action:'send_otp', email: email, page: 'register' });
@@ -1000,13 +999,17 @@ sendOtpBtn.addEventListener('click', async ()=>{
 } else {
       sendStatus.textContent = j.message || 'Failed to send OTP';
       sendOtpBtn.disabled = false;
+      resendOtpBtn.disabled = false;
     }
   }catch(err){
     console.error(err);
     sendStatus.textContent = 'Network error';
     sendOtpBtn.disabled = false;
+    resendOtpBtn.disabled = false;
   }
-});
+}
+
+sendOtpBtn.addEventListener('click', sendOtpToEmail);
 
 verifyOtpBtn.addEventListener('click', async ()=>{
   const email = (rEmail.value||'').trim().toLowerCase();
@@ -1040,11 +1043,12 @@ verifyOtpBtn.addEventListener('click', async ()=>{
 
 resendOtpBtn.addEventListener('click', ()=>{
   if(resendTimer){ showToast('Wait before resending'); return; }
-  sendOtpBtn.click();
+  sendOtpToEmail();
 });
 
 function startResendCountdown(){
   let sec = 60;
+  resendOtpBtn.disabled = true;
   resendTimer = setInterval(()=>{
     otpNote.textContent = `You can resend in ${sec}s`;
     sec--;
@@ -1052,6 +1056,7 @@ function startResendCountdown(){
       clearInterval(resendTimer);
       resendTimer = null;
       otpNote.textContent = 'You can resend OTP now';
+      resendOtpBtn.disabled = false;
     }
   }, 1000);
 }
@@ -1161,11 +1166,12 @@ const editREmail = document.getElementById('editREmail');
 const editOtpSection = document.getElementById('editOtpSection');
 const editSendOtpBtn = document.getElementById('editSendOtpBtn');
 const editSendStatus = document.getElementById('editSendStatus');
-const editOtpInputSection = document.getElementById('editOtpInputSection');
 const editOtpInput = document.getElementById('editOtpInput');
 const editVerifyOtpBtn = document.getElementById('editVerifyOtpBtn');
 const editResendOtpBtn = document.getElementById('editResendOtpBtn');
 const editOtpNote = document.getElementById('editOtpNote');
+const editPassword = document.getElementById('editPassword');
+const editConfirmPassword = document.getElementById('editConfirmPassword');
 const editUpdateStatus = document.getElementById('editUpdateStatus');
 const updateReceptionistBtn = document.getElementById('updateReceptionistBtn');
 
@@ -1179,11 +1185,18 @@ function openEditModal(id, name, email, mobile){
   editREmail.value = email;
   editRMobile.value = mobile;
   editOtpSection.classList.add('hidden');
-  editOtpInputSection.classList.add('hidden');
   editOtpInput.value = '';
   editSendStatus.textContent = '';
   editOtpNote.textContent = '';
   editUpdateStatus.textContent = '';
+  
+  // Clear password fields
+  editPassword.value = '';
+  editConfirmPassword.value = '';
+  
+  // Disable Send OTP button initially since email hasn't changed
+  editSendOtpBtn.disabled = true;
+  
   checkEditUpdateValidity();
   setTimeout(()=>editRName.focus(),80);
   document.addEventListener('keydown', onEditKeyDown);
@@ -1221,42 +1234,49 @@ editREmail.addEventListener('input', () => {
   const emailChanged = newEmail !== editOriginalEmail;
   
   if(emailChanged && validateEmail(newEmail)){
-    editOtpSection.classList.remove('hidden');
+    editSendOtpBtn.disabled = false;
     editOtpVerified = false;
-    editOtpInputSection.classList.add('hidden');
     editSendStatus.textContent = '';
-  } else if(!emailChanged){
+    // Hide OTP section until Send OTP is clicked
+    editOtpSection.classList.add('hidden');
+  } else {
+    editSendOtpBtn.disabled = true;
     editOtpSection.classList.add('hidden');
     editOtpVerified = false;
-  } else {
-    editOtpSection.classList.add('hidden');
   }
   checkEditUpdateValidity();
 });
 
-editSendOtpBtn.addEventListener('click', async ()=>{
+async function editSendOtpToEmail(){
   const email = (editREmail.value||'').trim().toLowerCase();
   if(!validateEmail(email)){ showToast('Enter a valid email'); return; }
   editSendOtpBtn.disabled = true;
+  editResendOtpBtn.disabled = true;
   editSendStatus.textContent = '';
   try{
     const body = new URLSearchParams({ action:'send_otp', email: email, page: 'register' });
     const res = await fetch(signupEndpoint, { method:'POST', body, credentials:'include' });
     const j = await res.json();
     if(j.success){
-      editOtpInputSection.classList.remove('hidden');
       editSendStatus.textContent = 'OTP sent to email.';
+      // Show OTP section after successful send
+      editOtpSection.classList.remove('hidden');
+      editOtpSection.setAttribute('aria-hidden','false');
       startEditResendCountdown();
     } else {
       editSendStatus.textContent = j.message || 'Failed to send OTP';
       editSendOtpBtn.disabled = false;
+      editResendOtpBtn.disabled = false;
     }
   }catch(err){
     console.error(err);
     editSendStatus.textContent = 'Network error';
     editSendOtpBtn.disabled = false;
+    editResendOtpBtn.disabled = false;
   }
-});
+}
+
+editSendOtpBtn.addEventListener('click', editSendOtpToEmail);
 
 editOtpInput.addEventListener('input', ()=> {
   editVerifyOtpBtn.disabled = !(editOtpInput.value||'').trim().length > 0;
@@ -1291,11 +1311,12 @@ editVerifyOtpBtn.addEventListener('click', async ()=>{
 
 editResendOtpBtn.addEventListener('click', ()=>{
   if(editResendTimer){ showToast('Wait before resending'); return; }
-  editSendOtpBtn.click();
+  editSendOtpToEmail();
 });
 
 function startEditResendCountdown(){
   let sec = 60;
+  editResendOtpBtn.disabled = true;
   editResendTimer = setInterval(()=>{
     editOtpNote.textContent = `You can resend in ${sec}s`;
     sec--;
@@ -1304,6 +1325,7 @@ function startEditResendCountdown(){
       editResendTimer = null;
       editOtpNote.textContent = 'You can resend OTP now';
       editSendOtpBtn.disabled = false;
+      editResendOtpBtn.disabled = false;
     }
   }, 1000);
 }
@@ -1312,17 +1334,32 @@ function checkEditUpdateValidity(){
   const name = (editRName.value||'').trim();
   const mobileVal = (editRMobile.value||'').trim();
   const email = (editREmail.value||'').trim().toLowerCase();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
+  
   const nameValid = /^[A-Za-z\s]+$/.test(name);
   const emailChanged = email !== editOriginalEmail;
   
-  const valid = name && nameValid && validateMobile(mobileVal) && validateEmail(email) && (!emailChanged || editOtpVerified);
+  // If password is provided, validate it
+  let passwordValid = true;
+  if(password || confirmPassword){
+    passwordValid = password.length >= 6 && password === confirmPassword;
+  }
+  
+  const valid = name && nameValid && validateMobile(mobileVal) && validateEmail(email) && (!emailChanged || editOtpVerified) && passwordValid;
   updateReceptionistBtn.disabled = !valid;
 }
+
+// Add password field listeners
+editPassword.addEventListener('input', checkEditUpdateValidity);
+editConfirmPassword.addEventListener('input', checkEditUpdateValidity);
 
 updateReceptionistBtn.addEventListener('click', async ()=>{
   const name = (editRName.value||'').trim();
   const email = (editREmail.value||'').trim().toLowerCase();
   const mobileVal = (editRMobile.value||'').trim();
+  const password = editPassword.value || '';
+  const confirmPassword = editConfirmPassword.value || '';
   const emailChanged = email !== editOriginalEmail;
 
   if(!name) return showToast('Enter name');
@@ -1330,18 +1367,31 @@ updateReceptionistBtn.addEventListener('click', async ()=>{
   if(!validateMobile(mobileVal)) return showToast('Enter valid mobile');
   if(!validateEmail(email)) return showToast('Enter valid email');
   if(emailChanged && !editOtpVerified) return showToast('Email changed - verify OTP first');
+  
+  // Validate password if provided
+  if(password || confirmPassword){
+    if(password.length < 6) return showToast('Password must be at least 6 characters');
+    if(password !== confirmPassword) return showToast('Passwords do not match');
+  }
 
   updateReceptionistBtn.disabled = true;
   editUpdateStatus.textContent = 'Updating...';
   try{
-    const body = JSON.stringify({
+    const payload = {
       id: editingReceptionistId,
       name: name,
       email: email,
       mobile: mobileVal,
       emailChanged: emailChanged,
       otpVerified: editOtpVerified
-    });
+    };
+    
+    // Include password only if provided
+    if(password){
+      payload.password = password;
+    }
+    
+    const body = JSON.stringify(payload);
     const res = await fetch(apiList + '?action=update', { 
       method:'POST', 
       headers:{'Content-Type':'application/json'},
