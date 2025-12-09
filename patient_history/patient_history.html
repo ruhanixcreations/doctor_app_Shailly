@@ -1348,7 +1348,7 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
     const fileName = previousPrescription.split('/').pop();
     prescriptionHtml = `
       <button type="button" class="btn btn-view" title="View Previous Prescription" onclick="openPdfModal('${escapeHtml(previousPrescription)}', '${escapeHtml(fileName)}')">
-        <i class="fas fa-prescription"></i> View
+        <i class="fas fa-prescription"></i> View Report
       </button>
     `;
   }
@@ -1359,7 +1359,7 @@ function renderReports(reports, patientData, previousPrescription, previousBlood
     const fileName = previousBloodTest.split('/').pop();
     bloodTestHtml = `
       <button type="button" class="btn btn-view" title="View Previous Blood Test" onclick="openPdfModal('${escapeHtml(previousBloodTest)}', '${escapeHtml(fileName)}')">
-        <i class="fas fa-vial"></i> View
+        <i class="fas fa-vial"></i> View Report
       </button>
     `;
   }
