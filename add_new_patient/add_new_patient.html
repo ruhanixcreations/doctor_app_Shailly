@@ -262,11 +262,33 @@ body{
   background:#f3f4f6;
 }
 
-.inline-pdf-body iframe{
-  width:100%;
+.inline-pdf-pages{
   height:100%;
-  border:0;
+  overflow:auto;
+  padding:12px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.pdf-page{
   background:#fff;
+  border-radius:12px;
+  margin:0 auto 12px auto;
+  box-shadow:0 4px 18px rgba(0,0,0,0.10);
+  overflow:hidden;
+  width:100%;
+  max-width:900px;
+}
+
+.pdf-page canvas{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.pdf-loading{
+  padding:14px;
+  color:var(--text-muted);
+  font-size:13px;
 }
 
 .table-wrapper{
@@ -716,7 +738,7 @@ body{
         <span id="inlinePdfTitle">PDF Preview</span>
       </div>
       <div class="inline-pdf-actions">
-        <a id="inlinePdfDownload" href="#" target="_blank" download>
+        <a id="inlinePdfDownload" href="#" download>
           <i class="fas fa-download"></i> Download
         </a>
         <button id="inlinePdfClose" type="button">
@@ -725,7 +747,9 @@ body{
       </div>
     </div>
     <div class="inline-pdf-body">
-      <iframe id="inlinePdfFrame" src="" title="PDF preview"></iframe>
+      <div id="inlinePdfPages" class="inline-pdf-pages">
+        <div class="pdf-loading">Loading PDF…</div>
+      </div>
     </div>
   </div>
 </div>
@@ -872,6 +896,7 @@ body{
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.js"></script>
 <script>
 /* Check Authentication from localStorage */
 function checkAuth(){
@@ -920,23 +945,105 @@ if(!checkAuth()){
   
   // Inline PDF popup elements
   const inlinePdfOverlay = document.getElementById('inlinePdfOverlay');
-  const inlinePdfFrame = document.getElementById('inlinePdfFrame');
+  const inlinePdfPages = document.getElementById('inlinePdfPages');
   const inlinePdfTitle = document.getElementById('inlinePdfTitle');
   const inlinePdfDownload = document.getElementById('inlinePdfDownload');
   const inlinePdfClose = document.getElementById('inlinePdfClose');
+  let currentInlinePdfUrl = null;
+  let currentInlinePdfFilename = null;
+  let resizeRerenderTimeout = null;
+  
+  // Configure PDF.js worker
+  const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+  if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.js';
+  }
+  
+  function setDownloadButtonState(state){
+    if(!inlinePdfDownload) return;
+    if(state === 'downloaded'){
+      inlinePdfDownload.innerHTML = `<i class="fas fa-check"></i> Downloaded`;
+      inlinePdfDownload.style.pointerEvents = 'none';
+      inlinePdfDownload.style.opacity = '0.8';
+      return;
+    }
+    inlinePdfDownload.innerHTML = `<i class="fas fa-download"></i> Download`;
+    inlinePdfDownload.style.pointerEvents = '';
+    inlinePdfDownload.style.opacity = '';
+  }
+  
+  async function downloadPdfToDevice(url, filename){
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Download failed');
+    const blob = await res.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    try{
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = filename || 'document.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } finally {
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
+    }
+  }
+  
+  async function renderPdfInPopup(url){
+    if(!inlinePdfPages) return;
+    if(!pdfjsLib || !pdfjsLib.getDocument){
+      inlinePdfPages.innerHTML = `<div class="pdf-loading">PDF viewer failed to load.</div>`;
+      return;
+    }
+    
+    inlinePdfPages.innerHTML = `<div class="pdf-loading">Loading PDF…</div>`;
+    try{
+      const loadingTask = pdfjsLib.getDocument(url);
+      const pdf = await loadingTask.promise;
+      inlinePdfPages.innerHTML = '';
+      
+      for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+        const page = await pdf.getPage(pageNum);
+        const viewport1 = page.getViewport({ scale: 1 });
+        
+        const containerWidth = Math.max(280, inlinePdfPages.clientWidth - 24); // padding
+        const cssScale = containerWidth / viewport1.width;
+        const dpr = window.devicePixelRatio || 1;
+        const viewport = page.getViewport({ scale: cssScale * dpr });
+        
+        const pageWrap = document.createElement('div');
+        pageWrap.className = 'pdf-page';
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.floor(viewport.width);
+        canvas.height = Math.floor(viewport.height);
+        pageWrap.appendChild(canvas);
+        inlinePdfPages.appendChild(pageWrap);
+        
+        const ctx = canvas.getContext('2d', { alpha: false });
+        await page.render({ canvasContext: ctx, viewport }).promise;
+      }
+    } catch (err) {
+      console.error('PDF render failed:', err);
+      inlinePdfPages.innerHTML = `<div class="pdf-loading" style="color:#dc3545;">Failed to render PDF.</div>`;
+    }
+  }
   
   function openInlinePdf(url, filename){
     if(!url) return;
     if (inlinePdfTitle) inlinePdfTitle.textContent = filename || 'PDF Preview';
-    if (inlinePdfFrame) inlinePdfFrame.src = url;
+    currentInlinePdfUrl = url;
+    currentInlinePdfFilename = filename || 'document.pdf';
+    setDownloadButtonState('default');
     if (inlinePdfDownload) {
       inlinePdfDownload.href = url;
-      inlinePdfDownload.setAttribute('download', filename || 'document.pdf');
+      inlinePdfDownload.setAttribute('download', currentInlinePdfFilename);
     }
     if (inlinePdfOverlay) {
       inlinePdfOverlay.style.display = 'flex';
       inlinePdfOverlay.setAttribute('aria-hidden', 'false');
     }
+    renderPdfInPopup(url);
   }
   
   function closeInlinePdf(){
@@ -944,7 +1051,9 @@ if(!checkAuth()){
       inlinePdfOverlay.style.display = 'none';
       inlinePdfOverlay.setAttribute('aria-hidden', 'true');
     }
-    if (inlinePdfFrame) inlinePdfFrame.src = '';
+    if (inlinePdfPages) inlinePdfPages.innerHTML = '';
+    currentInlinePdfUrl = null;
+    currentInlinePdfFilename = null;
   }
   
   if(inlinePdfClose){
@@ -955,6 +1064,32 @@ if(!checkAuth()){
       if(e.target === inlinePdfOverlay) closeInlinePdf();
     });
   }
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && inlinePdfOverlay && inlinePdfOverlay.style.display === 'flex') closeInlinePdf();
+  });
+  
+  if(inlinePdfDownload){
+    inlinePdfDownload.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if(!currentInlinePdfUrl) return;
+      try{
+        await downloadPdfToDevice(currentInlinePdfUrl, currentInlinePdfFilename || 'document.pdf');
+        setDownloadButtonState('downloaded');
+      } catch (err) {
+        console.error(err);
+        alert('Download failed. Please try again.');
+      }
+    });
+  }
+  
+  window.addEventListener('resize', () => {
+    if(!inlinePdfOverlay || inlinePdfOverlay.style.display !== 'flex') return;
+    if(!currentInlinePdfUrl) return;
+    if(resizeRerenderTimeout) clearTimeout(resizeRerenderTimeout);
+    resizeRerenderTimeout = setTimeout(() => {
+      renderPdfInPopup(currentInlinePdfUrl);
+    }, 200);
+  });
   
   // Prescription camera elements
   const modalOpenPrescriptionCameraBtn = document.getElementById('modal_openPrescriptionCamera');
