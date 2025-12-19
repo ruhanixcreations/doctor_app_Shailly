@@ -645,6 +645,24 @@ if(!checkAuth()){
   let autoSaveTimeout = null;
   
   const DRAFT_KEY = 'add_patient_draft';
+  const MODAL_OPEN_KEY = 'add_patient_modal_open';
+  
+  function setModalOpenFlag(isOpen){
+    try {
+      if (isOpen) sessionStorage.setItem(MODAL_OPEN_KEY, '1');
+      else sessionStorage.removeItem(MODAL_OPEN_KEY);
+    } catch (_) {
+      // Ignore storage failures (private mode / quota)
+    }
+  }
+  
+  function shouldRestoreOpenModal(){
+    try {
+      return sessionStorage.getItem(MODAL_OPEN_KEY) === '1' && !!sessionStorage.getItem(DRAFT_KEY);
+    } catch (_) {
+      return false;
+    }
+  }
   
   // Utility functions
   function dataURLtoBlob(dataurl){
@@ -654,6 +672,15 @@ if(!checkAuth()){
     const u8 = new Uint8Array(bstr.length);
     for (let i = 0; i < bstr.length; i++) u8[i] = bstr.charCodeAt(i);
     return new Blob([u8], { type: mime });
+  }
+  
+  function blobToDataUrl(blob){
+    return new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result);
+      reader.onerror = () => rej(reader.error || new Error('Failed to read blob'));
+      reader.readAsDataURL(blob);
+    });
   }
   
   function loadImage(dataUrl){
@@ -709,26 +736,44 @@ if(!checkAuth()){
       
       // Restore prescription photos
       if (formData.prescriptionPhotos && formData.prescriptionPhotos.length > 0) {
-        modalPrescriptionFilesArray = formData.prescriptionPhotos.map(item => {
-          const blob = dataURLtoBlob(item.dataUrl);
-          const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'), 
-                                 { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
-          return { file, dataUrl: item.dataUrl, isPdf: item.isPdf };
-        });
+        modalPrescriptionFilesArray = formData.prescriptionPhotos
+          .map(item => {
+            try {
+              // Backward-compat: older drafts stored PDF as blob: URL (cannot be restored after reload)
+              if (item && item.isPdf && typeof item.dataUrl === 'string' && item.dataUrl.startsWith('blob:')) return null;
+              const blob = dataURLtoBlob(item.dataUrl);
+              const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'),
+                                     { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
+              return { file, dataUrl: item.dataUrl, viewUrl: item.isPdf ? URL.createObjectURL(blob) : undefined, isPdf: item.isPdf };
+            } catch (_) {
+              return null;
+            }
+          })
+          .filter(Boolean);
         renderModalPrescriptionThumbs();
         updateModalPrescriptionControls();
+        updateModalPrescriptionPdfView();
       }
       
       // Restore blood test photos
       if (formData.bloodTestPhotos && formData.bloodTestPhotos.length > 0) {
-        modalBloodTestFilesArray = formData.bloodTestPhotos.map(item => {
-          const blob = dataURLtoBlob(item.dataUrl);
-          const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'), 
-                                 { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
-          return { file, dataUrl: item.dataUrl, isPdf: item.isPdf };
-        });
+        modalBloodTestFilesArray = formData.bloodTestPhotos
+          .map(item => {
+            try {
+              // Backward-compat: older drafts stored PDF as blob: URL (cannot be restored after reload)
+              if (item && item.isPdf && typeof item.dataUrl === 'string' && item.dataUrl.startsWith('blob:')) return null;
+              const blob = dataURLtoBlob(item.dataUrl);
+              const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'),
+                                     { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
+              return { file, dataUrl: item.dataUrl, viewUrl: item.isPdf ? URL.createObjectURL(blob) : undefined, isPdf: item.isPdf };
+            } catch (_) {
+              return null;
+            }
+          })
+          .filter(Boolean);
         renderModalBloodTestThumbs();
         updateModalBloodTestControls();
+        updateModalBloodTestPdfView();
       }
       
       updateModalControls();
@@ -755,7 +800,9 @@ if(!checkAuth()){
   
   // Modal open/close
   function openAddPatientModal(){
+    if (modalOverlay.style.display === 'flex') return;
     modalOverlay.style.display = 'flex';
+    setModalOpenFlag(true);
     modalClientInput.value = localStorage.getItem('client_id') || '';
     loadModalDoctors().then(() => {
       // Load saved data after doctors are loaded
@@ -777,6 +824,8 @@ if(!checkAuth()){
     document.body.style.overflow = '';
     // Don't clear saved data on close - keep it for restoration
     stopAllCameras();
+    // User explicitly closed the form, so don't auto-reopen on back/reload
+    setModalOpenFlag(false);
   }
   
   function resetModalForm(){
@@ -852,6 +901,7 @@ if(!checkAuth()){
         modalPrescriptionFilesArray.splice(idx,1);
         renderModalPrescriptionThumbs();
         updateModalPrescriptionControls();
+        updateModalPrescriptionPdfView();
         triggerAutoSave();
       });
       wrap.appendChild(btn);
@@ -861,6 +911,24 @@ if(!checkAuth()){
   
   function updateModalPrescriptionControls(){
     modalCreatePrescriptionPdfBtn.disabled = modalPrescriptionFilesArray.filter(f => !f.isPdf).length === 0;
+  }
+  
+  function updateModalPrescriptionPdfView(){
+    const pdfItem = modalPrescriptionFilesArray.find(f => f && f.isPdf);
+    if (!pdfItem){
+      modalPrescriptionPdfView.style.display = 'none';
+      modalPrescriptionPdfView.innerHTML = '';
+      return;
+    }
+    const href = pdfItem.viewUrl || pdfItem.dataUrl;
+    modalPrescriptionPdfView.style.display = 'block';
+    modalPrescriptionPdfView.innerHTML = `
+      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
+      <strong>PDF Ready:</strong> ${pdfItem.file && pdfItem.file.name ? pdfItem.file.name : 'prescription.pdf'} - 
+      <a href="${href}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+        <i class="fas fa-eye"></i> View PDF
+      </a>
+    `;
   }
   
   modalOpenPrescriptionCameraBtn.addEventListener('click', async () => {
@@ -931,9 +999,11 @@ if(!checkAuth()){
     
     const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
     const pdfFile = new File([blob], 'prescription_' + Date.now() + '.pdf', { type: 'application/pdf' });
-    modalPrescriptionFilesArray = modalPrescriptionFilesArray.filter(f => f.isPdf);
-    const pdfDataUrl = URL.createObjectURL(blob);
-    modalPrescriptionFilesArray.push({ file: pdfFile, dataUrl: pdfDataUrl, isPdf: true });
+    // Store PDF as data: URL (blob: URLs don't survive reload/back on mobile)
+    modalPrescriptionFilesArray = [];
+    const viewUrl = URL.createObjectURL(blob);
+    const storedDataUrl = await blobToDataUrl(blob);
+    modalPrescriptionFilesArray.push({ file: pdfFile, dataUrl: storedDataUrl, viewUrl, isPdf: true });
     renderModalPrescriptionThumbs();
     updateModalPrescriptionControls();
     
@@ -941,14 +1011,7 @@ if(!checkAuth()){
     dataTransfer.items.add(pdfFile);
     modalPreviousPrescriptionInput.files = dataTransfer.files;
     
-    modalPrescriptionPdfView.style.display = 'block';
-    modalPrescriptionPdfView.innerHTML = `
-      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
-      <strong>PDF Created:</strong> ${pdfFile.name} (${onlyImages.length} page(s)) - 
-      <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
-        <i class="fas fa-eye"></i> View PDF
-      </a>
-    `;
+    updateModalPrescriptionPdfView();
     triggerAutoSave();
   });
   
@@ -975,6 +1038,7 @@ if(!checkAuth()){
         modalBloodTestFilesArray.splice(idx,1);
         renderModalBloodTestThumbs();
         updateModalBloodTestControls();
+        updateModalBloodTestPdfView();
         triggerAutoSave();
       });
       wrap.appendChild(btn);
@@ -984,6 +1048,24 @@ if(!checkAuth()){
   
   function updateModalBloodTestControls(){
     modalCreateBloodTestPdfBtn.disabled = modalBloodTestFilesArray.filter(f => !f.isPdf).length === 0;
+  }
+  
+  function updateModalBloodTestPdfView(){
+    const pdfItem = modalBloodTestFilesArray.find(f => f && f.isPdf);
+    if (!pdfItem){
+      modalBloodTestPdfView.style.display = 'none';
+      modalBloodTestPdfView.innerHTML = '';
+      return;
+    }
+    const href = pdfItem.viewUrl || pdfItem.dataUrl;
+    modalBloodTestPdfView.style.display = 'block';
+    modalBloodTestPdfView.innerHTML = `
+      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
+      <strong>PDF Ready:</strong> ${pdfItem.file && pdfItem.file.name ? pdfItem.file.name : 'blood_test.pdf'} - 
+      <a href="${href}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+        <i class="fas fa-eye"></i> View PDF
+      </a>
+    `;
   }
   
   modalOpenBloodTestCameraBtn.addEventListener('click', async () => {
@@ -1054,9 +1136,11 @@ if(!checkAuth()){
     
     const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
     const pdfFile = new File([blob], 'blood_test_' + Date.now() + '.pdf', { type: 'application/pdf' });
-    modalBloodTestFilesArray = modalBloodTestFilesArray.filter(f => f.isPdf);
-    const pdfDataUrl = URL.createObjectURL(blob);
-    modalBloodTestFilesArray.push({ file: pdfFile, dataUrl: pdfDataUrl, isPdf: true });
+    // Store PDF as data: URL (blob: URLs don't survive reload/back on mobile)
+    modalBloodTestFilesArray = [];
+    const viewUrl = URL.createObjectURL(blob);
+    const storedDataUrl = await blobToDataUrl(blob);
+    modalBloodTestFilesArray.push({ file: pdfFile, dataUrl: storedDataUrl, viewUrl, isPdf: true });
     renderModalBloodTestThumbs();
     updateModalBloodTestControls();
     
@@ -1064,14 +1148,7 @@ if(!checkAuth()){
     dataTransfer.items.add(pdfFile);
     modalPreviousBloodTestInput.files = dataTransfer.files;
     
-    modalBloodTestPdfView.style.display = 'block';
-    modalBloodTestPdfView.innerHTML = `
-      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
-      <strong>PDF Created:</strong> ${pdfFile.name} (${onlyImages.length} page(s)) - 
-      <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
-        <i class="fas fa-eye"></i> View PDF
-      </a>
-    `;
+    updateModalBloodTestPdfView();
     triggerAutoSave();
   });
   
@@ -1193,6 +1270,38 @@ if(!checkAuth()){
   openModalBtn.addEventListener('click', openAddPatientModal);
   closeModalBtn.addEventListener('click', closeAddPatientModal);
   cancelBtn.addEventListener('click', closeAddPatientModal);
+  
+  // Persist state before opening the generated PDF (mobile back should restore the form)
+  function persistBeforePdfView(e){
+    const a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    // Only handle our PDF view links (open in new tab)
+    if (a.getAttribute('target') !== '_blank') return;
+    setModalOpenFlag(true);
+    // Save immediately (don't rely only on debounced autosave)
+    saveFormData();
+  }
+  modalPrescriptionPdfView.addEventListener('click', persistBeforePdfView);
+  modalBloodTestPdfView.addEventListener('click', persistBeforePdfView);
+  
+  // If the browser reloads/discards the page while viewing PDF, reopen the modal and restore draft
+  window.addEventListener('pageshow', () => {
+    if (shouldRestoreOpenModal()) openAddPatientModal();
+  });
+  
+  // When tab goes background (e.g., opening PDF in new tab), persist immediately
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && modalOverlay.style.display === 'flex') {
+      setModalOpenFlag(true);
+      saveFormData();
+    }
+  });
+  window.addEventListener('beforeunload', () => {
+    if (modalOverlay.style.display === 'flex') {
+      setModalOpenFlag(true);
+      saveFormData();
+    }
+  });
   
   // Close modal when clicking overlay
   modalOverlay.addEventListener('click', (e) => {
