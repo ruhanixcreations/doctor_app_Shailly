@@ -1,0 +1,60 @@
+[12-Nov-2025 07:48:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0123456789' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 07:48:14 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0123456789' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 10:44:35 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '1234567890' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 10:44:40 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '1234567890' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 10:46:06 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '1234567890' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 11:52:48 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0123456789' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 11:53:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0123456789' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 11:54:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0123456789' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 11:58:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '1234567890' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 12:29:43 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '1234567890' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 12:32:08 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '1234567890' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182
+[12-Nov-2025 12:33:47 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry '0123456789' for key 'mobile' in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php:182
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php(182): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/signup/signup.php on line 182

@@ -1,0 +1,2 @@
+VERIFY_SIGNUP_OTP: SESSION_OTP=363090 | POST_OTP=363090 | SESSION_EMAIL=client3@ruhanixlegal.in | POST_EMAIL=client3@ruhanixlegal.in
+VERIFY_SIGNUP_OTP: SESSION_OTP=307735 | POST_OTP=307735 | SESSION_EMAIL=client2@ruhanixlegal.in | POST_EMAIL=client2@ruhanixlegal.in

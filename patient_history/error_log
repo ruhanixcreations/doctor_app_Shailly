@@ -1,0 +1,773 @@
+[18-Nov-2025 07:48:28 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:48:30 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:48:42 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:48:43 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:48:44 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:49:05 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:107
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(107): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 107
+[18-Nov-2025 07:49:06 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:58:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 07:59:04 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:107
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(107): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 107
+[18-Nov-2025 07:59:05 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:107
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(107): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 107
+[18-Nov-2025 07:59:06 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:107
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(107): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 107
+[18-Nov-2025 07:59:07 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 08:02:53 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:02:57 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:02:58 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:02:58 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:02:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:02:59 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:03:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:03:04 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:03:04 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:06 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:108
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(108): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 108
+[18-Nov-2025 08:07:07 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:08 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:108
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(108): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 108
+[18-Nov-2025 08:07:09 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:10 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:33 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:07:36 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:117
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(117): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(30): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 117
+[18-Nov-2025 08:08:01 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 08:08:02 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 08:08:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 08:08:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[18-Nov-2025 08:08:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (latin1_swedish_ci,NUMERIC) for operation '>=' in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php:116
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(116): mysqli->prepare('\r\n        SELEC...')
+#1 /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php(29): handle_list_patients(Object(mysqli))
+#2 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/patient_history/patient_history.php on line 116
+[20-Nov-2025 11:50:53 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 11:50:53 UTC] Split into 1 file paths
+[20-Nov-2025 11:50:53 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 11:58:48 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 11:58:48 UTC] Split into 1 file paths
+[20-Nov-2025 11:58:48 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 11:58:50 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 11:58:50 UTC] Split into 1 file paths
+[20-Nov-2025 11:58:50 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 11:59:39 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 11:59:39 UTC] Split into 1 file paths
+[20-Nov-2025 11:59:39 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 11:59:51 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 11:59:51 UTC] Split into 1 file paths
+[20-Nov-2025 11:59:51 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 11:59:58 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 11:59:58 UTC] Split into 1 file paths
+[20-Nov-2025 11:59:58 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:00:35 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:00:35 UTC] Split into 1 file paths
+[20-Nov-2025 12:00:35 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:00:41 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 12:00:41 UTC] Split into 1 file paths
+[20-Nov-2025 12:00:41 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 12:01:25 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:01:25 UTC] Split into 1 file paths
+[20-Nov-2025 12:01:25 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:05:32 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:05:32 UTC] Split into 1 file paths
+[20-Nov-2025 12:05:32 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:06:03 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:06:03 UTC] Split into 1 file paths
+[20-Nov-2025 12:06:03 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:06:11 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:06:11 UTC] Split into 1 file paths
+[20-Nov-2025 12:06:11 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:06:27 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:06:27 UTC] Split into 1 file paths
+[20-Nov-2025 12:06:27 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:06:34 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:06:34 UTC] Split into 1 file paths
+[20-Nov-2025 12:06:34 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:08:12 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:08:12 UTC] Split into 1 file paths
+[20-Nov-2025 12:08:12 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:10:06 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:10:06 UTC] Split into 1 file paths
+[20-Nov-2025 12:10:06 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:10:43 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:10:43 UTC] Split into 1 file paths
+[20-Nov-2025 12:10:43 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:10:54 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:10:54 UTC] Split into 1 file paths
+[20-Nov-2025 12:10:54 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:11:27 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:11:27 UTC] Split into 1 file paths
+[20-Nov-2025 12:11:27 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:11:49 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:11:49 UTC] Split into 1 file paths
+[20-Nov-2025 12:11:49 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:12:17 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 12:12:17 UTC] Split into 1 file paths
+[20-Nov-2025 12:12:17 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 12:15:07 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 12:15:07 UTC] Split into 1 file paths
+[20-Nov-2025 12:15:07 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 12:17:32 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:17:32 UTC] Split into 1 file paths
+[20-Nov-2025 12:17:32 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:18:12 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:18:12 UTC] Split into 1 file paths
+[20-Nov-2025 12:18:12 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:18:24 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 12:18:24 UTC] Split into 1 file paths
+[20-Nov-2025 12:18:24 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 12:27:04 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:27:04 UTC] Split into 1 file paths
+[20-Nov-2025 12:27:04 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:28:06 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:28:06 UTC] Split into 1 file paths
+[20-Nov-2025 12:28:06 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:28:23 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:28:23 UTC] Split into 1 file paths
+[20-Nov-2025 12:28:23 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:28:41 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:28:41 UTC] Split into 1 file paths
+[20-Nov-2025 12:28:41 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:28:49 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:28:49 UTC] Split into 1 file paths
+[20-Nov-2025 12:28:49 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:28:53 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 12:28:53 UTC] Split into 1 file paths
+[20-Nov-2025 12:28:53 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 12:29:03 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:29:03 UTC] Split into 1 file paths
+[20-Nov-2025 12:29:03 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:30:30 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:30:30 UTC] Split into 1 file paths
+[20-Nov-2025 12:30:30 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 12:45:42 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:45:42 UTC] Split into 1 file paths
+[20-Nov-2025 12:45:42 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:46:13 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:46:13 UTC] Split into 1 file paths
+[20-Nov-2025 12:46:13 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:46:45 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:46:45 UTC] Split into 1 file paths
+[20-Nov-2025 12:46:45 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:47:54 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:47:54 UTC] Split into 1 file paths
+[20-Nov-2025 12:47:54 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:48:21 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 12:48:21 UTC] Split into 1 file paths
+[20-Nov-2025 12:48:21 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 12:55:34 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 12:55:34 UTC] Split into 1 file paths
+[20-Nov-2025 12:55:34 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 12:55:38 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 12:55:38 UTC] Split into 1 file paths
+[20-Nov-2025 12:55:38 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:04:56 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:04:56 UTC] Split into 1 file paths
+[20-Nov-2025 13:04:56 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:08:27 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 13:08:27 UTC] Split into 1 file paths
+[20-Nov-2025 13:08:27 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 13:09:12 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:09:12 UTC] Split into 1 file paths
+[20-Nov-2025 13:09:12 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:09:17 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:09:17 UTC] Split into 1 file paths
+[20-Nov-2025 13:09:17 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:19:04 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:19:04 UTC] Split into 1 file paths
+[20-Nov-2025 13:19:04 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:19:10 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 13:19:10 UTC] Split into 1 file paths
+[20-Nov-2025 13:19:10 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 13:26:04 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:26:04 UTC] Split into 1 file paths
+[20-Nov-2025 13:26:04 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:27:00 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:27:00 UTC] Split into 1 file paths
+[20-Nov-2025 13:27:00 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:27:04 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:27:04 UTC] Split into 1 file paths
+[20-Nov-2025 13:27:04 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:27:41 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:27:41 UTC] Split into 1 file paths
+[20-Nov-2025 13:27:41 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:28:16 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:28:16 UTC] Split into 1 file paths
+[20-Nov-2025 13:28:16 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:28:21 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:28:21 UTC] Split into 1 file paths
+[20-Nov-2025 13:28:21 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:28:33 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:28:33 UTC] Split into 1 file paths
+[20-Nov-2025 13:28:33 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:28:42 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:28:42 UTC] Split into 1 file paths
+[20-Nov-2025 13:28:42 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:29:26 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:29:26 UTC] Split into 1 file paths
+[20-Nov-2025 13:29:26 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:30:18 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 13:30:18 UTC] Split into 1 file paths
+[20-Nov-2025 13:30:18 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 13:30:39 UTC] Found report_file in patient_list: uploads/RUHA982579/PATIENT556314-17112025/308fa87c0dc94b82_report_1763389221884.pdf
+[20-Nov-2025 13:30:39 UTC] Split into 1 file paths
+[20-Nov-2025 13:30:39 UTC] Added report to array: {"id":"patient_list","file_name":"308fa87c0dc94b82_report_1763389221884.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA982579\/PATIENT556314-17112025\/308fa87c0dc94b82_report_1763389221884.pdf"}
+[20-Nov-2025 13:31:43 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:31:43 UTC] Split into 1 file paths
+[20-Nov-2025 13:31:43 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:31:46 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:31:46 UTC] Split into 1 file paths
+[20-Nov-2025 13:31:46 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:32:44 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:32:44 UTC] Split into 1 file paths
+[20-Nov-2025 13:32:44 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:33:09 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:33:09 UTC] Split into 1 file paths
+[20-Nov-2025 13:33:09 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:33:22 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:33:22 UTC] Split into 1 file paths
+[20-Nov-2025 13:33:22 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:34:40 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 13:34:40 UTC] Split into 1 file paths
+[20-Nov-2025 13:34:40 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 13:37:31 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:37:31 UTC] Split into 1 file paths
+[20-Nov-2025 13:37:31 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 13:37:45 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:37:45 UTC] Split into 1 file paths
+[20-Nov-2025 13:37:45 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:41:17 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:41:17 UTC] Split into 1 file paths
+[20-Nov-2025 13:41:17 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:50:04 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:50:04 UTC] Split into 1 file paths
+[20-Nov-2025 13:50:04 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:51:11 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:51:11 UTC] Split into 1 file paths
+[20-Nov-2025 13:51:11 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:51:22 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:51:22 UTC] Split into 1 file paths
+[20-Nov-2025 13:51:22 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:52:24 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:52:24 UTC] Split into 1 file paths
+[20-Nov-2025 13:52:24 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:52:50 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:52:50 UTC] Split into 1 file paths
+[20-Nov-2025 13:52:50 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:53:32 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 13:53:32 UTC] Split into 1 file paths
+[20-Nov-2025 13:53:32 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 13:54:00 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT856277-20112025/e31933268e03ab41_report_1763638694559.pdf
+[20-Nov-2025 13:54:00 UTC] Split into 1 file paths
+[20-Nov-2025 13:54:00 UTC] Added report to array: {"id":"patient_list","file_name":"e31933268e03ab41_report_1763638694559.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT856277-20112025\/e31933268e03ab41_report_1763638694559.pdf"}
+[20-Nov-2025 14:00:07 UTC] Found report_file in patient_list: uploads/RUHA822729/PATIENT375041-17112025/a0d87ba795cef521_report_1763385003915.pdf
+[20-Nov-2025 14:00:07 UTC] Split into 1 file paths
+[20-Nov-2025 14:00:07 UTC] Added report to array: {"id":"patient_list","file_name":"a0d87ba795cef521_report_1763385003915.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA822729\/PATIENT375041-17112025\/a0d87ba795cef521_report_1763385003915.pdf"}
+[20-Nov-2025 14:00:13 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:00:13 UTC] Split into 1 file paths
+[20-Nov-2025 14:00:13 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:01:06 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:01:06 UTC] Split into 1 file paths
+[20-Nov-2025 14:01:06 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:02:44 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:02:44 UTC] Split into 1 file paths
+[20-Nov-2025 14:02:44 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:03:20 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:03:20 UTC] Split into 1 file paths
+[20-Nov-2025 14:03:20 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:03:51 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:03:51 UTC] Split into 1 file paths
+[20-Nov-2025 14:03:51 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:07:16 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:07:16 UTC] Split into 1 file paths
+[20-Nov-2025 14:07:16 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:07:44 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:07:44 UTC] Split into 1 file paths
+[20-Nov-2025 14:07:44 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 14:14:51 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 14:14:51 UTC] Split into 1 file paths
+[20-Nov-2025 14:14:51 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[20-Nov-2025 15:17:57 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[20-Nov-2025 15:17:57 UTC] Split into 1 file paths
+[20-Nov-2025 15:17:57 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 05:50:00 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 05:50:00 UTC] Split into 1 file paths
+[21-Nov-2025 05:50:00 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 06:07:28 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 06:07:28 UTC] Split into 1 file paths
+[21-Nov-2025 06:07:28 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 08:26:34 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 08:26:34 UTC] Split into 1 file paths
+[21-Nov-2025 08:26:34 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 08:27:20 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 08:27:20 UTC] Split into 1 file paths
+[21-Nov-2025 08:27:20 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 08:54:35 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 08:54:35 UTC] Split into 1 file paths
+[21-Nov-2025 08:54:35 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 08:55:03 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 08:55:03 UTC] Split into 1 file paths
+[21-Nov-2025 08:55:03 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:25:45 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:25:45 UTC] Split into 1 file paths
+[21-Nov-2025 11:25:45 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:27:18 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:27:18 UTC] Split into 1 file paths
+[21-Nov-2025 11:27:18 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:28:04 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:28:04 UTC] Split into 1 file paths
+[21-Nov-2025 11:28:04 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:38:59 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:38:59 UTC] Split into 1 file paths
+[21-Nov-2025 11:38:59 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:40:56 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:40:56 UTC] Split into 1 file paths
+[21-Nov-2025 11:40:56 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:43:50 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:43:50 UTC] Split into 1 file paths
+[21-Nov-2025 11:43:50 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:55:10 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:55:10 UTC] Split into 1 file paths
+[21-Nov-2025 11:55:10 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:55:53 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:55:53 UTC] Split into 1 file paths
+[21-Nov-2025 11:55:53 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 11:57:20 UTC] Found report_file in patient_list: uploads/RUHA318429/PATIENT814285-15112025/102cebdd6a652ad1_capture_1763192648590.jpg
+[21-Nov-2025 11:57:20 UTC] Split into 1 file paths
+[21-Nov-2025 11:57:20 UTC] Added report to array: {"id":"patient_list","file_name":"102cebdd6a652ad1_capture_1763192648590.jpg","file_path":"..\/add_new_patient\/uploads\/RUHA318429\/PATIENT814285-15112025\/102cebdd6a652ad1_capture_1763192648590.jpg"}
+[21-Nov-2025 12:06:47 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 12:06:48 UTC] Split into 1 file paths
+[21-Nov-2025 12:06:48 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 12:09:16 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 12:09:16 UTC] Split into 1 file paths
+[21-Nov-2025 12:09:16 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 12:10:26 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 12:10:26 UTC] Split into 1 file paths
+[21-Nov-2025 12:10:26 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 12:12:42 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 12:12:42 UTC] Split into 1 file paths
+[21-Nov-2025 12:12:42 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 13:50:29 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 13:50:29 UTC] Split into 1 file paths
+[21-Nov-2025 13:50:29 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 13:57:37 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 13:57:37 UTC] Split into 1 file paths
+[21-Nov-2025 13:57:37 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 14:10:12 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 14:10:12 UTC] Split into 1 file paths
+[21-Nov-2025 14:10:12 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 14:10:50 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 14:10:50 UTC] Split into 1 file paths
+[21-Nov-2025 14:10:50 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 14:22:35 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 14:22:35 UTC] Split into 1 file paths
+[21-Nov-2025 14:22:35 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[21-Nov-2025 19:03:42 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[21-Nov-2025 19:03:42 UTC] Split into 1 file paths
+[21-Nov-2025 19:03:42 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 11:31:40 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 11:31:40 UTC] Split into 1 file paths
+[24-Nov-2025 11:31:40 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 11:35:40 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 11:35:40 UTC] Split into 1 file paths
+[24-Nov-2025 11:35:40 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 11:55:38 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 11:55:38 UTC] Split into 1 file paths
+[24-Nov-2025 11:55:38 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 12:05:14 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 12:05:14 UTC] Split into 1 file paths
+[24-Nov-2025 12:05:14 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 12:09:20 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 12:09:20 UTC] Split into 1 file paths
+[24-Nov-2025 12:09:20 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 12:12:01 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 12:12:01 UTC] Split into 1 file paths
+[24-Nov-2025 12:12:01 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 12:25:21 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 12:25:21 UTC] Split into 1 file paths
+[24-Nov-2025 12:25:21 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf"}
+[24-Nov-2025 12:52:10 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 12:52:10 UTC] Split into 1 file paths
+[24-Nov-2025 12:52:10 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf","previous_prescription_file":null,"previous_blood_test_file":null}
+[24-Nov-2025 13:02:16 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 13:02:16 UTC] Split into 1 file paths
+[24-Nov-2025 13:02:16 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf","previous_prescription_file":null,"previous_blood_test_file":null}
+[24-Nov-2025 13:04:35 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:06:54 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:07:11 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 13:07:11 UTC] Split into 1 file paths
+[24-Nov-2025 13:07:11 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf","previous_prescription_file":null,"previous_blood_test_file":null}
+[24-Nov-2025 13:14:45 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:18:18 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:18:24 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:18:32 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:18:37 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:23:03 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:28:09 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:28:19 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:29:17 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:29:19 UTC] Found report_file in patient_list: uploads/RUHA528052/PATIENT619983-21112025/efe8da573046483a_report_1763726749741.pdf
+[24-Nov-2025 13:29:19 UTC] Split into 1 file paths
+[24-Nov-2025 13:29:19 UTC] Added report to array: {"id":"patient_list","file_name":"efe8da573046483a_report_1763726749741.pdf","file_path":"..\/add_new_patient\/uploads\/RUHA528052\/PATIENT619983-21112025\/efe8da573046483a_report_1763726749741.pdf","created_at":"2025-11-21 17:36:00","previous_prescription_file":null,"previous_blood_test_file":null}
+[24-Nov-2025 13:29:38 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:32:24 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:34:33 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:36:09 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:36:21 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:41:59 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:42:08 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:45:17 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:45:55 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:46:16 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:46:51 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:47:45 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:48:11 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:48:26 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:53:14 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:54:03 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:55:38 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:56:24 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:57:12 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:57:40 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 13:58:00 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 14:08:33 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 14:16:15 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 14:17:38 UTC] No report_file found in patient_list or it's empty
+[24-Nov-2025 14:18:38 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:25:49 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:28:05 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:30:53 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:31:42 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:32:24 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:34:03 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:35:02 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:35:51 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:36:57 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:52:34 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:53:22 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:53:57 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:54:44 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:59:42 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:59:48 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 09:59:53 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 10:02:27 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 10:02:36 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 10:02:42 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 10:05:36 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 14:05:15 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 14:10:13 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 14:10:32 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 14:12:08 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 14:13:18 UTC] No report_file found in patient_list or it's empty
+[25-Nov-2025 14:27:25 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:33:00 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:38:59 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:39:43 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:41:21 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:41:27 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:42:12 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:49:01 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:49:02 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:49:09 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 07:49:53 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 10:55:57 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:44:16 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:44:32 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:44:34 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:45:11 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:45:19 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:45:27 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:50:17 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:50:35 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:51:03 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:52:17 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:54:23 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:54:29 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 12:54:36 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:17:29 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:18:27 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:44:57 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:45:53 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:48:34 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:48:42 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:49:54 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 13:57:50 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:01:31 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:01:33 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:01:47 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:06:47 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:06:49 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:07:07 UTC] No report_file found in patient_list or it's empty
+[26-Nov-2025 14:16:12 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 05:59:41 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:01:31 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:01:32 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:16:15 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:16:46 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:17:24 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:18:02 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:19:11 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 06:19:55 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 08:18:30 UTC] No report_file found in patient_list or it's empty
+[27-Nov-2025 14:17:42 UTC] No report_file found in patient_list or it's empty
+[28-Nov-2025 05:32:52 UTC] No report_file found in patient_list or it's empty
+[28-Nov-2025 05:33:18 UTC] No report_file found in patient_list or it's empty
+[28-Nov-2025 05:33:21 UTC] No report_file found in patient_list or it's empty
+[28-Nov-2025 05:34:11 UTC] No report_file found in patient_list or it's empty
+[28-Nov-2025 05:34:12 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 05:37:52 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 05:39:01 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 08:10:48 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 13:28:16 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 13:35:13 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 13:35:55 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 13:35:56 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 13:40:23 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:15:06 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:15:07 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:16:27 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:17:05 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:18:30 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:18:48 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:18:59 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:26:01 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:27:39 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:27:41 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:28:15 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:28:17 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:28:21 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:28:25 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:28:26 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:29:07 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:29:55 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:29:57 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:30:22 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:37:24 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:37:30 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:39:10 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:39:11 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:39:12 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:39:21 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:42:02 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:42:30 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:42:32 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:43:39 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:44:57 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:45:35 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:45:37 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:46:54 UTC] No report_file found in patient_list or it's empty
+[08-Dec-2025 14:47:20 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:45:30 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:45:52 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:46:00 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:46:02 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:49:06 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:52:31 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:54:32 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:58:14 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:58:46 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 12:59:11 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:01:41 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:05:27 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:22:05 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:27:45 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:32:16 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:40:35 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:40:50 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:40:50 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:40:57 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:40:58 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:48:48 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:48:59 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:49:00 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:49:01 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:49:34 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:49:35 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:49:47 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:50:10 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:50:16 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:50:39 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:50:49 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:50:51 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:52:55 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:53:44 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:53:48 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:54:27 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 13:55:24 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:10 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:15 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:16 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:17 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:27 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:30 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:01:32 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:21:50 UTC] No report_file found in patient_list or it's empty
+[09-Dec-2025 14:23:13 UTC] No report_file found in patient_list or it's empty
+[17-Dec-2025 08:31:29 UTC] No report_file found in patient_list or it's empty

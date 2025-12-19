@@ -1,0 +1,15 @@
+[21-Nov-2025 12:48:00 UTC] PHP Warning:  require_once(connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php on line 33
+[21-Nov-2025 12:48:00 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php:33
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php on line 33
+[21-Nov-2025 12:48:07 UTC] PHP Warning:  require_once(connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php on line 33
+[21-Nov-2025 12:48:07 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php:33
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php on line 33
+[21-Nov-2025 12:48:10 UTC] PHP Warning:  require_once(connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php on line 33
+[21-Nov-2025 12:48:10 UTC] PHP Fatal error:  Uncaught Error: Failed opening required 'connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php:33
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/header/profile.php on line 33

@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Manage Hospital Logo</title>
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --danger:#dc3545;
+  --success:#28a745;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.card{
+  max-width:800px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header .title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:24px;
+}
+
+.section{
+  background:var(--bg-white);
+  border:1px solid var(--border-light);
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.section-header{
+  font-size:16px;
+  font-weight:700;
+  color:var(--text-dark);
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:2px solid var(--primary-teal);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.section-header i{
+  color:var(--primary-teal);
+  font-size:18px;
+}
+
+.logo-preview-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:200px;
+  background:var(--bg-light);
+  border:2px dashed var(--border-light);
+  border-radius:8px;
+  margin-bottom:20px;
+  position:relative;
+  padding:20px;
+}
+
+.logo-preview-container.has-logo{
+  border-style:solid;
+  border-color:var(--primary-teal);
+}
+
+.logo-preview{
+  max-width:100%;
+  max-height:300px;
+  object-fit:contain;
+  border-radius:8px;
+}
+
+.no-logo-message{
+  text-align:center;
+  color:var(--text-muted);
+  font-size:14px;
+}
+
+.no-logo-message i{
+  font-size:48px;
+  margin-bottom:16px;
+  color:var(--border-light);
+}
+
+.btn-group{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+
+.btn{
+  height:44px;
+  padding:10px 20px;
+  border-radius:6px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 3px 10px rgba(0,169,165,0.25);
+}
+
+.btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.btn.danger{
+  background:var(--danger);
+}
+
+.btn.danger:hover:not(:disabled){
+  background:#c82333;
+  box-shadow:0 3px 10px rgba(220,53,69,0.25);
+}
+
+.btn.success{
+  background:var(--success);
+}
+
+.btn.success:hover:not(:disabled){
+  background:#218838;
+  box-shadow:0 3px 10px rgba(40,167,69,0.25);
+}
+
+.btn.secondary{
+  background:#6c757d;
+}
+
+.btn.secondary:hover:not(:disabled){
+  background:#5a6268;
+}
+
+.file-input-wrapper{
+  position:relative;
+  overflow:hidden;
+  display:inline-block;
+}
+
+.file-input-wrapper input[type=file]{
+  position:absolute;
+  left:-9999px;
+}
+
+.alert{
+  padding:12px 16px;
+  border-radius:6px;
+  margin-bottom:20px;
+  display:none;
+  font-size:14px;
+  font-weight:500;
+}
+
+.alert.success{
+  background:#d4edda;
+  color:#155724;
+  border:1px solid #c3e6cb;
+}
+
+.alert.error{
+  background:#f8d7da;
+  color:#721c24;
+  border:1px solid #f5c6cb;
+}
+
+.alert.info{
+  background:#d1ecf1;
+  color:#0c5460;
+  border:1px solid #bee5eb;
+}
+
+.table-wrapper{
+  overflow-x:auto;
+  margin-top:16px;
+}
+
+.logos-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+.logos-table thead{
+  background:var(--bg-light);
+}
+
+.logos-table th{
+  padding:12px;
+  text-align:left;
+  font-weight:600;
+  color:var(--text-dark);
+  border-bottom:2px solid var(--border-light);
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.logos-table td{
+  padding:12px;
+  border-bottom:1px solid var(--border-light);
+  vertical-align:middle;
+}
+
+.logos-table tbody tr:hover{
+  background:var(--bg-light);
+}
+
+.logo-thumbnail{
+  width:80px;
+  height:60px;
+  object-fit:contain;
+  border-radius:4px;
+  border:1px solid var(--border-light);
+  background:var(--bg-white);
+}
+
+.status-badge{
+  display:inline-block;
+  padding:4px 12px;
+  border-radius:12px;
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+}
+
+.status-badge.active{
+  background:#d4edda;
+  color:#155724;
+}
+
+.status-badge.inactive{
+  background:#e8e8e8;
+  color:#666;
+}
+
+.action-btns{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.action-btn{
+  padding:6px 12px;
+  border-radius:4px;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+  font-size:12px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+
+.action-btn.apply{
+  background:var(--success);
+  color:white;
+}
+
+.action-btn.apply:hover{
+  background:#218838;
+  transform:translateY(-1px);
+}
+
+.action-btn.delete{
+  background:var(--danger);
+  color:white;
+}
+
+.action-btn.delete:hover{
+  background:#c82333;
+  transform:translateY(-1px);
+}
+
+.action-btn:disabled{
+  background:#d1d5db;
+  color:#9ca3af;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.no-data{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--text-muted);
+  font-style:italic;
+  font-size:14px;
+}
+
+@media (max-width:768px){
+  body{
+    padding:12px;
+  }
+  
+  .card{
+    margin:12px auto;
+    border-radius:8px;
+  }
+  
+  .header{
+    padding:14px 16px;
+  }
+  
+  .brand{
+    width:38px;
+    height:38px;
+    font-size:18px;
+  }
+  
+  .header .title{
+    font-size:16px;
+  }
+  
+  .header .subtitle{
+    font-size:11px;
+  }
+  
+  .content{
+    padding:16px;
+  }
+  
+  .section{
+    padding:16px;
+  }
+  
+  .btn-group{
+    flex-direction:column;
+     justify-content:flex-end; /* ⬅ Add this */
+    align-items:flex-end;     /* ⬅ And this */
+    margin-top: 0px;
+  }
+  
+  .btn{
+    width:100%;
+  }
+  
+  /* Table responsive */
+  .table-wrapper{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  
+  .logos-table{
+    min-width:600px;
+  }
+  
+  .logos-table th,
+  .logos-table td{
+    padding:8px;
+    font-size:12px;
+  }
+  
+  .logo-thumbnail{
+    width:60px;
+    height:45px;
+  }
+  
+  .action-btns{
+    display:flex;
+    flex-direction:row;
+    gap:8px;
+  }
+  .action-btn{
+    white-space:nowrap;
+    width:auto;
+    height: 30px;
+  }
+}
+
+@media(max-width:420px){
+  body{
+    padding:8px;
+  }
+  
+  .card{
+    margin:8px auto;
+  }
+  
+  .header{
+    padding:12px 14px;
+  }
+  
+  .header .title{
+    font-size:15px;
+  }
+  
+  .content{
+    padding:14px;
+  }
+  
+  .section{
+    padding:14px;
+  }
+  
+  .section-header{
+    font-size:13px;
+  }
+  
+  .logos-table{
+    min-width:550px;
+  }
+  
+  .logos-table th,
+  .logos-table td{
+    padding:6px;
+    font-size:11px;
+  }
+  
+  .logo-thumbnail{
+    width:50px;
+    height:38px;
+  }
+  
+  .action-btn{
+    padding:5px 8px;
+    font-size:11px;
+  }
+  
+  .status-badge{
+    font-size:10px;
+    padding:3px 8px;
+  }
+}
+</style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
+
+<div class="card">
+  <div class="header">
+    <div class="brand">
+      <i class="fas fa-image"></i>
+    </div>
+    <div class="header-text">
+      <div class="title">Manage Hospital Logo</div>
+      <div class="subtitle">Upload and manage your clinic logo for prescriptions</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="alertBox" class="alert"></div>
+      
+      <div class="btn-group">
+        <div class="file-input-wrapper">
+          <button class="btn" onclick="document.getElementById('logoFileInput').click()">
+            <i class="fas fa-upload"></i> Upload Logo
+          </button>
+          <input type="file" id="logoFileInput" accept="image/png,image/jpeg,image/jpg,image/gif" onchange="handleFileSelect(event)">
+        </div>
+      </div>
+    </div>
+    
+    <!-- All Logos Table -->
+    <div class="section">
+      <div class="section-header">
+        <i class="fas fa-images"></i>
+        <span>All Logos</span>
+      </div>
+      
+      <div class="table-wrapper">
+        <table class="logos-table" id="logosTable">
+          <thead>
+            <tr>
+              <th style="width:80px;">#</th>
+              <th>Logo Preview</th>
+              <th>Uploaded Date</th>
+              <th>Status</th>
+              <th style="width:200px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="logosTableBody">
+            <tr>
+              <td colspan="5" class="no-data">Loading logos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Check Authentication */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  return true;
+}
+
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+function showAlert(message, type = 'info'){
+  const alertBox = document.getElementById('alertBox');
+  alertBox.textContent = message;
+  alertBox.className = 'alert ' + type;
+  alertBox.style.display = 'block';
+  
+  setTimeout(() => {
+    alertBox.style.display = 'none';
+  }, 5000);
+}
+
+function escapeHtml(text){
+  if(!text) return '-';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function formatDate(dateStr){
+  if(!dateStr) return '-';
+  const date = new Date(dateStr);
+  if(isNaN(date)) return dateStr;
+  return date.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+}
+
+async function loadAllLogos(){
+  try{
+    const client_id = localStorage.getItem('client_id');
+    if(!client_id){
+      console.warn('No client_id found');
+      const tbody = document.getElementById('logosTableBody');
+      tbody.innerHTML = '<tr><td colspan="5" class="no-data">No client ID found. Please log in again.</td></tr>';
+      return;
+    }
+    
+    const res = await fetch(`dashboard.php?action=list_logos&client_id=${encodeURIComponent(client_id)}`);
+    const data = await res.json();
+    
+    const tbody = document.getElementById('logosTableBody');
+    tbody.innerHTML = '';
+    
+    if(data.success && data.logos && data.logos.length > 0){
+      data.logos.forEach((logo, index) => {
+        const tr = document.createElement('tr');
+        
+        // Number
+        const tdNum = document.createElement('td');
+        tdNum.textContent = index + 1;
+        
+        // Logo Preview
+        const tdPreview = document.createElement('td');
+        const img = document.createElement('img');
+        img.src = logo.logo_path;
+        img.alt = 'Logo';
+        img.className = 'logo-thumbnail';
+        tdPreview.appendChild(img);
+        
+        // Uploaded Date
+        const tdDate = document.createElement('td');
+        tdDate.textContent = formatDate(logo.uploaded_at);
+        
+        // Status
+        const tdStatus = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.className = 'status-badge ' + (logo.is_active == '1' ? 'active' : 'inactive');
+        statusBadge.textContent = logo.is_active == '1' ? 'Active' : 'Inactive';
+        tdStatus.appendChild(statusBadge);
+        
+        // Actions
+        const tdActions = document.createElement('td');
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'action-btns';
+        
+        // Apply button
+        const applyBtn = document.createElement('button');
+        applyBtn.className = 'action-btn apply';
+        applyBtn.innerHTML = '<i class="fas fa-check"></i> Apply';
+        applyBtn.disabled = logo.is_active == '1';
+        applyBtn.onclick = () => applyLogo(logo.id);
+        
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'action-btn delete';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Delete';
+        deleteBtn.onclick = () => deleteLogo(logo.id);
+        
+        actionsDiv.appendChild(applyBtn);
+        actionsDiv.appendChild(deleteBtn);
+        tdActions.appendChild(actionsDiv);
+        
+        tr.appendChild(tdNum);
+        tr.appendChild(tdPreview);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdActions);
+        
+        tbody.appendChild(tr);
+      });
+    } else {
+      tbody.innerHTML = '<tr><td colspan="5" class="no-data"><i class="fas fa-image" style="font-size:48px;margin-bottom:16px;color:#ccc;display:block;"></i>No logos uploaded yet. Upload a logo to get started.</td></tr>';
+    }
+  }catch(e){
+    console.error('Failed to load logos:', e);
+    showAlert('Failed to load logos', 'error');
+    const tbody = document.getElementById('logosTableBody');
+    tbody.innerHTML = '<tr><td colspan="5" class="no-data">Error loading logos. Please refresh the page.</td></tr>';
+  }
+}
+
+function handleFileSelect(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  
+  // Validate file type
+  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+  if(!validTypes.includes(file.type)){
+    showAlert('Please select a valid image file (PNG, JPG, or GIF)', 'error');
+    event.target.value = '';
+    return;
+  }
+  
+  // Validate file size (2MB)
+  if(file.size > 2 * 1024 * 1024){
+    showAlert('File size must be less than 2MB', 'error');
+    event.target.value = '';
+    return;
+  }
+  
+  // Upload immediately
+  uploadLogo(file);
+  event.target.value = '';
+}
+
+async function uploadLogo(file){
+  const client_id = localStorage.getItem('client_id');
+  if(!client_id){
+    showAlert('Client ID not found. Please log in again.', 'error');
+    return;
+  }
+  
+  showAlert('Uploading logo...', 'info');
+  
+  try{
+    const formData = new FormData();
+    formData.append('client_id', client_id);
+    formData.append('logo', file);
+    formData.append('action', 'upload_logo');
+    
+    const res = await fetch('dashboard.php', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const data = await res.json();
+    
+    if(data.success){
+      showAlert('Logo uploaded successfully!', 'success');
+      // Reload logos table
+      await loadAllLogos();
+    } else {
+      showAlert(data.message || 'Failed to upload logo', 'error');
+    }
+  }catch(e){
+    console.error('Failed to upload logo:', e);
+    showAlert('Failed to upload logo. Please try again.', 'error');
+  }
+}
+
+async function applyLogo(logoId){
+  if(!confirm('Set this logo as active? It will appear on all prescriptions.')){
+    return;
+  }
+  
+  const client_id = localStorage.getItem('client_id');
+  if(!client_id){
+    showAlert('Client ID not found. Please log in again.', 'error');
+    return;
+  }
+  
+  try{
+    const res = await fetch('dashboard.php?action=apply_logo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ client_id, logo_id: logoId })
+    });
+    
+    const data = await res.json();
+    
+    if(data.success){
+      showAlert('Logo applied successfully!', 'success');
+      // Reload logos table
+      await loadAllLogos();
+    } else {
+      showAlert(data.message || 'Failed to apply logo', 'error');
+    }
+  }catch(e){
+    console.error('Failed to apply logo:', e);
+    showAlert('Failed to apply logo. Please try again.', 'error');
+  }
+}
+
+async function deleteLogo(logoId){
+  if(!confirm('Are you sure you want to delete this logo? This action cannot be undone.')){
+    return;
+  }
+  
+  const client_id = localStorage.getItem('client_id');
+  if(!client_id){
+    showAlert('Client ID not found. Please log in again.', 'error');
+    return;
+  }
+  
+  try{
+    const res = await fetch('dashboard.php?action=delete_logo', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ client_id, logo_id: logoId })
+    });
+    
+    const data = await res.json();
+    
+    if(data.success){
+      showAlert('Logo deleted successfully!', 'success');
+      // Reload logos table
+      await loadAllLogos();
+    } else {
+      showAlert(data.message || 'Failed to delete logo', 'error');
+    }
+  }catch(e){
+    console.error('Failed to delete logo:', e);
+    showAlert('Failed to delete logo. Please try again.', 'error');
+  }
+}
+
+// Load logos on page load
+document.addEventListener('DOMContentLoaded', () => {
+  loadAllLogos();
+});
+</script>
+<script src="../header/header.js"></script>
+
+<!-- Session Monitoring -->
+<script>
+(function() {
+  let sessionCheckInterval = null;
+  let isLoggingOut = false;
+  
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) return;
+  
+  sessionCheckInterval = setInterval(() => {
+    if (isLoggingOut) return;
+    
+    fetch("../check_session.php", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success && !isLoggingOut) {
+          isLoggingOut = true;
+          clearInterval(sessionCheckInterval);
+          localStorage.clear();
+          alert(data.message || 'Your session has expired');
+          window.location.href = '../signin/signin.html';
+        }
+      })
+      .catch(err => console.error('Session check error:', err));
+  }, 3000);
+})();
+</script>
+
+</body>
+</html>

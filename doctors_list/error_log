@@ -1,0 +1,80 @@
+[14-Nov-2025 08:01:19 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:01:24 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:01:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:01:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:01:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:03:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:03:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:03:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:03:46 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:21:26 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:21:30 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:21:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:21:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[14-Nov-2025 08:21:33 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Duplicate entry 'ca1@ruhanixlegal.in' for key 'email' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli_stmt->execute()
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[21-Nov-2025 10:24:28 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF NOT EXISTS is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'' at line 1 in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(20): mysqli->query('ALTER TABLE use...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 20
+[21-Nov-2025 11:16:08 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'is_disabled' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php:19
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php(19): mysqli->query('SELECT id, name...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/doctors_list/doctors_list.php on line 19

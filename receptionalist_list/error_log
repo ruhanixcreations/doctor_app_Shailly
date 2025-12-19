@@ -1,0 +1,45 @@
+[21-Nov-2025 10:24:15 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF NOT EXISTS is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'' at line 1 in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php(20): mysqli->query('ALTER TABLE use...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 20
+[21-Nov-2025 10:24:19 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF NOT EXISTS is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'' at line 1 in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php(20): mysqli->query('ALTER TABLE use...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 20
+[21-Nov-2025 10:26:03 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IF NOT EXISTS is_active TINYINT(1) DEFAULT 1 COMMENT '1=active, 0=disabled'' at line 1 in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:20
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php(20): mysqli->query('ALTER TABLE use...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 20
+[21-Nov-2025 11:15:40 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'is_disabled' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:19
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php(19): mysqli->query('SELECT id, name...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 19
+[21-Nov-2025 11:15:44 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'is_disabled' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:19
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php(19): mysqli->query('SELECT id, name...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 19
+[24-Nov-2025 07:21:30 UTC] PHP Warning:  require_once(../../connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:21:30 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:4
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:21:33 UTC] PHP Warning:  require_once(../../connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:21:33 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:4
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:22:23 UTC] PHP Warning:  require_once(../../connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:22:23 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:4
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:22:33 UTC] PHP Warning:  require_once(../../connections.php): Failed to open stream: No such file or directory in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4
+[24-Nov-2025 07:22:33 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../connections.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php:4
+Stack trace:
+#0 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/receptionalist_list/receptionalist_list.php on line 4

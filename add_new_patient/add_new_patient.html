@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="stylesheet" href="../header/header.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Add New Patient</title>
+
+<style>
+:root{
+  --primary-teal:#00A9A5;
+  --primary-blue:#1a75bb;
+  --text-dark:#2c3e50;
+  --text-muted:#6c757d;
+  --border-light:#e0e6ed;
+  --bg-light:#f8f9fa;
+  --bg-white:#ffffff;
+  --success-green:#28a745;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:#f5f7fa;
+  color:var(--text-dark);
+  padding:20px;
+  -webkit-font-smoothing:antialiased;
+}
+
+.card{
+  max-width:940px;
+  margin:20px auto;
+  background:var(--bg-white);
+  border-radius:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+  overflow:hidden;
+}
+
+.header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.brand{
+  width:42px;
+  height:42px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+  font-size:20px;
+}
+
+.header-text{
+  flex:1;
+}
+
+.header .title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:2px;
+  line-height:1.2;
+}
+
+.header .subtitle{
+  font-size:12px;
+  opacity:0.9;
+  font-weight:400;
+}
+
+.content{
+  padding:40px 24px;
+  text-align:center;
+}
+
+.content-text{
+  margin-bottom:32px;
+}
+
+.content-text h2{
+  font-size:24px;
+  color:var(--text-dark);
+  margin-bottom:12px;
+  font-weight:600;
+}
+
+.content-text p{
+  font-size:15px;
+  color:var(--text-muted);
+  line-height:1.6;
+}
+
+.btn{
+  padding:14px 32px;
+  border-radius:8px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  font-size:15px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(0,169,165,0.3);
+}
+
+/* Modal Styles */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.5);
+  z-index:1500;
+  padding:16px;
+  overflow-y:auto;
+}
+
+.modal{
+  width:100%;
+  max-width:900px;
+  background:var(--bg-white);
+  border-radius:12px;
+  padding:0;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  max-height:90vh;
+  overflow-y:auto;
+  margin:20px auto;
+}
+
+.modal-header{
+  background:linear-gradient(135deg,var(--primary-teal) 0%,var(--primary-blue) 100%);
+  padding:16px 24px;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:12px 12px 0 0;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.modal-header-text{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.modal-header .title{
+  font-size:18px;
+  font-weight:700;
+  margin:0;
+}
+
+.modal-close-btn{
+  background:rgba(255,255,255,0.2);
+  border:none;
+  color:white;
+  width:32px;
+  height:32px;
+  border-radius:6px;
+  cursor:pointer;
+  font-size:18px;
+  transition:all 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-close-btn:hover{
+  background:rgba(255,255,255,0.3);
+}
+
+.modal-body{
+  padding:24px;
+}
+
+.modal-section-title{
+  font-size:16px;
+  font-weight:600;
+  color:var(--text-dark);
+  margin-bottom:14px;
+  margin-top:20px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.modal-section-title:first-child{
+  margin-top:0;
+}
+
+.modal-form-group{
+  margin-bottom:16px;
+}
+
+.modal-label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+  font-size:14px;
+  color:var(--text-dark);
+}
+
+.modal-input, .modal-select{
+  width:100%;
+  padding:11px 14px;
+  border-radius:6px;
+  border:1px solid var(--border-light);
+  font-size:14px;
+  transition:all 0.2s ease;
+  font-family:inherit;
+}
+
+.modal-input:focus, .modal-select:focus{
+  border-color:var(--primary-teal);
+  box-shadow:0 0 0 3px rgba(0,169,165,0.1);
+  outline:none;
+}
+
+.modal-inline-group{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.modal-camera-section{
+  background:var(--bg-light);
+  padding:16px;
+  border-radius:8px;
+  margin-bottom:16px;
+}
+
+.modal-camera-section h3{
+  font-size:15px;
+  font-weight:600;
+  color:var(--text-dark);
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.modal-camera-section .small{
+  font-size:13px;
+  color:var(--text-muted);
+  margin-bottom:12px;
+  display:block;
+}
+
+.modal-video{
+  width:100%;
+  border-radius:8px;
+  background:#000;
+  max-height:300px;
+  display:none;
+  margin:12px 0;
+}
+
+.modal-btn-group{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.modal-btn{
+  padding:10px 18px;
+  border-radius:6px;
+  border:none;
+  background:linear-gradient(135deg,var(--primary-teal),var(--primary-blue));
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+  font-size:14px;
+  transition:all 0.2s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex:1;
+  justify-content:center;
+}
+
+.modal-btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(0,169,165,0.3);
+}
+
+.modal-btn:disabled{
+  background:#ccc;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.modal-btn.secondary{
+  background:#6c757d;
+}
+
+.modal-btn.secondary:hover:not(:disabled){
+  background:#5a6268;
+  box-shadow:0 4px 12px rgba(108,117,125,0.3);
+}
+
+.modal-thumbs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.modal-thumb-wrap{
+  position:relative;
+  width:100px;
+  height:100px;
+  border-radius:6px;
+  overflow:hidden;
+  border:2px solid var(--border-light);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-thumb-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.modal-remove-btn{
+  position:absolute;
+  top:4px;
+  right:4px;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:rgba(220,53,69,0.9);
+  color:white;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  transition:all 0.2s ease;
+}
+
+.modal-remove-btn:hover{
+  background:#dc3545;
+  transform:scale(1.1);
+}
+
+.modal-pdf-view{
+  margin-top:12px;
+  padding:12px;
+  background:rgba(231,76,60,0.1);
+  border-radius:6px;
+  font-size:13px;
+  color:var(--text-dark);
+  display:none;
+}
+
+.modal-divider{
+  height:1px;
+  background:var(--border-light);
+  margin:20px 0;
+}
+
+.small{
+  font-size:13px;
+  color:var(--text-muted);
+}
+
+@media (max-width:768px){
+  .modal{
+    max-width:95%;
+    max-height:95vh;
+  }
+  
+  .modal-inline-group{
+    grid-template-columns:1fr;
+  }
+  
+  .modal-btn-group{
+    flex-direction:column;
+  }
+  
+  .modal-btn{
+    width:100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="header-placeholder"></div>
+
+<div class="card">
+  <div class="header">
+    <div class="brand">
+      <i class="fas fa-user-plus"></i>
+    </div>
+    <div class="header-text">
+      <div class="title">Patient Registration</div>
+      <div class="subtitle">Add new patients to the system</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="content-text">
+      <h2>Add New Patient</h2>
+      <p>Click the button below to open the patient registration form.<br>Fill in all required information to register a new patient.</p>
+    </div>
+    
+    <button id="openAddPatientModal" class="btn">
+      <i class="fas fa-user-plus"></i> Add New Patient
+    </button>
+  </div>
+</div>
+
+<!-- Add Patient Modal -->
+<div id="addPatientModalOverlay" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <i class="fas fa-user-plus"></i>
+        <div class="title">Add New Patient</div>
+      </div>
+      <button id="closeAddPatientModal" class="modal-close-btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form id="addPatientForm" autocomplete="off" novalidate>
+        <input type="hidden" id="modal_client_id" name="client_id">
+        
+        <div class="modal-section-title">
+          <i class="fas fa-user-circle"></i> Patient Details
+        </div>
+        
+        <div class="modal-form-group">
+          <label class="modal-label" for="modal_patient_name">Patient Name *</label>
+          <input class="modal-input" id="modal_patient_name" name="patient_name" required autocomplete="name" />
+        </div>
+        
+        <div class="modal-inline-group">
+          <div class="modal-form-group">
+            <label class="modal-label" for="modal_mobile">Mobile *</label>
+            <input class="modal-input" id="modal_mobile" name="mobile" inputmode="tel" required autocomplete="tel" />
+          </div>
+          
+          <div class="modal-form-group">
+            <label class="modal-label" for="modal_age">Age *</label>
+            <input class="modal-input" id="modal_age" name="age" type="number" min="0" required />
+          </div>
+          
+          <div class="modal-form-group">
+            <label class="modal-label" for="modal_weight">Weight (kg) *</label>
+            <input class="modal-input" id="modal_weight" name="weight" type="number" step="0.1" min="0" required />
+          </div>
+        </div>
+        
+        <div class="modal-form-group">
+          <label class="modal-label" for="modal_doctor">Doctor *</label>
+          <select class="modal-select" id="modal_doctor" name="doctor" required>
+            <option value="" disabled selected>Select Doctor</option>
+          </select>
+        </div>
+        
+        <div class="modal-divider"></div>
+        
+        <!-- Previous Prescription Section -->
+        <div class="modal-camera-section">
+          <h3><i class="fas fa-file-medical"></i> Previous Prescription (Optional)</h3>
+          <p class="small">Capture patient's previous prescription</p>
+          
+          <div class="modal-btn-group">
+            <button type="button" id="modal_openPrescriptionCamera" class="modal-btn">
+              <i class="fas fa-camera"></i> Open Camera
+            </button>
+          </div>
+          
+          <video id="modal_prescriptionVideo" class="modal-video" autoplay playsinline></video>
+          <canvas id="modal_prescriptionCanvas" style="display:none;"></canvas>
+          
+          <div id="modal_prescriptionCameraActions" class="modal-btn-group" style="display:none;">
+            <button type="button" id="modal_takePrescriptionPhoto" class="modal-btn" disabled>
+              <i class="fas fa-camera"></i> Take Photo
+            </button>
+            <button type="button" id="modal_stopPrescriptionCamera" class="modal-btn secondary" disabled>
+              <i class="fas fa-stop"></i> Stop Camera
+            </button>
+          </div>
+          
+          <div id="modal_prescriptionThumbs" class="modal-thumbs"></div>
+          
+          <div class="modal-btn-group" style="margin-top:8px;">
+            <button type="button" id="modal_createPrescriptionPdf" class="modal-btn" disabled>
+              <i class="fas fa-file-pdf"></i> Create PDF from Photos
+            </button>
+          </div>
+          
+          <div id="modal_prescriptionPdfView" class="modal-pdf-view"></div>
+          <input type="file" id="modal_previousPrescription" name="previous_prescription" accept="image/*,application/pdf" style="display:none;">
+        </div>
+        
+        <div class="modal-divider"></div>
+        
+        <!-- Previous Blood Test Section -->
+        <div class="modal-camera-section">
+          <h3><i class="fas fa-vial"></i> Previous Blood Test Report (Optional)</h3>
+          <p class="small">Capture patient's previous blood test report</p>
+          
+          <div class="modal-btn-group">
+            <button type="button" id="modal_openBloodTestCamera" class="modal-btn">
+              <i class="fas fa-camera"></i> Open Camera
+            </button>
+          </div>
+          
+          <video id="modal_bloodTestVideo" class="modal-video" autoplay playsinline></video>
+          <canvas id="modal_bloodTestCanvas" style="display:none;"></canvas>
+          
+          <div id="modal_bloodTestCameraActions" class="modal-btn-group" style="display:none;">
+            <button type="button" id="modal_takeBloodTestPhoto" class="modal-btn" disabled>
+              <i class="fas fa-camera"></i> Take Photo
+            </button>
+            <button type="button" id="modal_stopBloodTestCamera" class="modal-btn secondary" disabled>
+              <i class="fas fa-stop"></i> Stop Camera
+            </button>
+          </div>
+          
+          <div id="modal_bloodTestThumbs" class="modal-thumbs"></div>
+          
+          <div class="modal-btn-group" style="margin-top:8px;">
+            <button type="button" id="modal_createBloodTestPdf" class="modal-btn" disabled>
+              <i class="fas fa-file-pdf"></i> Create PDF from Photos
+            </button>
+          </div>
+          
+          <div id="modal_bloodTestPdfView" class="modal-pdf-view"></div>
+          <input type="file" id="modal_previousBloodTest" name="previous_blood_test" accept="image/*,application/pdf" style="display:none;">
+        </div>
+        
+        <div class="modal-divider"></div>
+        
+        <div class="modal-btn-group" style="justify-content:flex-end;">
+          <button type="button" id="modal_cancelBtn" class="modal-btn secondary">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button type="submit" id="modal_submitBtn" class="modal-btn" disabled>
+            <i class="fas fa-save"></i> Save Patient
+          </button>
+        </div>
+        
+        <div id="modal_status" class="small" style="margin-top:10px;color:var(--text-muted);"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+/* Check Authentication from localStorage */
+function checkAuth(){
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  if(!isLoggedIn || isLoggedIn === 'false' || isLoggedIn === 'null'){
+    window.location.href = '../signin/signin.html';
+    return false;
+  }
+  
+  return true;
+}
+
+if(!checkAuth()){
+  throw new Error('Unauthorized access');
+}
+
+/* ========== ADD PATIENT MODAL FUNCTIONALITY ========== */
+(async function(){
+  const { jsPDF } = window.jspdf;
+  
+  // Modal elements
+  const modalOverlay = document.getElementById('addPatientModalOverlay');
+  const openModalBtn = document.getElementById('openAddPatientModal');
+  const closeModalBtn = document.getElementById('closeAddPatientModal');
+  const cancelBtn = document.getElementById('modal_cancelBtn');
+  const addPatientForm = document.getElementById('addPatientForm');
+  
+  // Form inputs
+  const modalClientInput = document.getElementById('modal_client_id');
+  const modalNameInput = document.getElementById('modal_patient_name');
+  const modalMobileInput = document.getElementById('modal_mobile');
+  const modalAgeInput = document.getElementById('modal_age');
+  const modalWeightInput = document.getElementById('modal_weight');
+  const modalDoctorSelect = document.getElementById('modal_doctor');
+  const modalSubmitBtn = document.getElementById('modal_submitBtn');
+  const modalStatusEl = document.getElementById('modal_status');
+  
+  // Prescription camera elements
+  const modalOpenPrescriptionCameraBtn = document.getElementById('modal_openPrescriptionCamera');
+  const modalPrescriptionVideo = document.getElementById('modal_prescriptionVideo');
+  const modalPrescriptionCanvas = document.getElementById('modal_prescriptionCanvas');
+  const modalPrescriptionCameraActions = document.getElementById('modal_prescriptionCameraActions');
+  const modalTakePrescriptionPhotoBtn = document.getElementById('modal_takePrescriptionPhoto');
+  const modalStopPrescriptionCameraBtn = document.getElementById('modal_stopPrescriptionCamera');
+  const modalCreatePrescriptionPdfBtn = document.getElementById('modal_createPrescriptionPdf');
+  const modalPrescriptionThumbsEl = document.getElementById('modal_prescriptionThumbs');
+  const modalPrescriptionPdfView = document.getElementById('modal_prescriptionPdfView');
+  const modalPreviousPrescriptionInput = document.getElementById('modal_previousPrescription');
+  
+  // Blood test camera elements
+  const modalOpenBloodTestCameraBtn = document.getElementById('modal_openBloodTestCamera');
+  const modalBloodTestVideo = document.getElementById('modal_bloodTestVideo');
+  const modalBloodTestCanvas = document.getElementById('modal_bloodTestCanvas');
+  const modalBloodTestCameraActions = document.getElementById('modal_bloodTestCameraActions');
+  const modalTakeBloodTestPhotoBtn = document.getElementById('modal_takeBloodTestPhoto');
+  const modalStopBloodTestCameraBtn = document.getElementById('modal_stopBloodTestCamera');
+  const modalCreateBloodTestPdfBtn = document.getElementById('modal_createBloodTestPdf');
+  const modalBloodTestThumbsEl = document.getElementById('modal_bloodTestThumbs');
+  const modalBloodTestPdfView = document.getElementById('modal_bloodTestPdfView');
+  const modalPreviousBloodTestInput = document.getElementById('modal_previousBloodTest');
+  
+  let modalPrescriptionStream = null;
+  let modalPrescriptionFilesArray = [];
+  let modalBloodTestStream = null;
+  let modalBloodTestFilesArray = [];
+  let autoSaveTimeout = null;
+  
+  const DRAFT_KEY = 'add_patient_draft';
+  
+  // Utility functions
+  function dataURLtoBlob(dataurl){
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    const u8 = new Uint8Array(bstr.length);
+    for (let i = 0; i < bstr.length; i++) u8[i] = bstr.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+  }
+  
+  function loadImage(dataUrl){
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = rej;
+      img.src = dataUrl;
+    });
+  }
+  
+  // Form data persistence
+  function saveFormData(){
+    const formData = {
+      patient_name: modalNameInput.value,
+      mobile: modalMobileInput.value,
+      age: modalAgeInput.value,
+      weight: modalWeightInput.value,
+      doctor: modalDoctorSelect.value,
+      prescriptionPhotos: modalPrescriptionFilesArray.map(item => ({
+        dataUrl: item.dataUrl,
+        isPdf: item.isPdf
+      })),
+      bloodTestPhotos: modalBloodTestFilesArray.map(item => ({
+        dataUrl: item.dataUrl,
+        isPdf: item.isPdf
+      })),
+      timestamp: Date.now()
+    };
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+    console.log('Form data auto-saved');
+  }
+  
+  function loadSavedFormData(){
+    try {
+      const saved = sessionStorage.getItem(DRAFT_KEY);
+      if (!saved) return false;
+      
+      const formData = JSON.parse(saved);
+      
+      // Check if data is not too old (24 hours)
+      if (Date.now() - formData.timestamp > 24 * 60 * 60 * 1000) {
+        sessionStorage.removeItem(DRAFT_KEY);
+        return false;
+      }
+      
+      // Restore form fields
+      if (formData.patient_name) modalNameInput.value = formData.patient_name;
+      if (formData.mobile) modalMobileInput.value = formData.mobile;
+      if (formData.age) modalAgeInput.value = formData.age;
+      if (formData.weight) modalWeightInput.value = formData.weight;
+      if (formData.doctor) modalDoctorSelect.value = formData.doctor;
+      
+      // Restore prescription photos
+      if (formData.prescriptionPhotos && formData.prescriptionPhotos.length > 0) {
+        modalPrescriptionFilesArray = formData.prescriptionPhotos.map(item => {
+          const blob = dataURLtoBlob(item.dataUrl);
+          const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'), 
+                                 { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
+          return { file, dataUrl: item.dataUrl, isPdf: item.isPdf };
+        });
+        renderModalPrescriptionThumbs();
+        updateModalPrescriptionControls();
+      }
+      
+      // Restore blood test photos
+      if (formData.bloodTestPhotos && formData.bloodTestPhotos.length > 0) {
+        modalBloodTestFilesArray = formData.bloodTestPhotos.map(item => {
+          const blob = dataURLtoBlob(item.dataUrl);
+          const file = new File([blob], 'restored_' + Date.now() + (item.isPdf ? '.pdf' : '.jpg'), 
+                                 { type: item.isPdf ? 'application/pdf' : 'image/jpeg' });
+          return { file, dataUrl: item.dataUrl, isPdf: item.isPdf };
+        });
+        renderModalBloodTestThumbs();
+        updateModalBloodTestControls();
+      }
+      
+      updateModalControls();
+      console.log('Form data restored from auto-save');
+      return true;
+    } catch(err) {
+      console.error('Failed to load saved form data:', err);
+      sessionStorage.removeItem(DRAFT_KEY);
+      return false;
+    }
+  }
+  
+  function clearSavedFormData(){
+    sessionStorage.removeItem(DRAFT_KEY);
+    console.log('Saved form data cleared');
+  }
+  
+  function triggerAutoSave(){
+    if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = setTimeout(() => {
+      saveFormData();
+    }, 500); // Debounce 500ms
+  }
+  
+  // Modal open/close
+  function openAddPatientModal(){
+    modalOverlay.style.display = 'flex';
+    modalClientInput.value = localStorage.getItem('client_id') || '';
+    loadModalDoctors().then(() => {
+      // Load saved data after doctors are loaded
+      const hasData = loadSavedFormData();
+      if (hasData) {
+        // Show a subtle notification that data was restored
+        modalStatusEl.textContent = '✓ Previous form data restored';
+        modalStatusEl.style.color = 'var(--success-green)';
+        setTimeout(() => {
+          modalStatusEl.textContent = '';
+        }, 3000);
+      }
+    });
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeAddPatientModal(){
+    modalOverlay.style.display = 'none';
+    document.body.style.overflow = '';
+    // Don't clear saved data on close - keep it for restoration
+    stopAllCameras();
+  }
+  
+  function resetModalForm(){
+    addPatientForm.reset();
+    modalPrescriptionFilesArray = [];
+    modalBloodTestFilesArray = [];
+    renderModalPrescriptionThumbs();
+    renderModalBloodTestThumbs();
+    modalPrescriptionPdfView.style.display = 'none';
+    modalBloodTestPdfView.style.display = 'none';
+    modalStatusEl.textContent = '';
+    updateModalControls();
+  }
+  
+  function stopAllCameras(){
+    if(modalPrescriptionStream){
+      modalPrescriptionStream.getTracks().forEach(t => t.stop());
+      modalPrescriptionStream = null;
+      modalPrescriptionVideo.style.display = 'none';
+      modalPrescriptionCameraActions.style.display = 'none';
+      modalOpenPrescriptionCameraBtn.style.display = 'block';
+    }
+    if(modalBloodTestStream){
+      modalBloodTestStream.getTracks().forEach(t => t.stop());
+      modalBloodTestStream = null;
+      modalBloodTestVideo.style.display = 'none';
+      modalBloodTestCameraActions.style.display = 'none';
+      modalOpenBloodTestCameraBtn.style.display = 'block';
+    }
+  }
+  
+  // Load doctors for modal
+  async function loadModalDoctors(){
+    try {
+      const res = await fetch('add_new_patient.php?action=get_doctors');
+      const json = await res.json();
+      
+      modalDoctorSelect.innerHTML = '<option value="" disabled selected>Select Doctor</option>';
+      
+      if (json.success && Array.isArray(json.doctors)){
+        json.doctors.forEach(doctor => {
+          const option = document.createElement('option');
+          option.value = doctor.id;
+          option.textContent = `${doctor.name} (Client ID: ${doctor.client_id})`;
+          modalDoctorSelect.appendChild(option);
+        });
+      }
+    } catch(err) {
+      console.error('Failed to load doctors:', err);
+    }
+  }
+  
+  // Prescription camera handlers
+  function renderModalPrescriptionThumbs(){
+    modalPrescriptionThumbsEl.innerHTML = '';
+    modalPrescriptionFilesArray.forEach((item, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'modal-thumb-wrap';
+      if (item.isPdf){
+        wrap.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+        wrap.innerHTML = `<i class="fas fa-file-pdf" style="color:white;font-size:32px;"></i>`;
+      } else {
+        const img = document.createElement('img');
+        img.src = item.dataUrl;
+        wrap.appendChild(img);
+      }
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'modal-remove-btn';
+      btn.innerHTML = '<i class="fas fa-times"></i>';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        modalPrescriptionFilesArray.splice(idx,1);
+        renderModalPrescriptionThumbs();
+        updateModalPrescriptionControls();
+        triggerAutoSave();
+      });
+      wrap.appendChild(btn);
+      modalPrescriptionThumbsEl.appendChild(wrap);
+    });
+  }
+  
+  function updateModalPrescriptionControls(){
+    modalCreatePrescriptionPdfBtn.disabled = modalPrescriptionFilesArray.filter(f => !f.isPdf).length === 0;
+  }
+  
+  modalOpenPrescriptionCameraBtn.addEventListener('click', async () => {
+    if (!modalPrescriptionStream) {
+      try {
+        modalPrescriptionStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        modalPrescriptionVideo.srcObject = modalPrescriptionStream;
+        modalPrescriptionVideo.style.display = 'block';
+        modalPrescriptionCameraActions.style.display = 'flex';
+        modalTakePrescriptionPhotoBtn.disabled = false;
+        modalStopPrescriptionCameraBtn.disabled = false;
+        modalOpenPrescriptionCameraBtn.style.display = 'none';
+      } catch (err) {
+        alert('Could not open camera: ' + (err && err.message ? err.message : err));
+      }
+    }
+  });
+  
+  modalTakePrescriptionPhotoBtn.addEventListener('click', () => {
+    if (!modalPrescriptionStream) return;
+    const w = modalPrescriptionVideo.videoWidth || 1280;
+    const h = modalPrescriptionVideo.videoHeight || 720;
+    modalPrescriptionCanvas.width = w;
+    modalPrescriptionCanvas.height = h;
+    const ctx = modalPrescriptionCanvas.getContext('2d');
+    ctx.drawImage(modalPrescriptionVideo, 0, 0, w, h);
+    const dataUrl = modalPrescriptionCanvas.toDataURL('image/jpeg', 0.92);
+    const blob = dataURLtoBlob(dataUrl);
+    const file = new File([blob], 'prescription_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+    modalPrescriptionFilesArray.push({ file, dataUrl, isPdf: false });
+    renderModalPrescriptionThumbs();
+    updateModalPrescriptionControls();
+    triggerAutoSave();
+  });
+  
+  modalStopPrescriptionCameraBtn.addEventListener('click', () => {
+    if (modalPrescriptionStream){
+      modalPrescriptionStream.getTracks().forEach(t => t.stop());
+      modalPrescriptionStream = null;
+      modalPrescriptionVideo.style.display = 'none';
+      modalPrescriptionCameraActions.style.display = 'none';
+      modalOpenPrescriptionCameraBtn.style.display = 'block';
+    }
+  });
+  
+  modalCreatePrescriptionPdfBtn.addEventListener('click', async () => {
+    const onlyImages = modalPrescriptionFilesArray.filter(f => !f.isPdf);
+    if (onlyImages.length === 0) return;
+    
+    const pdf = new jsPDF();
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    
+    for (let i = 0; i < onlyImages.length; i++){
+      const item = onlyImages[i];
+      const img = await loadImage(item.dataUrl);
+      const imgWidth = img.width;
+      const imgHeight = img.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const w = imgWidth * ratio;
+      const h = imgHeight * ratio;
+      const x = (pdfWidth - w) / 2;
+      const y = (pdfHeight - h) / 2;
+      
+      if (i > 0) pdf.addPage();
+      pdf.addImage(item.dataUrl, 'JPEG', x, y, w, h);
+    }
+    
+    const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
+    const pdfFile = new File([blob], 'prescription_' + Date.now() + '.pdf', { type: 'application/pdf' });
+    modalPrescriptionFilesArray = modalPrescriptionFilesArray.filter(f => f.isPdf);
+    const pdfDataUrl = URL.createObjectURL(blob);
+    modalPrescriptionFilesArray.push({ file: pdfFile, dataUrl: pdfDataUrl, isPdf: true });
+    renderModalPrescriptionThumbs();
+    updateModalPrescriptionControls();
+    
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(pdfFile);
+    modalPreviousPrescriptionInput.files = dataTransfer.files;
+    
+    modalPrescriptionPdfView.style.display = 'block';
+    modalPrescriptionPdfView.innerHTML = `
+      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
+      <strong>PDF Created:</strong> ${pdfFile.name} (${onlyImages.length} page(s)) - 
+      <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+        <i class="fas fa-eye"></i> View PDF
+      </a>
+    `;
+    triggerAutoSave();
+  });
+  
+  // Blood test camera handlers
+  function renderModalBloodTestThumbs(){
+    modalBloodTestThumbsEl.innerHTML = '';
+    modalBloodTestFilesArray.forEach((item, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'modal-thumb-wrap';
+      if (item.isPdf){
+        wrap.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+        wrap.innerHTML = `<i class="fas fa-file-pdf" style="color:white;font-size:32px;"></i>`;
+      } else {
+        const img = document.createElement('img');
+        img.src = item.dataUrl;
+        wrap.appendChild(img);
+      }
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'modal-remove-btn';
+      btn.innerHTML = '<i class="fas fa-times"></i>';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        modalBloodTestFilesArray.splice(idx,1);
+        renderModalBloodTestThumbs();
+        updateModalBloodTestControls();
+        triggerAutoSave();
+      });
+      wrap.appendChild(btn);
+      modalBloodTestThumbsEl.appendChild(wrap);
+    });
+  }
+  
+  function updateModalBloodTestControls(){
+    modalCreateBloodTestPdfBtn.disabled = modalBloodTestFilesArray.filter(f => !f.isPdf).length === 0;
+  }
+  
+  modalOpenBloodTestCameraBtn.addEventListener('click', async () => {
+    if (!modalBloodTestStream) {
+      try {
+        modalBloodTestStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        modalBloodTestVideo.srcObject = modalBloodTestStream;
+        modalBloodTestVideo.style.display = 'block';
+        modalBloodTestCameraActions.style.display = 'flex';
+        modalTakeBloodTestPhotoBtn.disabled = false;
+        modalStopBloodTestCameraBtn.disabled = false;
+        modalOpenBloodTestCameraBtn.style.display = 'none';
+      } catch (err) {
+        alert('Could not open camera: ' + (err && err.message ? err.message : err));
+      }
+    }
+  });
+  
+  modalTakeBloodTestPhotoBtn.addEventListener('click', () => {
+    if (!modalBloodTestStream) return;
+    const w = modalBloodTestVideo.videoWidth || 1280;
+    const h = modalBloodTestVideo.videoHeight || 720;
+    modalBloodTestCanvas.width = w;
+    modalBloodTestCanvas.height = h;
+    const ctx = modalBloodTestCanvas.getContext('2d');
+    ctx.drawImage(modalBloodTestVideo, 0, 0, w, h);
+    const dataUrl = modalBloodTestCanvas.toDataURL('image/jpeg', 0.92);
+    const blob = dataURLtoBlob(dataUrl);
+    const file = new File([blob], 'blood_test_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+    modalBloodTestFilesArray.push({ file, dataUrl, isPdf: false });
+    renderModalBloodTestThumbs();
+    updateModalBloodTestControls();
+    triggerAutoSave();
+  });
+  
+  modalStopBloodTestCameraBtn.addEventListener('click', () => {
+    if (modalBloodTestStream){
+      modalBloodTestStream.getTracks().forEach(t => t.stop());
+      modalBloodTestStream = null;
+      modalBloodTestVideo.style.display = 'none';
+      modalBloodTestCameraActions.style.display = 'none';
+      modalOpenBloodTestCameraBtn.style.display = 'block';
+    }
+  });
+  
+  modalCreateBloodTestPdfBtn.addEventListener('click', async () => {
+    const onlyImages = modalBloodTestFilesArray.filter(f => !f.isPdf);
+    if (onlyImages.length === 0) return;
+    
+    const pdf = new jsPDF();
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    
+    for (let i = 0; i < onlyImages.length; i++){
+      const item = onlyImages[i];
+      const img = await loadImage(item.dataUrl);
+      const imgWidth = img.width;
+      const imgHeight = img.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const w = imgWidth * ratio;
+      const h = imgHeight * ratio;
+      const x = (pdfWidth - w) / 2;
+      const y = (pdfHeight - h) / 2;
+      
+      if (i > 0) pdf.addPage();
+      pdf.addImage(item.dataUrl, 'JPEG', x, y, w, h);
+    }
+    
+    const blob = new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
+    const pdfFile = new File([blob], 'blood_test_' + Date.now() + '.pdf', { type: 'application/pdf' });
+    modalBloodTestFilesArray = modalBloodTestFilesArray.filter(f => f.isPdf);
+    const pdfDataUrl = URL.createObjectURL(blob);
+    modalBloodTestFilesArray.push({ file: pdfFile, dataUrl: pdfDataUrl, isPdf: true });
+    renderModalBloodTestThumbs();
+    updateModalBloodTestControls();
+    
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(pdfFile);
+    modalPreviousBloodTestInput.files = dataTransfer.files;
+    
+    modalBloodTestPdfView.style.display = 'block';
+    modalBloodTestPdfView.innerHTML = `
+      <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
+      <strong>PDF Created:</strong> ${pdfFile.name} (${onlyImages.length} page(s)) - 
+      <a href="${pdfDataUrl}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+        <i class="fas fa-eye"></i> View PDF
+      </a>
+    `;
+    triggerAutoSave();
+  });
+  
+  // Input validation
+  modalNameInput.addEventListener('keypress', (e) => {
+    const char = String.fromCharCode(e.which || e.keyCode);
+    if (!/^[a-zA-Z\s]$/.test(char)) e.preventDefault();
+  });
+  modalNameInput.addEventListener('input', ()=> {
+    const cleaned = modalNameInput.value.replace(/[^a-zA-Z\s]/g, '');
+    if (modalNameInput.value !== cleaned) modalNameInput.value = cleaned;
+    updateModalControls();
+    triggerAutoSave();
+  });
+  
+  modalMobileInput.addEventListener('keypress', (e) => {
+    const char = String.fromCharCode(e.which || e.keyCode);
+    if (!/^\d$/.test(char) || modalMobileInput.value.length >= 10) e.preventDefault();
+  });
+  modalMobileInput.addEventListener('input', ()=> {
+    const cleaned = modalMobileInput.value.replace(/\D/g, '').slice(0,10);
+    if (modalMobileInput.value !== cleaned) modalMobileInput.value = cleaned;
+    updateModalControls();
+    triggerAutoSave();
+  });
+  
+  [modalAgeInput, modalWeightInput].forEach(el => el.addEventListener('input', () => {
+    updateModalControls();
+    triggerAutoSave();
+  }));
+  modalDoctorSelect.addEventListener('change', () => {
+    updateModalControls();
+    triggerAutoSave();
+  });
+  
+  // Validation functions
+  function isModalNameValid(){ return /^[A-Za-z\s]+$/.test(modalNameInput.value.trim()) && modalNameInput.value.trim().length >= 2; }
+  function isModalMobileValid(){ return /^\d{10}$/.test(modalMobileInput.value.trim()); }
+  function isModalAgeValid(){ return modalAgeInput.value !== '' && Number(modalAgeInput.value) >= 0; }
+  function isModalWeightValid(){ return modalWeightInput.value !== '' && Number(modalWeightInput.value) >= 0; }
+  function isModalDoctorValid(){ return modalDoctorSelect.value !== ''; }
+  
+  function updateModalControls(){
+    const allOk = isModalNameValid() && isModalMobileValid() && isModalAgeValid() && isModalWeightValid() && isModalDoctorValid();
+    modalSubmitBtn.disabled = !allOk;
+    
+    if (!isModalNameValid() && modalNameInput.value.length > 0) {
+      modalNameInput.style.borderColor = '#dc3545';
+    } else {
+      modalNameInput.style.borderColor = '';
+    }
+    if (!isModalMobileValid() && modalMobileInput.value.length > 0) {
+      modalMobileInput.style.borderColor = '#dc3545';
+    } else {
+      modalMobileInput.style.borderColor = '';
+    }
+  }
+  
+  // Form submit
+  addPatientForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    updateModalControls();
+    if (!(isModalNameValid() && isModalMobileValid() && isModalAgeValid() && isModalWeightValid() && isModalDoctorValid())){
+      alert('Please fill all required fields correctly.');
+      return;
+    }
+    
+    if (!modalClientInput.value) {
+      modalClientInput.value = '';
+    }
+    
+    const formData = new FormData();
+    formData.append('client_id', modalClientInput.value);
+    formData.append('patient_name', modalNameInput.value.trim());
+    formData.append('mobile', modalMobileInput.value.trim());
+    formData.append('age', modalAgeInput.value);
+    formData.append('weight', modalWeightInput.value);
+    formData.append('doctor', modalDoctorSelect.value.trim());
+    
+    // Add prescription file if exists
+    if (modalPreviousPrescriptionInput.files.length > 0) {
+      formData.append('previous_prescription', modalPreviousPrescriptionInput.files[0]);
+    }
+    
+    // Add blood test file if exists
+    if (modalPreviousBloodTestInput.files.length > 0) {
+      formData.append('previous_blood_test', modalPreviousBloodTestInput.files[0]);
+    }
+    
+    modalStatusEl.textContent = 'Saving patient...';
+    modalSubmitBtn.disabled = true;
+    try {
+      const res = await fetch('add_new_patient.php', { method: 'POST', body: formData });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Server error');
+      
+      modalStatusEl.textContent = 'Patient saved successfully!';
+      modalStatusEl.style.color = 'var(--success-green)';
+      
+      // Clear saved form data after successful submission
+      clearSavedFormData();
+      
+      // Close modal after short delay
+      setTimeout(() => {
+        resetModalForm();
+        closeAddPatientModal();
+        modalStatusEl.style.color = '';
+        alert('Patient added successfully!');
+      }, 1500);
+      
+    } catch (err) {
+      modalStatusEl.textContent = 'Failed: ' + (err && err.message ? err.message : err);
+      modalStatusEl.style.color = '#dc3545';
+      modalSubmitBtn.disabled = false;
+    }
+  });
+  
+  // Event listeners
+  openModalBtn.addEventListener('click', openAddPatientModal);
+  closeModalBtn.addEventListener('click', closeAddPatientModal);
+  cancelBtn.addEventListener('click', closeAddPatientModal);
+  
+  // Close modal when clicking overlay
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) {
+      closeAddPatientModal();
+    }
+  });
+  
+  // Close modal with ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay.style.display === 'flex') {
+      closeAddPatientModal();
+    }
+  });
+  
+})();
+</script>
+<script src="../header/header.js"></script>
+
+</body>
+</html>

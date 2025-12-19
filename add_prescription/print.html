@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Medical Prescription</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- html2pdf for Save PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:#f0f0f0;
+  padding:20px;
+  color:#333;
+}
+
+.no-print{
+  text-align:right;
+  max-width:850px;
+  margin:0 auto 15px;
+}
+
+.btn{
+  padding:10px 20px;
+  margin-left:8px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:14px;
+  transition:all 0.2s;
+}
+
+.btn-pdf{
+  background:#2196F3;
+  color:white;
+}
+
+.btn-pdf:hover{
+  background:#1976D2;
+}
+
+.btn-print{
+  background:#00A9A5;
+  color:white;
+}
+
+.btn-print:hover{
+  background:#008f8c;
+}
+
+.prescription-page{
+  max-width:850px;
+  margin:0 auto;
+  background:white;
+  box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+/* Doctor Header */
+.doctor-header{
+  border-bottom:3px solid #00A9A5;
+  padding:25px 35px 20px;
+  background:#fafafa;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+}
+
+.doctor-info{
+  flex:1;
+}
+
+.doctor-name{
+  font-size:24px;
+  font-weight:700;
+  color:#1a1a1a;
+  margin-bottom:4px;
+}
+
+.doctor-contact{
+  display:flex;
+  gap:20px;
+  font-size:12px;
+  color:#666;
+  flex-wrap:wrap;
+}
+
+.doctor-contact span{
+  display:inline-block;
+}
+
+.clinic-logo{
+  flex-shrink:0;
+  max-width:150px;
+  max-height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.clinic-logo img{
+  max-width:100%;
+  max-height:100px;
+  height:auto;
+  width:auto;
+  object-fit:contain;
+  border-radius:8px;
+}
+
+/* Patient Info Bar */
+.patient-bar{
+  background:#f9f9f9;
+  border-left:4px solid #00A9A5;
+  padding:16px 35px;
+  border-bottom:1px solid #e0e0e0;
+}
+
+.patient-name{
+  font-size:17px;
+  font-weight:700;
+  color:#1a1a1a;
+  margin-bottom:10px;
+}
+
+.patient-details{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px 20px;
+  font-size:12px;
+}
+
+.detail-item{
+  display:flex;
+  gap:5px;
+}
+
+.detail-label{
+  color:#666;
+  font-weight:500;
+}
+
+.detail-value{
+  color:#1a1a1a;
+  font-weight:600;
+}
+
+/* Prescription Content */
+.prescription-content{
+  padding:25px 35px;
+}
+
+/* Section */
+.section{
+  margin-bottom:25px;
+}
+
+.section-title{
+  font-size:14px;
+  font-weight:700;
+  color:#1a1a1a;
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  border-bottom:2px solid #e0e0e0;
+  padding-bottom:6px;
+}
+
+.section-content{
+  font-size:13px;
+  line-height:1.6;
+  color:#333;
+  padding:10px;
+  background:#fafafa;
+  border-radius:4px;
+  border:1px solid #e8e8e8;
+}
+
+/* Table Wrapper for Scroll */
+.table-wrapper{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin-top:10px;
+}
+
+/* Medications Table */
+.medications-table{
+  width:100%;
+  min-width:600px;
+  border-collapse:collapse;
+  font-size:12px;
+  border:1px solid #ddd;
+}
+
+.medications-table thead{
+  background:#f5f5f5;
+}
+
+.medications-table th{
+  padding:10px 8px;
+  text-align:left;
+  font-weight:700;
+  color:#1a1a1a;
+  border:1px solid #ddd;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
+  white-space:nowrap;
+}
+
+.medications-table td{
+  padding:10px 8px;
+  border:1px solid #ddd;
+  vertical-align:top;
+  color:#333;
+}
+
+.medications-table tbody tr:nth-child(even){
+  background:#fafafa;
+}
+
+.med-number{
+  font-weight:700;
+  color:#00A9A5;
+  text-align:center;
+}
+
+.med-name{
+  font-weight:700;
+  color:#1a1a1a;
+  font-size:13px;
+}
+
+/* Tests */
+.tests-list{
+  padding-left:20px;
+  margin:8px 0;
+}
+
+.tests-list li{
+  margin-bottom:5px;
+  font-size:13px;
+  color:#333;
+  line-height:1.6;
+}
+
+/* Follow-up */
+.followup-box{
+  background:#e8f5e9;
+  border-left:4px solid #4caf50;
+  padding:12px 16px;
+  border-radius:4px;
+  font-size:13px;
+  margin-top:10px;
+}
+
+.followup-box strong{
+  color:#2e7d32;
+  font-weight:700;
+}
+
+/* Footer */
+.prescription-footer{
+  margin-top:40px;
+  padding-top:25px;
+  border-top:1px solid #e0e0e0;
+}
+
+.signature-section{
+  text-align:right;
+}
+
+.signature-line{
+  border-top:2px solid #1a1a1a;
+  width:200px;
+  margin-left:auto;
+  margin-bottom:8px;
+  margin-top:40px;
+}
+
+.signature-label{
+  font-size:12px;
+  color:#666;
+  font-weight:600;
+}
+
+.prescription-note{
+  margin-top:20px;
+  font-size:11px;
+  color:#888;
+  text-align:center;
+  padding-top:12px;
+  border-top:1px dashed #ddd;
+}
+
+/* Print Styles */
+@media print {
+  @page{
+    size:A4;
+    margin:10mm;
+  }
+  
+  body{
+    background:white;
+    padding:0;
+    margin:0;
+  }
+  
+  .no-print{
+    display:none !important;
+  }
+  
+  .prescription-page{
+    box-shadow:none;
+    max-width:100%;
+    width:100%;
+  }
+  
+  .doctor-header{
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+    display:flex;
+    justify-content:space-between;
+  }
+  
+  .clinic-logo{
+    max-width:120px;
+    max-height:80px;
+  }
+  
+  .clinic-logo img{
+    max-height:80px;
+  }
+  
+  .patient-bar{
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .section-content{
+    background:white;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .table-wrapper{
+    overflow:visible;
+  }
+  
+  .medications-table{
+    width:100%;
+    min-width:100%;
+    page-break-inside:auto;
+  }
+  
+  .medications-table thead{
+    background:#f5f5f5;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+    display:table-header-group;
+  }
+  
+  .medications-table tbody tr:nth-child(even){
+    background:#fafafa;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .medications-table tr{
+    page-break-inside:avoid;
+    page-break-after:auto;
+  }
+  
+  .medications-table th,
+  .medications-table td{
+    font-size:10px;
+    padding:6px 4px;
+  }
+  
+  .followup-box{
+    background:#e8f5e9;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .section{
+    page-break-inside:avoid;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width:768px){
+  body{
+    padding:10px;
+  }
+  
+   .doctor-header{
+    padding:20px;
+    flex-direction:row;     /* keep row layout */
+    justify-content:space-between;
+    align-items:flex-start;
+  }
+  
+  .clinic-logo{
+    max-width:120px;
+    max-height:80px;
+    align-self:flex-start;  /* move logo to the top-right */
+  }
+  
+  .clinic-logo img{
+    max-height:80px;
+  }
+  
+  .doctor-name{
+    font-size:20px;
+    margin-bottom:8px;
+  }
+  
+  .doctor-contact{
+    font-size:11px;
+    gap:12px;
+  }
+  
+  .patient-bar{
+    padding:14px 20px;
+  }
+  
+  .patient-name{
+    font-size:15px;
+  }
+  
+  .patient-details{
+    grid-template-columns:1fr;
+    gap:8px;
+    font-size:11px;
+  }
+  
+  .prescription-content{
+    padding:20px 20px;
+  }
+  
+  .section-title{
+    font-size:13px;
+  }
+  
+  .section-content{
+    font-size:12px;
+  }
+  
+  .table-wrapper{
+    overflow-x:auto;
+    margin-left:-20px;
+    margin-right:-20px;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  
+  .medications-table{
+    font-size:11px;
+    min-width:650px;
+  }
+  
+  .medications-table th,
+  .medications-table td{
+    padding:8px 6px;
+    font-size:10px;
+  }
+  
+  .btn{
+    padding:8px 14px;
+    font-size:12px;
+  }
+
+  .doctor-info{
+    flex:1;
+  }
+}
+
+@media (max-width:480px){
+  .doctor-name{
+    font-size:18px;
+  }
+  
+  .patient-name{
+    font-size:14px;
+  }
+  
+  .prescription-content{
+    padding:16px 16px;
+  }
+  
+  .doctor-header{
+    padding:16px;
+    flex-direction:row;     /* row layout on small screens too */
+    justify-content:space-between;
+    align-items:flex-start;
+  }
+
+  .clinic-logo{
+    max-width:100px;
+    max-height:60px;
+    align-self:flex-start;
+  }
+  
+  .clinic-logo img{
+    max-height:60px;
+  }
+  
+  .patient-bar{
+    padding:12px 16px;
+  }
+  
+  .table-wrapper{
+    overflow-x:auto;
+    margin-left:-16px;
+    margin-right:-16px;
+    padding-left:16px;
+    padding-right:16px;
+  }
+  
+  .medications-table{
+    font-size:10px;
+    min-width:700px;
+  }
+  
+  .medications-table th,
+  .medications-table td{
+    padding:6px 4px;
+    font-size:9px;
+  }
+}
+
+.no-data{
+  text-align:center;
+  padding:20px;
+  color:#999;
+  font-style:italic;
+}
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <button class="btn btn-pdf" onclick="savePDF()">📄 Save as PDF</button>
+  <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
+</div>
+
+<div id="prescription" class="prescription-page">
+  <!-- DOCTOR HEADER -->
+  <div class="doctor-header">
+    <div class="doctor-info">
+      <div class="doctor-name" id="doctorName">Loading...</div>
+      <div class="doctor-contact">
+        <span id="doctorMobile">Phone: <span id="docMobile">-</span></span>
+        <span>|</span>
+        <span id="doctorEmail">Email: <span id="docEmail">-</span></span>
+      </div>
+    </div>
+    <div class="clinic-logo" id="clinicLogo" style="display:none;">
+      <img id="clinicLogoImg" src="" alt="Clinic Logo">
+    </div>
+  </div>
+
+  <!-- PATIENT INFO BAR -->
+  <div class="patient-bar">
+    <div class="patient-name" id="patientName">Patient: Loading...</div>
+    <div class="patient-details">
+      <div class="detail-item">
+        <span class="detail-label">Patient ID:</span>
+        <span class="detail-value" id="patientId">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Age:</span>
+        <span class="detail-value" id="patientAge">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Weight:</span>
+        <span class="detail-value" id="patientWeight">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Mobile:</span>
+        <span class="detail-value" id="patientMobile">-</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Date:</span>
+        <span class="detail-value" id="presDate">-</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESCRIPTION CONTENT -->
+  <div class="prescription-content">
+
+    <!-- SYMPTOMS -->
+    <div class="section" id="symptomsSection">
+      <div class="section-title">Chief Complaints / Symptoms</div>
+      <div class="section-content" id="symptomsText">-</div>
+    </div>
+
+    <!-- MEDICATIONS TABLE -->
+    <div class="section">
+      <div class="section-title">Medications Prescribed</div>
+      
+      <div class="table-wrapper">
+        <table class="medications-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Medicine Name</th>
+              <th>Type</th>
+              <th>Duration</th>
+              <th>Time of Day</th>
+              <th>Before/After Meal</th>
+              <th>Instructions</th>
+            </tr>
+          </thead>
+          <tbody id="medicationsBody">
+            <tr>
+              <td colspan="7" class="no-data">Loading medications...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DIAGNOSTIC TESTS -->
+    <div class="section" id="testsSection" style="display:none">
+      <div class="section-title">Investigations / Tests Advised</div>
+      <ul class="tests-list" id="testsList">
+        <!-- Tests will be added here -->
+      </ul>
+    </div>
+
+    <!-- FOLLOW-UP -->
+    <div class="section" id="followupSection" style="display:none">
+      <div class="followup-box">
+        <strong>Next Follow-up:</strong> <span id="followupDate">-</span>
+      </div>
+    </div>
+
+    <!-- FOOTER WITH SIGNATURE -->
+    <div class="prescription-footer">
+      <div class="signature-section">
+        <div class="signature-line"></div>
+        <div class="signature-label">Doctor's Signature</div>
+      </div>
+      <div class="prescription-note">
+        This is a computer-generated prescription. Please follow the instructions carefully.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function getQueryParam(name){
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+const prescriptionId = getQueryParam('prescription_id');
+const patientId = getQueryParam('patient_id');
+
+function escapeHtml(text){
+  if(!text || text === '' || text === null || text === undefined) return '-';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function formatDate(dateStr){
+  if(!dateStr) return '-';
+  const date = new Date(dateStr);
+  if(isNaN(date)) return dateStr;
+  return date.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+async function loadClinicLogo(){
+  try{
+    const currentClientId = localStorage.getItem('client_id');
+    if(!currentClientId) return;
+    
+    const res = await fetch(`../dashboard/dashboard.php?action=get_logo&client_id=${encodeURIComponent(currentClientId)}`);
+    const data = await res.json();
+    
+    if(data.success && data.logo_url){
+      const clinicLogoDiv = document.getElementById('clinicLogo');
+      const clinicLogoImg = document.getElementById('clinicLogoImg');
+      clinicLogoImg.src = data.logo_url;
+      clinicLogoDiv.style.display = 'flex';
+    }
+  }catch(e){
+    console.error('Failed to load clinic logo:', e);
+  }
+}
+
+async function loadPrescription(){
+  if(!patientId){
+    alert('Patient ID is required');
+    return;
+  }
+  
+  // Load clinic logo
+  await loadClinicLogo();
+
+  // Step 1: Get client_id from localStorage (set in add_prescription page)
+  const currentClientId = localStorage.getItem('client_id');
+  const currentUsername = localStorage.getItem('username');
+  
+  console.log('=== PRINT PAGE DEBUG ===');
+  console.log('Client ID from localStorage:', currentClientId);
+  console.log('Username from localStorage:', currentUsername);
+  console.log('All localStorage keys:', Object.keys(localStorage));
+  console.log('=======================');
+
+  // Step 2: Fetch doctor information from users table where role='user'
+  if(currentClientId){
+    try{
+      console.log('Fetching doctor info for client_id:', currentClientId);
+      const docRes = await fetch(`add_prescription.php?action=get_doctor_info&client_id=${encodeURIComponent(currentClientId)}`);
+      
+      console.log('Response status:', docRes.status);
+      console.log('Response ok:', docRes.ok);
+      
+      // Check if response is ok
+      if(!docRes.ok){
+        console.error('Server returned error status:', docRes.status);
+        const errorText = await docRes.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Server error: ${docRes.status}`);
+      }
+      
+      const responseText = await docRes.text();
+      console.log('Raw response:', responseText);
+      
+      let docData;
+      try{
+        docData = JSON.parse(responseText);
+      }catch(jsonError){
+        console.error('JSON parse error:', jsonError);
+        console.error('Response was:', responseText);
+        throw new Error('Invalid JSON response from server');
+      }
+      
+      console.log('Parsed API Response:', docData);
+      
+      if(docData.success && docData.doctor){
+        const doctor = docData.doctor;
+        console.log('Doctor found in database:', doctor);
+        console.log('Doctor role:', doctor.role);
+        
+        // Display doctor details from database
+        document.getElementById('doctorName').textContent = 'Dr. ' + (doctor.name || currentUsername || 'Doctor');
+        document.getElementById('docMobile').textContent = doctor.mobile || '-';
+        document.getElementById('docEmail').textContent = doctor.email || '-';
+      } else {
+        console.warn('API returned success=false:', docData.message);
+        console.warn('No doctor found in database with client_id:', currentClientId);
+        // Fallback to username
+        document.getElementById('doctorName').textContent = 'Dr. ' + (currentUsername || 'Doctor Name');
+        document.getElementById('docMobile').textContent = '-';
+        document.getElementById('docEmail').textContent = '-';
+      }
+    }catch(e){
+      console.error('Error fetching doctor info:', e);
+      console.error('Error stack:', e.stack);
+      // Fallback to username
+      document.getElementById('doctorName').textContent = 'Dr. ' + (currentUsername || 'Doctor Name');
+      document.getElementById('docMobile').textContent = '-';
+      document.getElementById('docEmail').textContent = '-';
+    }
+  } else {
+    console.warn('No client_id found in localStorage');
+    // No client_id, try with username
+    if(currentUsername){
+      document.getElementById('doctorName').textContent = 'Dr. ' + currentUsername;
+    } else {
+      document.getElementById('doctorName').textContent = 'Dr. [Doctor Name]';
+    }
+    document.getElementById('docMobile').textContent = '-';
+    document.getElementById('docEmail').textContent = '-';
+  }
+
+  try{
+    // Fetch prescription data
+    const res = await fetch(`add_prescription.php?action=get_prescriptions&patient_id=${encodeURIComponent(patientId)}`);
+    const data = await res.json();
+    
+    if(!data.success){
+      alert('Failed to load prescription');
+      return;
+    }
+
+    const allItems = data.items || [];
+    const items = prescriptionId 
+      ? allItems.filter(item => String(item.prescription_id) === String(prescriptionId))
+      : allItems;
+
+    if(items.length === 0){
+      document.getElementById('medicationsBody').innerHTML = '<tr><td colspan="7" class="no-data">No medications found</td></tr>';
+      return;
+    }
+
+    // Get first item for meta data
+    const firstItem = items[0];
+
+    // Fetch patient details
+    try{
+      const patRes = await fetch('add_prescription.php?action=list_patients');
+      const patData = await patRes.json();
+      
+      if(patData.success && patData.patients){
+        const patient = patData.patients.find(p => String(p.patient_id) === String(patientId));
+        if(patient){
+          document.getElementById('patientName').textContent = 'Patient: ' + (patient.patient_name || '-');
+          document.getElementById('patientId').textContent = patient.patient_id || '-';
+          document.getElementById('patientAge').textContent = patient.age ? patient.age + ' years' : '-';
+          document.getElementById('patientWeight').textContent = patient.weight ? patient.weight + ' kg' : '-';
+          document.getElementById('patientMobile').textContent = patient.mobile || '-';
+        }
+      }
+    }catch(e){
+      console.error('Failed to fetch patient info:', e);
+    }
+
+    // Set date
+    const presDate = firstItem.created_at ? firstItem.created_at.split(' ')[0] : new Date().toISOString().split('T')[0];
+    document.getElementById('presDate').textContent = formatDate(presDate);
+
+    // Set symptoms
+    const symptoms = firstItem.symptoms || '-';
+    document.getElementById('symptomsText').textContent = symptoms;
+
+    // Render medications in table
+    const tbody = document.getElementById('medicationsBody');
+    tbody.innerHTML = '';
+
+    items.forEach((item, index) => {
+      const tr = document.createElement('tr');
+      
+      const number = document.createElement('td');
+      number.className = 'med-number';
+      number.textContent = index + 1;
+      
+      const name = document.createElement('td');
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'med-name';
+      nameSpan.textContent = item.medicine_name || '-';
+      name.appendChild(nameSpan);
+      
+      const type = document.createElement('td');
+      type.textContent = item.type || '-';
+      
+      const duration = document.createElement('td');
+      duration.textContent = item.duration || '-';
+      
+      const timing = document.createElement('td');
+      timing.textContent = item.times_of_day || '-';
+      
+      const meal = document.createElement('td');
+      meal.textContent = item.before_after ? item.before_after + ' meal' : '-';
+      
+      const instructions = document.createElement('td');
+      instructions.textContent = item.notes || '-';
+      
+      tr.appendChild(number);
+      tr.appendChild(name);
+      tr.appendChild(type);
+      tr.appendChild(duration);
+      tr.appendChild(timing);
+      tr.appendChild(meal);
+      tr.appendChild(instructions);
+      
+      tbody.appendChild(tr);
+    });
+
+    // Diagnostic tests
+    const testsSet = new Set();
+    items.forEach(item => {
+      if(item.recommended_blood_test){
+        item.recommended_blood_test.split(',').forEach(test => {
+          const trimmed = test.trim();
+          if(trimmed) testsSet.add(trimmed);
+        });
+      }
+      if(item.blood_test_name){
+        item.blood_test_name.split(',').forEach(test => {
+          const trimmed = test.trim();
+          if(trimmed) testsSet.add(trimmed);
+        });
+      }
+    });
+
+    if(testsSet.size > 0){
+      const testsList = document.getElementById('testsList');
+      testsList.innerHTML = '';
+      testsSet.forEach(test => {
+        const li = document.createElement('li');
+        li.textContent = test;
+        testsList.appendChild(li);
+      });
+      document.getElementById('testsSection').style.display = 'block';
+    }
+
+    // Follow-up date
+    const followupDate = firstItem.follow_up_date;
+    if(followupDate){
+      document.getElementById('followupDate').textContent = formatDate(followupDate);
+      document.getElementById('followupSection').style.display = 'block';
+    }
+
+  }catch(error){
+    console.error('Error loading prescription:', error);
+    alert('Failed to load prescription: ' + error.message);
+  }
+}
+
+function savePDF(){
+  const element = document.getElementById('prescription');
+  const options = {
+    margin: [0.4, 0.4, 0.4, 0.4],
+    filename: `prescription_${prescriptionId || 'print'}.pdf`,
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      windowWidth: 850,
+      width: 850
+    },
+    jsPDF: { 
+      unit: 'in', 
+      format: 'a4', 
+      orientation: 'portrait',
+      compress: true
+    },
+    pagebreak: { 
+      mode: ['avoid-all', 'css', 'legacy'],
+      avoid: '.section'
+    }
+  };
+  html2pdf().set(options).from(element).save();
+}
+
+// Load on page load
+window.addEventListener('DOMContentLoaded', loadPrescription);
+</script>
+</body>
+</html>

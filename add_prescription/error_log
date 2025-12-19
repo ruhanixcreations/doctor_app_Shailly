@@ -1,0 +1,541 @@
+[19-Nov-2025 12:01:40 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Too many connections in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:10
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(10): mysqli->__construct('localhost', 'ruhanixl_doctor...', Object(SensitiveParameterValue), 'ruhanixl_doctor...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 10
+[19-Nov-2025 12:01:41 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Too many connections in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:10
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(10): mysqli->__construct('localhost', 'ruhanixl_doctor...', Object(SensitiveParameterValue), 'ruhanixl_doctor...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 10
+[19-Nov-2025 12:01:44 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Too many connections in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:10
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(10): mysqli->__construct('localhost', 'ruhanixl_doctor...', Object(SensitiveParameterValue), 'ruhanixl_doctor...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 10
+[19-Nov-2025 12:01:54 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Too many connections in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:10
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(10): mysqli->__construct('localhost', 'ruhanixl_doctor...', Object(SensitiveParameterValue), 'ruhanixl_doctor...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 10
+[19-Nov-2025 12:01:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Too many connections in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:10
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(10): mysqli->__construct('localhost', 'ruhanixl_doctor...', Object(SensitiveParameterValue), 'ruhanixl_doctor...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 10
+[20-Nov-2025 07:57:04 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:124
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(124): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 124
+[20-Nov-2025 07:57:07 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:124
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(124): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 124
+[20-Nov-2025 07:57:31 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:124
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(124): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 124
+[20-Nov-2025 08:29:45 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:29:47 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:29:48 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:29:48 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:29:50 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:29:52 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:29:54 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:30:22 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:33:09 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Unknown column 'specialization' in 'field list' in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php:125
+Stack trace:
+#0 /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php(125): mysqli->prepare('SELECT name, em...')
+#1 {main}
+  thrown in /home4/ruhanixlegal/public_html/doctor_app/add_prescription/add_prescription.php on line 125
+[20-Nov-2025 08:40:10 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:40:10 UTC] get_doctor_info: Exception - Unknown column 'specialization' in 'field list'
+[20-Nov-2025 08:40:17 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:40:17 UTC] get_doctor_info: Exception - Unknown column 'specialization' in 'field list'
+[20-Nov-2025 08:40:43 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:40:43 UTC] get_doctor_info: Exception - Unknown column 'specialization' in 'field list'
+[20-Nov-2025 08:45:02 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:45:02 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 08:45:11 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:45:11 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 08:46:01 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:46:01 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 08:53:20 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:53:20 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 08:53:21 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:53:21 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 08:53:33 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:53:33 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 08:54:46 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 08:54:46 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 09:52:28 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 09:52:28 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:35:48 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:35:48 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:36:22 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:36:22 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:36:27 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:36:27 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:36:32 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:36:32 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:36:34 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:36:34 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:36:34 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:36:34 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:36:37 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:36:37 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:37:16 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:37:16 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:37:52 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:37:52 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:38:13 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:38:13 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:38:24 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:38:24 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:44:52 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:44:52 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 10:45:33 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 10:45:33 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:00:29 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:00:29 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:09:14 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:09:14 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:09:26 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:09:26 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:09:41 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:09:41 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:09:51 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:09:51 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:10:04 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:10:04 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:12:52 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:12:52 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:13:39 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:13:39 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:20:38 UTC] save: Created new prescription ID: 95
+[20-Nov-2025 11:20:54 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:20:54 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:21:15 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:21:15 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:21:30 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:21:30 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:32:05 UTC] save: Created new prescription ID: 97
+[20-Nov-2025 11:32:34 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:32:34 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:34:46 UTC] save: Reusing draft prescription ID: 98
+[20-Nov-2025 11:35:00 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:35:00 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:36:28 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:36:28 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:40:09 UTC] save: Reusing draft prescription ID: 99
+[20-Nov-2025 11:51:43 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:51:43 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 11:59:21 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 11:59:21 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 12:15:03 UTC] save: Reusing draft prescription ID: 101
+[20-Nov-2025 12:15:30 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 12:15:30 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 12:20:54 UTC] save: Reusing draft prescription ID: 102
+[20-Nov-2025 12:23:15 UTC] save: Reusing draft prescription ID: 103
+[20-Nov-2025 12:24:53 UTC] save: Reusing draft prescription ID: 104
+[20-Nov-2025 12:28:00 UTC] ========== SAVE ACTION ==========
+[20-Nov-2025 12:28:00 UTC] save: Received draft_prescription_id from frontend: 105
+[20-Nov-2025 12:28:00 UTC] save: Patient ID: PATIENT375041-17112025
+[20-Nov-2025 12:28:00 UTC] save: Number of items: 2
+[20-Nov-2025 12:28:00 UTC] save: Checking if draft ID 105 exists in DB...
+[20-Nov-2025 12:28:00 UTC] save: ✓ Found valid draft, REUSING prescription ID: 105
+[20-Nov-2025 12:28:00 UTC] save: Final prescription ID being used: 105
+[20-Nov-2025 12:28:00 UTC] ================================
+[20-Nov-2025 12:28:30 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 12:28:30 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 12:29:11 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 12:29:11 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 12:30:24 UTC] ========== SAVE ACTION ==========
+[20-Nov-2025 12:30:24 UTC] save: Received draft_prescription_id from frontend: 106
+[20-Nov-2025 12:30:24 UTC] save: Patient ID: PATIENT375041-17112025
+[20-Nov-2025 12:30:24 UTC] save: Number of items: 1
+[20-Nov-2025 12:30:24 UTC] save: Checking if draft ID 106 exists in DB...
+[20-Nov-2025 12:30:24 UTC] save: ✓ Found valid draft, REUSING prescription ID: 106
+[20-Nov-2025 12:30:24 UTC] save: Final prescription ID being used: 106
+[20-Nov-2025 12:30:24 UTC] ================================
+[20-Nov-2025 13:19:32 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:19:32 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:27:33 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:27:33 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:29:34 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:29:34 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:32:23 UTC] get_doctor_info: Looking for client_id: RUHA318429
+[20-Nov-2025 13:32:23 UTC] get_doctor_info: No doctor found with client_id: RUHA318429 and role=user
+[20-Nov-2025 13:32:23 UTC] get_doctor_info: Found user but role is: receptionalist
+[20-Nov-2025 13:41:13 UTC] ========== SAVE ACTION ==========
+[20-Nov-2025 13:41:13 UTC] save: Received draft_prescription_id from frontend: 107
+[20-Nov-2025 13:41:13 UTC] save: Patient ID: PATIENT814285-15112025
+[20-Nov-2025 13:41:13 UTC] save: Number of items: 1
+[20-Nov-2025 13:41:13 UTC] save: Checking if draft ID 107 exists in DB...
+[20-Nov-2025 13:41:13 UTC] save: ✓ Found valid draft, REUSING prescription ID: 107
+[20-Nov-2025 13:41:13 UTC] save: Final prescription ID being used: 107
+[20-Nov-2025 13:41:13 UTC] ================================
+[20-Nov-2025 13:41:25 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:41:25 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:56:51 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:56:51 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:57:57 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:57:57 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:57:58 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:57:58 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:58:01 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:58:02 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:58:05 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:58:05 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 13:58:11 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 13:58:11 UTC] get_doctor_info: Found doctor - Shailly
+[20-Nov-2025 14:03:31 UTC] get_doctor_info: Looking for client_id: RUHA318429
+[20-Nov-2025 14:03:31 UTC] get_doctor_info: No doctor found with client_id: RUHA318429 and role=user
+[20-Nov-2025 14:03:31 UTC] get_doctor_info: Found user but role is: receptionalist
+[20-Nov-2025 15:18:04 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[20-Nov-2025 15:18:04 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 08:27:28 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 08:27:28 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 08:27:34 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 08:27:34 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 08:27:46 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 08:27:46 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 08:55:29 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 08:55:29 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 08:56:20 UTC] ========== SAVE ACTION ==========
+[21-Nov-2025 08:56:20 UTC] save: Received draft_prescription_id from frontend: 109
+[21-Nov-2025 08:56:20 UTC] save: Patient ID: PATIENT814285-15112025
+[21-Nov-2025 08:56:20 UTC] save: Number of items: 1
+[21-Nov-2025 08:56:20 UTC] save: Checking if draft ID 109 exists in DB...
+[21-Nov-2025 08:56:20 UTC] save: ✓ Found valid draft, REUSING prescription ID: 109
+[21-Nov-2025 08:56:20 UTC] save: Final prescription ID being used: 109
+[21-Nov-2025 08:56:20 UTC] ================================
+[21-Nov-2025 08:56:24 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 08:56:24 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 11:26:21 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 11:26:21 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 11:44:01 UTC] get_doctor_info: Looking for client_id: RUHA318429
+[21-Nov-2025 11:44:01 UTC] get_doctor_info: No doctor found with client_id: RUHA318429 and role=user
+[21-Nov-2025 11:44:01 UTC] get_doctor_info: Found user but role is: receptionalist
+[21-Nov-2025 11:44:07 UTC] get_doctor_info: Looking for client_id: RUHA318429
+[21-Nov-2025 11:44:07 UTC] get_doctor_info: No doctor found with client_id: RUHA318429 and role=user
+[21-Nov-2025 11:44:07 UTC] get_doctor_info: Found user but role is: receptionalist
+[21-Nov-2025 11:44:11 UTC] get_doctor_info: Looking for client_id: RUHA318429
+[21-Nov-2025 11:44:11 UTC] get_doctor_info: No doctor found with client_id: RUHA318429 and role=user
+[21-Nov-2025 11:44:11 UTC] get_doctor_info: Found user but role is: receptionalist
+[21-Nov-2025 12:09:03 UTC] ========== SAVE ACTION ==========
+[21-Nov-2025 12:09:03 UTC] save: Received draft_prescription_id from frontend: 110
+[21-Nov-2025 12:09:03 UTC] save: Patient ID: PATIENT619983-21112025
+[21-Nov-2025 12:09:03 UTC] save: Number of items: 2
+[21-Nov-2025 12:09:03 UTC] save: Checking if draft ID 110 exists in DB...
+[21-Nov-2025 12:09:03 UTC] save: ✓ Found valid draft, REUSING prescription ID: 110
+[21-Nov-2025 12:09:03 UTC] save: Final prescription ID being used: 110
+[21-Nov-2025 12:09:03 UTC] ================================
+[21-Nov-2025 12:09:11 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 12:09:11 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 12:09:29 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[21-Nov-2025 12:09:29 UTC] get_doctor_info: Found doctor - Shailly
+[21-Nov-2025 13:50:35 UTC] get_doctor_info: Looking for client_id: RUHA528052
+[21-Nov-2025 13:50:35 UTC] get_doctor_info: No doctor found with client_id: RUHA528052 and role=user
+[21-Nov-2025 13:50:35 UTC] get_doctor_info: Found user but role is: receptionalist
+[24-Nov-2025 06:30:42 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 06:30:42 UTC] get_doctor_info: Found doctor - Shailly
+[24-Nov-2025 12:05:21 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 12:05:21 UTC] get_doctor_info: Found doctor - Shailly
+[24-Nov-2025 12:11:56 UTC] ========== SAVE ACTION ==========
+[24-Nov-2025 12:11:56 UTC] save: Received draft_prescription_id from frontend: 111
+[24-Nov-2025 12:11:56 UTC] save: Patient ID: PATIENT619983-21112025
+[24-Nov-2025 12:11:56 UTC] save: Number of items: 2
+[24-Nov-2025 12:11:56 UTC] save: Checking if draft ID 111 exists in DB...
+[24-Nov-2025 12:11:56 UTC] save: ✓ Found valid draft, REUSING prescription ID: 111
+[24-Nov-2025 12:11:56 UTC] save: Final prescription ID being used: 111
+[24-Nov-2025 12:11:56 UTC] ================================
+[24-Nov-2025 12:12:07 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 12:12:07 UTC] get_doctor_info: Found doctor - Shailly
+[24-Nov-2025 12:12:14 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 12:12:14 UTC] get_doctor_info: Found doctor - Shailly
+[24-Nov-2025 13:34:29 UTC] ========== SAVE ACTION ==========
+[24-Nov-2025 13:34:29 UTC] save: Received draft_prescription_id from frontend: 112
+[24-Nov-2025 13:34:29 UTC] save: Patient ID: PATIENT565118-24112025
+[24-Nov-2025 13:34:29 UTC] save: Number of items: 2
+[24-Nov-2025 13:34:29 UTC] save: Checking if draft ID 112 exists in DB...
+[24-Nov-2025 13:34:29 UTC] save: ✓ Found valid draft, REUSING prescription ID: 112
+[24-Nov-2025 13:34:29 UTC] save: Final prescription ID being used: 112
+[24-Nov-2025 13:34:29 UTC] ================================
+[24-Nov-2025 13:34:42 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 13:34:42 UTC] get_doctor_info: Found doctor - Shailly
+[24-Nov-2025 13:35:14 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 13:35:14 UTC] get_doctor_info: Found doctor - Shailly
+[24-Nov-2025 13:47:21 UTC] get_doctor_info: Looking for client_id: RUHA528052
+[24-Nov-2025 13:47:21 UTC] get_doctor_info: No doctor found with client_id: RUHA528052 and role=user
+[24-Nov-2025 13:47:21 UTC] get_doctor_info: Found user but role is: receptionalist
+[24-Nov-2025 13:55:34 UTC] ========== SAVE ACTION ==========
+[24-Nov-2025 13:55:34 UTC] save: Received draft_prescription_id from frontend: 113
+[24-Nov-2025 13:55:34 UTC] save: Patient ID: PATIENT909686-24112025
+[24-Nov-2025 13:55:34 UTC] save: Number of items: 2
+[24-Nov-2025 13:55:34 UTC] save: Checking if draft ID 113 exists in DB...
+[24-Nov-2025 13:55:34 UTC] save: ✓ Found valid draft, REUSING prescription ID: 113
+[24-Nov-2025 13:55:34 UTC] save: Final prescription ID being used: 113
+[24-Nov-2025 13:55:34 UTC] ================================
+[24-Nov-2025 13:55:49 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[24-Nov-2025 13:55:49 UTC] get_doctor_info: Found doctor - Shailly
+[25-Nov-2025 09:27:53 UTC] ========== SAVE ACTION ==========
+[25-Nov-2025 09:27:53 UTC] save: Received draft_prescription_id from frontend: 114
+[25-Nov-2025 09:27:53 UTC] save: Patient ID: PATIENT971147-25112025
+[25-Nov-2025 09:27:53 UTC] save: Number of items: 2
+[25-Nov-2025 09:27:53 UTC] save: Checking if draft ID 114 exists in DB...
+[25-Nov-2025 09:27:53 UTC] save: ✓ Found valid draft, REUSING prescription ID: 114
+[25-Nov-2025 09:27:53 UTC] save: Final prescription ID being used: 114
+[25-Nov-2025 09:27:53 UTC] ================================
+[25-Nov-2025 09:27:59 UTC] get_doctor_info: Looking for client_id: RUHA809034
+[25-Nov-2025 09:27:59 UTC] get_doctor_info: Found doctor - SP
+[25-Nov-2025 09:28:10 UTC] get_doctor_info: Looking for client_id: RUHA809034
+[25-Nov-2025 09:28:10 UTC] get_doctor_info: Found doctor - SP
+[25-Nov-2025 09:33:47 UTC] ========== SAVE ACTION ==========
+[25-Nov-2025 09:33:47 UTC] save: Received draft_prescription_id from frontend: 115
+[25-Nov-2025 09:33:47 UTC] save: Patient ID: PATIENT971147-25112025
+[25-Nov-2025 09:33:47 UTC] save: Number of items: 1
+[25-Nov-2025 09:33:47 UTC] save: Checking if draft ID 115 exists in DB...
+[25-Nov-2025 09:33:47 UTC] save: ✓ Found valid draft, REUSING prescription ID: 115
+[25-Nov-2025 09:33:47 UTC] save: Final prescription ID being used: 115
+[25-Nov-2025 09:33:47 UTC] ================================
+[25-Nov-2025 14:09:59 UTC] ========== SAVE ACTION ==========
+[25-Nov-2025 14:09:59 UTC] save: Received draft_prescription_id from frontend: 116
+[25-Nov-2025 14:09:59 UTC] save: Patient ID: PATIENT369601-25112025
+[25-Nov-2025 14:09:59 UTC] save: Number of items: 2
+[25-Nov-2025 14:09:59 UTC] save: Checking if draft ID 116 exists in DB...
+[25-Nov-2025 14:09:59 UTC] save: ✓ Found valid draft, REUSING prescription ID: 116
+[25-Nov-2025 14:09:59 UTC] save: Final prescription ID being used: 116
+[25-Nov-2025 14:09:59 UTC] ================================
+[25-Nov-2025 14:10:17 UTC] get_doctor_info: Looking for client_id: RUHA652993
+[25-Nov-2025 14:10:17 UTC] get_doctor_info: Found doctor - ClientTwo
+[25-Nov-2025 14:11:06 UTC] get_doctor_info: Looking for client_id: RUHA652993
+[25-Nov-2025 14:11:06 UTC] get_doctor_info: Found doctor - ClientTwo
+[26-Nov-2025 07:42:07 UTC] ========== SAVE ACTION ==========
+[26-Nov-2025 07:42:07 UTC] save: Received draft_prescription_id from frontend: 117
+[26-Nov-2025 07:42:07 UTC] save: Patient ID: PATIENT540004-26112025
+[26-Nov-2025 07:42:07 UTC] save: Number of items: 1
+[26-Nov-2025 07:42:07 UTC] save: Checking if draft ID 117 exists in DB...
+[26-Nov-2025 07:42:07 UTC] save: ✓ Found valid draft, REUSING prescription ID: 117
+[26-Nov-2025 07:42:07 UTC] save: Final prescription ID being used: 117
+[26-Nov-2025 07:42:07 UTC] ================================
+[26-Nov-2025 07:49:50 UTC] ========== SAVE ACTION ==========
+[26-Nov-2025 07:49:50 UTC] save: Received draft_prescription_id from frontend: 118
+[26-Nov-2025 07:49:50 UTC] save: Patient ID: PATIENT540004-26112025
+[26-Nov-2025 07:49:50 UTC] save: Number of items: 1
+[26-Nov-2025 07:49:50 UTC] save: Checking if draft ID 118 exists in DB...
+[26-Nov-2025 07:49:50 UTC] save: ✓ Found valid draft, REUSING prescription ID: 118
+[26-Nov-2025 07:49:50 UTC] save: Final prescription ID being used: 118
+[26-Nov-2025 07:49:50 UTC] ================================
+[26-Nov-2025 12:48:50 UTC] ========== SAVE ACTION ==========
+[26-Nov-2025 12:48:50 UTC] save: Received draft_prescription_id from frontend: 120
+[26-Nov-2025 12:48:50 UTC] save: Patient ID: PATIENT416050-26112025
+[26-Nov-2025 12:48:50 UTC] save: Number of items: 2
+[26-Nov-2025 12:48:50 UTC] save: Checking if draft ID 120 exists in DB...
+[26-Nov-2025 12:48:50 UTC] save: ✓ Found valid draft, REUSING prescription ID: 120
+[26-Nov-2025 12:48:50 UTC] save: Final prescription ID being used: 120
+[26-Nov-2025 12:48:50 UTC] ================================
+[26-Nov-2025 12:48:57 UTC] get_doctor_info: Looking for client_id: RUHA394567
+[26-Nov-2025 12:48:57 UTC] get_doctor_info: Found doctor - Aashi
+[26-Nov-2025 12:50:11 UTC] get_doctor_info: Looking for client_id: RUHA394567
+[26-Nov-2025 12:50:11 UTC] get_doctor_info: Found doctor - Aashi
+[26-Nov-2025 12:50:34 UTC] get_doctor_info: Looking for client_id: RUHA394567
+[26-Nov-2025 12:50:34 UTC] get_doctor_info: Found doctor - Aashi
+[26-Nov-2025 12:50:40 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 12:50:40 UTC] get_doctor_info: Found doctor - Shailly
+[26-Nov-2025 13:19:03 UTC] ========== SAVE ACTION ==========
+[26-Nov-2025 13:19:03 UTC] save: Received draft_prescription_id from frontend: 121
+[26-Nov-2025 13:19:03 UTC] save: Patient ID: PATIENT416050-26112025
+[26-Nov-2025 13:19:03 UTC] save: Number of items: 1
+[26-Nov-2025 13:19:03 UTC] save: Checking if draft ID 121 exists in DB...
+[26-Nov-2025 13:19:03 UTC] save: ✓ Found valid draft, REUSING prescription ID: 121
+[26-Nov-2025 13:19:03 UTC] save: Final prescription ID being used: 121
+[26-Nov-2025 13:19:03 UTC] ================================
+[26-Nov-2025 13:19:07 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 13:19:07 UTC] get_doctor_info: Found doctor - Shailly
+[26-Nov-2025 13:19:42 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 13:19:42 UTC] get_doctor_info: Found doctor - Shailly
+[26-Nov-2025 13:20:15 UTC] ========== SAVE ACTION ==========
+[26-Nov-2025 13:20:15 UTC] save: Received draft_prescription_id from frontend: 122
+[26-Nov-2025 13:20:15 UTC] save: Patient ID: PATIENT416050-26112025
+[26-Nov-2025 13:20:15 UTC] save: Number of items: 1
+[26-Nov-2025 13:20:15 UTC] save: Checking if draft ID 122 exists in DB...
+[26-Nov-2025 13:20:15 UTC] save: ✓ Found valid draft, REUSING prescription ID: 122
+[26-Nov-2025 13:20:15 UTC] save: Final prescription ID being used: 122
+[26-Nov-2025 13:20:15 UTC] ================================
+[26-Nov-2025 13:20:17 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 13:20:17 UTC] get_doctor_info: Found doctor - Shailly
+[26-Nov-2025 13:45:02 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 13:45:02 UTC] get_doctor_info: Found doctor - Shailly
+[26-Nov-2025 14:15:53 UTC] ========== SAVE ACTION ==========
+[26-Nov-2025 14:15:53 UTC] save: Received draft_prescription_id from frontend: 123
+[26-Nov-2025 14:15:53 UTC] save: Patient ID: PATIENT350785-26112025
+[26-Nov-2025 14:15:53 UTC] save: Number of items: 1
+[26-Nov-2025 14:15:53 UTC] save: Checking if draft ID 123 exists in DB...
+[26-Nov-2025 14:15:53 UTC] save: ✓ Found valid draft, REUSING prescription ID: 123
+[26-Nov-2025 14:15:53 UTC] save: Final prescription ID being used: 123
+[26-Nov-2025 14:15:53 UTC] ================================
+[26-Nov-2025 14:15:55 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 14:15:55 UTC] get_doctor_info: Found doctor - Shailly
+[26-Nov-2025 14:16:06 UTC] get_doctor_info: Looking for client_id: RUHA822729
+[26-Nov-2025 14:16:06 UTC] get_doctor_info: Found doctor - Shailly
+[06-Dec-2025 06:57:28 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 06:57:28 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 06:57:39 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 06:57:39 UTC] save: Received draft_prescription_id from frontend: 125
+[06-Dec-2025 06:57:39 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 06:57:39 UTC] save: Number of items: 1
+[06-Dec-2025 06:57:39 UTC] save: Checking if draft ID 125 exists in DB...
+[06-Dec-2025 06:57:39 UTC] save: ✓ Found valid draft, REUSING prescription ID: 125
+[06-Dec-2025 06:57:39 UTC] save: Final prescription ID being used: 125
+[06-Dec-2025 06:57:39 UTC] ================================
+[06-Dec-2025 06:57:42 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 06:57:42 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:06:01 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:06:01 UTC] save: Received draft_prescription_id from frontend: 126
+[06-Dec-2025 07:06:01 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:06:01 UTC] save: Number of items: 2
+[06-Dec-2025 07:06:01 UTC] save: Checking if draft ID 126 exists in DB...
+[06-Dec-2025 07:06:01 UTC] save: ✓ Found valid draft, REUSING prescription ID: 126
+[06-Dec-2025 07:06:01 UTC] save: Final prescription ID being used: 126
+[06-Dec-2025 07:06:01 UTC] ================================
+[06-Dec-2025 07:06:12 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:06:12 UTC] save: Received draft_prescription_id from frontend: 0
+[06-Dec-2025 07:06:12 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:06:12 UTC] save: Number of items: 2
+[06-Dec-2025 07:06:12 UTC] save: No draft_prescription_id provided (is 0 or null)
+[06-Dec-2025 07:06:12 UTC] save: Creating BRAND NEW prescription...
+[06-Dec-2025 07:06:12 UTC] save: ✓ Created BRAND NEW prescription ID: 127
+[06-Dec-2025 07:06:12 UTC] save: Final prescription ID being used: 127
+[06-Dec-2025 07:06:12 UTC] ================================
+[06-Dec-2025 07:10:27 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:10:27 UTC] save: Received draft_prescription_id from frontend: 128
+[06-Dec-2025 07:10:27 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:10:27 UTC] save: Number of items: 1
+[06-Dec-2025 07:10:27 UTC] save: Checking if draft ID 128 exists in DB...
+[06-Dec-2025 07:10:27 UTC] save: ✓ Found valid draft, REUSING prescription ID: 128
+[06-Dec-2025 07:10:27 UTC] save: Final prescription ID being used: 128
+[06-Dec-2025 07:10:27 UTC] ================================
+[06-Dec-2025 07:10:29 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:10:29 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:10:50 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:10:50 UTC] save: Received draft_prescription_id from frontend: 129
+[06-Dec-2025 07:10:50 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:10:50 UTC] save: Number of items: 2
+[06-Dec-2025 07:10:50 UTC] save: Checking if draft ID 129 exists in DB...
+[06-Dec-2025 07:10:50 UTC] save: ✓ Found valid draft, REUSING prescription ID: 129
+[06-Dec-2025 07:10:50 UTC] save: Final prescription ID being used: 129
+[06-Dec-2025 07:10:50 UTC] ================================
+[06-Dec-2025 07:10:52 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:10:52 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:11:06 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:11:06 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:11:12 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:11:12 UTC] save: Received draft_prescription_id from frontend: 130
+[06-Dec-2025 07:11:12 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:11:12 UTC] save: Number of items: 3
+[06-Dec-2025 07:11:12 UTC] save: Checking if draft ID 130 exists in DB...
+[06-Dec-2025 07:11:12 UTC] save: ✓ Found valid draft, REUSING prescription ID: 130
+[06-Dec-2025 07:11:12 UTC] save: Final prescription ID being used: 130
+[06-Dec-2025 07:11:12 UTC] ================================
+[06-Dec-2025 07:11:15 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:11:15 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:11:36 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:11:36 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:11:41 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:11:41 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:12:57 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:12:57 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:28:37 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:28:37 UTC] save: Received draft_prescription_id from frontend: 131
+[06-Dec-2025 07:28:37 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:28:37 UTC] save: Number of items: 1
+[06-Dec-2025 07:28:37 UTC] save: Checking if draft ID 131 exists in DB...
+[06-Dec-2025 07:28:37 UTC] save: ✓ Found valid draft, REUSING prescription ID: 131
+[06-Dec-2025 07:28:37 UTC] save: Final prescription ID being used: 131
+[06-Dec-2025 07:28:37 UTC] ================================
+[06-Dec-2025 07:28:40 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:28:40 UTC] get_doctor_info: Found doctor - Aashi
+[06-Dec-2025 07:43:01 UTC] ========== SAVE ACTION ==========
+[06-Dec-2025 07:43:01 UTC] save: Received draft_prescription_id from frontend: 0
+[06-Dec-2025 07:43:01 UTC] save: Patient ID: PATIENT372034-06122025
+[06-Dec-2025 07:43:01 UTC] save: Number of items: 1
+[06-Dec-2025 07:43:01 UTC] save: No draft_prescription_id provided (is 0 or null)
+[06-Dec-2025 07:43:01 UTC] save: Creating BRAND NEW prescription...
+[06-Dec-2025 07:43:01 UTC] save: ✓ Created BRAND NEW prescription ID: 132
+[06-Dec-2025 07:43:01 UTC] save: Final prescription ID being used: 132
+[06-Dec-2025 07:43:01 UTC] ================================
+[06-Dec-2025 07:43:04 UTC] get_doctor_info: Looking for client_id: RUHA276994
+[06-Dec-2025 07:43:04 UTC] get_doctor_info: Found doctor - Aashi
+[08-Dec-2025 13:28:25 UTC] ========== SAVE ACTION ==========
+[08-Dec-2025 13:28:25 UTC] save: Received draft_prescription_id from frontend: 133
+[08-Dec-2025 13:28:25 UTC] save: Patient ID: PATIENT744728-08122025
+[08-Dec-2025 13:28:25 UTC] save: Number of items: 2
+[08-Dec-2025 13:28:25 UTC] save: Checking if draft ID 133 exists in DB...
+[08-Dec-2025 13:28:25 UTC] save: ✓ Found valid draft, REUSING prescription ID: 133
+[08-Dec-2025 13:28:25 UTC] save: Final prescription ID being used: 133
+[08-Dec-2025 13:28:25 UTC] ================================
+[08-Dec-2025 13:28:33 UTC] get_doctor_info: Looking for client_id: RUHA685412
+[08-Dec-2025 13:28:33 UTC] get_doctor_info: Found doctor - Aashi
+[08-Dec-2025 13:32:34 UTC] get_doctor_info: Looking for client_id: RUHA685412
+[08-Dec-2025 13:32:34 UTC] get_doctor_info: Found doctor - Aashi
+[08-Dec-2025 13:32:34 UTC] get_doctor_info: Looking for client_id: RUHA685412
+[08-Dec-2025 13:32:34 UTC] get_doctor_info: Found doctor - Aashi
+[08-Dec-2025 13:35:03 UTC] ========== SAVE ACTION ==========
+[08-Dec-2025 13:35:03 UTC] save: Received draft_prescription_id from frontend: 134
+[08-Dec-2025 13:35:03 UTC] save: Patient ID: PATIENT744728-08122025
+[08-Dec-2025 13:35:03 UTC] save: Number of items: 2
+[08-Dec-2025 13:35:03 UTC] save: Checking if draft ID 134 exists in DB...
+[08-Dec-2025 13:35:03 UTC] save: ✓ Found valid draft, REUSING prescription ID: 134
+[08-Dec-2025 13:35:03 UTC] save: Final prescription ID being used: 134
+[08-Dec-2025 13:35:03 UTC] ================================
+[08-Dec-2025 14:16:23 UTC] ========== SAVE ACTION ==========
+[08-Dec-2025 14:16:23 UTC] save: Received draft_prescription_id from frontend: 135
+[08-Dec-2025 14:16:23 UTC] save: Patient ID: PATIENT388859-08122025
+[08-Dec-2025 14:16:23 UTC] save: Number of items: 1
+[08-Dec-2025 14:16:23 UTC] save: Checking if draft ID 135 exists in DB...
+[08-Dec-2025 14:16:23 UTC] save: ✓ Found valid draft, REUSING prescription ID: 135
+[08-Dec-2025 14:16:23 UTC] save: Final prescription ID being used: 135
+[08-Dec-2025 14:16:23 UTC] ================================
+[08-Dec-2025 14:18:23 UTC] get_doctor_info: Looking for client_id: RUHA865257
+[08-Dec-2025 14:18:23 UTC] get_doctor_info: No doctor found with client_id: RUHA865257 and role=user
+[08-Dec-2025 14:18:23 UTC] get_doctor_info: Found user but role is: receptionalist
+[09-Dec-2025 12:45:49 UTC] get_doctor_info: Looking for client_id: RUHA685412
+[09-Dec-2025 12:45:49 UTC] get_doctor_info: Found doctor - Aashi
+[09-Dec-2025 13:41:27 UTC] get_doctor_info: Looking for client_id: RUHA685412
+[09-Dec-2025 13:41:27 UTC] get_doctor_info: Found doctor - Aashi
