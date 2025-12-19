@@ -641,11 +641,11 @@ async function initClinicPickerIfNeeded(){
     const saved = localStorage.getItem('logo_client_id');
     if(saved){
       sel.value = saved;
-    } else if(doctors.length === 1 && doctors[0].client_id){
-      // Auto-pick when only one clinic exists
+    } else if(doctors.length > 0 && doctors[0].client_id){
+      // Auto-pick first available clinic so logos are visible immediately
       localStorage.setItem('logo_client_id', doctors[0].client_id);
       sel.value = doctors[0].client_id;
-      showAlert('Clinic selected automatically for logo management.', 'info');
+      showAlert('Clinic selected automatically for logo management. You can change it from the dropdown.', 'info');
     }
     
     sel.addEventListener('change', () => {
