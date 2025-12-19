@@ -896,7 +896,7 @@ body{
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<!-- PDF.js (legacy build exposes window.pdfjsLib) -->
+<!-- PDF.js (best-effort; JS also falls back to dynamic load) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 /* Check Authentication from localStorage */
@@ -954,10 +954,53 @@ if(!checkAuth()){
   let currentInlinePdfFilename = null;
   let resizeRerenderTimeout = null;
   
-  // Configure PDF.js worker
-  const pdfjsLib = window.pdfjsLib;
-  if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  // PDF.js loader (some browsers/CDNs may not expose window.pdfjsLib consistently)
+  const PDFJS_VERSION = '3.11.174';
+  let pdfJsLibPromise = null;
+  
+  function resolvePdfJsLibFromWindow(){
+    const candidates = [
+      window.pdfjsLib,
+      window['pdfjsLib'],
+      window['pdfjs-dist/build/pdf'],
+      window['pdfjs-dist/legacy/build/pdf']
+    ];
+    for (const c of candidates){
+      if (c && typeof c.getDocument === 'function') return c;
+    }
+    // Last-resort heuristic: find any global with getDocument + GlobalWorkerOptions
+    try{
+      for (const k of Object.keys(window)){
+        const v = window[k];
+        if (v && typeof v.getDocument === 'function' && v.GlobalWorkerOptions) return v;
+      }
+    } catch (_) {}
+    return null;
+  }
+  
+  function ensurePdfJsLoaded(){
+    if (pdfJsLibPromise) return pdfJsLibPromise;
+    pdfJsLibPromise = new Promise((resolve) => {
+      const existing = resolvePdfJsLibFromWindow();
+      if (existing) return resolve(existing);
+      
+      // Fallback: dynamically load legacy build from jsDelivr
+      const s = document.createElement('script');
+      s.src = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/legacy/build/pdf.min.js`;
+      s.async = true;
+      s.onload = () => resolve(resolvePdfJsLibFromWindow());
+      s.onerror = () => resolve(null);
+      document.head.appendChild(s);
+    });
+    return pdfJsLibPromise;
+  }
+  
+  async function getPdfJsLib(){
+    const lib = await ensurePdfJsLoaded();
+    if (lib && lib.GlobalWorkerOptions) {
+      lib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/legacy/build/pdf.worker.min.js`;
+    }
+    return lib;
   }
   
   function setDownloadButtonState(state){
@@ -992,7 +1035,8 @@ if(!checkAuth()){
   
   async function renderPdfInPopup(url){
     if(!inlinePdfPages) return;
-    if(!pdfjsLib || !pdfjsLib.getDocument){
+    const pdfjsLib = await getPdfJsLib();
+    if(!pdfjsLib || typeof pdfjsLib.getDocument !== 'function'){
       inlinePdfPages.innerHTML = `<div class="pdf-loading">PDF viewer failed to load.</div>`;
       return;
     }
