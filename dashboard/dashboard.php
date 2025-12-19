@@ -16,8 +16,12 @@ if (is_dir($sessionDir) && is_writable($sessionDir)) {
 }
 
 // Align cookie params
+$SESSION_TTL = 60 * 60 * 24 * 7; // 7 days in seconds
+ini_set('session.gc_maxlifetime', (string)$SESSION_TTL);
+ini_set('session.cookie_lifetime', (string)$SESSION_TTL);
+
 $cookieParams = [
-    'lifetime' => 0,
+    'lifetime' => $SESSION_TTL,
     'path' => '/',
     'domain' => '.ruhanixlegal.in',
     'secure' => false,

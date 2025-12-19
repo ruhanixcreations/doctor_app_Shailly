@@ -1,6 +1,11 @@
 <?php
+// Keep sessions valid for 7 days unless user logs out
+$SESSION_TTL = 60 * 60 * 24 * 7; // 7 days in seconds
+ini_set('session.gc_maxlifetime', (string)$SESSION_TTL);
+ini_set('session.cookie_lifetime', (string)$SESSION_TTL);
+
 session_set_cookie_params([
-    'lifetime' => 0,
+    'lifetime' => $SESSION_TTL,
     'path' => '/',
     'domain' => '.ruhanixlegal.in',
     'secure' => false,
