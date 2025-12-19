@@ -515,6 +515,20 @@ body{
   <div class="content">
     <div id="alertBox" class="alert"></div>
       
+      <div class="section" id="clinicPickerSection" style="display:none;">
+        <div class="section-header">
+          <i class="fas fa-hospital"></i>
+          <span>Select Clinic (for Receptionist)</span>
+        </div>
+        <label class="small" for="clinicClientSelect" style="margin-bottom:8px;">Choose Doctor / Clinic Client ID</label>
+        <select id="clinicClientSelect">
+          <option value="">Loading...</option>
+        </select>
+        <div class="small" style="margin-top:10px;">
+          This selection decides which clinic’s logo you are managing. It must match the doctor’s clinic used for prescriptions.
+        </div>
+      </div>
+
       <div class="btn-group">
         <div class="file-input-wrapper">
           <button class="btn" onclick="document.getElementById('logoFileInput').click()">
@@ -594,13 +608,68 @@ function formatDate(dateStr){
   return date.toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) + ' ' + date.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
 }
 
+function getEffectiveLogoClientId(){
+  // Prefer explicit clinic selection (for receptionist), otherwise fallback to own client_id
+  return localStorage.getItem('logo_client_id') || localStorage.getItem('client_id');
+}
+
+async function initClinicPickerIfNeeded(){
+  const role = (localStorage.getItem('role') || '').trim().toLowerCase();
+  const section = document.getElementById('clinicPickerSection');
+  const sel = document.getElementById('clinicClientSelect');
+  if(!section || !sel) return;
+  
+  if(role !== 'receptionalist'){
+    section.style.display = 'none';
+    return;
+  }
+  
+  section.style.display = 'block';
+  try{
+    const res = await fetch('dashboard.php?action=list_doctors');
+    const data = await res.json();
+    const doctors = (data && data.success && Array.isArray(data.doctors)) ? data.doctors : [];
+    
+    sel.innerHTML = '<option value="">-- Select doctor/clinic --</option>';
+    doctors.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.client_id;
+      opt.textContent = `${d.name} (Client ID: ${d.client_id})`;
+      sel.appendChild(opt);
+    });
+    
+    const saved = localStorage.getItem('logo_client_id');
+    if(saved){
+      sel.value = saved;
+    } else if(doctors.length === 1 && doctors[0].client_id){
+      // Auto-pick when only one clinic exists
+      localStorage.setItem('logo_client_id', doctors[0].client_id);
+      sel.value = doctors[0].client_id;
+      showAlert('Clinic selected automatically for logo management.', 'info');
+    }
+    
+    sel.addEventListener('change', () => {
+      const v = sel.value;
+      if(v){
+        localStorage.setItem('logo_client_id', v);
+      } else {
+        localStorage.removeItem('logo_client_id');
+      }
+      loadAllLogos();
+    });
+  } catch(e){
+    console.error('Failed to load doctors for clinic picker:', e);
+    sel.innerHTML = '<option value="">Failed to load clinics</option>';
+  }
+}
+
 async function loadAllLogos(){
   try{
-    const client_id = localStorage.getItem('client_id');
+    const client_id = getEffectiveLogoClientId();
     if(!client_id){
       console.warn('No client_id found');
       const tbody = document.getElementById('logosTableBody');
-      tbody.innerHTML = '<tr><td colspan="5" class="no-data">No client ID found. Please log in again.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" class="no-data">No clinic selected. Please select a clinic above.</td></tr>';
       return;
     }
     
@@ -703,9 +772,9 @@ function handleFileSelect(event){
 }
 
 async function uploadLogo(file){
-  const client_id = localStorage.getItem('client_id');
+  const client_id = getEffectiveLogoClientId();
   if(!client_id){
-    showAlert('Client ID not found. Please log in again.', 'error');
+    showAlert('No clinic selected. Please select a clinic first.', 'error');
     return;
   }
   
@@ -742,9 +811,9 @@ async function applyLogo(logoId){
     return;
   }
   
-  const client_id = localStorage.getItem('client_id');
+  const client_id = getEffectiveLogoClientId();
   if(!client_id){
-    showAlert('Client ID not found. Please log in again.', 'error');
+    showAlert('No clinic selected. Please select a clinic first.', 'error');
     return;
   }
   
@@ -775,9 +844,9 @@ async function deleteLogo(logoId){
     return;
   }
   
-  const client_id = localStorage.getItem('client_id');
+  const client_id = getEffectiveLogoClientId();
   if(!client_id){
-    showAlert('Client ID not found. Please log in again.', 'error');
+    showAlert('No clinic selected. Please select a clinic first.', 'error');
     return;
   }
   
@@ -805,7 +874,7 @@ async function deleteLogo(logoId){
 
 // Load logos on page load
 document.addEventListener('DOMContentLoaded', () => {
-  loadAllLogos();
+  initClinicPickerIfNeeded().finally(loadAllLogos);
 });
 </script>
 <script src="../header/header.js"></script>

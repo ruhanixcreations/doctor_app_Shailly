@@ -149,6 +149,20 @@ if ($action) {
         $conn->close();
         exit;
     }
+
+    if ($action === 'list_doctors') {
+        // List doctors (used by receptionist to pick clinic for logos)
+        $res = $conn->query("SELECT id, name, client_id FROM users WHERE role='user' ORDER BY name ASC LIMIT 2000");
+        $doctors = [];
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $doctors[] = $row;
+            }
+        }
+        echo json_encode(['success' => true, 'doctors' => $doctors]);
+        $conn->close();
+        exit;
+    }
     
     if ($action === 'apply_logo') {
         // Set a logo as active (and deactivate others)
