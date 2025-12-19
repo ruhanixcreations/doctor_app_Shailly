@@ -260,13 +260,17 @@ body{
 .inline-pdf-body{
   flex:1;
   background:#f3f4f6;
+  min-height:0; /* critical for scroll inside flex container */
 }
 
 .inline-pdf-pages{
   height:100%;
-  overflow:auto;
+  overflow-y:auto;
+  overflow-x:hidden;
   padding:12px;
   -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
 }
 
 .pdf-page{
