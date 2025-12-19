@@ -53,9 +53,6 @@ if(isset($_GET['action']) && $_GET['action'] === 'list_patients'){
         $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
         $mysqli->query("UPDATE patient_list SET created_at = NOW() WHERE created_at IS NULL");
     }
-    if(!column_exists($mysqli, 'patient_list', 'email')){
-        $mysqli->query("ALTER TABLE patient_list ADD COLUMN email VARCHAR(255) NULL");
-    }
 
     $client_id = trim($_GET['client_id'] ?? '');
     if($client_id === ''){
@@ -66,7 +63,6 @@ if(isset($_GET['action']) && $_GET['action'] === 'list_patients'){
     $sql = "SELECT pl.patient_id,
                    pl.patient_name,
                    pl.mobile,
-                   pl.email,
                    DATE_FORMAT(COALESCE(p_max.last_visit, pl.created_at), '%Y-%m-%d') AS last_visit
             FROM patient_list pl
             LEFT JOIN (
@@ -100,7 +96,6 @@ if($_SERVER['REQUEST_METHOD'] !== 'POST'){
 $client_id_local = trim($_POST['client_id'] ?? ''); 
 $patient_name = trim($_POST['patient_name'] ?? '');
 $mobile = trim($_POST['mobile'] ?? '');
-$email = trim($_POST['email'] ?? '');
 $age = trim($_POST['age'] ?? '');
 $weight = trim($_POST['weight'] ?? '');
 $doctor_id = trim($_POST['doctor'] ?? ''); 
@@ -108,9 +103,6 @@ $doctor_id = trim($_POST['doctor'] ?? '');
 // --- Input Validation --- (omitted for brevity)
 if($client_id_local === '') send_json(['success'=>false,'message'=>'Validation Error: Client ID missing (from local storage)'],400);
 if($doctor_id === '' || !is_numeric($doctor_id)) send_json(['success'=>false,'message'=>'Validation Error: Please select a valid doctor'],400);
-if($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)){
-    send_json(['success'=>false,'message'=>'Validation Error: Invalid email'],400);
-}
 
 $allowed_mimes = ['image/jpeg','image/png','image/webp','image/gif','application/pdf'];
 $allowed_exts = ['jpg','jpeg','png','webp','gif','pdf'];
@@ -266,13 +258,10 @@ if(!column_exists($mysqli, 'patient_list', 'created_at')){
     $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
     $mysqli->query("UPDATE patient_list SET created_at = NOW() WHERE created_at IS NULL");
 }
-if(!column_exists($mysqli, 'patient_list', 'email')){
-    $mysqli->query("ALTER TABLE patient_list ADD COLUMN email VARCHAR(255) NULL");
-}
 
 // The doctor_id variable is now replaced by the doctor_json string
-$stmt = $mysqli->prepare("INSERT INTO patient_list (client_id, patient_id, patient_name, mobile, email, age, weight, doctor, report_file, previous_prescription_file, previous_blood_test_file, created_at)
-  VALUES (?, ?, ?, ?, NULLIF(?,''), NULLIF(?,''), NULLIF(?,''), ?, ?, ?, ?, NOW())");
+$stmt = $mysqli->prepare("INSERT INTO patient_list (client_id, patient_id, patient_name, mobile, age, weight, doctor, report_file, previous_prescription_file, previous_blood_test_file, created_at)
+  VALUES (?, ?, ?, ?, NULLIF(?,''), NULLIF(?,''), ?, ?, ?, ?, NOW())");
 
 if(!$stmt) {
     send_json(['success'=>false,'message'=>'DB Prepare Error (Patient Insert): '.$mysqli->error],500);
@@ -280,7 +269,7 @@ if(!$stmt) {
 
 // IMPORTANT CHANGE: Binding $doctor_json instead of $doctor_id and adding previous files
 // The 'doctor' column should be large enough (VARCHAR/TEXT/JSON type) to store the JSON string.
-$stmt->bind_param('sssssssssss', $client_id_local, $patient_id, $patient_name, $mobile, $email, $age, $weight, $doctor_json, $report_file_value, $previous_prescription_path, $previous_blood_test_path);
+$stmt->bind_param('ssssssssss', $client_id_local, $patient_id, $patient_name, $mobile, $age, $weight, $doctor_json, $report_file_value, $previous_prescription_path, $previous_blood_test_path);
 
 if(!$stmt->execute()){
     // Clean up function (omitted for brevity)

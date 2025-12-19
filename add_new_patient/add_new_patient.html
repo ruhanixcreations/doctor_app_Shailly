@@ -130,6 +130,145 @@ body{
   margin-top:12px;
 }
 
+.table-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+
+.filter-input{
+  flex:1;
+  min-width:220px;
+  padding:10px 12px;
+  border:1px solid var(--border-light);
+  border-radius:10px;
+  background:#fff;
+  font-size:14px;
+}
+
+.pager{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.pager select{
+  padding:8px 10px;
+  border:1px solid var(--border-light);
+  border-radius:10px;
+  background:#fff;
+  font-size:13px;
+}
+
+.pager-btn{
+  border:1px solid var(--border-light);
+  background:#fff;
+  color:var(--text-dark);
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+}
+
+.pager-btn:disabled{
+  opacity:0.55;
+  cursor:not-allowed;
+}
+
+.pager-status{
+  font-size:13px;
+  color:var(--text-muted);
+  white-space:nowrap;
+}
+
+.inline-pdf-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  z-index:99999;
+}
+
+.inline-pdf-modal{
+  width:min(900px, 98vw);
+  height:min(90vh, 720px);
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 16px 60px rgba(0,0,0,0.35);
+  display:flex;
+  flex-direction:column;
+}
+
+.inline-pdf-header{
+  padding:12px 14px;
+  border-bottom:1px solid var(--border-light);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.inline-pdf-title{
+  font-weight:800;
+  color:var(--text-dark);
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.inline-pdf-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.inline-pdf-actions a,
+.inline-pdf-actions button{
+  border:none;
+  border-radius:10px;
+  padding:9px 12px;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.inline-pdf-actions a{
+  text-decoration:none;
+  background:var(--primary-teal);
+  color:#fff;
+}
+
+.inline-pdf-actions button{
+  background:#fff;
+  border:1px solid var(--border-light);
+  color:var(--text-dark);
+}
+
+.inline-pdf-body{
+  flex:1;
+  background:#f3f4f6;
+}
+
+.inline-pdf-body iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+
 .table-wrapper{
   width:100%;
   overflow-x:auto;
@@ -521,24 +660,61 @@ body{
     </div>
 
     <div class="datastyles">
+      <div class="table-toolbar">
+        <input id="patientsFilter" class="filter-input" type="search" placeholder="Filter by name or mobile..." autocomplete="off" />
+        <div class="pager">
+          <span class="pager-status" id="patientsPagerStatus">—</span>
+          <label class="small" for="patientsPageSize" style="margin-left:6px;">Rows</label>
+          <select id="patientsPageSize">
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <button id="patientsPrevBtn" class="pager-btn" type="button">Prev</button>
+          <button id="patientsNextBtn" class="pager-btn" type="button">Next</button>
+        </div>
+      </div>
       <div class="table-wrapper">
         <table class="table" aria-label="All patients">
           <thead>
             <tr>
               <th>Name</th>
               <th>Mobile</th>
-              <th>Email</th>
               <th>Last Date of Visit</th>
               <th>Patient History</th>
             </tr>
           </thead>
           <tbody id="patientsTableBody">
             <tr>
-              <td colspan="5" class="small" style="padding:14px;color:var(--text-muted);">Loading patients...</td>
+              <td colspan="4" class="small" style="padding:14px;color:var(--text-muted);">Loading patients...</td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inline PDF popup (above Add Patient form) -->
+<div id="inlinePdfOverlay" class="inline-pdf-overlay" aria-hidden="true">
+  <div class="inline-pdf-modal" role="dialog" aria-modal="true">
+    <div class="inline-pdf-header">
+      <div class="inline-pdf-title">
+        <i class="fas fa-file-pdf" style="color:#e74c3c"></i>
+        <span id="inlinePdfTitle">PDF Preview</span>
+      </div>
+      <div class="inline-pdf-actions">
+        <a id="inlinePdfDownload" href="#" target="_blank" download>
+          <i class="fas fa-download"></i> Download
+        </a>
+        <button id="inlinePdfClose" type="button">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+    <div class="inline-pdf-body">
+      <iframe id="inlinePdfFrame" src="" title="PDF preview"></iframe>
     </div>
   </div>
 </div>
@@ -567,11 +743,6 @@ body{
         <div class="modal-form-group">
           <label class="modal-label" for="modal_patient_name">Patient Name *</label>
           <input class="modal-input" id="modal_patient_name" name="patient_name" required autocomplete="name" />
-        </div>
-
-        <div class="modal-form-group">
-          <label class="modal-label" for="modal_email">Email (optional)</label>
-          <input class="modal-input" id="modal_email" name="email" type="email" autocomplete="email" />
         </div>
         
         <div class="modal-inline-group">
@@ -721,7 +892,6 @@ if(!checkAuth()){
   // Form inputs
   const modalClientInput = document.getElementById('modal_client_id');
   const modalNameInput = document.getElementById('modal_patient_name');
-  const modalEmailInput = document.getElementById('modal_email');
   const modalMobileInput = document.getElementById('modal_mobile');
   const modalAgeInput = document.getElementById('modal_age');
   const modalWeightInput = document.getElementById('modal_weight');
@@ -731,6 +901,49 @@ if(!checkAuth()){
 
   // Patients table
   const patientsTableBody = document.getElementById('patientsTableBody');
+  const patientsFilterInput = document.getElementById('patientsFilter');
+  const patientsPageSizeSelect = document.getElementById('patientsPageSize');
+  const patientsPrevBtn = document.getElementById('patientsPrevBtn');
+  const patientsNextBtn = document.getElementById('patientsNextBtn');
+  const patientsPagerStatus = document.getElementById('patientsPagerStatus');
+  
+  // Inline PDF popup elements
+  const inlinePdfOverlay = document.getElementById('inlinePdfOverlay');
+  const inlinePdfFrame = document.getElementById('inlinePdfFrame');
+  const inlinePdfTitle = document.getElementById('inlinePdfTitle');
+  const inlinePdfDownload = document.getElementById('inlinePdfDownload');
+  const inlinePdfClose = document.getElementById('inlinePdfClose');
+  
+  function openInlinePdf(url, filename){
+    if(!url) return;
+    if (inlinePdfTitle) inlinePdfTitle.textContent = filename || 'PDF Preview';
+    if (inlinePdfFrame) inlinePdfFrame.src = url;
+    if (inlinePdfDownload) {
+      inlinePdfDownload.href = url;
+      inlinePdfDownload.setAttribute('download', filename || 'document.pdf');
+    }
+    if (inlinePdfOverlay) {
+      inlinePdfOverlay.style.display = 'flex';
+      inlinePdfOverlay.setAttribute('aria-hidden', 'false');
+    }
+  }
+  
+  function closeInlinePdf(){
+    if (inlinePdfOverlay) {
+      inlinePdfOverlay.style.display = 'none';
+      inlinePdfOverlay.setAttribute('aria-hidden', 'true');
+    }
+    if (inlinePdfFrame) inlinePdfFrame.src = '';
+  }
+  
+  if(inlinePdfClose){
+    inlinePdfClose.addEventListener('click', closeInlinePdf);
+  }
+  if(inlinePdfOverlay){
+    inlinePdfOverlay.addEventListener('click', (e)=>{
+      if(e.target === inlinePdfOverlay) closeInlinePdf();
+    });
+  }
   
   // Prescription camera elements
   const modalOpenPrescriptionCameraBtn = document.getElementById('modal_openPrescriptionCamera');
@@ -814,7 +1027,6 @@ if(!checkAuth()){
   function saveFormData(){
     const formData = {
       patient_name: modalNameInput.value,
-      email: modalEmailInput.value,
       mobile: modalMobileInput.value,
       age: modalAgeInput.value,
       weight: modalWeightInput.value,
@@ -848,7 +1060,6 @@ if(!checkAuth()){
       
       // Restore form fields
       if (formData.patient_name) modalNameInput.value = formData.patient_name;
-      if (formData.email) modalEmailInput.value = formData.email;
       if (formData.mobile) modalMobileInput.value = formData.mobile;
       if (formData.age) modalAgeInput.value = formData.age;
       if (formData.weight) modalWeightInput.value = formData.weight;
@@ -1041,13 +1252,14 @@ if(!checkAuth()){
       return;
     }
     const href = pdfItem.viewUrl || pdfItem.dataUrl;
+    const fileName = (pdfItem.file && pdfItem.file.name) ? pdfItem.file.name : 'prescription.pdf';
     modalPrescriptionPdfView.style.display = 'block';
     modalPrescriptionPdfView.innerHTML = `
       <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
-      <strong>PDF Ready:</strong> ${pdfItem.file && pdfItem.file.name ? pdfItem.file.name : 'prescription.pdf'} - 
-      <a href="${href}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+      <strong>PDF Ready:</strong> ${fileName} -
+      <button type="button" class="action-btn view" data-pdf-url="${href}" data-pdf-name="${fileName}">
         <i class="fas fa-eye"></i> View PDF
-      </a>
+      </button>
     `;
   }
   
@@ -1178,13 +1390,14 @@ if(!checkAuth()){
       return;
     }
     const href = pdfItem.viewUrl || pdfItem.dataUrl;
+    const fileName = (pdfItem.file && pdfItem.file.name) ? pdfItem.file.name : 'blood_test.pdf';
     modalBloodTestPdfView.style.display = 'block';
     modalBloodTestPdfView.innerHTML = `
       <i class="fas fa-file-pdf" style="color:#e74c3c;font-size:16px;margin-right:8px;"></i>
-      <strong>PDF Ready:</strong> ${pdfItem.file && pdfItem.file.name ? pdfItem.file.name : 'blood_test.pdf'} - 
-      <a href="${href}" target="_blank" style="color: var(--primary-teal); text-decoration: underline; font-weight: 600;">
+      <strong>PDF Ready:</strong> ${fileName} -
+      <button type="button" class="action-btn view" data-pdf-url="${href}" data-pdf-name="${fileName}">
         <i class="fas fa-eye"></i> View PDF
-      </a>
+      </button>
     `;
   }
   
@@ -1284,10 +1497,6 @@ if(!checkAuth()){
     triggerAutoSave();
   });
 
-  modalEmailInput.addEventListener('input', ()=> {
-    triggerAutoSave();
-  });
-  
   modalMobileInput.addEventListener('keypress', (e) => {
     const char = String.fromCharCode(e.which || e.keyCode);
     if (!/^\d$/.test(char) || modalMobileInput.value.length >= 10) e.preventDefault();
@@ -1347,7 +1556,6 @@ if(!checkAuth()){
     const formData = new FormData();
     formData.append('client_id', modalClientInput.value);
     formData.append('patient_name', modalNameInput.value.trim());
-    formData.append('email', (modalEmailInput.value || '').trim());
     formData.append('mobile', modalMobileInput.value.trim());
     formData.append('age', modalAgeInput.value);
     formData.append('weight', modalWeightInput.value);
@@ -1399,23 +1607,33 @@ if(!checkAuth()){
   
   // Persist state before opening the generated PDF (mobile back should restore the form)
   function persistBeforePdfView(e){
-    const a = e.target && e.target.closest ? e.target.closest('a') : null;
-    if (!a) return;
-    // Only handle our PDF view links (open in new tab)
-    if (a.getAttribute('target') !== '_blank') return;
+    const btn = e.target && e.target.closest ? e.target.closest('button[data-pdf-url]') : null;
+    if (!btn) return;
     setModalOpenFlag(true);
     // Save immediately (don't rely only on debounced autosave)
     saveFormData();
   }
   modalPrescriptionPdfView.addEventListener('click', persistBeforePdfView);
   modalBloodTestPdfView.addEventListener('click', persistBeforePdfView);
+
+  // Open PDF in popup above the same form
+  function handlePdfPopupClick(e){
+    const btn = e.target && e.target.closest ? e.target.closest('button[data-pdf-url]') : null;
+    if (!btn) return;
+    e.preventDefault();
+    const url = btn.getAttribute('data-pdf-url');
+    const name = btn.getAttribute('data-pdf-name') || 'document.pdf';
+    openInlinePdf(url, name);
+  }
+  modalPrescriptionPdfView.addEventListener('click', handlePdfPopupClick);
+  modalBloodTestPdfView.addEventListener('click', handlePdfPopupClick);
   
   // If the browser reloads/discards the page while viewing PDF, reopen the modal and restore draft
   window.addEventListener('pageshow', () => {
     if (shouldRestoreOpenModal()) openAddPatientModal();
   });
   
-  // When tab goes background (e.g., opening PDF in new tab), persist immediately
+  // When tab goes background, persist immediately
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && modalOverlay.style.display === 'flex') {
       setModalOpenFlag(true);
@@ -1434,55 +1652,117 @@ if(!checkAuth()){
     return String(s).replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  let allPatientsCache = [];
+  let currentPage = 1;
+  function getPageSize(){
+    const n = parseInt(patientsPageSizeSelect && patientsPageSizeSelect.value ? patientsPageSizeSelect.value : '25', 10);
+    return isNaN(n) || n <= 0 ? 25 : n;
+  }
+  function getFilterText(){
+    return (patientsFilterInput && patientsFilterInput.value ? patientsFilterInput.value : '').trim().toLowerCase();
+  }
+  function getFilteredPatients(){
+    const q = getFilterText();
+    if(!q) return allPatientsCache.slice();
+    return allPatientsCache.filter(p => {
+      const name = (p.patient_name || '').toLowerCase();
+      const mobile = (p.mobile || '').toLowerCase();
+      return name.includes(q) || mobile.includes(q);
+    });
+  }
+  function renderPatientsTable(){
+    if (!patientsTableBody) return;
+    const list = getFilteredPatients();
+    const pageSize = getPageSize();
+    const total = list.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    if(currentPage > totalPages) currentPage = totalPages;
+    if(currentPage < 1) currentPage = 1;
+    const start = (currentPage - 1) * pageSize;
+    const pageItems = list.slice(start, start + pageSize);
+
+    if(patientsPagerStatus){
+      patientsPagerStatus.textContent = `${total === 0 ? 0 : start + 1}-${Math.min(start + pageItems.length, total)} of ${total}`;
+    }
+    if(patientsPrevBtn) patientsPrevBtn.disabled = currentPage <= 1;
+    if(patientsNextBtn) patientsNextBtn.disabled = currentPage >= totalPages;
+
+    if(pageItems.length === 0){
+      patientsTableBody.innerHTML = `<tr><td colspan="4" class="small" style="padding:14px;color:var(--text-muted);">No patients found.</td></tr>`;
+      return;
+    }
+
+    patientsTableBody.innerHTML = '';
+    pageItems.forEach(p => {
+      const tr = document.createElement('tr');
+      const name = p.patient_name || '-';
+      const mobile = p.mobile || '-';
+      const lastVisit = p.last_visit || '-';
+      const pid = p.patient_id || '';
+      tr.innerHTML = `
+        <td data-label="Name">${escapeHtml(name)}</td>
+        <td data-label="Mobile">${escapeHtml(mobile)}</td>
+        <td data-label="Last Date of Visit">${escapeHtml(lastVisit)}</td>
+        <td data-label="Patient History">
+          <button type="button" class="action-btn view" ${pid ? '' : 'disabled'}>
+            <i class="fas fa-eye"></i> View
+          </button>
+        </td>
+      `;
+      const btn = tr.querySelector('button');
+      if (btn && pid){
+        btn.addEventListener('click', () => {
+          const url = `../patient_history/patient_history.html?patient_id=${encodeURIComponent(pid)}&patient_name=${encodeURIComponent(name)}`;
+          window.location.href = url;
+        });
+      }
+      patientsTableBody.appendChild(tr);
+    });
+  }
   async function loadPatientsTable(){
     if (!patientsTableBody) return;
-    patientsTableBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px;color:var(--text-muted);">Loading patients...</td></tr>`;
+    patientsTableBody.innerHTML = `<tr><td colspan="4" class="small" style="padding:14px;color:var(--text-muted);">Loading patients...</td></tr>`;
     try{
       const clientId = localStorage.getItem('client_id') || '';
       const res = await fetch(`add_new_patient.php?action=list_patients&client_id=${encodeURIComponent(clientId)}`);
       const j = await res.json();
       if(!j.success) throw new Error(j.message || 'Failed to load patients');
-      const list = Array.isArray(j.patients) ? j.patients : [];
-      if(list.length === 0){
-        patientsTableBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px;color:var(--text-muted);">No patients found.</td></tr>`;
-        return;
-      }
-      patientsTableBody.innerHTML = '';
-      list.forEach(p => {
-        const tr = document.createElement('tr');
-        const name = p.patient_name || '-';
-        const mobile = p.mobile || '-';
-        const email = p.email || '-';
-        const lastVisit = p.last_visit || '-';
-        const pid = p.patient_id || '';
-        tr.innerHTML = `
-          <td data-label="Name">${escapeHtml(name)}</td>
-          <td data-label="Mobile">${escapeHtml(mobile)}</td>
-          <td data-label="Email">${escapeHtml(email)}</td>
-          <td data-label="Last Date of Visit">${escapeHtml(lastVisit)}</td>
-          <td data-label="Patient History">
-            <button type="button" class="action-btn view" ${pid ? '' : 'disabled'}>
-              <i class="fas fa-eye"></i> View
-            </button>
-          </td>
-        `;
-        const btn = tr.querySelector('button');
-        if (btn && pid){
-          btn.addEventListener('click', () => {
-            const url = `../patient_history/patient_history.html?patient_id=${encodeURIComponent(pid)}&patient_name=${encodeURIComponent(name)}`;
-            window.location.href = url;
-          });
-        }
-        patientsTableBody.appendChild(tr);
-      });
+      allPatientsCache = Array.isArray(j.patients) ? j.patients : [];
+      currentPage = 1;
+      renderPatientsTable();
     }catch(err){
-      patientsTableBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px;color:#dc3545;">Failed to load patients.</td></tr>`;
+      patientsTableBody.innerHTML = `<tr><td colspan="4" class="small" style="padding:14px;color:#dc3545;">Failed to load patients.</td></tr>`;
       console.error(err);
     }
   }
 
   // Initial patients load
   loadPatientsTable();
+
+  if(patientsFilterInput){
+    patientsFilterInput.addEventListener('input', () => {
+      currentPage = 1;
+      renderPatientsTable();
+    });
+  }
+  if(patientsPageSizeSelect){
+    patientsPageSizeSelect.addEventListener('change', () => {
+      currentPage = 1;
+      renderPatientsTable();
+    });
+  }
+  if(patientsPrevBtn){
+    patientsPrevBtn.addEventListener('click', () => {
+      currentPage = Math.max(1, currentPage - 1);
+      renderPatientsTable();
+    });
+  }
+  if(patientsNextBtn){
+    patientsNextBtn.addEventListener('click', () => {
+      currentPage = currentPage + 1;
+      renderPatientsTable();
+    });
+  }
   
   // Close modal when clicking overlay
   modalOverlay.addEventListener('click', (e) => {
