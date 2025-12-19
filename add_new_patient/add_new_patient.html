@@ -275,6 +275,32 @@ body{
   border:1px solid var(--border-light);
   border-radius:12px;
   background:var(--bg-white);
+  -webkit-overflow-scrolling:touch;
+}
+
+@media (max-width: 768px){
+  .inline-pdf-overlay{
+    padding:0;
+  }
+  .inline-pdf-modal{
+    width:100vw;
+    height:100vh;
+    border-radius:0;
+  }
+  .inline-pdf-header{
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+  .inline-pdf-actions{
+    width:100%;
+    justify-content:stretch;
+  }
+  .inline-pdf-actions a,
+  .inline-pdf-actions button{
+    flex:1;
+    justify-content:center;
+  }
 }
 
 .table{
@@ -321,26 +347,8 @@ body{
   background:var(--primary-blue);
 }
 
-@media (max-width: 768px){
-  .table thead{ display:none; }
-  .table, .table tbody, .table tr, .table td{ display:block; width:100%; }
-  .table tr{
-    border-bottom:1px solid var(--border-light);
-    padding:10px 0;
-  }
-  .table td{
-    border:none;
-    padding:10px 14px;
-    display:flex;
-    justify-content:space-between;
-    gap:12px;
-  }
-  .table td::before{
-    content:attr(data-label);
-    font-weight:700;
-    color:var(--text-muted);
-  }
-}
+/* Keep patients list in real table layout even on mobile.
+   Horizontal scrolling is handled by .table-wrapper. */
 
 .btn:hover{
   transform:translateY(-2px);
@@ -648,9 +656,6 @@ body{
       <div class="title">Patient Registration</div>
       <div class="subtitle">Add new patients to the system</div>
     </div>
-    <button id="openAddPatientModal" class="btn header-btn" type="button">
-      <i class="fas fa-user-plus"></i> Add New Patient
-    </button>
   </div>
 
   <div class="content">
@@ -660,6 +665,12 @@ body{
     </div>
 
     <div class="datastyles">
+      <div class="table-toolbar" style="margin-bottom:12px;">
+        <div></div>
+        <button id="openAddPatientModal" class="btn" type="button">
+          <i class="fas fa-user-plus"></i> Add New Patient
+        </button>
+      </div>
       <div class="table-toolbar">
         <input id="patientsFilter" class="filter-input" type="search" placeholder="Filter by name or mobile..." autocomplete="off" />
         <div class="pager">
