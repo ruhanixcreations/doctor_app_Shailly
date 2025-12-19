@@ -78,8 +78,8 @@ body{
 }
 
 .content{
-  padding:40px 24px;
-  text-align:center;
+  padding:24px;
+  text-align:left;
 }
 
 .content-text{
@@ -112,6 +112,95 @@ body{
   display:inline-flex;
   align-items:center;
   gap:10px;
+}
+
+.header-btn{
+  padding:10px 14px;
+  font-size:14px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.22);
+}
+
+.header-btn:hover{
+  box-shadow:0 6px 18px rgba(0,0,0,0.18);
+}
+
+.datastyles{
+  margin-top:12px;
+}
+
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  border:1px solid var(--border-light);
+  border-radius:12px;
+  background:var(--bg-white);
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.table th,.table td{
+  padding:12px 14px;
+  border-bottom:1px solid var(--border-light);
+  text-align:left;
+  font-size:14px;
+  vertical-align:middle;
+}
+
+.table th{
+  font-weight:700;
+  background:rgba(0,169,165,0.06);
+  color:var(--text-dark);
+}
+
+.table tr:last-child td{
+  border-bottom:none;
+}
+
+.action-btn{
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.action-btn.view{
+  background:var(--primary-teal);
+  color:#fff;
+}
+
+.action-btn.view:hover{
+  background:var(--primary-blue);
+}
+
+@media (max-width: 768px){
+  .table thead{ display:none; }
+  .table, .table tbody, .table tr, .table td{ display:block; width:100%; }
+  .table tr{
+    border-bottom:1px solid var(--border-light);
+    padding:10px 0;
+  }
+  .table td{
+    border:none;
+    padding:10px 14px;
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .table td::before{
+    content:attr(data-label);
+    font-weight:700;
+    color:var(--text-muted);
+  }
 }
 
 .btn:hover{
@@ -420,17 +509,37 @@ body{
       <div class="title">Patient Registration</div>
       <div class="subtitle">Add new patients to the system</div>
     </div>
+    <button id="openAddPatientModal" class="btn header-btn" type="button">
+      <i class="fas fa-user-plus"></i> Add New Patient
+    </button>
   </div>
 
   <div class="content">
     <div class="content-text">
-      <h2>Add New Patient</h2>
-      <p>Click the button below to open the patient registration form.<br>Fill in all required information to register a new patient.</p>
+      <h2>All Patients</h2>
+      <p>Below is a list of all registered patients. Use “View” to open patient history.</p>
     </div>
-    
-    <button id="openAddPatientModal" class="btn">
-      <i class="fas fa-user-plus"></i> Add New Patient
-    </button>
+
+    <div class="datastyles">
+      <div class="table-wrapper">
+        <table class="table" aria-label="All patients">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Mobile</th>
+              <th>Email</th>
+              <th>Last Date of Visit</th>
+              <th>Patient History</th>
+            </tr>
+          </thead>
+          <tbody id="patientsTableBody">
+            <tr>
+              <td colspan="5" class="small" style="padding:14px;color:var(--text-muted);">Loading patients...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -458,6 +567,11 @@ body{
         <div class="modal-form-group">
           <label class="modal-label" for="modal_patient_name">Patient Name *</label>
           <input class="modal-input" id="modal_patient_name" name="patient_name" required autocomplete="name" />
+        </div>
+
+        <div class="modal-form-group">
+          <label class="modal-label" for="modal_email">Email (optional)</label>
+          <input class="modal-input" id="modal_email" name="email" type="email" autocomplete="email" />
         </div>
         
         <div class="modal-inline-group">
@@ -607,12 +721,16 @@ if(!checkAuth()){
   // Form inputs
   const modalClientInput = document.getElementById('modal_client_id');
   const modalNameInput = document.getElementById('modal_patient_name');
+  const modalEmailInput = document.getElementById('modal_email');
   const modalMobileInput = document.getElementById('modal_mobile');
   const modalAgeInput = document.getElementById('modal_age');
   const modalWeightInput = document.getElementById('modal_weight');
   const modalDoctorSelect = document.getElementById('modal_doctor');
   const modalSubmitBtn = document.getElementById('modal_submitBtn');
   const modalStatusEl = document.getElementById('modal_status');
+
+  // Patients table
+  const patientsTableBody = document.getElementById('patientsTableBody');
   
   // Prescription camera elements
   const modalOpenPrescriptionCameraBtn = document.getElementById('modal_openPrescriptionCamera');
@@ -696,6 +814,7 @@ if(!checkAuth()){
   function saveFormData(){
     const formData = {
       patient_name: modalNameInput.value,
+      email: modalEmailInput.value,
       mobile: modalMobileInput.value,
       age: modalAgeInput.value,
       weight: modalWeightInput.value,
@@ -729,6 +848,7 @@ if(!checkAuth()){
       
       // Restore form fields
       if (formData.patient_name) modalNameInput.value = formData.patient_name;
+      if (formData.email) modalEmailInput.value = formData.email;
       if (formData.mobile) modalMobileInput.value = formData.mobile;
       if (formData.age) modalAgeInput.value = formData.age;
       if (formData.weight) modalWeightInput.value = formData.weight;
@@ -1163,6 +1283,10 @@ if(!checkAuth()){
     updateModalControls();
     triggerAutoSave();
   });
+
+  modalEmailInput.addEventListener('input', ()=> {
+    triggerAutoSave();
+  });
   
   modalMobileInput.addEventListener('keypress', (e) => {
     const char = String.fromCharCode(e.which || e.keyCode);
@@ -1223,6 +1347,7 @@ if(!checkAuth()){
     const formData = new FormData();
     formData.append('client_id', modalClientInput.value);
     formData.append('patient_name', modalNameInput.value.trim());
+    formData.append('email', (modalEmailInput.value || '').trim());
     formData.append('mobile', modalMobileInput.value.trim());
     formData.append('age', modalAgeInput.value);
     formData.append('weight', modalWeightInput.value);
@@ -1257,6 +1382,7 @@ if(!checkAuth()){
         closeAddPatientModal();
         modalStatusEl.style.color = '';
         alert('Patient added successfully!');
+        loadPatientsTable();
       }, 1500);
       
     } catch (err) {
@@ -1302,6 +1428,61 @@ if(!checkAuth()){
       saveFormData();
     }
   });
+
+  function escapeHtml(s){
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/[&<>"']/g, (c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  async function loadPatientsTable(){
+    if (!patientsTableBody) return;
+    patientsTableBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px;color:var(--text-muted);">Loading patients...</td></tr>`;
+    try{
+      const clientId = localStorage.getItem('client_id') || '';
+      const res = await fetch(`add_new_patient.php?action=list_patients&client_id=${encodeURIComponent(clientId)}`);
+      const j = await res.json();
+      if(!j.success) throw new Error(j.message || 'Failed to load patients');
+      const list = Array.isArray(j.patients) ? j.patients : [];
+      if(list.length === 0){
+        patientsTableBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px;color:var(--text-muted);">No patients found.</td></tr>`;
+        return;
+      }
+      patientsTableBody.innerHTML = '';
+      list.forEach(p => {
+        const tr = document.createElement('tr');
+        const name = p.patient_name || '-';
+        const mobile = p.mobile || '-';
+        const email = p.email || '-';
+        const lastVisit = p.last_visit || '-';
+        const pid = p.patient_id || '';
+        tr.innerHTML = `
+          <td data-label="Name">${escapeHtml(name)}</td>
+          <td data-label="Mobile">${escapeHtml(mobile)}</td>
+          <td data-label="Email">${escapeHtml(email)}</td>
+          <td data-label="Last Date of Visit">${escapeHtml(lastVisit)}</td>
+          <td data-label="Patient History">
+            <button type="button" class="action-btn view" ${pid ? '' : 'disabled'}>
+              <i class="fas fa-eye"></i> View
+            </button>
+          </td>
+        `;
+        const btn = tr.querySelector('button');
+        if (btn && pid){
+          btn.addEventListener('click', () => {
+            const url = `../patient_history/patient_history.html?patient_id=${encodeURIComponent(pid)}&patient_name=${encodeURIComponent(name)}`;
+            window.location.href = url;
+          });
+        }
+        patientsTableBody.appendChild(tr);
+      });
+    }catch(err){
+      patientsTableBody.innerHTML = `<tr><td colspan="5" class="small" style="padding:14px;color:#dc3545;">Failed to load patients.</td></tr>`;
+      console.error(err);
+    }
+  }
+
+  // Initial patients load
+  loadPatientsTable();
   
   // Close modal when clicking overlay
   modalOverlay.addEventListener('click', (e) => {
