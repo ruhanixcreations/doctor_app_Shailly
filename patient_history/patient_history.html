@@ -519,14 +519,40 @@ tbody tr:last-child td{
   overflow:hidden;
   background:#f5f5f5;
   position:relative;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
 
-.modal-body iframe{
+.pdf-pages{
+  flex:1;
+  min-height:0;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  padding:12px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.pdf-page{
+  background:#fff;
+  border-radius:12px;
+  margin:0 auto 12px auto;
+  box-shadow:0 4px 18px rgba(0,0,0,0.10);
+  overflow:hidden;
   width:100%;
-  height:100%;
-  border:0;
+  max-width:900px;
+}
+
+.pdf-page canvas{
   display:block;
-  background:white;
+  width:100%;
+  height:auto;
+}
+
+.pdf-loading{
+  padding:14px;
+  color:var(--text-muted);
+  font-size:13px;
 }
 
 /* quick info placeholder */
@@ -566,6 +592,16 @@ tbody tr:last-child td{
 }
 
 @media (max-width: 768px) {
+  .modal-overlay{
+    padding:0;
+  }
+  .modal{
+    width:100vw;
+    height:100vh;
+    max-width:none;
+    max-height:none;
+    border-radius:0;
+  }
   .header{
     padding:16px 20px;
   }
@@ -951,7 +987,7 @@ tbody tr:last-child td{
         <span>Report Preview</span>
       </div>
       <div class="report-actions">
-        <a id="pdfDownload" class="btn btn-download" href="#" target="_blank" download>
+        <a id="pdfDownload" class="btn btn-download" href="#" download>
           <i class="fas fa-download"></i> Download
         </a>
         <button id="closeModal" class="btn btn-close">
@@ -960,11 +996,15 @@ tbody tr:last-child td{
       </div>
     </div>
     <div class="modal-body">
-      <iframe id="pdfFrame" src="" title="PDF preview"></iframe>
+      <div id="pdfPages" class="pdf-pages">
+        <div class="pdf-loading">Loading PDF…</div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- PDF.js (best-effort; JS also falls back to dynamic load) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 /* Check Authentication from localStorage */
 function checkAuth(){
@@ -1454,10 +1494,129 @@ async function loadDetails(patient_id){
 
 /* PDF Modal */
 const pdfModal = document.getElementById('pdfModal');
-const pdfFrame = document.getElementById('pdfFrame');
+const pdfPages = document.getElementById('pdfPages');
 const modalTitle = document.getElementById('modalTitle');
 const pdfDownload = document.getElementById('pdfDownload');
 const closeModalBtn = document.getElementById('closeModal');
+
+const PDFJS_VERSION = '3.11.174';
+let pdfJsLibPromise = null;
+let currentPdfUrl = null;
+let currentPdfName = null;
+let resizeRerenderTimeout = null;
+
+function resolvePdfJsLibFromWindow(){
+  const candidates = [
+    window.pdfjsLib,
+    window['pdfjsLib'],
+    window['pdfjs-dist/build/pdf'],
+    window['pdfjs-dist/legacy/build/pdf']
+  ];
+  for (const c of candidates){
+    if (c && typeof c.getDocument === 'function') return c;
+  }
+  try{
+    for (const k of Object.keys(window)){
+      const v = window[k];
+      if (v && typeof v.getDocument === 'function' && v.GlobalWorkerOptions) return v;
+    }
+  } catch (_) {}
+  return null;
+}
+
+function ensurePdfJsLoaded(){
+  if (pdfJsLibPromise) return pdfJsLibPromise;
+  pdfJsLibPromise = new Promise((resolve) => {
+    const existing = resolvePdfJsLibFromWindow();
+    if (existing) return resolve(existing);
+    const s = document.createElement('script');
+    s.src = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/legacy/build/pdf.min.js`;
+    s.async = true;
+    s.onload = () => resolve(resolvePdfJsLibFromWindow());
+    s.onerror = () => resolve(null);
+    document.head.appendChild(s);
+  });
+  return pdfJsLibPromise;
+}
+
+async function getPdfJsLib(){
+  const lib = await ensurePdfJsLoaded();
+  if (lib && lib.GlobalWorkerOptions) {
+    lib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/legacy/build/pdf.worker.min.js`;
+  }
+  return lib;
+}
+
+function setDownloadButtonState(state){
+  if(!pdfDownload) return;
+  if(state === 'downloaded'){
+    pdfDownload.innerHTML = `<i class="fas fa-check"></i> Downloaded`;
+    pdfDownload.style.pointerEvents = 'none';
+    pdfDownload.style.opacity = '0.85';
+    return;
+  }
+  pdfDownload.innerHTML = `<i class="fas fa-download"></i> Download`;
+  pdfDownload.style.pointerEvents = '';
+  pdfDownload.style.opacity = '';
+}
+
+async function downloadPdfToDevice(url, filename){
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('Download failed');
+  const blob = await res.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  try{
+    const a = document.createElement('a');
+    a.href = objectUrl;
+    a.download = filename || 'document.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
+  }
+}
+
+async function renderPdfInModal(url){
+  if(!pdfPages) return;
+  const pdfjsLib = await getPdfJsLib();
+  if(!pdfjsLib || typeof pdfjsLib.getDocument !== 'function'){
+    pdfPages.innerHTML = `<div class="pdf-loading">PDF viewer failed to load.</div>`;
+    return;
+  }
+
+  pdfPages.innerHTML = `<div class="pdf-loading">Loading PDF…</div>`;
+  try{
+    const loadingTask = pdfjsLib.getDocument(url);
+    const pdf = await loadingTask.promise;
+    pdfPages.innerHTML = '';
+
+    for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+      const page = await pdf.getPage(pageNum);
+      const viewport1 = page.getViewport({ scale: 1 });
+
+      const containerWidth = Math.max(280, pdfPages.clientWidth - 24);
+      const cssScale = containerWidth / viewport1.width;
+      const dpr = window.devicePixelRatio || 1;
+      const viewport = page.getViewport({ scale: cssScale * dpr });
+
+      const pageWrap = document.createElement('div');
+      pageWrap.className = 'pdf-page';
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      pageWrap.appendChild(canvas);
+      pdfPages.appendChild(pageWrap);
+
+      const ctx = canvas.getContext('2d', { alpha: false });
+      await page.render({ canvasContext: ctx, viewport }).promise;
+    }
+  } catch (err) {
+    console.error('PDF render failed:', err);
+    pdfPages.innerHTML = `<div class="pdf-loading" style="color:#dc3545;">Failed to render PDF.</div>`;
+  }
+}
 
 function openPdfModal(url, name) {
   if(!url) return;
@@ -1466,26 +1625,58 @@ function openPdfModal(url, name) {
   if(currentPatientId){
     sessionStorage.setItem('patientHistorySelectedPatient', currentPatientId);
   }
-  modalTitle.textContent = name || 'Report Preview';
-  pdfFrame.src = url;
-  pdfDownload.href = url;
-  pdfDownload.setAttribute('download', name || '');
+
+  currentPdfUrl = url;
+  currentPdfName = name || 'Report Preview';
+  modalTitle.textContent = currentPdfName;
+  setDownloadButtonState('default');
+  if(pdfDownload){
+    pdfDownload.href = url;
+    pdfDownload.setAttribute('download', currentPdfName || 'document.pdf');
+  }
+
   pdfModal.classList.add('open');
   pdfModal.setAttribute('aria-hidden', 'false');
+  renderPdfInModal(url);
 }
 
 function closePdfModal() {
   pdfModal.classList.remove('open');
   pdfModal.setAttribute('aria-hidden', 'true');
-  pdfFrame.src = '';
+  if(pdfPages) pdfPages.innerHTML = '';
+  currentPdfUrl = null;
+  currentPdfName = null;
 }
 
 closeModalBtn.addEventListener('click', closePdfModal);
 pdfModal.addEventListener('click', (ev)=>{
   if(ev.target === pdfModal) closePdfModal();
 });
-document.addEventListener('keydown', (e)=>{ 
-  if(e.key === 'Escape') closePdfModal(); 
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closePdfModal();
+});
+
+if(pdfDownload){
+  pdfDownload.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if(!currentPdfUrl) return;
+    try{
+      await downloadPdfToDevice(currentPdfUrl, currentPdfName || 'document.pdf');
+      setDownloadButtonState('downloaded');
+    } catch (err) {
+      console.error(err);
+      alert('Download failed. Please try again.');
+    }
+  });
+}
+
+window.addEventListener('resize', () => {
+  if(!pdfModal || !pdfModal.classList.contains('open')) return;
+  if(!currentPdfUrl) return;
+  if(resizeRerenderTimeout) clearTimeout(resizeRerenderTimeout);
+  resizeRerenderTimeout = setTimeout(() => {
+    renderPdfInModal(currentPdfUrl);
+  }, 200);
 });
 
 /* Initialize */

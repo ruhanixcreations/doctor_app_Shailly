@@ -27,6 +27,13 @@ function send_json($arr, $code=200){
     exit;
 }
 
+function column_exists($mysqli, $table, $column){
+    $t = $mysqli->real_escape_string($table);
+    $c = $mysqli->real_escape_string($column);
+    $res = $mysqli->query("SHOW COLUMNS FROM `$t` LIKE '$c'");
+    return ($res && $res->num_rows > 0);
+}
+
 // === GET DOCTORS (No change) ===
 if(isset($_GET['action']) && $_GET['action'] === 'get_doctors'){
     $res = $mysqli->query("SELECT id, name, client_id FROM users WHERE role='user' AND status='active' ORDER BY name ASC");
@@ -37,6 +44,47 @@ if(isset($_GET['action']) && $_GET['action'] === 'get_doctors'){
         }
     }
     send_json(['success'=>true, 'doctors'=>$doctors]);
+}
+
+// === GET PATIENTS LIST (for Add New Patient page table) ===
+if(isset($_GET['action']) && $_GET['action'] === 'list_patients'){
+    // Ensure required columns exist
+    if(!column_exists($mysqli, 'patient_list', 'created_at')){
+        $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+        $mysqli->query("UPDATE patient_list SET created_at = NOW() WHERE created_at IS NULL");
+    }
+
+    $client_id = trim($_GET['client_id'] ?? '');
+    if($client_id === ''){
+        send_json(['success'=>false,'message'=>'client_id required'],400);
+    }
+
+    // last_visit = latest prescription date, fallback to patient created_at
+    $sql = "SELECT pl.patient_id,
+                   pl.patient_name,
+                   pl.mobile,
+                   DATE_FORMAT(COALESCE(p_max.last_visit, pl.created_at), '%Y-%m-%d') AS last_visit
+            FROM patient_list pl
+            LEFT JOIN (
+              SELECT patient_id, MAX(created_at) AS last_visit
+              FROM prescriptions
+              GROUP BY patient_id
+            ) p_max ON p_max.patient_id = pl.patient_id
+            WHERE pl.client_id = ?
+            ORDER BY pl.id DESC
+            LIMIT 2000";
+
+    $stmt = $mysqli->prepare($sql);
+    if(!$stmt) send_json(['success'=>false,'message'=>'DB Prepare Error (Patients List): '.$mysqli->error],500);
+    $stmt->bind_param('s', $client_id);
+    if(!$stmt->execute()) send_json(['success'=>false,'message'=>'DB Execute Error (Patients List): '.$stmt->error],500);
+    $res = $stmt->get_result();
+    $out = [];
+    while($r = $res->fetch_assoc()){
+        $out[] = $r;
+    }
+    $stmt->close();
+    send_json(['success'=>true,'patients'=>$out]);
 }
 
 // === POST PATIENT SAVE ===
@@ -200,17 +248,15 @@ if(isset($_FILES['previous_blood_test']) && $_FILES['previous_blood_test']['erro
 // --- STEP 3: Database Insert (Binding the new JSON string) ---
 
 // First, ensure the new columns exist
-$mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'previous_prescription_file'");
-if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+if(!column_exists($mysqli, 'patient_list', 'previous_prescription_file')){
     $mysqli->query("ALTER TABLE patient_list ADD COLUMN previous_prescription_file TEXT NULL");
 }
-$mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'previous_blood_test_file'");
-if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+if(!column_exists($mysqli, 'patient_list', 'previous_blood_test_file')){
     $mysqli->query("ALTER TABLE patient_list ADD COLUMN previous_blood_test_file TEXT NULL");
 }
-$mysqli->query("SHOW COLUMNS FROM patient_list LIKE 'created_at'");
-if($mysqli->affected_rows === 0 || $mysqli->field_count === 0){
+if(!column_exists($mysqli, 'patient_list', 'created_at')){
     $mysqli->query("ALTER TABLE patient_list ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP");
+    $mysqli->query("UPDATE patient_list SET created_at = NOW() WHERE created_at IS NULL");
 }
 
 // The doctor_id variable is now replaced by the doctor_json string

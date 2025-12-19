@@ -16,8 +16,12 @@ if (is_dir($sessionDir) && is_writable($sessionDir)) {
 }
 
 // Align cookie params
+$SESSION_TTL = 60 * 60 * 24 * 7; // 7 days in seconds
+ini_set('session.gc_maxlifetime', (string)$SESSION_TTL);
+ini_set('session.cookie_lifetime', (string)$SESSION_TTL);
+
 $cookieParams = [
-    'lifetime' => 0,
+    'lifetime' => $SESSION_TTL,
     'path' => '/',
     'domain' => '.ruhanixlegal.in',
     'secure' => false,
@@ -88,16 +92,30 @@ if ($action) {
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
             $logo_url = '/doctor_app/uploads/logos/' . $filename;
             
-            // Insert new logo (not active by default)
-            $stmt = $conn->prepare("INSERT INTO clinic_logos (client_id, logo_path, is_active, uploaded_at) VALUES (?, ?, 0, NOW())");
-            $stmt->bind_param("ss", $client_id, $logo_url);
-            
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'logo_url' => $logo_url, 'logo_id' => $conn->insert_id]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to save logo to database']);
+            // Make the newly uploaded logo ACTIVE by default (required so it shows for doctor + prescriptions)
+            $conn->begin_transaction();
+            try {
+                $stmt0 = $conn->prepare("UPDATE clinic_logos SET is_active = 0 WHERE client_id = ?");
+                $stmt0->bind_param("s", $client_id);
+                $stmt0->execute();
+                $stmt0->close();
+                
+                $stmt = $conn->prepare("INSERT INTO clinic_logos (client_id, logo_path, is_active, uploaded_at) VALUES (?, ?, 1, NOW())");
+                $stmt->bind_param("ss", $client_id, $logo_url);
+                
+                if ($stmt->execute()) {
+                    $newId = $conn->insert_id;
+                    $conn->commit();
+                    echo json_encode(['success' => true, 'logo_url' => $logo_url, 'logo_id' => $newId, 'is_active' => 1]);
+                } else {
+                    $conn->rollback();
+                    echo json_encode(['success' => false, 'message' => 'Failed to save logo to database']);
+                }
+                $stmt->close();
+            } catch (Exception $e) {
+                $conn->rollback();
+                echo json_encode(['success' => false, 'message' => 'Failed to upload logo: ' . $e->getMessage()]);
             }
-            $stmt->close();
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to move uploaded file']);
         }
@@ -128,6 +146,20 @@ if ($action) {
         echo json_encode(['success' => true, 'logos' => $logos]);
         
         $stmt->close();
+        $conn->close();
+        exit;
+    }
+
+    if ($action === 'list_doctors') {
+        // List doctors (used by receptionist to pick clinic for logos)
+        $res = $conn->query("SELECT id, name, client_id FROM users WHERE role='user' ORDER BY name ASC LIMIT 2000");
+        $doctors = [];
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $doctors[] = $row;
+            }
+        }
+        echo json_encode(['success' => true, 'doctors' => $doctors]);
         $conn->close();
         exit;
     }
@@ -185,7 +217,8 @@ if ($action) {
             exit;
         }
         
-        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ? AND is_active = 1");
+        // Prefer active logo; fallback to most recent logo if none is marked active
+        $stmt = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ? AND is_active = 1 ORDER BY uploaded_at DESC LIMIT 1");
         $stmt->bind_param("s", $client_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -193,7 +226,16 @@ if ($action) {
         if ($row = $result->fetch_assoc()) {
             echo json_encode(['success' => true, 'logo_url' => $row['logo_path']]);
         } else {
-            echo json_encode(['success' => false, 'message' => 'No active logo found']);
+            $stmt2 = $conn->prepare("SELECT logo_path FROM clinic_logos WHERE client_id = ? ORDER BY uploaded_at DESC LIMIT 1");
+            $stmt2->bind_param("s", $client_id);
+            $stmt2->execute();
+            $result2 = $stmt2->get_result();
+            if ($row2 = $result2->fetch_assoc()) {
+                echo json_encode(['success' => true, 'logo_url' => $row2['logo_path'], 'note' => 'No active logo; returning latest uploaded logo']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No logo found']);
+            }
+            $stmt2->close();
         }
         
         $stmt->close();

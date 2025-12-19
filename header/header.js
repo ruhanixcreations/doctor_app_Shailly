@@ -388,8 +388,8 @@ function applyRoleBasedVisibility() {
       hideMenuItem(doctorsListLink);
       hideMenuItem(bloodTestsLink);
       hideMenuItem(receptionalistListLink);
-      hideMenuItem(manageLogoLink);
-      console.log('✅ Hidden 7 menu items for receptionalist');
+      // Allow receptionists to manage clinic logo
+      console.log('✅ Hidden 6 menu items for receptionalist (logo allowed)');
     } else if (role === 'user') {
       console.log('✅ USER ROLE - Hiding Add Patient for doctors');
       hideMenuItem(addPatientLink);
