@@ -304,6 +304,14 @@ textarea{min-height:80px;resize:vertical}
 /* blood test box */
 #bloodTestBox{margin-top:14px}
 #bloodSelectedLabel,#followUpLabel{margin-top:12px;font-weight:600;color:var(--text-dark);padding:10px;background:var(--bg-light);border-radius:4px;font-size:14px}
+.blood-test-checkboxes{padding:8px;max-height:280px;overflow-y:auto}
+.blood-test-checkboxes label{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:4px;margin:4px 0;font-size:14px;cursor:pointer;transition:all 0.2s ease}
+.blood-test-checkboxes label:hover{background:rgba(0,169,165,0.08)}
+.blood-test-checkboxes input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--primary-teal)}
+#selectedBloodTestsList{margin-top:12px;padding:10px;background:var(--bg-light);border-radius:4px;display:none}
+#selectedBloodTestsList ol{margin:8px 0 0 20px;padding:0}
+#selectedBloodTestsList li{margin:4px 0;font-size:14px;color:var(--text-dark)}
+.error-message{color:#dc3545;font-size:13px;font-weight:600;margin-top:8px;padding:8px 12px;background:#ffe6e6;border-radius:4px;border-left:3px solid #dc3545;display:none}
 
 /* saved items list */
 .meds-list{margin-top:0}
@@ -498,18 +506,23 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
         </div>
         
         <div id="bloodTestBox">
-          <label class="small">Recommended Blood Test</label>
+          <label class="small">Recommended Blood Test (Select multiple)</label>
           <div class="blood-dropdown" id="bloodDropdown" style="margin-top:8px;">
             <div class="selectedBtn" id="bloodSelectedBtn">
-              <span id="bloodLabel">Choose blood test...</span> 
+              <span id="bloodLabel">Choose blood tests...</span> 
               <span style="opacity:0.6">▾</span>
             </div>
             <div class="listPanel hidden" id="bloodPanel">
               <div class="search"><input id="bloodSearch" type="search" placeholder="Search blood tests..."></div>
-              <div class="items" id="bloodItems" style="max-height:200px;overflow:auto;margin-top:8px"></div>
+              <div class="blood-test-checkboxes" id="bloodTestCheckboxes">
+                <!-- Blood test checkboxes will be populated here -->
+              </div>
             </div>
-            <input type="hidden" id="selectedBloodId" value="">
-            <input type="hidden" id="selectedBloodName" value="">
+          </div>
+          
+          <div id="selectedBloodTestsList">
+            <strong><i class="fas fa-vial"></i> Selected Blood Tests:</strong>
+            <ol id="selectedBloodTestsOL"></ol>
           </div>
 
           <!-- Follow-up date -->
@@ -522,6 +535,9 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
 
       <!-- ACTION BUTTONS -->
       <div class="action-btn-group" style="margin-bottom:30px">
+        <div class="error-message" id="validationError">
+          <i class="fas fa-exclamation-triangle"></i> Fill all the required fields
+        </div>
         <button id="savePrescription" class="btn save" disabled>
           <i class="fas fa-save"></i> Save Prescription
         </button>
@@ -565,7 +581,8 @@ input:focus, select:focus, textarea:focus, .selectedBtn:focus{
           </div>
 
           <div id="bloodSelectedLabel" style="display:none;">
-            <i class="fas fa-vial"></i> <strong>Recommended Blood Test:</strong> <span id="bloodSelectedText"></span>
+            <i class="fas fa-vial"></i> <strong>Recommended Blood Tests:</strong>
+            <ol id="bloodSelectedText" style="margin:8px 0 0 20px;padding:0"></ol>
           </div>
           <div id="followUpLabel" style="display:none;">
             <i class="fas fa-calendar-check"></i> <strong>Follow-up Date:</strong> <span id="followUpText"></span>
@@ -582,6 +599,8 @@ let medicines = [];
 let patients = [];
 let bloodTests = [];
 let currentPrescId = null;
+let selectedBloodTests = [];
+let filledFieldsCount = 0;
 
 function escapeHtml(s){ if(!s) return ''; return s.toString().replace(/[&<>"']/g,(c)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function formatDateYYYYMMDD(d){ const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`; }
@@ -668,7 +687,7 @@ window.addEventListener('blur', hideAllOpenPanels);
 /* ---------- LOAD lists ---------- */
 async function loadPatients(){ try{ const r = await fetch('add_prescription.php?action=list_patients'); const j = await r.json(); if(j.success){ patients = j.patients || []; populatePatientItems(''); } else patients = []; }catch(e){ patients=[]; } }
 async function loadMedicines(){ try{ const r = await fetch('add_prescription.php?action=list_medicines'); const j = await r.json(); medicines = j.success ? (j.medicines||[]) : []; }catch(e){ medicines = []; } }
-async function loadBloodTests(){ try{ const r = await fetch('add_prescription.php?action=list_blood_tests'); const j = await r.json(); bloodTests = j.success ? (j.blood_tests||[]) : []; populateBloodItems(''); }catch(e){ bloodTests = []; populateBloodItems(''); } }
+async function loadBloodTests(){ try{ const r = await fetch('add_prescription.php?action=list_blood_tests'); const j = await r.json(); bloodTests = j.success ? (j.blood_tests||[]) : []; }catch(e){ bloodTests = []; } }
 
 /* ---------- PATIENT DROPDOWN ---------- */
 const patientDropdown = document.getElementById('patientDropdown');
@@ -716,37 +735,104 @@ function populatePatientItems(filter){
 patientSelectedBtn.addEventListener('click',(ev)=>{ ev.stopPropagation(); if(patientPanel.style.display==='block'){ hidePanel(patientPanel); } else { populatePatientItems(''); showPanelFixed(patientSelectedBtn, patientPanel); } });
 patientSearch.addEventListener('input',(e)=> populatePatientItems(e.target.value));
 
-/* ---------- BLOOD TEST DROPDOWN ---------- */
+/* ---------- BLOOD TEST DROPDOWN WITH CHECKBOXES ---------- */
 const bloodDropdown = document.getElementById('bloodDropdown');
 const bloodSelectedBtn = document.getElementById('bloodSelectedBtn');
 const bloodPanel = document.getElementById('bloodPanel');
-const bloodItems = document.getElementById('bloodItems');
+const bloodTestCheckboxes = document.getElementById('bloodTestCheckboxes');
 const bloodSearch = document.getElementById('bloodSearch');
 const bloodLabel = document.getElementById('bloodLabel');
-const selectedBloodId = document.getElementById('selectedBloodId');
-const selectedBloodName = document.getElementById('selectedBloodName');
+const selectedBloodTestsList = document.getElementById('selectedBloodTestsList');
+const selectedBloodTestsOL = document.getElementById('selectedBloodTestsOL');
 
-function populateBloodItems(filter){
-  bloodItems.innerHTML='';
-  const q=(filter||'').trim().toLowerCase();
+function populateBloodTestCheckboxes(filter = ''){
+  bloodTestCheckboxes.innerHTML = '';
+  const q = (filter || '').trim().toLowerCase();
   const list = bloodTests.filter(b => !q || (b.name && b.name.toLowerCase().includes(q)));
-  if(!list.length){ bloodItems.innerHTML='<div class="no-results">No blood tests</div>'; return; }
-  list.forEach(b=>{
-    const div=document.createElement('div'); div.className='item';
-    div.textContent = `${b.name} ${b.price?(' — ₹'+b.price):''}`; div.dataset.id=b.id; div.dataset.name=b.name;
-    div.addEventListener('click', ()=>{
-      selectedBloodId.value = b.id;
-      selectedBloodName.value = b.name;
-      bloodLabel.textContent = b.name;
-      hidePanel(bloodPanel);
-      document.getElementById('bloodSelectedText').textContent = b.name;
-      document.getElementById('bloodSelectedLabel').style.display = document.getElementById('savedItemsContainer').style.display === 'block' ? 'block' : 'none';
-    });
-    bloodItems.appendChild(div);
+  
+  if(!list.length){ 
+    bloodTestCheckboxes.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">No blood tests found</div>'; 
+    return; 
+  }
+  
+  list.forEach(b => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = b.id;
+    checkbox.dataset.name = b.name;
+    checkbox.addEventListener('change', updateSelectedBloodTests);
+    
+    // Check if this test is already selected
+    if(selectedBloodTests.some(t => t.id == b.id)){
+      checkbox.checked = true;
+    }
+    
+    const span = document.createElement('span');
+    span.textContent = b.name + (b.price ? ` — ₹${b.price}` : '');
+    
+    label.appendChild(checkbox);
+    label.appendChild(span);
+    bloodTestCheckboxes.appendChild(label);
   });
 }
-bloodSelectedBtn.addEventListener('click',(ev)=>{ ev.stopPropagation(); if(bloodPanel.style.display==='block'){ hidePanel(bloodPanel); } else { populateBloodItems(''); showPanelFixed(bloodSelectedBtn, bloodPanel); } });
-bloodSearch.addEventListener('input',(e)=> populateBloodItems(e.target.value));
+
+function updateSelectedBloodTests(){
+  selectedBloodTests = [];
+  const checkboxes = bloodTestCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+  checkboxes.forEach(cb => {
+    selectedBloodTests.push({
+      id: cb.value,
+      name: cb.dataset.name
+    });
+  });
+  
+  // Update button label
+  if(selectedBloodTests.length === 0){
+    bloodLabel.textContent = 'Choose blood tests...';
+  } else if(selectedBloodTests.length === 1){
+    bloodLabel.textContent = selectedBloodTests[0].name;
+  } else {
+    bloodLabel.textContent = `${selectedBloodTests.length} tests selected`;
+  }
+  
+  // Update display list
+  if(selectedBloodTests.length > 0){
+    selectedBloodTestsOL.innerHTML = '';
+    selectedBloodTests.forEach(test => {
+      const li = document.createElement('li');
+      li.textContent = test.name;
+      selectedBloodTestsOL.appendChild(li);
+    });
+    selectedBloodTestsList.style.display = 'block';
+  } else {
+    selectedBloodTestsList.style.display = 'none';
+  }
+  
+  updateFieldsCount();
+  validateAllForms();
+}
+
+// Dropdown open/close
+bloodSelectedBtn.addEventListener('click', (ev) => { 
+  ev.stopPropagation(); 
+  if(bloodPanel.style.display === 'block'){ 
+    hidePanel(bloodPanel); 
+  } else { 
+    populateBloodTestCheckboxes(''); 
+    showPanelFixed(bloodSelectedBtn, bloodPanel); 
+  } 
+});
+
+// Search functionality
+bloodSearch.addEventListener('input', (e) => {
+  populateBloodTestCheckboxes(e.target.value);
+});
+
+// Prevent dropdown from closing when clicking inside the checkboxes area
+bloodTestCheckboxes.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
 
 /* ---------- MEDICINE MINI-FORM ---------- */
 const medsContainer = document.getElementById('medsFormsContainer');
@@ -836,6 +922,7 @@ function createMiniForm(prefill={}){
   // remove (button is inside card and shown only if more than 1)
   wrapper.querySelector('.removeMini').addEventListener('click', ()=>{
     wrapper.remove();
+    updateFieldsCount();
     validateAllForms();
     updateRemoveButtonsVisibility();
     updateFollowUpLabelFromTop();
@@ -863,6 +950,7 @@ function createMiniForm(prefill={}){
         const typeElem = wrapper.querySelector('.typeInput');
         typeElem.style.display = 'block'; typeElem.previousElementSibling.style.display='inline-block';
         markFormActive(wrapper);
+        updateFieldsCount();
         validateAllForms();
       });
       itemsEl.appendChild(div);
@@ -883,6 +971,7 @@ function createMiniForm(prefill={}){
         const durationEl = wrapper.querySelector('.durationInput');
         durationEl.style.display='block'; durationEl.previousElementSibling.style.display='inline-block';
         markFormActive(wrapper);
+        updateFieldsCount();
         validateAllForms();
       }
     }
@@ -905,6 +994,7 @@ function createMiniForm(prefill={}){
       const radios = wrapper.querySelectorAll('.beforeRadio, .afterRadio'); radios.forEach(r=> r.checked=false);
     }
     markFormActive(wrapper);
+    updateFieldsCount();
     validateAllForms();
   });
 
@@ -923,6 +1013,7 @@ function createMiniForm(prefill={}){
       const radios = wrapper.querySelectorAll('.beforeRadio, .afterRadio');
       radios.forEach(r=> r.checked = false);
     }
+    updateFieldsCount();
     validateAllForms();
   }
   timeCheckboxes.forEach(ch => ch.addEventListener('change', updateBeforeAfterVisibility));
@@ -931,6 +1022,7 @@ function createMiniForm(prefill={}){
   wrapper.addEventListener('change',(e)=>{
     if(e.target.classList && (e.target.classList.contains('beforeRadio') || e.target.classList.contains('afterRadio'))){
       beforeAfterInput.value = e.target.value;
+      updateFieldsCount();
       validateAllForms();
     }
   });
@@ -939,12 +1031,14 @@ function createMiniForm(prefill={}){
   ['input','change','focus'].forEach(evt=>{
     wrapper.addEventListener(evt, (ev)=> {
       markFormActive(wrapper);
+      updateFieldsCount();
       validateAllForms();
     });
   });
 
   medsContainer.appendChild(wrapper);
   markFormActive(wrapper);
+  updateFieldsCount();
   validateAllForms();
   updateRemoveButtonsVisibility();
   updateFollowUpLabelFromTop();
@@ -1006,9 +1100,36 @@ function validateForSave(){
   return validateMedicineForms();
 }
 
+function updateFieldsCount(){
+  filledFieldsCount = 0;
+  
+  // Count symptom field if filled
+  const topSymptoms = document.getElementById('topSymptoms').value.trim();
+  if(topSymptoms) filledFieldsCount++;
+  
+  // Count each medicine form field that's filled
+  const forms = Array.from(medsContainer.children);
+  forms.forEach(f => {
+    const med = f.querySelector('.medInput')?.value.trim();
+    const type = f.querySelector('.typeInput')?.value.trim();
+    const dur = f.querySelector('.durationInput')?.value.trim();
+    if(med) filledFieldsCount++;
+    if(type) filledFieldsCount++;
+    if(dur) filledFieldsCount++;
+  });
+  
+  // Count blood tests if selected
+  if(selectedBloodTests.length > 0) filledFieldsCount++;
+  
+  // Count follow-up date if filled
+  const followUp = document.getElementById('topFollowUp').value;
+  if(followUp) filledFieldsCount++;
+}
+
 function updateButtonStates(){
   const saveBtn = document.getElementById('savePrescription');
   const addBtn = document.getElementById('addBottomBtn');
+  const errorMsg = document.getElementById('validationError');
   
   // Add Medicine button: only checks if medicine forms are complete (no symptoms check)
   const medFormsValid = validateMedicineForms();
@@ -1021,9 +1142,16 @@ function updateButtonStates(){
   // Save Prescription button: checks both symptoms AND medicine forms
   const allValid = validateForSave();
   if(allValid){ 
-    saveBtn.removeAttribute('disabled'); 
+    saveBtn.removeAttribute('disabled');
+    errorMsg.style.display = 'none';
   } else { 
-    saveBtn.setAttribute('disabled',''); 
+    saveBtn.setAttribute('disabled','');
+    // Show error message if user has filled 3 or more fields but not all required
+    if(filledFieldsCount >= 3){
+      errorMsg.style.display = 'block';
+    } else {
+      errorMsg.style.display = 'none';
+    }
   }
 }
 
@@ -1059,8 +1187,8 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
   const items = collectMiniForms();
   if(!items.length){ alert('Add medicines'); return; }
   const client_id = localStorage.getItem('client_id') || '';
-  const bloodTestId = document.getElementById('selectedBloodId').value || null;
-  const bloodTestName = document.getElementById('selectedBloodName').value || null;
+  const bloodTestIds = selectedBloodTests.map(t => t.id);
+  const bloodTestNames = selectedBloodTests.map(t => t.name);
   const symptoms = document.getElementById('topSymptoms').value.trim() || '';
   const follow_up_date = document.getElementById('topFollowUp').value || null;
 
@@ -1068,7 +1196,7 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     const res = await fetch('add_prescription.php?action=save', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_id: bloodTestId, blood_test_name: bloodTestName })
+      body: JSON.stringify({ patient_id: pid, client_id, symptoms, follow_up_date, items, blood_test_ids: bloodTestIds, blood_test_names: bloodTestNames })
     });
     const j = await res.json();
     if(!j.success){ alert('Save failed: '+(j.message||'')); return; }
@@ -1080,6 +1208,11 @@ document.getElementById('savePrescription').addEventListener('click', async ()=>
     document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
     updateFollowUpLabelFromTop();
     document.getElementById('topSymptoms').value = '';
+    // Reset blood test selections
+    selectedBloodTests = [];
+    bloodLabel.textContent = 'Choose blood tests...';
+    selectedBloodTestsList.style.display = 'none';
+    updateFieldsCount();
     validateAllForms();
     await loadPatientPrescriptions(pid);
     updateRemoveButtonsVisibility();
@@ -1131,16 +1264,20 @@ async function loadPatientPrescriptions(patient_id){
 
     // update recommended blood test (from latest)
     if(latestPrescription && latestPrescription.recommended_blood_test){
-      document.getElementById('bloodSelectedText').textContent = latestPrescription.recommended_blood_test;
+      const bloodTestsArray = latestPrescription.recommended_blood_test.split(',').map(t => t.trim()).filter(t => t);
+      const bloodTextOL = document.getElementById('bloodSelectedText');
+      bloodTextOL.innerHTML = '';
+      bloodTestsArray.forEach(test => {
+        const li = document.createElement('li');
+        li.textContent = test;
+        li.style.margin = '4px 0';
+        li.style.fontSize = '14px';
+        li.style.color = 'var(--text-dark)';
+        bloodTextOL.appendChild(li);
+      });
       document.getElementById('bloodSelectedLabel').style.display='block';
-      selectedBloodName.value = latestPrescription.recommended_blood_test || '';
-      const bt = bloodTests.find(b => b.name === latestPrescription.recommended_blood_test);
-      if(bt) selectedBloodId.value = bt.id;
     } else {
       document.getElementById('bloodSelectedLabel').style.display='none';
-      selectedBloodId.value = '';
-      selectedBloodName.value = '';
-      bloodLabel.textContent = 'Choose blood test...';
     }
 
     // update follow-up date (from latestPrescription)
@@ -1179,9 +1316,9 @@ async function onPatientSelected(patient_id, patientObj){
   document.getElementById('pdWeight').textContent = patientObj.weight || '-';
 
   document.getElementById('topSymptoms').value = '';
-  selectedBloodId.value = '';
-  selectedBloodName.value = '';
-  bloodLabel.textContent = 'Choose blood test...';
+  selectedBloodTests = [];
+  bloodLabel.textContent = 'Choose blood tests...';
+  selectedBloodTestsList.style.display = 'none';
   if(!document.getElementById('topFollowUp').value) document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
   updateFollowUpLabelFromTop();
 
@@ -1196,14 +1333,22 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   await loadPatients();
   await loadMedicines();
   await loadBloodTests();
+  populateBloodTestCheckboxes();
   // set top follow-up default
   document.getElementById('topFollowUp').value = formatDateYYYYMMDD(addDays(new Date(),7));
   document.getElementById('savedItemsContainer').style.display='none';
 
   // update follow-up label when top input changes
-  document.getElementById('topFollowUp').addEventListener('change', updateFollowUpLabelFromTop);
+  document.getElementById('topFollowUp').addEventListener('change', () => {
+    updateFollowUpLabelFromTop();
+    updateFieldsCount();
+    validateAllForms();
+  });
   // validate when symptom typed
-  document.getElementById('topSymptoms').addEventListener('input', validateAllForms);
+  document.getElementById('topSymptoms').addEventListener('input', () => {
+    updateFieldsCount();
+    validateAllForms();
+  });
 
   // create first empty mini-form
   medsContainer.innerHTML=''; createMiniForm();

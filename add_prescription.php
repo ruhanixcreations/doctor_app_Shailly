@@ -136,8 +136,12 @@ if($action === 'save'){
         echo json_encode(['success'=>false,'message'=>'Client ID missing for this prescription']); exit;
     }
     $items = $data['items'];
-    $blood_test_id = isset($data['blood_test_id']) ? $data['blood_test_id'] : null;
-    $blood_test_name = isset($data['blood_test_name']) ? $data['blood_test_name'] : null;
+    // Handle multiple blood tests
+    $blood_test_ids = isset($data['blood_test_ids']) && is_array($data['blood_test_ids']) ? $data['blood_test_ids'] : (isset($data['blood_test_id']) ? [$data['blood_test_id']] : []);
+    $blood_test_names = isset($data['blood_test_names']) && is_array($data['blood_test_names']) ? $data['blood_test_names'] : (isset($data['blood_test_name']) ? [$data['blood_test_name']] : []);
+    // Join multiple blood test names with comma
+    $blood_test_name = !empty($blood_test_names) ? implode(', ', $blood_test_names) : null;
+    $blood_test_id = !empty($blood_test_ids) ? $blood_test_ids[0] : null; // Use first ID for backward compatibility
     $symptoms = isset($data['symptoms']) ? $data['symptoms'] : '';
     $follow_up_date_top = isset($data['follow_up_date']) && $data['follow_up_date'] !== '' ? $data['follow_up_date'] : null;
 
